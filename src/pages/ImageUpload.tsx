@@ -1,0 +1,144 @@
+
+import { useState, useRef } from "react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Upload, X, Image } from "lucide-react";
+import { useToast } from "@/hooks/use-toast";
+
+interface ImageUploadProps {
+  images: (string | null)[];
+  onImagesChange: (images: (string | null)[]) => void;
+  maxImages?: number;
+  label?: string;
+}
+
+const ImageUpload = ({ images, onImagesChange, maxImages = 3, label = "Project Images" }: ImageUploadProps) => {
+  const [uploading, setUploading] = useState<number | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const { toast } = useToast();
+
+  const convertToBase64 = (file: File): Promise<string> => {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.readAsDataURL(file);
+      reader.onload = () => resolve(reader.result as string);
+      reader.onerror = error => reject(error);
+    });
+  };
+
+  const uploadImage = async (file: File, index: number) => {
+    setUploading(index);
+    
+    try {
+      const base64String = await convertToBase64(file);
+      
+      const newImages = [...images];
+      newImages[index] = base64String;
+      onImagesChange(newImages);
+
+      toast({
+        title: "Success",
+        description: "Image uploaded successfully",
+      });
+    } catch (error) {
+      console.error('Error converting image to base64:', error);
+      toast({
+        title: "Error",
+        description: "Failed to upload image",
+        variant: "destructive",
+      });
+    } finally {
+      setUploading(null);
+    }
+  };
+
+  const removeImage = (index: number) => {
+    const newImages = [...images];
+    newImages[index] = null;
+    onImagesChange(newImages);
+  };
+
+  const handleFileSelect = (event: React.ChangeEvent<HTMLInputElement>, index: number) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      if (file.size > 5 * 1024 * 1024) {
+        toast({
+          title: "Error",
+          description: "Image must be smaller than 5MB",
+          variant: "destructive",
+        });
+        return;
+      }
+      
+      if (!file.type.startsWith('image/')) {
+        toast({
+          title: "Error",
+          description: "Please select an image file",
+          variant: "destructive",
+        });
+        return;
+      }
+      
+      uploadImage(file, index);
+    }
+  };
+
+  return (
+    <div className="space-y-4">
+      <Label>{label} (up to {maxImages})</Label>
+      <div className={`grid gap-4 w-full ${maxImages === 2 ? 'grid-cols-2' : 'grid-cols-2 md:grid-cols-3'}`}>
+        {Array.from({ length: maxImages }).map((_, index) => (
+          <div key={index} className="relative">
+            {images[index] ? (
+              <div className="relative group">
+                <img
+                  src={images[index]!}
+                  alt={`Project image ${index + 1}`}
+                  className="w-full h-32 object-cover rounded-lg border"
+                />
+                <Button
+                  type="button"
+                  variant="destructive"
+                  size="sm"
+                  className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity"
+                  onClick={() => removeImage(index)}
+                >
+                  <X className="h-4 w-4" />
+                </Button>
+              </div>
+            ) : (
+              <div className="w-full h-32 border-2 border-dashed border-gray-300 rounded-lg flex flex-col items-center justify-center hover:border-gray-400 transition-colors">
+                <Input
+                  ref={fileInputRef}
+                  type="file"
+                  accept="image/*"
+                  onChange={(e) => handleFileSelect(e, index)}
+                  className="hidden"
+                  id={`image-upload-${index}`}
+                />
+                <Label
+                  htmlFor={`image-upload-${index}`}
+                  className="flex flex-col items-center justify-center cursor-pointer w-full h-full"
+                >
+                  {uploading === index ? (
+                    <div className="animate-spin">
+                      <Upload className="h-6 w-6 text-gray-400" />
+                    </div>
+                  ) : (
+                    <>
+                      <Image className="h-6 w-6 text-gray-400 mb-2" />
+                      <span className="text-sm text-gray-500">Upload Image</span>
+                    </>
+                  )}
+                </Label>
+              </div>
+            )}
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+};
+
+export default ImageUpload;
