@@ -29,10 +29,10 @@ const ImageUpload = ({ images, onImagesChange, maxImages = 3, label = "Project I
 
   const uploadImage = async (file: File, index: number) => {
     setUploading(index);
-    
+
     try {
       const base64String = await convertToBase64(file);
-      
+
       const newImages = [...images];
       newImages[index] = base64String;
       onImagesChange(newImages);
@@ -70,7 +70,7 @@ const ImageUpload = ({ images, onImagesChange, maxImages = 3, label = "Project I
         });
         return;
       }
-      
+
       if (!file.type.startsWith('image/')) {
         toast({
           title: "Error",
@@ -79,15 +79,21 @@ const ImageUpload = ({ images, onImagesChange, maxImages = 3, label = "Project I
         });
         return;
       }
-      
+
       uploadImage(file, index);
     }
+  };
+
+  const getGridLayout = () => {
+    if (maxImages === 1) return "grid-cols-1 w-full"; // Full space occupied 
+    if (maxImages === 2) return "grid-cols-2 w-full gap-4"; // Left & Right evenly split
+    return "grid-cols-1 sm:grid-cols-2 md:grid-cols-3 w-full gap-4"; // 3 items alignment structured responsive matrix
   };
 
   return (
     <div className="space-y-4">
       <Label>{label} (up to {maxImages})</Label>
-      <div className={`grid gap-4 w-full ${maxImages === 2 ? 'grid-cols-2' : 'grid-cols-2 md:grid-cols-3'}`}>
+      <div className={`grid ${getGridLayout()}`}>
         {Array.from({ length: maxImages }).map((_, index) => (
           <div key={index} className="relative">
             {images[index] ? (

@@ -1638,7 +1638,7 @@ const WorkoutProgramManagement = () => {
                       placeholder="e.g., Weight Loss Transformation"
                     />
                   </div>
-                  
+
                   <div className="space-y-2">
                     <Label htmlFor="name">Role Name*</Label>
                     <Input
@@ -1843,7 +1843,7 @@ const WorkoutProgramManagement = () => {
                       onChange={(e) => setCompanyForm({ ...companyForm, name: e.target.value })}
                       placeholder="e.g., User Name"
                     />
-                  </div>                
+                  </div>
                   <div className="space-y-2">
                     <Label htmlFor="FirstName">First Name</Label>
                     <Input
@@ -1852,7 +1852,7 @@ const WorkoutProgramManagement = () => {
                       onChange={(e) => setCompanyForm({ ...companyForm, name: e.target.value })}
                       placeholder="e.g., First Name"
                     />
-                  </div>                
+                  </div>
                   <div className="space-y-2">
                     <Label htmlFor="LastName">Last Name</Label>
                     <Input
@@ -1861,7 +1861,7 @@ const WorkoutProgramManagement = () => {
                       onChange={(e) => setCompanyForm({ ...companyForm, name: e.target.value })}
                       placeholder="e.g., LastName"
                     />
-                  </div>                
+                  </div>
                   <div className="space-y-2">
                     <Label htmlFor="name">Password</Label>
                     <Input
@@ -1870,7 +1870,7 @@ const WorkoutProgramManagement = () => {
                       onChange={(e) => setCompanyForm({ ...companyForm, name: e.target.value })}
                       placeholder="e.g., Password"
                     />
-                  </div>                
+                  </div>
                   <div className="space-y-2">
                     <Label htmlFor="UserCode">Status</Label>
                     <Select value={companyForm.category} onValueChange={(value) => setCompanyForm({ ...companyForm, category: value })}>
@@ -1886,7 +1886,7 @@ const WorkoutProgramManagement = () => {
                         <SelectItem value="Flexibility">Flexibility</SelectItem>
                       </SelectContent>
                     </Select>
-                  </div>   
+                  </div>
 
                   <div className="space-y-2">
                     <Label htmlFor="Log">Log in/out</Label>
@@ -1903,7 +1903,7 @@ const WorkoutProgramManagement = () => {
                         <SelectItem value="Flexibility">Flexibility</SelectItem>
                       </SelectContent>
                     </Select>
-                  </div>   
+                  </div>
 
                   <div className="space-y-2">
                     <Label htmlFor="RoleID">Role ID</Label>
@@ -1920,8 +1920,8 @@ const WorkoutProgramManagement = () => {
                         <SelectItem value="Flexibility">Flexibility</SelectItem>
                       </SelectContent>
                     </Select>
-                  </div>   
-              
+                  </div>
+
                   <div className="space-y-2">
                     <Label htmlFor="Email">Email</Label>
                     <Input
@@ -1930,7 +1930,7 @@ const WorkoutProgramManagement = () => {
                       onChange={(e) => setCompanyForm({ ...companyForm, name: e.target.value })}
                       placeholder="e.g., Email"
                     />
-                  </div>                
+                  </div>
                   <div className="space-y-2">
                     <Label htmlFor="DOB">DOB</Label>
                     <Input
@@ -1939,7 +1939,7 @@ const WorkoutProgramManagement = () => {
                       onChange={(e) => setCompanyForm({ ...companyForm, name: e.target.value })}
                       placeholder="e.g., DOB"
                     />
-                  </div>                
+                  </div>
                   <div className="space-y-2">
                     <Label htmlFor="Gender">Gender</Label>
                     <Select value={companyForm.category} onValueChange={(value) => setCompanyForm({ ...companyForm, category: value })}>
@@ -1955,20 +1955,26 @@ const WorkoutProgramManagement = () => {
                         <SelectItem value="Flexibility">Flexibility</SelectItem>
                       </SelectContent>
                     </Select>
-                  </div>                 
-              
                   </div>
+
+                  <div className="space-x-2">
+                    <Switch
+                      id="isActive"
+                      checked={companyForm.isActive}
+                      onCheckedChange={(checked) => setCompanyForm({ ...companyForm, isActive: checked })}
+                    />
+                    <Label htmlFor="isActive">Super Admin</Label>
+                  </div>
+                </div>
               </div>
 
-              {/* Super Admin */}
-              <div className="flex items-center space-x-2">
-                <Switch
-                  id="isActive"
-                  checked={companyForm.isActive}
-                  onCheckedChange={(checked) => setCompanyForm({ ...companyForm, isActive: checked })}
-                />
-                <Label htmlFor="isActive">Super Admin</Label>
-              </div>
+              <ImageUpload
+                label="User Image"
+                images={images}
+                onImagesChange={setImages}
+                maxImages={1}
+              />
+
             </div>
             <DialogFooter>
               <Button variant="outline" onClick={() => setIsUserDialogOpen(false)}>Cancel</Button>
@@ -2027,7 +2033,7 @@ const WorkoutProgramManagement = () => {
                       placeholder="e.g., Details Name"
                     />
                   </div>
-                  </div>
+                </div>
 
                 <div className="space-y-2">
                   <Label htmlFor="description">Description</Label>
