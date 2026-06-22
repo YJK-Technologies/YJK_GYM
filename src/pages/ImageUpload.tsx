@@ -11,9 +11,11 @@ interface ImageUploadProps {
   onImagesChange: (images: (string | null)[]) => void;
   maxImages?: number;
   label?: string;
+
+  onFilesChange?: (files: (File | null)[]) => void;
 }
 
-const ImageUpload = ({ images, onImagesChange, maxImages = 3, label = "Project Images" }: ImageUploadProps) => {
+const ImageUpload = ({ images, onImagesChange, maxImages = 3, label = "Project Images", onFilesChange }: ImageUploadProps) => {
   const [uploading, setUploading] = useState<number | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const { toast } = useToast();
@@ -37,16 +39,16 @@ const ImageUpload = ({ images, onImagesChange, maxImages = 3, label = "Project I
       newImages[index] = base64String;
       onImagesChange(newImages);
 
+      // NEW
+      if (onFilesChange) {
+        const files = Array(maxImages).fill(null);
+        files[index] = file;
+        onFilesChange(files);
+      }
+
       toast({
         title: "Success",
         description: "Image uploaded successfully",
-      });
-    } catch (error) {
-      console.error('Error converting image to base64:', error);
-      toast({
-        title: "Error",
-        description: "Failed to upload image",
-        variant: "destructive",
       });
     } finally {
       setUploading(null);

@@ -99,6 +99,14 @@ router.post("/UserUpdates", upload.single('user_images'), dataController.UserUpd
 router.post("/Userdropdown",dataController.Userdropdown)
 router.post("/getUCN",dataController.getUCN)
 router.post("/getUserData",dataController.getUserData)
+router.post("/city", dataController.getCity)
+router.post("/state", dataController.getState)
+router.post("/country", dataController.getCountry)
+router.post("/status", dataController.getStatus)
+router.post("/Screens",dataController.getScreens)
+router.post("/Permissions",dataController.getPermissions)
+router.post("/Loginorout", dataController.getLoginorout)
+router.post("/gender", dataController.getGender)
 
 
 module.exports = router;
