@@ -7,6 +7,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Home from "./pages/Home";
 import Login from "./pages/Login";
 import AdminDashboard from "./pages/admin/AdminDashboard";
+import SuperUserManagement from "./pages/admin/SuperUserManagement";
 import FacultyManagement from "./pages/admin/FacultyManagement";
 import DietPlanManagement from "./pages/admin/DietPlanManagement";
 import MemberManagement from "./pages/admin/MemberManagement";
@@ -34,6 +35,7 @@ const App = () => (
           <Route path="/" element={<Home />} />
           <Route path="/login" element={<Login />} />
           <Route path="/admin" element={<AdminDashboard />} />
+          <Route path="/admin/super-user" element={<SuperUserManagement />} />
           <Route path="/admin/members" element={<MemberManagement />} />
           <Route path="/admin/faculty" element={<FacultyManagement />} />
           <Route path="/admin/diet-plans" element={<DietPlanManagement />} />
