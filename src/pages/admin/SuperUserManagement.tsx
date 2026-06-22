@@ -126,6 +126,68 @@ const sampleCompanies: WorkoutProgram[] = [
     createdDate: '2024-01-20',
   },
 ];
+const sampleCompanyMapping: WorkoutProgram[] = [
+  {
+    id: 'PRG001',
+    name: 'Weight Loss Transformation',
+    description: 'Intensive HIIT program designed for maximum fat burning and weight loss',
+    category: 'HIIT',
+    difficultyLevel: 'Intermediate',
+    goals: ['Weight Loss', 'Endurance', 'Cardio Fitness'],
+    exercises: [
+      { name: 'Burpees', sets: 4, reps: '15' },
+      { name: 'Mountain Climbers', sets: 4, reps: '30 sec' },
+      { name: 'Jump Squats', sets: 4, reps: '20' },
+    ],
+    durationPerSession: '45 minutes',
+    sessionsPerWeek: 5,
+    assignedFaculty: 'FAC001',
+    facultyName: 'Ahmed Al-Rashid',
+    workingHours: '6AM-10AM, 5PM-9PM',
+    isActive: true,
+    createdDate: '2024-01-15',
+  },
+  {
+    id: 'PRG002',
+    name: 'Muscle Building Pro',
+    description: 'Advanced strength training program for muscle hypertrophy and power',
+    category: 'Strength',
+    difficultyLevel: 'Advanced',
+    goals: ['Muscle Gain', 'Strength', 'Power'],
+    exercises: [
+      { name: 'Bench Press', sets: 5, reps: '8-10' },
+      { name: 'Deadlift', sets: 5, reps: '6-8' },
+      { name: 'Squats', sets: 5, reps: '8-10' },
+    ],
+    durationPerSession: '60 minutes',
+    sessionsPerWeek: 4,
+    assignedFaculty: 'FAC002',
+    facultyName: 'Omar Khalil',
+    workingHours: '8AM-12PM, 4PM-8PM',
+    isActive: true,
+    createdDate: '2024-02-01',
+  },
+  {
+    id: 'PRG003',
+    name: 'Yoga & Flexibility',
+    description: 'Relaxing yoga sessions for flexibility, balance, and mental wellness',
+    category: 'Yoga',
+    difficultyLevel: 'Beginner',
+    goals: ['Flexibility', 'Balance', 'Stress Relief'],
+    exercises: [
+      { name: 'Sun Salutation', sets: 1, reps: '10 rounds' },
+      { name: 'Warrior Poses', sets: 1, reps: '5 min each' },
+      { name: 'Stretching Flow', sets: 1, reps: '15 min' },
+    ],
+    durationPerSession: '60 minutes',
+    sessionsPerWeek: 3,
+    assignedFaculty: 'FAC003',
+    facultyName: 'Fatima Hassan',
+    workingHours: '7AM-9AM, 6PM-8PM',
+    isActive: false,
+    createdDate: '2024-01-20',
+  },
+];
 
 const WorkoutProgramManagement = () => {
   const navigate = useNavigate();
@@ -133,8 +195,9 @@ const WorkoutProgramManagement = () => {
   const [activeTab, setActiveTab] = useState('company');
   const [searchTerm, setSearchTerm] = useState('');
   const [companies, setCompanies] = useState<WorkoutProgram[]>(sampleCompanies);
+  const [companyMapping, setCompanyMapping] = useState<WorkoutProgram[]>(sampleCompanyMapping);
 
-  // Program Dialog States
+  // Company Dialog States
   const [isCompanyDialogOpen, setIsCompanyDialogOpen] = useState(false);
   const [isCompanyMappingDialogOpen, setIsCompanyMappingDialogOpen] = useState(false);
   const [isLocationDialogOpen, setIsLocationDialogOpen] = useState(false);
@@ -143,6 +206,7 @@ const WorkoutProgramManagement = () => {
   const [isRoleRightsDialogOpen, setIsRoleRightsDialogOpen] = useState(false);
   const [isUserDialogOpen, setIsUserDialogOpen] = useState(false);
   const [isAttributeDialogOpen, setIsAttributeDialogOpen] = useState(false);
+
   const [editingCompany, setEditingCompany] = useState<WorkoutProgram | null>(null);
   const [companyForm, setCompanyForm] = useState({
     name: '',
@@ -158,9 +222,8 @@ const WorkoutProgramManagement = () => {
     exercises: [{ name: '', sets: 3, reps: '' }],
   });
 
-  // Package Dialog States
-  const [isPackageDialogOpen, setIsPackageDialogOpen] = useState(false);
-  const [editingPackage, setEditingPackage] = useState<WorkoutPackage | null>(null);
+  // Company Mapping Dialog States
+  const [editingCompanyMapping, setEditingCompanyMapping] = useState<WorkoutPackage | null>(null);
   const [packageForm, setPackageForm] = useState({
     name: '',
     packageType: 'Monthly' as 'Monthly' | 'Quarterly' | 'Half-Yearly',
@@ -257,7 +320,7 @@ const WorkoutProgramManagement = () => {
 
   //company Mapping CRUD Functions
   const handleAddCompanyMapping = () => {
-    setEditingPackage(null);
+    setEditingCompanyMapping(null);
     setPackageForm({
       name: '',
       packageType: 'Monthly',
@@ -273,7 +336,7 @@ const WorkoutProgramManagement = () => {
   };
 
   const handleAddLocation = () => {
-    setEditingPackage(null);
+    setEditingCompanyMapping(null);
     setPackageForm({
       name: '',
       packageType: 'Monthly',
@@ -289,7 +352,7 @@ const WorkoutProgramManagement = () => {
   };
 
   const handleAddRole = () => {
-    setEditingPackage(null);
+    setEditingCompanyMapping(null);
     setPackageForm({
       name: '',
       packageType: 'Monthly',
@@ -305,7 +368,7 @@ const WorkoutProgramManagement = () => {
   };
 
   const handleAddRoleMapping = () => {
-    setEditingPackage(null);
+    setEditingCompanyMapping(null);
     setPackageForm({
       name: '',
       packageType: 'Monthly',
@@ -321,7 +384,7 @@ const WorkoutProgramManagement = () => {
   };
 
   const handleAddRoleRights = () => {
-    setEditingPackage(null);
+    setEditingCompanyMapping(null);
     setPackageForm({
       name: '',
       packageType: 'Monthly',
@@ -337,7 +400,7 @@ const WorkoutProgramManagement = () => {
   };
 
   const handleAddUser = () => {
-    setEditingPackage(null);
+    setEditingCompanyMapping(null);
     setPackageForm({
       name: '',
       packageType: 'Monthly',
@@ -353,7 +416,7 @@ const WorkoutProgramManagement = () => {
   };
 
   const handleAddAttribute = () => {
-    setEditingPackage(null);
+    setEditingCompanyMapping(null);
     setPackageForm({
       name: '',
       packageType: 'Monthly',
@@ -665,11 +728,19 @@ const WorkoutProgramManagement = () => {
                 <Table>
                   <TableHeader>
                     <TableRow>
-                      <TableHead>User Code</TableHead>
-                      <TableHead>Company Code</TableHead>
                       <TableHead>Location No</TableHead>
+                      <TableHead>Location Name</TableHead>
+                      <TableHead>Short Name</TableHead>
+                      <TableHead>Address 1</TableHead>
+                      <TableHead>Address 2</TableHead>
+                      <TableHead>Address 3</TableHead>
+                      <TableHead>City</TableHead>
+                      <TableHead>State</TableHead>
+                      <TableHead>Pin Code</TableHead>
+                      <TableHead>Country</TableHead>
+                      <TableHead>Email</TableHead>
                       <TableHead>Status</TableHead>
-                      <TableHead>Order No</TableHead>
+                      <TableHead>Contact No</TableHead>
                       <TableHead className="text-right">Actions</TableHead>
                     </TableRow>
                   </TableHeader>
@@ -688,6 +759,14 @@ const WorkoutProgramManagement = () => {
                             {program.difficultyLevel}
                           </Badge>
                         </TableCell>
+                        <TableCell className="text-sm text-gray-600">{program.workingHours}</TableCell>
+                        <TableCell className="text-sm text-gray-600">{program.workingHours}</TableCell>
+                        <TableCell className="text-sm text-gray-600">{program.workingHours}</TableCell>
+                        <TableCell className="text-sm text-gray-600">{program.workingHours}</TableCell>
+                        <TableCell className="text-sm text-gray-600">{program.workingHours}</TableCell>
+                        <TableCell className="text-sm text-gray-600">{program.workingHours}</TableCell>
+                        <TableCell className="text-sm text-gray-600">{program.workingHours}</TableCell>
+                        <TableCell className="text-sm text-gray-600">{program.workingHours}</TableCell>
                         <TableCell className="text-sm text-gray-600">{program.workingHours}</TableCell>
                         <TableCell>
                           {program.isActive ? (
@@ -725,11 +804,10 @@ const WorkoutProgramManagement = () => {
                 <Table>
                   <TableHeader>
                     <TableRow>
-                      <TableHead>User Code</TableHead>
-                      <TableHead>Company Code</TableHead>
-                      <TableHead>Location No</TableHead>
-                      <TableHead>Status</TableHead>
-                      <TableHead>Order No</TableHead>
+                      <TableHead>Role ID</TableHead>
+                      <TableHead>Role Name</TableHead>
+                      <TableHead>Description</TableHead>
+                      <TableHead>Keyfield</TableHead>
                       <TableHead className="text-right">Actions</TableHead>
                     </TableRow>
                   </TableHeader>
@@ -748,7 +826,6 @@ const WorkoutProgramManagement = () => {
                             {program.difficultyLevel}
                           </Badge>
                         </TableCell>
-                        <TableCell className="text-sm text-gray-600">{program.workingHours}</TableCell>
                         <TableCell>
                           {program.isActive ? (
                             <Badge className="bg-green-500"><CheckCircle className="h-3 w-3 mr-1" />Active</Badge>
@@ -779,17 +856,17 @@ const WorkoutProgramManagement = () => {
             <Card>
               <CardHeader>
                 <CardTitle>Role Mapping</CardTitle>
-                <CardDescription>Manage all mapping companies and their details</CardDescription>
+                <CardDescription>Manage all mapping roles and their details</CardDescription>
               </CardHeader>
               <CardContent>
                 <Table>
                   <TableHeader>
                     <TableRow>
                       <TableHead>User Code</TableHead>
-                      <TableHead>Company Code</TableHead>
-                      <TableHead>Location No</TableHead>
-                      <TableHead>Status</TableHead>
-                      <TableHead>Order No</TableHead>
+                      <TableHead>User Name</TableHead>
+                      <TableHead>Role ID</TableHead>
+                      <TableHead>Role Name</TableHead>
+                      <TableHead>Keyfield</TableHead>
                       <TableHead className="text-right">Actions</TableHead>
                     </TableRow>
                   </TableHeader>
@@ -845,11 +922,10 @@ const WorkoutProgramManagement = () => {
                 <Table>
                   <TableHeader>
                     <TableRow>
-                      <TableHead>User Code</TableHead>
-                      <TableHead>Company Code</TableHead>
-                      <TableHead>Location No</TableHead>
-                      <TableHead>Status</TableHead>
-                      <TableHead>Order No</TableHead>
+                      <TableHead>Role ID</TableHead>
+                      <TableHead>Screen Type</TableHead>
+                      <TableHead>Permission Type</TableHead>
+                      <TableHead>Keyfield</TableHead>
                       <TableHead className="text-right">Actions</TableHead>
                     </TableRow>
                   </TableHeader>
@@ -868,7 +944,6 @@ const WorkoutProgramManagement = () => {
                             {program.difficultyLevel}
                           </Badge>
                         </TableCell>
-                        <TableCell className="text-sm text-gray-600">{program.workingHours}</TableCell>
                         <TableCell>
                           {program.isActive ? (
                             <Badge className="bg-green-500"><CheckCircle className="h-3 w-3 mr-1" />Active</Badge>
@@ -899,17 +974,19 @@ const WorkoutProgramManagement = () => {
             <Card>
               <CardHeader>
                 <CardTitle>User</CardTitle>
-                <CardDescription>Manage all mapping companies and their details</CardDescription>
+                <CardDescription>Manage all User and their details</CardDescription>
               </CardHeader>
               <CardContent>
                 <Table>
                   <TableHeader>
                     <TableRow>
                       <TableHead>User Code</TableHead>
-                      <TableHead>Company Code</TableHead>
-                      <TableHead>Location No</TableHead>
-                      <TableHead>Status</TableHead>
-                      <TableHead>Order No</TableHead>
+                      <TableHead>User Name</TableHead>
+                      <TableHead>First Name</TableHead>
+                      <TableHead>Last Name</TableHead>
+                      <TableHead>User Status</TableHead>
+                      <TableHead>DOB</TableHead>
+                      <TableHead>Gender</TableHead>
                       <TableHead className="text-right">Actions</TableHead>
                     </TableRow>
                   </TableHeader>
@@ -928,6 +1005,8 @@ const WorkoutProgramManagement = () => {
                             {program.difficultyLevel}
                           </Badge>
                         </TableCell>
+                        <TableCell className="text-sm text-gray-600">{program.workingHours}</TableCell>
+                        <TableCell className="text-sm text-gray-600">{program.workingHours}</TableCell>
                         <TableCell className="text-sm text-gray-600">{program.workingHours}</TableCell>
                         <TableCell>
                           {program.isActive ? (
@@ -959,17 +1038,16 @@ const WorkoutProgramManagement = () => {
             <Card>
               <CardHeader>
                 <CardTitle>Attribute</CardTitle>
-                <CardDescription>Manage all mapping companies and their details</CardDescription>
+                <CardDescription>Manage all Attribute and their details</CardDescription>
               </CardHeader>
               <CardContent>
                 <Table>
                   <TableHeader>
                     <TableRow>
-                      <TableHead>User Code</TableHead>
-                      <TableHead>Company Code</TableHead>
-                      <TableHead>Location No</TableHead>
-                      <TableHead>Status</TableHead>
-                      <TableHead>Order No</TableHead>
+                      <TableHead>Code</TableHead>
+                      <TableHead>Sub Code</TableHead>
+                      <TableHead>Details Name</TableHead>
+                      <TableHead>Description</TableHead>
                       <TableHead className="text-right">Actions</TableHead>
                     </TableRow>
                   </TableHeader>
@@ -988,7 +1066,6 @@ const WorkoutProgramManagement = () => {
                             {program.difficultyLevel}
                           </Badge>
                         </TableCell>
-                        <TableCell className="text-sm text-gray-600">{program.workingHours}</TableCell>
                         <TableCell>
                           {program.isActive ? (
                             <Badge className="bg-green-500"><CheckCircle className="h-3 w-3 mr-1" />Active</Badge>
@@ -1019,7 +1096,7 @@ const WorkoutProgramManagement = () => {
         {/* Add/Edit Company Dialog Or Popup*/}
         <Dialog open={isCompanyDialogOpen} onOpenChange={setIsCompanyDialogOpen}>
           <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
-            
+
             <DialogHeader>
               <DialogTitle>{editingCompany ? 'Edit Company' : 'Add New Company'}</DialogTitle>
               <DialogDescription>
@@ -1263,18 +1340,19 @@ const WorkoutProgramManagement = () => {
         <Dialog open={isCompanyMappingDialogOpen} onOpenChange={setIsCompanyMappingDialogOpen}>
           <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
             <DialogHeader>
-              <DialogTitle>{editingCompany ? 'Edit Company' : 'Add New Company'}</DialogTitle>
+              <DialogTitle>{editingCompanyMapping ? 'Edit Company Mapping' : 'Add New Company Mapping'}</DialogTitle>
               <DialogDescription>
-                {editingCompany ? 'Update the company details' : 'Create a new company'}
+                {editingCompanyMapping ? 'Update the company mapping details' : 'Create a new company mapping'}
               </DialogDescription>
             </DialogHeader>
             <div className="grid gap-6 py-4">
               {/* Program Details */}
               <div className="space-y-4">
-                <h4 className="font-medium text-sm text-gray-700">Company Details</h4>
+                <h4 className="font-medium text-sm text-gray-700">Company Mapping Details</h4>
                 <div className="grid grid-cols-2 gap-4">
+
                   <div className="space-y-2">
-                    <Label htmlFor="name">Program Name</Label>
+                    <Label htmlFor="name">User Code*</Label>
                     <Input
                       id="name"
                       value={companyForm.name}
@@ -1282,8 +1360,9 @@ const WorkoutProgramManagement = () => {
                       placeholder="e.g., Weight Loss Transformation"
                     />
                   </div>
+
                   <div className="space-y-2">
-                    <Label htmlFor="category">Category</Label>
+                    <Label htmlFor="category">Company Code*</Label>
                     <Select value={companyForm.category} onValueChange={(value) => setCompanyForm({ ...companyForm, category: value })}>
                       <SelectTrigger>
                         <SelectValue placeholder="Select category" />
@@ -1298,139 +1377,57 @@ const WorkoutProgramManagement = () => {
                       </SelectContent>
                     </Select>
                   </div>
-                </div>
-                <div className="grid grid-cols-2 gap-4">
+
                   <div className="space-y-2">
-                    <Label htmlFor="difficulty">Difficulty Level</Label>
-                    <Select value={companyForm.difficultyLevel} onValueChange={(value) => setCompanyForm({ ...companyForm, difficultyLevel: value })}>
+                    <Label htmlFor="category">Location No*</Label>
+                    <Select value={companyForm.category} onValueChange={(value) => setCompanyForm({ ...companyForm, category: value })}>
                       <SelectTrigger>
-                        <SelectValue placeholder="Select difficulty" />
+                        <SelectValue placeholder="Select category" />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="Beginner">Beginner</SelectItem>
-                        <SelectItem value="Intermediate">Intermediate</SelectItem>
-                        <SelectItem value="Advanced">Advanced</SelectItem>
+                        <SelectItem value="Strength">Strength</SelectItem>
+                        <SelectItem value="Cardio">Cardio</SelectItem>
+                        <SelectItem value="HIIT">HIIT</SelectItem>
+                        <SelectItem value="Yoga">Yoga</SelectItem>
+                        <SelectItem value="CrossFit">CrossFit</SelectItem>
+                        <SelectItem value="Flexibility">Flexibility</SelectItem>
                       </SelectContent>
                     </Select>
                   </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="goals">Goals (comma-separated)</Label>
-                    <Input
-                      id="goals"
-                      value={companyForm.goals}
-                      onChange={(e) => setCompanyForm({ ...companyForm, goals: e.target.value })}
-                      placeholder="e.g., Weight Loss, Endurance"
-                    />
-                  </div>
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="description">Description</Label>
-                  <Textarea
-                    id="description"
-                    value={companyForm.description}
-                    onChange={(e) => setCompanyForm({ ...companyForm, description: e.target.value })}
-                    placeholder="Describe the program..."
-                  />
-                </div>
-              </div>
 
-              {/* Schedule Section */}
-              <div className="space-y-4">
-                <h4 className="font-medium text-sm text-gray-700">Schedule</h4>
-                <div className="grid grid-cols-3 gap-4">
                   <div className="space-y-2">
-                    <Label htmlFor="duration">Duration Per Session</Label>
-                    <Input
-                      id="duration"
-                      value={companyForm.durationPerSession}
-                      onChange={(e) => setCompanyForm({ ...companyForm, durationPerSession: e.target.value })}
-                      placeholder="e.g., 45 minutes"
-                    />
+                    <Label htmlFor="category">Status*</Label>
+                    <Select value={companyForm.category} onValueChange={(value) => setCompanyForm({ ...companyForm, category: value })}>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select category" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="Strength">Strength</SelectItem>
+                        <SelectItem value="Cardio">Cardio</SelectItem>
+                        <SelectItem value="HIIT">HIIT</SelectItem>
+                        <SelectItem value="Yoga">Yoga</SelectItem>
+                        <SelectItem value="CrossFit">CrossFit</SelectItem>
+                        <SelectItem value="Flexibility">Flexibility</SelectItem>
+                      </SelectContent>
+                    </Select>
                   </div>
+
                   <div className="space-y-2">
-                    <Label htmlFor="sessions">Sessions Per Week</Label>
+                    <Label htmlFor="name">Order No</Label>
                     <Input
-                      id="sessions"
-                      type="number"
-                      min={1}
-                      max={7}
-                      value={companyForm.sessionsPerWeek}
-                      onChange={(e) => setCompanyForm({ ...companyForm, sessionsPerWeek: parseInt(e.target.value) || 1 })}
+                      id="name"
+                      value={companyForm.name}
+                      onChange={(e) => setCompanyForm({ ...companyForm, name: e.target.value })}
+                      placeholder="e.g., Weight Loss Transformation"
                     />
                   </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="workingHours">Working Hours</Label>
-                    <Input
-                      id="workingHours"
-                      value={companyForm.workingHours}
-                      onChange={(e) => setCompanyForm({ ...companyForm, workingHours: e.target.value })}
-                      placeholder="e.g., 6AM-10AM, 5PM-9PM"
-                    />
-                  </div>
-                </div>
-              </div>
 
-              {/* Faculty Assignment */}
-              <div className="space-y-4">
-                <h4 className="font-medium text-sm text-gray-700">Faculty Assignment</h4>
-                <div className="space-y-2">
-                  <Label htmlFor="faculty">Assigned Faculty</Label>
-                  <Select value={companyForm.assignedFaculty} onValueChange={(value) => setCompanyForm({ ...companyForm, assignedFaculty: value })}>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select trainer" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {sampleFaculty.map((faculty) => (
-                        <SelectItem key={faculty.id} value={faculty.id}>{faculty.name}</SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
                 </div>
-              </div>
-
-              {/* Exercises */}
-              <div className="space-y-4">
-                <div className="flex justify-between items-center">
-                  <h4 className="font-medium text-sm text-gray-700">Exercises</h4>
-                  <Button type="button" variant="outline" size="sm" onClick={addExerciseField}>
-                    <Plus className="h-4 w-4 mr-1" /> Add Exercise
-                  </Button>
-                </div>
-                {companyForm.exercises.map((exercise, index) => (
-                  <div key={index} className="grid grid-cols-3 gap-2">
-                    <Input
-                      placeholder="Exercise name"
-                      value={exercise.name}
-                      onChange={(e) => updateExercise(index, 'name', e.target.value)}
-                    />
-                    <Input
-                      type="number"
-                      placeholder="Sets"
-                      value={exercise.sets}
-                      onChange={(e) => updateExercise(index, 'sets', parseInt(e.target.value) || 0)}
-                    />
-                    <Input
-                      placeholder="Reps (e.g., 10-12)"
-                      value={exercise.reps}
-                      onChange={(e) => updateExercise(index, 'reps', e.target.value)}
-                    />
-                  </div>
-                ))}
-              </div>
-
-              {/* Status */}
-              <div className="flex items-center space-x-2">
-                <Switch
-                  id="isActive"
-                  checked={companyForm.isActive}
-                  onCheckedChange={(checked) => setCompanyForm({ ...companyForm, isActive: checked })}
-                />
-                <Label htmlFor="isActive">Active Program</Label>
               </div>
             </div>
             <DialogFooter>
               <Button variant="outline" onClick={() => setIsCompanyMappingDialogOpen(false)}>Cancel</Button>
-              <Button onClick={handleSaveProgram}>{editingCompany ? 'Update' : 'Create'} Program</Button>
+              <Button onClick={handleSaveProgram}>{editingCompanyMapping ? 'Update' : 'Create'} Company Mapping</Button>
             </DialogFooter>
           </DialogContent>
         </Dialog>
@@ -1439,18 +1436,19 @@ const WorkoutProgramManagement = () => {
         <Dialog open={isLocationDialogOpen} onOpenChange={setIsLocationDialogOpen}>
           <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
             <DialogHeader>
-              <DialogTitle>{editingCompany ? 'Edit Company' : 'Add New Company'}</DialogTitle>
+              <DialogTitle>{editingCompany ? 'Edit Location' : 'Add New Location'}</DialogTitle>
               <DialogDescription>
-                {editingCompany ? 'Update the company details' : 'Create a new company'}
+                {editingCompany ? 'Update the location details' : 'Create a new location'}
               </DialogDescription>
             </DialogHeader>
             <div className="grid gap-6 py-4">
               {/* Program Details */}
               <div className="space-y-4">
-                <h4 className="font-medium text-sm text-gray-700">Company Details</h4>
+                <h4 className="font-medium text-sm text-gray-700">Location Details</h4>
                 <div className="grid grid-cols-2 gap-4">
+
                   <div className="space-y-2">
-                    <Label htmlFor="name">Program Name</Label>
+                    <Label htmlFor="name">Location No*</Label>
                     <Input
                       id="name"
                       value={companyForm.name}
@@ -1458,8 +1456,59 @@ const WorkoutProgramManagement = () => {
                       placeholder="e.g., Weight Loss Transformation"
                     />
                   </div>
+
                   <div className="space-y-2">
-                    <Label htmlFor="category">Category</Label>
+                    <Label htmlFor="name">Location Name*</Label>
+                    <Input
+                      id="name"
+                      value={companyForm.name}
+                      onChange={(e) => setCompanyForm({ ...companyForm, name: e.target.value })}
+                      placeholder="e.g., Weight Loss Transformation"
+                    />
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label htmlFor="name">Short Name*</Label>
+                    <Input
+                      id="name"
+                      value={companyForm.name}
+                      onChange={(e) => setCompanyForm({ ...companyForm, name: e.target.value })}
+                      placeholder="e.g., Weight Loss Transformation"
+                    />
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label htmlFor="name">Address 1*</Label>
+                    <Input
+                      id="name"
+                      value={companyForm.name}
+                      onChange={(e) => setCompanyForm({ ...companyForm, name: e.target.value })}
+                      placeholder="e.g., Weight Loss Transformation"
+                    />
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label htmlFor="name">Address 2*</Label>
+                    <Input
+                      id="name"
+                      value={companyForm.name}
+                      onChange={(e) => setCompanyForm({ ...companyForm, name: e.target.value })}
+                      placeholder="e.g., Weight Loss Transformation"
+                    />
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label htmlFor="name">Address 3</Label>
+                    <Input
+                      id="name"
+                      value={companyForm.name}
+                      onChange={(e) => setCompanyForm({ ...companyForm, name: e.target.value })}
+                      placeholder="e.g., Weight Loss Transformation"
+                    />
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label htmlFor="category">City*</Label>
                     <Select value={companyForm.category} onValueChange={(value) => setCompanyForm({ ...companyForm, category: value })}>
                       <SelectTrigger>
                         <SelectValue placeholder="Select category" />
@@ -1474,139 +1523,93 @@ const WorkoutProgramManagement = () => {
                       </SelectContent>
                     </Select>
                   </div>
-                </div>
-                <div className="grid grid-cols-2 gap-4">
+
                   <div className="space-y-2">
-                    <Label htmlFor="difficulty">Difficulty Level</Label>
-                    <Select value={companyForm.difficultyLevel} onValueChange={(value) => setCompanyForm({ ...companyForm, difficultyLevel: value })}>
+                    <Label htmlFor="category">State*</Label>
+                    <Select value={companyForm.category} onValueChange={(value) => setCompanyForm({ ...companyForm, category: value })}>
                       <SelectTrigger>
-                        <SelectValue placeholder="Select difficulty" />
+                        <SelectValue placeholder="Select category" />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="Beginner">Beginner</SelectItem>
-                        <SelectItem value="Intermediate">Intermediate</SelectItem>
-                        <SelectItem value="Advanced">Advanced</SelectItem>
+                        <SelectItem value="Strength">Strength</SelectItem>
+                        <SelectItem value="Cardio">Cardio</SelectItem>
+                        <SelectItem value="HIIT">HIIT</SelectItem>
+                        <SelectItem value="Yoga">Yoga</SelectItem>
+                        <SelectItem value="CrossFit">CrossFit</SelectItem>
+                        <SelectItem value="Flexibility">Flexibility</SelectItem>
                       </SelectContent>
                     </Select>
                   </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="goals">Goals (comma-separated)</Label>
-                    <Input
-                      id="goals"
-                      value={companyForm.goals}
-                      onChange={(e) => setCompanyForm({ ...companyForm, goals: e.target.value })}
-                      placeholder="e.g., Weight Loss, Endurance"
-                    />
-                  </div>
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="description">Description</Label>
-                  <Textarea
-                    id="description"
-                    value={companyForm.description}
-                    onChange={(e) => setCompanyForm({ ...companyForm, description: e.target.value })}
-                    placeholder="Describe the program..."
-                  />
-                </div>
-              </div>
 
-              {/* Schedule Section */}
-              <div className="space-y-4">
-                <h4 className="font-medium text-sm text-gray-700">Schedule</h4>
-                <div className="grid grid-cols-3 gap-4">
                   <div className="space-y-2">
-                    <Label htmlFor="duration">Duration Per Session</Label>
+                    <Label htmlFor="name">Pin Code*</Label>
                     <Input
-                      id="duration"
-                      value={companyForm.durationPerSession}
-                      onChange={(e) => setCompanyForm({ ...companyForm, durationPerSession: e.target.value })}
-                      placeholder="e.g., 45 minutes"
+                      id="name"
+                      value={companyForm.name}
+                      onChange={(e) => setCompanyForm({ ...companyForm, name: e.target.value })}
+                      placeholder="e.g., Weight Loss Transformation"
                     />
                   </div>
+
                   <div className="space-y-2">
-                    <Label htmlFor="sessions">Sessions Per Week</Label>
+                    <Label htmlFor="category">Country*</Label>
+                    <Select value={companyForm.category} onValueChange={(value) => setCompanyForm({ ...companyForm, category: value })}>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select category" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="Strength">Strength</SelectItem>
+                        <SelectItem value="Cardio">Cardio</SelectItem>
+                        <SelectItem value="HIIT">HIIT</SelectItem>
+                        <SelectItem value="Yoga">Yoga</SelectItem>
+                        <SelectItem value="CrossFit">CrossFit</SelectItem>
+                        <SelectItem value="Flexibility">Flexibility</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label htmlFor="name">Email*</Label>
                     <Input
-                      id="sessions"
-                      type="number"
-                      min={1}
-                      max={7}
-                      value={companyForm.sessionsPerWeek}
-                      onChange={(e) => setCompanyForm({ ...companyForm, sessionsPerWeek: parseInt(e.target.value) || 1 })}
+                      id="name"
+                      value={companyForm.name}
+                      onChange={(e) => setCompanyForm({ ...companyForm, name: e.target.value })}
+                      placeholder="e.g., Weight Loss Transformation"
                     />
                   </div>
+
                   <div className="space-y-2">
-                    <Label htmlFor="workingHours">Working Hours</Label>
+                    <Label htmlFor="category">Status*</Label>
+                    <Select value={companyForm.category} onValueChange={(value) => setCompanyForm({ ...companyForm, category: value })}>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select category" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="Strength">Strength</SelectItem>
+                        <SelectItem value="Cardio">Cardio</SelectItem>
+                        <SelectItem value="HIIT">HIIT</SelectItem>
+                        <SelectItem value="Yoga">Yoga</SelectItem>
+                        <SelectItem value="CrossFit">CrossFit</SelectItem>
+                        <SelectItem value="Flexibility">Flexibility</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label htmlFor="name">Contact No*</Label>
                     <Input
-                      id="workingHours"
-                      value={companyForm.workingHours}
-                      onChange={(e) => setCompanyForm({ ...companyForm, workingHours: e.target.value })}
-                      placeholder="e.g., 6AM-10AM, 5PM-9PM"
+                      id="name"
+                      value={companyForm.name}
+                      onChange={(e) => setCompanyForm({ ...companyForm, name: e.target.value })}
+                      placeholder="e.g., Weight Loss Transformation"
                     />
                   </div>
                 </div>
-              </div>
-
-              {/* Faculty Assignment */}
-              <div className="space-y-4">
-                <h4 className="font-medium text-sm text-gray-700">Faculty Assignment</h4>
-                <div className="space-y-2">
-                  <Label htmlFor="faculty">Assigned Faculty</Label>
-                  <Select value={companyForm.assignedFaculty} onValueChange={(value) => setCompanyForm({ ...companyForm, assignedFaculty: value })}>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select trainer" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {sampleFaculty.map((faculty) => (
-                        <SelectItem key={faculty.id} value={faculty.id}>{faculty.name}</SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-              </div>
-
-              {/* Exercises */}
-              <div className="space-y-4">
-                <div className="flex justify-between items-center">
-                  <h4 className="font-medium text-sm text-gray-700">Exercises</h4>
-                  <Button type="button" variant="outline" size="sm" onClick={addExerciseField}>
-                    <Plus className="h-4 w-4 mr-1" /> Add Exercise
-                  </Button>
-                </div>
-                {companyForm.exercises.map((exercise, index) => (
-                  <div key={index} className="grid grid-cols-3 gap-2">
-                    <Input
-                      placeholder="Exercise name"
-                      value={exercise.name}
-                      onChange={(e) => updateExercise(index, 'name', e.target.value)}
-                    />
-                    <Input
-                      type="number"
-                      placeholder="Sets"
-                      value={exercise.sets}
-                      onChange={(e) => updateExercise(index, 'sets', parseInt(e.target.value) || 0)}
-                    />
-                    <Input
-                      placeholder="Reps (e.g., 10-12)"
-                      value={exercise.reps}
-                      onChange={(e) => updateExercise(index, 'reps', e.target.value)}
-                    />
-                  </div>
-                ))}
-              </div>
-
-              {/* Status */}
-              <div className="flex items-center space-x-2">
-                <Switch
-                  id="isActive"
-                  checked={companyForm.isActive}
-                  onCheckedChange={(checked) => setCompanyForm({ ...companyForm, isActive: checked })}
-                />
-                <Label htmlFor="isActive">Active Program</Label>
               </div>
             </div>
             <DialogFooter>
               <Button variant="outline" onClick={() => setIsLocationDialogOpen(false)}>Cancel</Button>
-              <Button onClick={handleSaveProgram}>{editingCompany ? 'Update' : 'Create'} Program</Button>
+              <Button onClick={handleSaveProgram}>{editingCompany ? 'Update' : 'Create'} Location</Button>
             </DialogFooter>
           </DialogContent>
         </Dialog>
@@ -1615,18 +1618,19 @@ const WorkoutProgramManagement = () => {
         <Dialog open={isRoleDialogOpen} onOpenChange={setIsRoleDialogOpen}>
           <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
             <DialogHeader>
-              <DialogTitle>{editingCompany ? 'Edit Company' : 'Add New Company'}</DialogTitle>
+              <DialogTitle>{editingCompany ? 'Edit Role' : 'Add New Role'}</DialogTitle>
               <DialogDescription>
-                {editingCompany ? 'Update the company details' : 'Create a new company'}
+                {editingCompany ? 'Update the role details' : 'Create a new role'}
               </DialogDescription>
             </DialogHeader>
             <div className="grid gap-6 py-4">
               {/* Program Details */}
               <div className="space-y-4">
-                <h4 className="font-medium text-sm text-gray-700">Company Details</h4>
+                <h4 className="font-medium text-sm text-gray-700">Role Details</h4>
                 <div className="grid grid-cols-2 gap-4">
+
                   <div className="space-y-2">
-                    <Label htmlFor="name">Program Name</Label>
+                    <Label htmlFor="name">Role ID*</Label>
                     <Input
                       id="name"
                       value={companyForm.name}
@@ -1634,155 +1638,33 @@ const WorkoutProgramManagement = () => {
                       placeholder="e.g., Weight Loss Transformation"
                     />
                   </div>
+                  
                   <div className="space-y-2">
-                    <Label htmlFor="category">Category</Label>
-                    <Select value={companyForm.category} onValueChange={(value) => setCompanyForm({ ...companyForm, category: value })}>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select category" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="Strength">Strength</SelectItem>
-                        <SelectItem value="Cardio">Cardio</SelectItem>
-                        <SelectItem value="HIIT">HIIT</SelectItem>
-                        <SelectItem value="Yoga">Yoga</SelectItem>
-                        <SelectItem value="CrossFit">CrossFit</SelectItem>
-                        <SelectItem value="Flexibility">Flexibility</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-                </div>
-                <div className="grid grid-cols-2 gap-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="difficulty">Difficulty Level</Label>
-                    <Select value={companyForm.difficultyLevel} onValueChange={(value) => setCompanyForm({ ...companyForm, difficultyLevel: value })}>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select difficulty" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="Beginner">Beginner</SelectItem>
-                        <SelectItem value="Intermediate">Intermediate</SelectItem>
-                        <SelectItem value="Advanced">Advanced</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="goals">Goals (comma-separated)</Label>
+                    <Label htmlFor="name">Role Name*</Label>
                     <Input
-                      id="goals"
-                      value={companyForm.goals}
-                      onChange={(e) => setCompanyForm({ ...companyForm, goals: e.target.value })}
-                      placeholder="e.g., Weight Loss, Endurance"
+                      id="name"
+                      value={companyForm.name}
+                      onChange={(e) => setCompanyForm({ ...companyForm, name: e.target.value })}
+                      placeholder="e.g., Weight Loss Transformation"
                     />
                   </div>
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="description">Description</Label>
-                  <Textarea
-                    id="description"
-                    value={companyForm.description}
-                    onChange={(e) => setCompanyForm({ ...companyForm, description: e.target.value })}
-                    placeholder="Describe the program..."
-                  />
-                </div>
-              </div>
 
-              {/* Schedule Section */}
-              <div className="space-y-4">
-                <h4 className="font-medium text-sm text-gray-700">Schedule</h4>
-                <div className="grid grid-cols-3 gap-4">
                   <div className="space-y-2">
-                    <Label htmlFor="duration">Duration Per Session</Label>
+                    <Label htmlFor="name">Description</Label>
                     <Input
-                      id="duration"
-                      value={companyForm.durationPerSession}
-                      onChange={(e) => setCompanyForm({ ...companyForm, durationPerSession: e.target.value })}
-                      placeholder="e.g., 45 minutes"
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="sessions">Sessions Per Week</Label>
-                    <Input
-                      id="sessions"
-                      type="number"
-                      min={1}
-                      max={7}
-                      value={companyForm.sessionsPerWeek}
-                      onChange={(e) => setCompanyForm({ ...companyForm, sessionsPerWeek: parseInt(e.target.value) || 1 })}
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="workingHours">Working Hours</Label>
-                    <Input
-                      id="workingHours"
-                      value={companyForm.workingHours}
-                      onChange={(e) => setCompanyForm({ ...companyForm, workingHours: e.target.value })}
-                      placeholder="e.g., 6AM-10AM, 5PM-9PM"
+                      id="name"
+                      value={companyForm.name}
+                      onChange={(e) => setCompanyForm({ ...companyForm, name: e.target.value })}
+                      placeholder="e.g., Weight Loss Transformation"
                     />
                   </div>
                 </div>
-              </div>
-
-              {/* Faculty Assignment */}
-              <div className="space-y-4">
-                <h4 className="font-medium text-sm text-gray-700">Faculty Assignment</h4>
-                <div className="space-y-2">
-                  <Label htmlFor="faculty">Assigned Faculty</Label>
-                  <Select value={companyForm.assignedFaculty} onValueChange={(value) => setCompanyForm({ ...companyForm, assignedFaculty: value })}>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select trainer" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {sampleFaculty.map((faculty) => (
-                        <SelectItem key={faculty.id} value={faculty.id}>{faculty.name}</SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-              </div>
-
-              {/* Exercises */}
-              <div className="space-y-4">
-                <div className="flex justify-between items-center">
-                  <h4 className="font-medium text-sm text-gray-700">Exercises</h4>
-                  <Button type="button" variant="outline" size="sm" onClick={addExerciseField}>
-                    <Plus className="h-4 w-4 mr-1" /> Add Exercise
-                  </Button>
-                </div>
-                {companyForm.exercises.map((exercise, index) => (
-                  <div key={index} className="grid grid-cols-3 gap-2">
-                    <Input
-                      placeholder="Exercise name"
-                      value={exercise.name}
-                      onChange={(e) => updateExercise(index, 'name', e.target.value)}
-                    />
-                    <Input
-                      type="number"
-                      placeholder="Sets"
-                      value={exercise.sets}
-                      onChange={(e) => updateExercise(index, 'sets', parseInt(e.target.value) || 0)}
-                    />
-                    <Input
-                      placeholder="Reps (e.g., 10-12)"
-                      value={exercise.reps}
-                      onChange={(e) => updateExercise(index, 'reps', e.target.value)}
-                    />
-                  </div>
-                ))}
-              </div>
-
-              {/* Status */}
-              <div className="flex items-center space-x-2">
-                <Switch
-                  id="isActive"
-                  checked={companyForm.isActive}
-                  onCheckedChange={(checked) => setCompanyForm({ ...companyForm, isActive: checked })}
-                />
-                <Label htmlFor="isActive">Active Program</Label>
               </div>
             </div>
+
             <DialogFooter>
               <Button variant="outline" onClick={() => setIsRoleDialogOpen(false)}>Cancel</Button>
-              <Button onClick={handleSaveProgram}>{editingCompany ? 'Update' : 'Create'} Program</Button>
+              <Button onClick={handleSaveProgram}>{editingCompany ? 'Update' : 'Create'} Role</Button>
             </DialogFooter>
           </DialogContent>
         </Dialog>
@@ -1791,9 +1673,9 @@ const WorkoutProgramManagement = () => {
         <Dialog open={isRoleMappingDialogOpen} onOpenChange={setIsRoleMappingDialogOpen}>
           <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
             <DialogHeader>
-              <DialogTitle>{editingCompany ? 'Edit Company' : 'Add New Company'}</DialogTitle>
+              <DialogTitle>{editingCompany ? 'Edit Role Mapping' : 'Add New Role Mapping'}</DialogTitle>
               <DialogDescription>
-                {editingCompany ? 'Update the company details' : 'Create a new company'}
+                {editingCompany ? 'Update the role mapping details' : 'Create a new role mapping'}
               </DialogDescription>
             </DialogHeader>
             <div className="grid gap-6 py-4">
@@ -1801,17 +1683,26 @@ const WorkoutProgramManagement = () => {
               <div className="space-y-4">
                 <h4 className="font-medium text-sm text-gray-700">Company Details</h4>
                 <div className="grid grid-cols-2 gap-4">
+
                   <div className="space-y-2">
-                    <Label htmlFor="name">Program Name</Label>
-                    <Input
-                      id="name"
-                      value={companyForm.name}
-                      onChange={(e) => setCompanyForm({ ...companyForm, name: e.target.value })}
-                      placeholder="e.g., Weight Loss Transformation"
-                    />
+                    <Label htmlFor="category">User Code*</Label>
+                    <Select value={companyForm.category} onValueChange={(value) => setCompanyForm({ ...companyForm, category: value })}>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select category" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="Strength">Strength</SelectItem>
+                        <SelectItem value="Cardio">Cardio</SelectItem>
+                        <SelectItem value="HIIT">HIIT</SelectItem>
+                        <SelectItem value="Yoga">Yoga</SelectItem>
+                        <SelectItem value="CrossFit">CrossFit</SelectItem>
+                        <SelectItem value="Flexibility">Flexibility</SelectItem>
+                      </SelectContent>
+                    </Select>
                   </div>
+
                   <div className="space-y-2">
-                    <Label htmlFor="category">Category</Label>
+                    <Label htmlFor="category">Role ID*</Label>
                     <Select value={companyForm.category} onValueChange={(value) => setCompanyForm({ ...companyForm, category: value })}>
                       <SelectTrigger>
                         <SelectValue placeholder="Select category" />
@@ -1827,138 +1718,11 @@ const WorkoutProgramManagement = () => {
                     </Select>
                   </div>
                 </div>
-                <div className="grid grid-cols-2 gap-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="difficulty">Difficulty Level</Label>
-                    <Select value={companyForm.difficultyLevel} onValueChange={(value) => setCompanyForm({ ...companyForm, difficultyLevel: value })}>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select difficulty" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="Beginner">Beginner</SelectItem>
-                        <SelectItem value="Intermediate">Intermediate</SelectItem>
-                        <SelectItem value="Advanced">Advanced</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="goals">Goals (comma-separated)</Label>
-                    <Input
-                      id="goals"
-                      value={companyForm.goals}
-                      onChange={(e) => setCompanyForm({ ...companyForm, goals: e.target.value })}
-                      placeholder="e.g., Weight Loss, Endurance"
-                    />
-                  </div>
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="description">Description</Label>
-                  <Textarea
-                    id="description"
-                    value={companyForm.description}
-                    onChange={(e) => setCompanyForm({ ...companyForm, description: e.target.value })}
-                    placeholder="Describe the program..."
-                  />
-                </div>
-              </div>
-
-              {/* Schedule Section */}
-              <div className="space-y-4">
-                <h4 className="font-medium text-sm text-gray-700">Schedule</h4>
-                <div className="grid grid-cols-3 gap-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="duration">Duration Per Session</Label>
-                    <Input
-                      id="duration"
-                      value={companyForm.durationPerSession}
-                      onChange={(e) => setCompanyForm({ ...companyForm, durationPerSession: e.target.value })}
-                      placeholder="e.g., 45 minutes"
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="sessions">Sessions Per Week</Label>
-                    <Input
-                      id="sessions"
-                      type="number"
-                      min={1}
-                      max={7}
-                      value={companyForm.sessionsPerWeek}
-                      onChange={(e) => setCompanyForm({ ...companyForm, sessionsPerWeek: parseInt(e.target.value) || 1 })}
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="workingHours">Working Hours</Label>
-                    <Input
-                      id="workingHours"
-                      value={companyForm.workingHours}
-                      onChange={(e) => setCompanyForm({ ...companyForm, workingHours: e.target.value })}
-                      placeholder="e.g., 6AM-10AM, 5PM-9PM"
-                    />
-                  </div>
-                </div>
-              </div>
-
-              {/* Faculty Assignment */}
-              <div className="space-y-4">
-                <h4 className="font-medium text-sm text-gray-700">Faculty Assignment</h4>
-                <div className="space-y-2">
-                  <Label htmlFor="faculty">Assigned Faculty</Label>
-                  <Select value={companyForm.assignedFaculty} onValueChange={(value) => setCompanyForm({ ...companyForm, assignedFaculty: value })}>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select trainer" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {sampleFaculty.map((faculty) => (
-                        <SelectItem key={faculty.id} value={faculty.id}>{faculty.name}</SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-              </div>
-
-              {/* Exercises */}
-              <div className="space-y-4">
-                <div className="flex justify-between items-center">
-                  <h4 className="font-medium text-sm text-gray-700">Exercises</h4>
-                  <Button type="button" variant="outline" size="sm" onClick={addExerciseField}>
-                    <Plus className="h-4 w-4 mr-1" /> Add Exercise
-                  </Button>
-                </div>
-                {companyForm.exercises.map((exercise, index) => (
-                  <div key={index} className="grid grid-cols-3 gap-2">
-                    <Input
-                      placeholder="Exercise name"
-                      value={exercise.name}
-                      onChange={(e) => updateExercise(index, 'name', e.target.value)}
-                    />
-                    <Input
-                      type="number"
-                      placeholder="Sets"
-                      value={exercise.sets}
-                      onChange={(e) => updateExercise(index, 'sets', parseInt(e.target.value) || 0)}
-                    />
-                    <Input
-                      placeholder="Reps (e.g., 10-12)"
-                      value={exercise.reps}
-                      onChange={(e) => updateExercise(index, 'reps', e.target.value)}
-                    />
-                  </div>
-                ))}
-              </div>
-
-              {/* Status */}
-              <div className="flex items-center space-x-2">
-                <Switch
-                  id="isActive"
-                  checked={companyForm.isActive}
-                  onCheckedChange={(checked) => setCompanyForm({ ...companyForm, isActive: checked })}
-                />
-                <Label htmlFor="isActive">Active Program</Label>
               </div>
             </div>
             <DialogFooter>
               <Button variant="outline" onClick={() => setIsRoleMappingDialogOpen(false)}>Cancel</Button>
-              <Button onClick={handleSaveProgram}>{editingCompany ? 'Update' : 'Create'} Program</Button>
+              <Button onClick={handleSaveProgram}>{editingCompany ? 'Update' : 'Create'} Role Mapping</Button>
             </DialogFooter>
           </DialogContent>
         </Dialog>
@@ -1967,9 +1731,9 @@ const WorkoutProgramManagement = () => {
         <Dialog open={isRoleRightsDialogOpen} onOpenChange={setIsRoleRightsDialogOpen}>
           <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
             <DialogHeader>
-              <DialogTitle>{editingCompany ? 'Edit Company' : 'Add New Company'}</DialogTitle>
+              <DialogTitle>{editingCompany ? 'Edit Role Right' : 'Add New Role Right'}</DialogTitle>
               <DialogDescription>
-                {editingCompany ? 'Update the company details' : 'Create a new company'}
+                {editingCompany ? 'Update the role right details' : 'Create a new role right'}
               </DialogDescription>
             </DialogHeader>
             <div className="grid gap-6 py-4">
@@ -1977,17 +1741,43 @@ const WorkoutProgramManagement = () => {
               <div className="space-y-4">
                 <h4 className="font-medium text-sm text-gray-700">Company Details</h4>
                 <div className="grid grid-cols-2 gap-4">
+
                   <div className="space-y-2">
-                    <Label htmlFor="name">Program Name</Label>
-                    <Input
-                      id="name"
-                      value={companyForm.name}
-                      onChange={(e) => setCompanyForm({ ...companyForm, name: e.target.value })}
-                      placeholder="e.g., Weight Loss Transformation"
-                    />
+                    <Label htmlFor="category">Role ID*</Label>
+                    <Select value={companyForm.category} onValueChange={(value) => setCompanyForm({ ...companyForm, category: value })}>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select category" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="Strength">Strength</SelectItem>
+                        <SelectItem value="Cardio">Cardio</SelectItem>
+                        <SelectItem value="HIIT">HIIT</SelectItem>
+                        <SelectItem value="Yoga">Yoga</SelectItem>
+                        <SelectItem value="CrossFit">CrossFit</SelectItem>
+                        <SelectItem value="Flexibility">Flexibility</SelectItem>
+                      </SelectContent>
+                    </Select>
                   </div>
+
                   <div className="space-y-2">
-                    <Label htmlFor="category">Category</Label>
+                    <Label htmlFor="category">Screen Type*</Label>
+                    <Select value={companyForm.category} onValueChange={(value) => setCompanyForm({ ...companyForm, category: value })}>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select category" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="Strength">Strength</SelectItem>
+                        <SelectItem value="Cardio">Cardio</SelectItem>
+                        <SelectItem value="HIIT">HIIT</SelectItem>
+                        <SelectItem value="Yoga">Yoga</SelectItem>
+                        <SelectItem value="CrossFit">CrossFit</SelectItem>
+                        <SelectItem value="Flexibility">Flexibility</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label htmlFor="category">Permission Type*</Label>
                     <Select value={companyForm.category} onValueChange={(value) => setCompanyForm({ ...companyForm, category: value })}>
                       <SelectTrigger>
                         <SelectValue placeholder="Select category" />
@@ -2003,138 +1793,12 @@ const WorkoutProgramManagement = () => {
                     </Select>
                   </div>
                 </div>
-                <div className="grid grid-cols-2 gap-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="difficulty">Difficulty Level</Label>
-                    <Select value={companyForm.difficultyLevel} onValueChange={(value) => setCompanyForm({ ...companyForm, difficultyLevel: value })}>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select difficulty" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="Beginner">Beginner</SelectItem>
-                        <SelectItem value="Intermediate">Intermediate</SelectItem>
-                        <SelectItem value="Advanced">Advanced</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="goals">Goals (comma-separated)</Label>
-                    <Input
-                      id="goals"
-                      value={companyForm.goals}
-                      onChange={(e) => setCompanyForm({ ...companyForm, goals: e.target.value })}
-                      placeholder="e.g., Weight Loss, Endurance"
-                    />
-                  </div>
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="description">Description</Label>
-                  <Textarea
-                    id="description"
-                    value={companyForm.description}
-                    onChange={(e) => setCompanyForm({ ...companyForm, description: e.target.value })}
-                    placeholder="Describe the program..."
-                  />
-                </div>
               </div>
 
-              {/* Schedule Section */}
-              <div className="space-y-4">
-                <h4 className="font-medium text-sm text-gray-700">Schedule</h4>
-                <div className="grid grid-cols-3 gap-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="duration">Duration Per Session</Label>
-                    <Input
-                      id="duration"
-                      value={companyForm.durationPerSession}
-                      onChange={(e) => setCompanyForm({ ...companyForm, durationPerSession: e.target.value })}
-                      placeholder="e.g., 45 minutes"
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="sessions">Sessions Per Week</Label>
-                    <Input
-                      id="sessions"
-                      type="number"
-                      min={1}
-                      max={7}
-                      value={companyForm.sessionsPerWeek}
-                      onChange={(e) => setCompanyForm({ ...companyForm, sessionsPerWeek: parseInt(e.target.value) || 1 })}
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="workingHours">Working Hours</Label>
-                    <Input
-                      id="workingHours"
-                      value={companyForm.workingHours}
-                      onChange={(e) => setCompanyForm({ ...companyForm, workingHours: e.target.value })}
-                      placeholder="e.g., 6AM-10AM, 5PM-9PM"
-                    />
-                  </div>
-                </div>
-              </div>
-
-              {/* Faculty Assignment */}
-              <div className="space-y-4">
-                <h4 className="font-medium text-sm text-gray-700">Faculty Assignment</h4>
-                <div className="space-y-2">
-                  <Label htmlFor="faculty">Assigned Faculty</Label>
-                  <Select value={companyForm.assignedFaculty} onValueChange={(value) => setCompanyForm({ ...companyForm, assignedFaculty: value })}>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select trainer" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {sampleFaculty.map((faculty) => (
-                        <SelectItem key={faculty.id} value={faculty.id}>{faculty.name}</SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-              </div>
-
-              {/* Exercises */}
-              <div className="space-y-4">
-                <div className="flex justify-between items-center">
-                  <h4 className="font-medium text-sm text-gray-700">Exercises</h4>
-                  <Button type="button" variant="outline" size="sm" onClick={addExerciseField}>
-                    <Plus className="h-4 w-4 mr-1" /> Add Exercise
-                  </Button>
-                </div>
-                {companyForm.exercises.map((exercise, index) => (
-                  <div key={index} className="grid grid-cols-3 gap-2">
-                    <Input
-                      placeholder="Exercise name"
-                      value={exercise.name}
-                      onChange={(e) => updateExercise(index, 'name', e.target.value)}
-                    />
-                    <Input
-                      type="number"
-                      placeholder="Sets"
-                      value={exercise.sets}
-                      onChange={(e) => updateExercise(index, 'sets', parseInt(e.target.value) || 0)}
-                    />
-                    <Input
-                      placeholder="Reps (e.g., 10-12)"
-                      value={exercise.reps}
-                      onChange={(e) => updateExercise(index, 'reps', e.target.value)}
-                    />
-                  </div>
-                ))}
-              </div>
-
-              {/* Status */}
-              <div className="flex items-center space-x-2">
-                <Switch
-                  id="isActive"
-                  checked={companyForm.isActive}
-                  onCheckedChange={(checked) => setCompanyForm({ ...companyForm, isActive: checked })}
-                />
-                <Label htmlFor="isActive">Active Program</Label>
-              </div>
             </div>
             <DialogFooter>
               <Button variant="outline" onClick={() => setIsRoleRightsDialogOpen(false)}>Cancel</Button>
-              <Button onClick={handleSaveProgram}>{editingCompany ? 'Update' : 'Create'} Program</Button>
+              <Button onClick={handleSaveProgram}>{editingCompany ? 'Update' : 'Create'} Role Right</Button>
             </DialogFooter>
           </DialogContent>
         </Dialog>
@@ -2143,30 +1807,22 @@ const WorkoutProgramManagement = () => {
         <Dialog open={isUserDialogOpen} onOpenChange={setIsUserDialogOpen}>
           <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
             <DialogHeader>
-              <DialogTitle>{editingCompany ? 'Edit Company' : 'Add New Company'}</DialogTitle>
+              <DialogTitle>{editingCompany ? 'Edit User' : 'Add User'}</DialogTitle>
               <DialogDescription>
-                {editingCompany ? 'Update the company details' : 'Create a new company'}
+                {editingCompany ? 'Update the User details' : 'Create a new User'}
               </DialogDescription>
             </DialogHeader>
             <div className="grid gap-6 py-4">
               {/* Program Details */}
               <div className="space-y-4">
-                <h4 className="font-medium text-sm text-gray-700">Company Details</h4>
+                <h4 className="font-medium text-sm text-gray-700">User Details</h4>
                 <div className="grid grid-cols-2 gap-4">
+
                   <div className="space-y-2">
-                    <Label htmlFor="name">Program Name</Label>
-                    <Input
-                      id="name"
-                      value={companyForm.name}
-                      onChange={(e) => setCompanyForm({ ...companyForm, name: e.target.value })}
-                      placeholder="e.g., Weight Loss Transformation"
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="category">Category</Label>
+                    <Label htmlFor="UserCode">User Code</Label>
                     <Select value={companyForm.category} onValueChange={(value) => setCompanyForm({ ...companyForm, category: value })}>
                       <SelectTrigger>
-                        <SelectValue placeholder="Select category" />
+                        <SelectValue placeholder="Select User Code" />
                       </SelectTrigger>
                       <SelectContent>
                         <SelectItem value="Strength">Strength</SelectItem>
@@ -2178,134 +1834,140 @@ const WorkoutProgramManagement = () => {
                       </SelectContent>
                     </Select>
                   </div>
-                </div>
-                <div className="grid grid-cols-2 gap-4">
+
                   <div className="space-y-2">
-                    <Label htmlFor="difficulty">Difficulty Level</Label>
-                    <Select value={companyForm.difficultyLevel} onValueChange={(value) => setCompanyForm({ ...companyForm, difficultyLevel: value })}>
+                    <Label htmlFor="name">User Name</Label>
+                    <Input
+                      id="UserName"
+                      value={companyForm.name}
+                      onChange={(e) => setCompanyForm({ ...companyForm, name: e.target.value })}
+                      placeholder="e.g., User Name"
+                    />
+                  </div>                
+                  <div className="space-y-2">
+                    <Label htmlFor="FirstName">First Name</Label>
+                    <Input
+                      id="FirstName"
+                      value={companyForm.name}
+                      onChange={(e) => setCompanyForm({ ...companyForm, name: e.target.value })}
+                      placeholder="e.g., First Name"
+                    />
+                  </div>                
+                  <div className="space-y-2">
+                    <Label htmlFor="LastName">Last Name</Label>
+                    <Input
+                      id="LastName"
+                      value={companyForm.name}
+                      onChange={(e) => setCompanyForm({ ...companyForm, name: e.target.value })}
+                      placeholder="e.g., LastName"
+                    />
+                  </div>                
+                  <div className="space-y-2">
+                    <Label htmlFor="name">Password</Label>
+                    <Input
+                      id="Password"
+                      value={companyForm.name}
+                      onChange={(e) => setCompanyForm({ ...companyForm, name: e.target.value })}
+                      placeholder="e.g., Password"
+                    />
+                  </div>                
+                  <div className="space-y-2">
+                    <Label htmlFor="UserCode">Status</Label>
+                    <Select value={companyForm.category} onValueChange={(value) => setCompanyForm({ ...companyForm, category: value })}>
                       <SelectTrigger>
-                        <SelectValue placeholder="Select difficulty" />
+                        <SelectValue placeholder="Select Status" />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="Beginner">Beginner</SelectItem>
-                        <SelectItem value="Intermediate">Intermediate</SelectItem>
-                        <SelectItem value="Advanced">Advanced</SelectItem>
+                        <SelectItem value="Strength">Strength</SelectItem>
+                        <SelectItem value="Cardio">Cardio</SelectItem>
+                        <SelectItem value="HIIT">HIIT</SelectItem>
+                        <SelectItem value="Yoga">Yoga</SelectItem>
+                        <SelectItem value="CrossFit">CrossFit</SelectItem>
+                        <SelectItem value="Flexibility">Flexibility</SelectItem>
                       </SelectContent>
                     </Select>
-                  </div>
+                  </div>   
+
                   <div className="space-y-2">
-                    <Label htmlFor="goals">Goals (comma-separated)</Label>
+                    <Label htmlFor="Log">Log in/out</Label>
+                    <Select value={companyForm.category} onValueChange={(value) => setCompanyForm({ ...companyForm, category: value })}>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select Log in Or out" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="Strength">Strength</SelectItem>
+                        <SelectItem value="Cardio">Cardio</SelectItem>
+                        <SelectItem value="HIIT">HIIT</SelectItem>
+                        <SelectItem value="Yoga">Yoga</SelectItem>
+                        <SelectItem value="CrossFit">CrossFit</SelectItem>
+                        <SelectItem value="Flexibility">Flexibility</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>   
+
+                  <div className="space-y-2">
+                    <Label htmlFor="RoleID">Role ID</Label>
+                    <Select value={companyForm.category} onValueChange={(value) => setCompanyForm({ ...companyForm, category: value })}>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select Role ID" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="Strength">Strength</SelectItem>
+                        <SelectItem value="Cardio">Cardio</SelectItem>
+                        <SelectItem value="HIIT">HIIT</SelectItem>
+                        <SelectItem value="Yoga">Yoga</SelectItem>
+                        <SelectItem value="CrossFit">CrossFit</SelectItem>
+                        <SelectItem value="Flexibility">Flexibility</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>   
+              
+                  <div className="space-y-2">
+                    <Label htmlFor="Email">Email</Label>
                     <Input
-                      id="goals"
-                      value={companyForm.goals}
-                      onChange={(e) => setCompanyForm({ ...companyForm, goals: e.target.value })}
-                      placeholder="e.g., Weight Loss, Endurance"
+                      id="Email"
+                      value={companyForm.name}
+                      onChange={(e) => setCompanyForm({ ...companyForm, name: e.target.value })}
+                      placeholder="e.g., Email"
                     />
+                  </div>                
+                  <div className="space-y-2">
+                    <Label htmlFor="DOB">DOB</Label>
+                    <Input
+                      id="DOB"
+                      value={companyForm.name}
+                      onChange={(e) => setCompanyForm({ ...companyForm, name: e.target.value })}
+                      placeholder="e.g., DOB"
+                    />
+                  </div>                
+                  <div className="space-y-2">
+                    <Label htmlFor="Gender">Gender</Label>
+                    <Select value={companyForm.category} onValueChange={(value) => setCompanyForm({ ...companyForm, category: value })}>
+                      <SelectTrigger>
+                        <SelectValue placeholder="SelectGender" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="Strength">Strength</SelectItem>
+                        <SelectItem value="Cardio">Cardio</SelectItem>
+                        <SelectItem value="HIIT">HIIT</SelectItem>
+                        <SelectItem value="Yoga">Yoga</SelectItem>
+                        <SelectItem value="CrossFit">CrossFit</SelectItem>
+                        <SelectItem value="Flexibility">Flexibility</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>                 
+              
                   </div>
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="description">Description</Label>
-                  <Textarea
-                    id="description"
-                    value={companyForm.description}
-                    onChange={(e) => setCompanyForm({ ...companyForm, description: e.target.value })}
-                    placeholder="Describe the program..."
-                  />
-                </div>
               </div>
 
-              {/* Schedule Section */}
-              <div className="space-y-4">
-                <h4 className="font-medium text-sm text-gray-700">Schedule</h4>
-                <div className="grid grid-cols-3 gap-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="duration">Duration Per Session</Label>
-                    <Input
-                      id="duration"
-                      value={companyForm.durationPerSession}
-                      onChange={(e) => setCompanyForm({ ...companyForm, durationPerSession: e.target.value })}
-                      placeholder="e.g., 45 minutes"
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="sessions">Sessions Per Week</Label>
-                    <Input
-                      id="sessions"
-                      type="number"
-                      min={1}
-                      max={7}
-                      value={companyForm.sessionsPerWeek}
-                      onChange={(e) => setCompanyForm({ ...companyForm, sessionsPerWeek: parseInt(e.target.value) || 1 })}
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="workingHours">Working Hours</Label>
-                    <Input
-                      id="workingHours"
-                      value={companyForm.workingHours}
-                      onChange={(e) => setCompanyForm({ ...companyForm, workingHours: e.target.value })}
-                      placeholder="e.g., 6AM-10AM, 5PM-9PM"
-                    />
-                  </div>
-                </div>
-              </div>
-
-              {/* Faculty Assignment */}
-              <div className="space-y-4">
-                <h4 className="font-medium text-sm text-gray-700">Faculty Assignment</h4>
-                <div className="space-y-2">
-                  <Label htmlFor="faculty">Assigned Faculty</Label>
-                  <Select value={companyForm.assignedFaculty} onValueChange={(value) => setCompanyForm({ ...companyForm, assignedFaculty: value })}>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select trainer" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {sampleFaculty.map((faculty) => (
-                        <SelectItem key={faculty.id} value={faculty.id}>{faculty.name}</SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-              </div>
-
-              {/* Exercises */}
-              <div className="space-y-4">
-                <div className="flex justify-between items-center">
-                  <h4 className="font-medium text-sm text-gray-700">Exercises</h4>
-                  <Button type="button" variant="outline" size="sm" onClick={addExerciseField}>
-                    <Plus className="h-4 w-4 mr-1" /> Add Exercise
-                  </Button>
-                </div>
-                {companyForm.exercises.map((exercise, index) => (
-                  <div key={index} className="grid grid-cols-3 gap-2">
-                    <Input
-                      placeholder="Exercise name"
-                      value={exercise.name}
-                      onChange={(e) => updateExercise(index, 'name', e.target.value)}
-                    />
-                    <Input
-                      type="number"
-                      placeholder="Sets"
-                      value={exercise.sets}
-                      onChange={(e) => updateExercise(index, 'sets', parseInt(e.target.value) || 0)}
-                    />
-                    <Input
-                      placeholder="Reps (e.g., 10-12)"
-                      value={exercise.reps}
-                      onChange={(e) => updateExercise(index, 'reps', e.target.value)}
-                    />
-                  </div>
-                ))}
-              </div>
-
-              {/* Status */}
+              {/* Super Admin */}
               <div className="flex items-center space-x-2">
                 <Switch
                   id="isActive"
                   checked={companyForm.isActive}
                   onCheckedChange={(checked) => setCompanyForm({ ...companyForm, isActive: checked })}
                 />
-                <Label htmlFor="isActive">Active Program</Label>
+                <Label htmlFor="isActive">Super Admin</Label>
               </div>
             </div>
             <DialogFooter>
@@ -2319,30 +1981,22 @@ const WorkoutProgramManagement = () => {
         <Dialog open={isAttributeDialogOpen} onOpenChange={setIsAttributeDialogOpen}>
           <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
             <DialogHeader>
-              <DialogTitle>{editingCompany ? 'Edit Company' : 'Add New Company'}</DialogTitle>
+              <DialogTitle>{editingCompany ? 'Edit Attribute' : 'Add Attribute'}</DialogTitle>
               <DialogDescription>
-                {editingCompany ? 'Update the company details' : 'Create a new company'}
+                {editingCompany ? 'Update the Attribute details' : 'Create a new Attribute'}
               </DialogDescription>
             </DialogHeader>
             <div className="grid gap-6 py-4">
               {/* Program Details */}
               <div className="space-y-4">
-                <h4 className="font-medium text-sm text-gray-700">Company Details</h4>
+                <h4 className="font-medium text-sm text-gray-700">Attribute Details</h4>
                 <div className="grid grid-cols-2 gap-4">
+
                   <div className="space-y-2">
-                    <Label htmlFor="name">Program Name</Label>
-                    <Input
-                      id="name"
-                      value={companyForm.name}
-                      onChange={(e) => setCompanyForm({ ...companyForm, name: e.target.value })}
-                      placeholder="e.g., Weight Loss Transformation"
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="category">Category</Label>
+                    <Label htmlFor="Code">Code</Label>
                     <Select value={companyForm.category} onValueChange={(value) => setCompanyForm({ ...companyForm, category: value })}>
                       <SelectTrigger>
-                        <SelectValue placeholder="Select category" />
+                        <SelectValue placeholder="Select Code" />
                       </SelectTrigger>
                       <SelectContent>
                         <SelectItem value="Strength">Strength</SelectItem>
@@ -2354,134 +2008,37 @@ const WorkoutProgramManagement = () => {
                       </SelectContent>
                     </Select>
                   </div>
-                </div>
-                <div className="grid grid-cols-2 gap-4">
+
                   <div className="space-y-2">
-                    <Label htmlFor="difficulty">Difficulty Level</Label>
-                    <Select value={companyForm.difficultyLevel} onValueChange={(value) => setCompanyForm({ ...companyForm, difficultyLevel: value })}>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select difficulty" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="Beginner">Beginner</SelectItem>
-                        <SelectItem value="Intermediate">Intermediate</SelectItem>
-                        <SelectItem value="Advanced">Advanced</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="goals">Goals (comma-separated)</Label>
+                    <Label htmlFor="SubCode">Sub Code</Label>
                     <Input
-                      id="goals"
-                      value={companyForm.goals}
-                      onChange={(e) => setCompanyForm({ ...companyForm, goals: e.target.value })}
-                      placeholder="e.g., Weight Loss, Endurance"
+                      id="SubCode"
+                      value={companyForm.name}
+                      onChange={(e) => setCompanyForm({ ...companyForm, name: e.target.value })}
+                      placeholder="e.g., SubCode"
                     />
                   </div>
-                </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="DetailsName">Details Name</Label>
+                    <Input
+                      id="DetailsName"
+                      value={companyForm.name}
+                      onChange={(e) => setCompanyForm({ ...companyForm, name: e.target.value })}
+                      placeholder="e.g., Details Name"
+                    />
+                  </div>
+                  </div>
+
                 <div className="space-y-2">
                   <Label htmlFor="description">Description</Label>
                   <Textarea
                     id="description"
                     value={companyForm.description}
                     onChange={(e) => setCompanyForm({ ...companyForm, description: e.target.value })}
-                    placeholder="Describe the program..."
+                    placeholder="Description..."
                   />
                 </div>
-              </div>
 
-              {/* Schedule Section */}
-              <div className="space-y-4">
-                <h4 className="font-medium text-sm text-gray-700">Schedule</h4>
-                <div className="grid grid-cols-3 gap-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="duration">Duration Per Session</Label>
-                    <Input
-                      id="duration"
-                      value={companyForm.durationPerSession}
-                      onChange={(e) => setCompanyForm({ ...companyForm, durationPerSession: e.target.value })}
-                      placeholder="e.g., 45 minutes"
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="sessions">Sessions Per Week</Label>
-                    <Input
-                      id="sessions"
-                      type="number"
-                      min={1}
-                      max={7}
-                      value={companyForm.sessionsPerWeek}
-                      onChange={(e) => setCompanyForm({ ...companyForm, sessionsPerWeek: parseInt(e.target.value) || 1 })}
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="workingHours">Working Hours</Label>
-                    <Input
-                      id="workingHours"
-                      value={companyForm.workingHours}
-                      onChange={(e) => setCompanyForm({ ...companyForm, workingHours: e.target.value })}
-                      placeholder="e.g., 6AM-10AM, 5PM-9PM"
-                    />
-                  </div>
-                </div>
-              </div>
-
-              {/* Faculty Assignment */}
-              <div className="space-y-4">
-                <h4 className="font-medium text-sm text-gray-700">Faculty Assignment</h4>
-                <div className="space-y-2">
-                  <Label htmlFor="faculty">Assigned Faculty</Label>
-                  <Select value={companyForm.assignedFaculty} onValueChange={(value) => setCompanyForm({ ...companyForm, assignedFaculty: value })}>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select trainer" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {sampleFaculty.map((faculty) => (
-                        <SelectItem key={faculty.id} value={faculty.id}>{faculty.name}</SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-              </div>
-
-              {/* Exercises */}
-              <div className="space-y-4">
-                <div className="flex justify-between items-center">
-                  <h4 className="font-medium text-sm text-gray-700">Exercises</h4>
-                  <Button type="button" variant="outline" size="sm" onClick={addExerciseField}>
-                    <Plus className="h-4 w-4 mr-1" /> Add Exercise
-                  </Button>
-                </div>
-                {companyForm.exercises.map((exercise, index) => (
-                  <div key={index} className="grid grid-cols-3 gap-2">
-                    <Input
-                      placeholder="Exercise name"
-                      value={exercise.name}
-                      onChange={(e) => updateExercise(index, 'name', e.target.value)}
-                    />
-                    <Input
-                      type="number"
-                      placeholder="Sets"
-                      value={exercise.sets}
-                      onChange={(e) => updateExercise(index, 'sets', parseInt(e.target.value) || 0)}
-                    />
-                    <Input
-                      placeholder="Reps (e.g., 10-12)"
-                      value={exercise.reps}
-                      onChange={(e) => updateExercise(index, 'reps', e.target.value)}
-                    />
-                  </div>
-                ))}
-              </div>
-
-              {/* Status */}
-              <div className="flex items-center space-x-2">
-                <Switch
-                  id="isActive"
-                  checked={companyForm.isActive}
-                  onCheckedChange={(checked) => setCompanyForm({ ...companyForm, isActive: checked })}
-                />
-                <Label htmlFor="isActive">Active Program</Label>
               </div>
             </div>
             <DialogFooter>
