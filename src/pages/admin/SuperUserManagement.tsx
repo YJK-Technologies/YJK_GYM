@@ -196,9 +196,16 @@ const WorkoutProgramManagement = () => {
   const [activeTab, setActiveTab] = useState('company');
   const [searchTerm, setSearchTerm] = useState('');
   const [programs, setPrograms] = useState<WorkoutProgram[]>(samplePrograms);
-  
+
   // Program Dialog States
-  const [isProgramDialogOpen, setIsProgramDialogOpen] = useState(false);
+  const [isCompanyDialogOpen, setIsCompanyDialogOpen] = useState(false);
+  const [isCompanyMappingDialogOpen, setIsCompanyMappingDialogOpen] = useState(false);
+  const [isLocationDialogOpen, setIsLocationDialogOpen] = useState(false);
+  const [isRoleDialogOpen, setIsRoleDialogOpen] = useState(false);
+  const [isRoleMappingDialogOpen, setIsRoleMappingDialogOpen] = useState(false);
+  const [isRoleRightsDialogOpen, setIsRoleRightsDialogOpen] = useState(false);
+  const [isUserDialogOpen, setIsUserDialogOpen] = useState(false);
+  const [isAttributeDialogOpen, setIsAttributeDialogOpen] = useState(false);
   const [editingProgram, setEditingProgram] = useState<WorkoutProgram | null>(null);
   const [programForm, setProgramForm] = useState({
     name: '',
@@ -245,7 +252,7 @@ const WorkoutProgramManagement = () => {
       goals: '',
       exercises: [{ name: '', sets: 3, reps: '' }],
     });
-    setIsProgramDialogOpen(true);
+    setIsCompanyDialogOpen(true);
   };
 
   const handleEditProgram = (program: WorkoutProgram) => {
@@ -263,21 +270,21 @@ const WorkoutProgramManagement = () => {
       goals: program.goals.join(', '),
       exercises: program.exercises.length > 0 ? program.exercises : [{ name: '', sets: 3, reps: '' }],
     });
-    setIsProgramDialogOpen(true);
+    setIsCompanyDialogOpen(true);
   };
 
   const handleSaveProgram = () => {
     const faculty = sampleFaculty.find(f => f.id === programForm.assignedFaculty);
-    
+
     if (editingProgram) {
-      setPrograms(programs.map(p => 
-        p.id === editingProgram.id 
+      setPrograms(programs.map(p =>
+        p.id === editingProgram.id
           ? {
-              ...p,
-              ...programForm,
-              goals: programForm.goals.split(',').map(g => g.trim()).filter(Boolean),
-              facultyName: faculty?.name || '',
-            }
+            ...p,
+            ...programForm,
+            goals: programForm.goals.split(',').map(g => g.trim()).filter(Boolean),
+            facultyName: faculty?.name || '',
+          }
           : p
       ));
       toast({ title: "Program Updated", description: "Workout program has been updated successfully." });
@@ -301,7 +308,7 @@ const WorkoutProgramManagement = () => {
       setPrograms([...programs, newProgram]);
       toast({ title: "Program Added", description: "New workout program has been created successfully." });
     }
-    setIsProgramDialogOpen(false);
+    setIsCompanyDialogOpen(false);
   };
 
   const handleDeleteProgram = (id: string) => {
@@ -309,8 +316,8 @@ const WorkoutProgramManagement = () => {
     toast({ title: "Program Deleted", description: "Workout program has been removed.", variant: "destructive" });
   };
 
-  // Package CRUD Functions
-  const handleAddPackage = () => {
+  //company Mapping CRUD Functions
+  const handleAddCompanyMapping = () => {
     setEditingPackage(null);
     setPackageForm({
       name: '',
@@ -323,7 +330,103 @@ const WorkoutProgramManagement = () => {
       isActive: true,
       features: '',
     });
-    setIsPackageDialogOpen(true);
+    setIsCompanyMappingDialogOpen(true);
+  };
+
+  const handleAddLocation = () => {
+    setEditingPackage(null);
+    setPackageForm({
+      name: '',
+      packageType: 'Monthly',
+      price: 0,
+      programId: '',
+      facultyId: '',
+      workingHours: '',
+      discountPercentage: 0,
+      isActive: true,
+      features: '',
+    });
+    setIsLocationDialogOpen(true);
+  };
+
+  const handleAddRole = () => {
+    setEditingPackage(null);
+    setPackageForm({
+      name: '',
+      packageType: 'Monthly',
+      price: 0,
+      programId: '',
+      facultyId: '',
+      workingHours: '',
+      discountPercentage: 0,
+      isActive: true,
+      features: '',
+    });
+    setIsRoleDialogOpen(true);
+  };
+
+  const handleAddRoleMapping = () => {
+    setEditingPackage(null);
+    setPackageForm({
+      name: '',
+      packageType: 'Monthly',
+      price: 0,
+      programId: '',
+      facultyId: '',
+      workingHours: '',
+      discountPercentage: 0,
+      isActive: true,
+      features: '',
+    });
+    setIsRoleMappingDialogOpen(true);
+  };
+
+  const handleAddRoleRights = () => {
+    setEditingPackage(null);
+    setPackageForm({
+      name: '',
+      packageType: 'Monthly',
+      price: 0,
+      programId: '',
+      facultyId: '',
+      workingHours: '',
+      discountPercentage: 0,
+      isActive: true,
+      features: '',
+    });
+    setIsRoleRightsDialogOpen(true);
+  };
+
+  const handleAddUser = () => {
+    setEditingPackage(null);
+    setPackageForm({
+      name: '',
+      packageType: 'Monthly',
+      price: 0,
+      programId: '',
+      facultyId: '',
+      workingHours: '',
+      discountPercentage: 0,
+      isActive: true,
+      features: '',
+    });
+    setIsUserDialogOpen(true);
+  };
+
+  const handleAddAttribute = () => {
+    setEditingPackage(null);
+    setPackageForm({
+      name: '',
+      packageType: 'Monthly',
+      price: 0,
+      programId: '',
+      facultyId: '',
+      workingHours: '',
+      discountPercentage: 0,
+      isActive: true,
+      features: '',
+    });
+    setIsAttributeDialogOpen(true);
   };
 
   const addExerciseField = () => {
@@ -345,6 +448,47 @@ const WorkoutProgramManagement = () => {
     p.facultyName.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
+  const addLabels = {
+    company: "Company",
+    companyMapping: "Company Mapping",
+    location: "Location",
+    role: "Role",
+    roleMapping: "Role Mapping",
+    roleRights: "Role Rights",
+    user: "User",
+    attribute: "Attribute",
+  };
+
+  const handleAdd = () => {
+    switch (activeTab) {
+      case "company":
+        handleAddProgram();
+        break;
+      case "companyMapping":
+        handleAddCompanyMapping();
+        break;
+      case "location":
+        handleAddLocation();
+        break;
+      case "role":
+        handleAddRole();
+        break;
+      case "roleMapping":
+        handleAddRoleMapping();
+        break;
+      case "roleRights":
+        handleAddRoleRights();
+        break;
+      case "user":
+        handleAddUser();
+        break;
+      case "attribute":
+        handleAddAttribute();
+        break;
+      default:
+        break;
+    }
+  };
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -390,18 +534,42 @@ const WorkoutProgramManagement = () => {
                 <Dumbbell className="h-4 w-4" />
                 Company
               </TabsTrigger>
-              <TabsTrigger value="packages" className="flex items-center gap-2">
+              <TabsTrigger value="companyMapping" className="flex items-center gap-2">
                 <Package className="h-4 w-4" />
-                Packages
+                Company Mapping
+              </TabsTrigger>
+              <TabsTrigger value="location" className="flex items-center gap-2">
+                <Package className="h-4 w-4" />
+                Location
+              </TabsTrigger>
+              <TabsTrigger value="role" className="flex items-center gap-2">
+                <Package className="h-4 w-4" />
+                Role
+              </TabsTrigger>
+              <TabsTrigger value="roleMapping" className="flex items-center gap-2">
+                <Package className="h-4 w-4" />
+                Role Mapping
+              </TabsTrigger>
+              <TabsTrigger value="roleRights" className="flex items-center gap-2">
+                <Package className="h-4 w-4" />
+                Role Rights
+              </TabsTrigger>
+              <TabsTrigger value="user" className="flex items-center gap-2">
+                <Package className="h-4 w-4" />
+                User
+              </TabsTrigger>
+              <TabsTrigger value="attribute" className="flex items-center gap-2">
+                <Package className="h-4 w-4" />
+                Attribute
               </TabsTrigger>
             </TabsList>
-            <Button onClick={activeTab === 'company' ? handleAddProgram : handleAddPackage}>
+            <Button onClick={handleAdd}>
               <Plus className="h-4 w-4 mr-2" />
-              Add {activeTab === 'company' ? 'company' : 'Package'}
+              Add {addLabels[activeTab]}
             </Button>
           </div>
 
-          {/* Programs Tab */}
+          {/* Company Tab */}
           <TabsContent value="company">
             <Card>
               <CardHeader>
@@ -443,7 +611,7 @@ const WorkoutProgramManagement = () => {
                         <TableCell>
                           <Badge variant={
                             program.difficultyLevel === 'Beginner' ? 'secondary' :
-                            program.difficultyLevel === 'Intermediate' ? 'default' : 'destructive'
+                              program.difficultyLevel === 'Intermediate' ? 'default' : 'destructive'
                           }>
                             {program.difficultyLevel}
                           </Badge>
@@ -487,21 +655,441 @@ const WorkoutProgramManagement = () => {
             </Card>
           </TabsContent>
 
+          {/* Company Mapping Tab */}
+          <TabsContent value="companyMapping">
+            <Card>
+              <CardHeader>
+                <CardTitle>Company Mapping</CardTitle>
+                <CardDescription>Manage all mapping companies and their details</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>User Code</TableHead>
+                      <TableHead>Company Code</TableHead>
+                      <TableHead>Location No</TableHead>
+                      <TableHead>Status</TableHead>
+                      <TableHead>Order No</TableHead>
+                      <TableHead className="text-right">Actions</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {filteredPrograms.map((program) => (
+                      <TableRow key={program.id}>
+                        <TableCell className="font-medium">{program.name}</TableCell>
+                        <TableCell>
+                          <Badge variant="outline">{program.category}</Badge>
+                        </TableCell>
+                        <TableCell>
+                          <Badge variant={
+                            program.difficultyLevel === 'Beginner' ? 'secondary' :
+                              program.difficultyLevel === 'Intermediate' ? 'default' : 'destructive'
+                          }>
+                            {program.difficultyLevel}
+                          </Badge>
+                        </TableCell>
+                        <TableCell className="text-sm text-gray-600">{program.workingHours}</TableCell>
+                        <TableCell>
+                          {program.isActive ? (
+                            <Badge className="bg-green-500"><CheckCircle className="h-3 w-3 mr-1" />Active</Badge>
+                          ) : (
+                            <Badge variant="secondary"><XCircle className="h-3 w-3 mr-1" />Inactive</Badge>
+                          )}
+                        </TableCell>
+                        <TableCell className="text-right">
+                          <div className="flex justify-end gap-2">
+                            <Button variant="ghost" size="sm" onClick={() => handleEditProgram(program)}>
+                              <Edit className="h-4 w-4" />
+                            </Button>
+                            <Button variant="ghost" size="sm" onClick={() => handleDeleteProgram(program.id)}>
+                              <Trash2 className="h-4 w-4 text-red-500" />
+                            </Button>
+                          </div>
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          {/* Location Tab */}
+          <TabsContent value="location">
+            <Card>
+              <CardHeader>
+                <CardTitle>Location</CardTitle>
+                <CardDescription>Manage all mapping companies and their details</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>User Code</TableHead>
+                      <TableHead>Company Code</TableHead>
+                      <TableHead>Location No</TableHead>
+                      <TableHead>Status</TableHead>
+                      <TableHead>Order No</TableHead>
+                      <TableHead className="text-right">Actions</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {filteredPrograms.map((program) => (
+                      <TableRow key={program.id}>
+                        <TableCell className="font-medium">{program.name}</TableCell>
+                        <TableCell>
+                          <Badge variant="outline">{program.category}</Badge>
+                        </TableCell>
+                        <TableCell>
+                          <Badge variant={
+                            program.difficultyLevel === 'Beginner' ? 'secondary' :
+                              program.difficultyLevel === 'Intermediate' ? 'default' : 'destructive'
+                          }>
+                            {program.difficultyLevel}
+                          </Badge>
+                        </TableCell>
+                        <TableCell className="text-sm text-gray-600">{program.workingHours}</TableCell>
+                        <TableCell>
+                          {program.isActive ? (
+                            <Badge className="bg-green-500"><CheckCircle className="h-3 w-3 mr-1" />Active</Badge>
+                          ) : (
+                            <Badge variant="secondary"><XCircle className="h-3 w-3 mr-1" />Inactive</Badge>
+                          )}
+                        </TableCell>
+                        <TableCell className="text-right">
+                          <div className="flex justify-end gap-2">
+                            <Button variant="ghost" size="sm" onClick={() => handleEditProgram(program)}>
+                              <Edit className="h-4 w-4" />
+                            </Button>
+                            <Button variant="ghost" size="sm" onClick={() => handleDeleteProgram(program.id)}>
+                              <Trash2 className="h-4 w-4 text-red-500" />
+                            </Button>
+                          </div>
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          {/* Role Tab */}
+          <TabsContent value="role">
+            <Card>
+              <CardHeader>
+                <CardTitle>Role</CardTitle>
+                <CardDescription>Manage all mapping companies and their details</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>User Code</TableHead>
+                      <TableHead>Company Code</TableHead>
+                      <TableHead>Location No</TableHead>
+                      <TableHead>Status</TableHead>
+                      <TableHead>Order No</TableHead>
+                      <TableHead className="text-right">Actions</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {filteredPrograms.map((program) => (
+                      <TableRow key={program.id}>
+                        <TableCell className="font-medium">{program.name}</TableCell>
+                        <TableCell>
+                          <Badge variant="outline">{program.category}</Badge>
+                        </TableCell>
+                        <TableCell>
+                          <Badge variant={
+                            program.difficultyLevel === 'Beginner' ? 'secondary' :
+                              program.difficultyLevel === 'Intermediate' ? 'default' : 'destructive'
+                          }>
+                            {program.difficultyLevel}
+                          </Badge>
+                        </TableCell>
+                        <TableCell className="text-sm text-gray-600">{program.workingHours}</TableCell>
+                        <TableCell>
+                          {program.isActive ? (
+                            <Badge className="bg-green-500"><CheckCircle className="h-3 w-3 mr-1" />Active</Badge>
+                          ) : (
+                            <Badge variant="secondary"><XCircle className="h-3 w-3 mr-1" />Inactive</Badge>
+                          )}
+                        </TableCell>
+                        <TableCell className="text-right">
+                          <div className="flex justify-end gap-2">
+                            <Button variant="ghost" size="sm" onClick={() => handleEditProgram(program)}>
+                              <Edit className="h-4 w-4" />
+                            </Button>
+                            <Button variant="ghost" size="sm" onClick={() => handleDeleteProgram(program.id)}>
+                              <Trash2 className="h-4 w-4 text-red-500" />
+                            </Button>
+                          </div>
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          {/* Role Mapping Tab */}
+          <TabsContent value="roleMapping">
+            <Card>
+              <CardHeader>
+                <CardTitle>Role Mapping</CardTitle>
+                <CardDescription>Manage all mapping companies and their details</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>User Code</TableHead>
+                      <TableHead>Company Code</TableHead>
+                      <TableHead>Location No</TableHead>
+                      <TableHead>Status</TableHead>
+                      <TableHead>Order No</TableHead>
+                      <TableHead className="text-right">Actions</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {filteredPrograms.map((program) => (
+                      <TableRow key={program.id}>
+                        <TableCell className="font-medium">{program.name}</TableCell>
+                        <TableCell>
+                          <Badge variant="outline">{program.category}</Badge>
+                        </TableCell>
+                        <TableCell>
+                          <Badge variant={
+                            program.difficultyLevel === 'Beginner' ? 'secondary' :
+                              program.difficultyLevel === 'Intermediate' ? 'default' : 'destructive'
+                          }>
+                            {program.difficultyLevel}
+                          </Badge>
+                        </TableCell>
+                        <TableCell className="text-sm text-gray-600">{program.workingHours}</TableCell>
+                        <TableCell>
+                          {program.isActive ? (
+                            <Badge className="bg-green-500"><CheckCircle className="h-3 w-3 mr-1" />Active</Badge>
+                          ) : (
+                            <Badge variant="secondary"><XCircle className="h-3 w-3 mr-1" />Inactive</Badge>
+                          )}
+                        </TableCell>
+                        <TableCell className="text-right">
+                          <div className="flex justify-end gap-2">
+                            <Button variant="ghost" size="sm" onClick={() => handleEditProgram(program)}>
+                              <Edit className="h-4 w-4" />
+                            </Button>
+                            <Button variant="ghost" size="sm" onClick={() => handleDeleteProgram(program.id)}>
+                              <Trash2 className="h-4 w-4 text-red-500" />
+                            </Button>
+                          </div>
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          {/* Role Rights Tab */}
+          <TabsContent value="roleRights">
+            <Card>
+              <CardHeader>
+                <CardTitle>Role Rights</CardTitle>
+                <CardDescription>Manage all mapping companies and their details</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>User Code</TableHead>
+                      <TableHead>Company Code</TableHead>
+                      <TableHead>Location No</TableHead>
+                      <TableHead>Status</TableHead>
+                      <TableHead>Order No</TableHead>
+                      <TableHead className="text-right">Actions</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {filteredPrograms.map((program) => (
+                      <TableRow key={program.id}>
+                        <TableCell className="font-medium">{program.name}</TableCell>
+                        <TableCell>
+                          <Badge variant="outline">{program.category}</Badge>
+                        </TableCell>
+                        <TableCell>
+                          <Badge variant={
+                            program.difficultyLevel === 'Beginner' ? 'secondary' :
+                              program.difficultyLevel === 'Intermediate' ? 'default' : 'destructive'
+                          }>
+                            {program.difficultyLevel}
+                          </Badge>
+                        </TableCell>
+                        <TableCell className="text-sm text-gray-600">{program.workingHours}</TableCell>
+                        <TableCell>
+                          {program.isActive ? (
+                            <Badge className="bg-green-500"><CheckCircle className="h-3 w-3 mr-1" />Active</Badge>
+                          ) : (
+                            <Badge variant="secondary"><XCircle className="h-3 w-3 mr-1" />Inactive</Badge>
+                          )}
+                        </TableCell>
+                        <TableCell className="text-right">
+                          <div className="flex justify-end gap-2">
+                            <Button variant="ghost" size="sm" onClick={() => handleEditProgram(program)}>
+                              <Edit className="h-4 w-4" />
+                            </Button>
+                            <Button variant="ghost" size="sm" onClick={() => handleDeleteProgram(program.id)}>
+                              <Trash2 className="h-4 w-4 text-red-500" />
+                            </Button>
+                          </div>
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          {/* User Tab */}
+          <TabsContent value="user">
+            <Card>
+              <CardHeader>
+                <CardTitle>User</CardTitle>
+                <CardDescription>Manage all mapping companies and their details</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>User Code</TableHead>
+                      <TableHead>Company Code</TableHead>
+                      <TableHead>Location No</TableHead>
+                      <TableHead>Status</TableHead>
+                      <TableHead>Order No</TableHead>
+                      <TableHead className="text-right">Actions</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {filteredPrograms.map((program) => (
+                      <TableRow key={program.id}>
+                        <TableCell className="font-medium">{program.name}</TableCell>
+                        <TableCell>
+                          <Badge variant="outline">{program.category}</Badge>
+                        </TableCell>
+                        <TableCell>
+                          <Badge variant={
+                            program.difficultyLevel === 'Beginner' ? 'secondary' :
+                              program.difficultyLevel === 'Intermediate' ? 'default' : 'destructive'
+                          }>
+                            {program.difficultyLevel}
+                          </Badge>
+                        </TableCell>
+                        <TableCell className="text-sm text-gray-600">{program.workingHours}</TableCell>
+                        <TableCell>
+                          {program.isActive ? (
+                            <Badge className="bg-green-500"><CheckCircle className="h-3 w-3 mr-1" />Active</Badge>
+                          ) : (
+                            <Badge variant="secondary"><XCircle className="h-3 w-3 mr-1" />Inactive</Badge>
+                          )}
+                        </TableCell>
+                        <TableCell className="text-right">
+                          <div className="flex justify-end gap-2">
+                            <Button variant="ghost" size="sm" onClick={() => handleEditProgram(program)}>
+                              <Edit className="h-4 w-4" />
+                            </Button>
+                            <Button variant="ghost" size="sm" onClick={() => handleDeleteProgram(program.id)}>
+                              <Trash2 className="h-4 w-4 text-red-500" />
+                            </Button>
+                          </div>
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          {/* Attribute Tab */}
+          <TabsContent value="attribute">
+            <Card>
+              <CardHeader>
+                <CardTitle>Attribute</CardTitle>
+                <CardDescription>Manage all mapping companies and their details</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>User Code</TableHead>
+                      <TableHead>Company Code</TableHead>
+                      <TableHead>Location No</TableHead>
+                      <TableHead>Status</TableHead>
+                      <TableHead>Order No</TableHead>
+                      <TableHead className="text-right">Actions</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {filteredPrograms.map((program) => (
+                      <TableRow key={program.id}>
+                        <TableCell className="font-medium">{program.name}</TableCell>
+                        <TableCell>
+                          <Badge variant="outline">{program.category}</Badge>
+                        </TableCell>
+                        <TableCell>
+                          <Badge variant={
+                            program.difficultyLevel === 'Beginner' ? 'secondary' :
+                              program.difficultyLevel === 'Intermediate' ? 'default' : 'destructive'
+                          }>
+                            {program.difficultyLevel}
+                          </Badge>
+                        </TableCell>
+                        <TableCell className="text-sm text-gray-600">{program.workingHours}</TableCell>
+                        <TableCell>
+                          {program.isActive ? (
+                            <Badge className="bg-green-500"><CheckCircle className="h-3 w-3 mr-1" />Active</Badge>
+                          ) : (
+                            <Badge variant="secondary"><XCircle className="h-3 w-3 mr-1" />Inactive</Badge>
+                          )}
+                        </TableCell>
+                        <TableCell className="text-right">
+                          <div className="flex justify-end gap-2">
+                            <Button variant="ghost" size="sm" onClick={() => handleEditProgram(program)}>
+                              <Edit className="h-4 w-4" />
+                            </Button>
+                            <Button variant="ghost" size="sm" onClick={() => handleDeleteProgram(program.id)}>
+                              <Trash2 className="h-4 w-4 text-red-500" />
+                            </Button>
+                          </div>
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </CardContent>
+            </Card>
+          </TabsContent>
+
         </Tabs>
 
-        {/* Add/Edit Program Dialog */}
-        <Dialog open={isProgramDialogOpen} onOpenChange={setIsProgramDialogOpen}>
+        {/* Add/Edit Company Dialog Or Popup*/}
+        <Dialog open={isCompanyDialogOpen} onOpenChange={setIsCompanyDialogOpen}>
           <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
             <DialogHeader>
-              <DialogTitle>{editingProgram ? 'Edit Program' : 'Add New Program'}</DialogTitle>
+              <DialogTitle>{editingProgram ? 'Edit Company' : 'Add New Company'}</DialogTitle>
               <DialogDescription>
-                {editingProgram ? 'Update the workout program details' : 'Create a new workout program'}
+                {editingProgram ? 'Update the company details' : 'Create a new company'}
               </DialogDescription>
             </DialogHeader>
             <div className="grid gap-6 py-4">
               {/* Program Details */}
               <div className="space-y-4">
-                <h4 className="font-medium text-sm text-gray-700">Program Details</h4>
+                <h4 className="font-medium text-sm text-gray-700">Company Details</h4>
                 <div className="grid grid-cols-2 gap-4">
                   <div className="space-y-2">
                     <Label htmlFor="name">Program Name</Label>
@@ -659,7 +1247,1239 @@ const WorkoutProgramManagement = () => {
               </div>
             </div>
             <DialogFooter>
-              <Button variant="outline" onClick={() => setIsProgramDialogOpen(false)}>Cancel</Button>
+              <Button variant="outline" onClick={() => setIsCompanyDialogOpen(false)}>Cancel</Button>
+              <Button onClick={handleSaveProgram}>{editingProgram ? 'Update' : 'Create'} Program</Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
+
+        {/* Add/Edit Company Mapping Dialog Or Popup*/}
+        <Dialog open={isCompanyMappingDialogOpen} onOpenChange={setIsCompanyMappingDialogOpen}>
+          <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+            <DialogHeader>
+              <DialogTitle>{editingProgram ? 'Edit Company' : 'Add New Company'}</DialogTitle>
+              <DialogDescription>
+                {editingProgram ? 'Update the company details' : 'Create a new company'}
+              </DialogDescription>
+            </DialogHeader>
+            <div className="grid gap-6 py-4">
+              {/* Program Details */}
+              <div className="space-y-4">
+                <h4 className="font-medium text-sm text-gray-700">Company Details</h4>
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="name">Program Name</Label>
+                    <Input
+                      id="name"
+                      value={programForm.name}
+                      onChange={(e) => setProgramForm({ ...programForm, name: e.target.value })}
+                      placeholder="e.g., Weight Loss Transformation"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="category">Category</Label>
+                    <Select value={programForm.category} onValueChange={(value) => setProgramForm({ ...programForm, category: value })}>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select category" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="Strength">Strength</SelectItem>
+                        <SelectItem value="Cardio">Cardio</SelectItem>
+                        <SelectItem value="HIIT">HIIT</SelectItem>
+                        <SelectItem value="Yoga">Yoga</SelectItem>
+                        <SelectItem value="CrossFit">CrossFit</SelectItem>
+                        <SelectItem value="Flexibility">Flexibility</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                </div>
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="difficulty">Difficulty Level</Label>
+                    <Select value={programForm.difficultyLevel} onValueChange={(value) => setProgramForm({ ...programForm, difficultyLevel: value })}>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select difficulty" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="Beginner">Beginner</SelectItem>
+                        <SelectItem value="Intermediate">Intermediate</SelectItem>
+                        <SelectItem value="Advanced">Advanced</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="goals">Goals (comma-separated)</Label>
+                    <Input
+                      id="goals"
+                      value={programForm.goals}
+                      onChange={(e) => setProgramForm({ ...programForm, goals: e.target.value })}
+                      placeholder="e.g., Weight Loss, Endurance"
+                    />
+                  </div>
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="description">Description</Label>
+                  <Textarea
+                    id="description"
+                    value={programForm.description}
+                    onChange={(e) => setProgramForm({ ...programForm, description: e.target.value })}
+                    placeholder="Describe the program..."
+                  />
+                </div>
+              </div>
+
+              {/* Schedule Section */}
+              <div className="space-y-4">
+                <h4 className="font-medium text-sm text-gray-700">Schedule</h4>
+                <div className="grid grid-cols-3 gap-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="duration">Duration Per Session</Label>
+                    <Input
+                      id="duration"
+                      value={programForm.durationPerSession}
+                      onChange={(e) => setProgramForm({ ...programForm, durationPerSession: e.target.value })}
+                      placeholder="e.g., 45 minutes"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="sessions">Sessions Per Week</Label>
+                    <Input
+                      id="sessions"
+                      type="number"
+                      min={1}
+                      max={7}
+                      value={programForm.sessionsPerWeek}
+                      onChange={(e) => setProgramForm({ ...programForm, sessionsPerWeek: parseInt(e.target.value) || 1 })}
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="workingHours">Working Hours</Label>
+                    <Input
+                      id="workingHours"
+                      value={programForm.workingHours}
+                      onChange={(e) => setProgramForm({ ...programForm, workingHours: e.target.value })}
+                      placeholder="e.g., 6AM-10AM, 5PM-9PM"
+                    />
+                  </div>
+                </div>
+              </div>
+
+              {/* Faculty Assignment */}
+              <div className="space-y-4">
+                <h4 className="font-medium text-sm text-gray-700">Faculty Assignment</h4>
+                <div className="space-y-2">
+                  <Label htmlFor="faculty">Assigned Faculty</Label>
+                  <Select value={programForm.assignedFaculty} onValueChange={(value) => setProgramForm({ ...programForm, assignedFaculty: value })}>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select trainer" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {sampleFaculty.map((faculty) => (
+                        <SelectItem key={faculty.id} value={faculty.id}>{faculty.name}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+
+              {/* Exercises */}
+              <div className="space-y-4">
+                <div className="flex justify-between items-center">
+                  <h4 className="font-medium text-sm text-gray-700">Exercises</h4>
+                  <Button type="button" variant="outline" size="sm" onClick={addExerciseField}>
+                    <Plus className="h-4 w-4 mr-1" /> Add Exercise
+                  </Button>
+                </div>
+                {programForm.exercises.map((exercise, index) => (
+                  <div key={index} className="grid grid-cols-3 gap-2">
+                    <Input
+                      placeholder="Exercise name"
+                      value={exercise.name}
+                      onChange={(e) => updateExercise(index, 'name', e.target.value)}
+                    />
+                    <Input
+                      type="number"
+                      placeholder="Sets"
+                      value={exercise.sets}
+                      onChange={(e) => updateExercise(index, 'sets', parseInt(e.target.value) || 0)}
+                    />
+                    <Input
+                      placeholder="Reps (e.g., 10-12)"
+                      value={exercise.reps}
+                      onChange={(e) => updateExercise(index, 'reps', e.target.value)}
+                    />
+                  </div>
+                ))}
+              </div>
+
+              {/* Status */}
+              <div className="flex items-center space-x-2">
+                <Switch
+                  id="isActive"
+                  checked={programForm.isActive}
+                  onCheckedChange={(checked) => setProgramForm({ ...programForm, isActive: checked })}
+                />
+                <Label htmlFor="isActive">Active Program</Label>
+              </div>
+            </div>
+            <DialogFooter>
+              <Button variant="outline" onClick={() => setIsCompanyMappingDialogOpen(false)}>Cancel</Button>
+              <Button onClick={handleSaveProgram}>{editingProgram ? 'Update' : 'Create'} Program</Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
+
+        {/* Add/Edit Location Dialog Or Popup*/}
+        <Dialog open={isLocationDialogOpen} onOpenChange={setIsLocationDialogOpen}>
+          <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+            <DialogHeader>
+              <DialogTitle>{editingProgram ? 'Edit Company' : 'Add New Company'}</DialogTitle>
+              <DialogDescription>
+                {editingProgram ? 'Update the company details' : 'Create a new company'}
+              </DialogDescription>
+            </DialogHeader>
+            <div className="grid gap-6 py-4">
+              {/* Program Details */}
+              <div className="space-y-4">
+                <h4 className="font-medium text-sm text-gray-700">Company Details</h4>
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="name">Program Name</Label>
+                    <Input
+                      id="name"
+                      value={programForm.name}
+                      onChange={(e) => setProgramForm({ ...programForm, name: e.target.value })}
+                      placeholder="e.g., Weight Loss Transformation"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="category">Category</Label>
+                    <Select value={programForm.category} onValueChange={(value) => setProgramForm({ ...programForm, category: value })}>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select category" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="Strength">Strength</SelectItem>
+                        <SelectItem value="Cardio">Cardio</SelectItem>
+                        <SelectItem value="HIIT">HIIT</SelectItem>
+                        <SelectItem value="Yoga">Yoga</SelectItem>
+                        <SelectItem value="CrossFit">CrossFit</SelectItem>
+                        <SelectItem value="Flexibility">Flexibility</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                </div>
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="difficulty">Difficulty Level</Label>
+                    <Select value={programForm.difficultyLevel} onValueChange={(value) => setProgramForm({ ...programForm, difficultyLevel: value })}>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select difficulty" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="Beginner">Beginner</SelectItem>
+                        <SelectItem value="Intermediate">Intermediate</SelectItem>
+                        <SelectItem value="Advanced">Advanced</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="goals">Goals (comma-separated)</Label>
+                    <Input
+                      id="goals"
+                      value={programForm.goals}
+                      onChange={(e) => setProgramForm({ ...programForm, goals: e.target.value })}
+                      placeholder="e.g., Weight Loss, Endurance"
+                    />
+                  </div>
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="description">Description</Label>
+                  <Textarea
+                    id="description"
+                    value={programForm.description}
+                    onChange={(e) => setProgramForm({ ...programForm, description: e.target.value })}
+                    placeholder="Describe the program..."
+                  />
+                </div>
+              </div>
+
+              {/* Schedule Section */}
+              <div className="space-y-4">
+                <h4 className="font-medium text-sm text-gray-700">Schedule</h4>
+                <div className="grid grid-cols-3 gap-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="duration">Duration Per Session</Label>
+                    <Input
+                      id="duration"
+                      value={programForm.durationPerSession}
+                      onChange={(e) => setProgramForm({ ...programForm, durationPerSession: e.target.value })}
+                      placeholder="e.g., 45 minutes"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="sessions">Sessions Per Week</Label>
+                    <Input
+                      id="sessions"
+                      type="number"
+                      min={1}
+                      max={7}
+                      value={programForm.sessionsPerWeek}
+                      onChange={(e) => setProgramForm({ ...programForm, sessionsPerWeek: parseInt(e.target.value) || 1 })}
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="workingHours">Working Hours</Label>
+                    <Input
+                      id="workingHours"
+                      value={programForm.workingHours}
+                      onChange={(e) => setProgramForm({ ...programForm, workingHours: e.target.value })}
+                      placeholder="e.g., 6AM-10AM, 5PM-9PM"
+                    />
+                  </div>
+                </div>
+              </div>
+
+              {/* Faculty Assignment */}
+              <div className="space-y-4">
+                <h4 className="font-medium text-sm text-gray-700">Faculty Assignment</h4>
+                <div className="space-y-2">
+                  <Label htmlFor="faculty">Assigned Faculty</Label>
+                  <Select value={programForm.assignedFaculty} onValueChange={(value) => setProgramForm({ ...programForm, assignedFaculty: value })}>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select trainer" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {sampleFaculty.map((faculty) => (
+                        <SelectItem key={faculty.id} value={faculty.id}>{faculty.name}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+
+              {/* Exercises */}
+              <div className="space-y-4">
+                <div className="flex justify-between items-center">
+                  <h4 className="font-medium text-sm text-gray-700">Exercises</h4>
+                  <Button type="button" variant="outline" size="sm" onClick={addExerciseField}>
+                    <Plus className="h-4 w-4 mr-1" /> Add Exercise
+                  </Button>
+                </div>
+                {programForm.exercises.map((exercise, index) => (
+                  <div key={index} className="grid grid-cols-3 gap-2">
+                    <Input
+                      placeholder="Exercise name"
+                      value={exercise.name}
+                      onChange={(e) => updateExercise(index, 'name', e.target.value)}
+                    />
+                    <Input
+                      type="number"
+                      placeholder="Sets"
+                      value={exercise.sets}
+                      onChange={(e) => updateExercise(index, 'sets', parseInt(e.target.value) || 0)}
+                    />
+                    <Input
+                      placeholder="Reps (e.g., 10-12)"
+                      value={exercise.reps}
+                      onChange={(e) => updateExercise(index, 'reps', e.target.value)}
+                    />
+                  </div>
+                ))}
+              </div>
+
+              {/* Status */}
+              <div className="flex items-center space-x-2">
+                <Switch
+                  id="isActive"
+                  checked={programForm.isActive}
+                  onCheckedChange={(checked) => setProgramForm({ ...programForm, isActive: checked })}
+                />
+                <Label htmlFor="isActive">Active Program</Label>
+              </div>
+            </div>
+            <DialogFooter>
+              <Button variant="outline" onClick={() => setIsLocationDialogOpen(false)}>Cancel</Button>
+              <Button onClick={handleSaveProgram}>{editingProgram ? 'Update' : 'Create'} Program</Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
+
+        {/* Add/Edit Role Dialog Or Popup*/}
+        <Dialog open={isRoleDialogOpen} onOpenChange={setIsRoleDialogOpen}>
+          <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+            <DialogHeader>
+              <DialogTitle>{editingProgram ? 'Edit Company' : 'Add New Company'}</DialogTitle>
+              <DialogDescription>
+                {editingProgram ? 'Update the company details' : 'Create a new company'}
+              </DialogDescription>
+            </DialogHeader>
+            <div className="grid gap-6 py-4">
+              {/* Program Details */}
+              <div className="space-y-4">
+                <h4 className="font-medium text-sm text-gray-700">Company Details</h4>
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="name">Program Name</Label>
+                    <Input
+                      id="name"
+                      value={programForm.name}
+                      onChange={(e) => setProgramForm({ ...programForm, name: e.target.value })}
+                      placeholder="e.g., Weight Loss Transformation"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="category">Category</Label>
+                    <Select value={programForm.category} onValueChange={(value) => setProgramForm({ ...programForm, category: value })}>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select category" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="Strength">Strength</SelectItem>
+                        <SelectItem value="Cardio">Cardio</SelectItem>
+                        <SelectItem value="HIIT">HIIT</SelectItem>
+                        <SelectItem value="Yoga">Yoga</SelectItem>
+                        <SelectItem value="CrossFit">CrossFit</SelectItem>
+                        <SelectItem value="Flexibility">Flexibility</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                </div>
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="difficulty">Difficulty Level</Label>
+                    <Select value={programForm.difficultyLevel} onValueChange={(value) => setProgramForm({ ...programForm, difficultyLevel: value })}>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select difficulty" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="Beginner">Beginner</SelectItem>
+                        <SelectItem value="Intermediate">Intermediate</SelectItem>
+                        <SelectItem value="Advanced">Advanced</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="goals">Goals (comma-separated)</Label>
+                    <Input
+                      id="goals"
+                      value={programForm.goals}
+                      onChange={(e) => setProgramForm({ ...programForm, goals: e.target.value })}
+                      placeholder="e.g., Weight Loss, Endurance"
+                    />
+                  </div>
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="description">Description</Label>
+                  <Textarea
+                    id="description"
+                    value={programForm.description}
+                    onChange={(e) => setProgramForm({ ...programForm, description: e.target.value })}
+                    placeholder="Describe the program..."
+                  />
+                </div>
+              </div>
+
+              {/* Schedule Section */}
+              <div className="space-y-4">
+                <h4 className="font-medium text-sm text-gray-700">Schedule</h4>
+                <div className="grid grid-cols-3 gap-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="duration">Duration Per Session</Label>
+                    <Input
+                      id="duration"
+                      value={programForm.durationPerSession}
+                      onChange={(e) => setProgramForm({ ...programForm, durationPerSession: e.target.value })}
+                      placeholder="e.g., 45 minutes"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="sessions">Sessions Per Week</Label>
+                    <Input
+                      id="sessions"
+                      type="number"
+                      min={1}
+                      max={7}
+                      value={programForm.sessionsPerWeek}
+                      onChange={(e) => setProgramForm({ ...programForm, sessionsPerWeek: parseInt(e.target.value) || 1 })}
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="workingHours">Working Hours</Label>
+                    <Input
+                      id="workingHours"
+                      value={programForm.workingHours}
+                      onChange={(e) => setProgramForm({ ...programForm, workingHours: e.target.value })}
+                      placeholder="e.g., 6AM-10AM, 5PM-9PM"
+                    />
+                  </div>
+                </div>
+              </div>
+
+              {/* Faculty Assignment */}
+              <div className="space-y-4">
+                <h4 className="font-medium text-sm text-gray-700">Faculty Assignment</h4>
+                <div className="space-y-2">
+                  <Label htmlFor="faculty">Assigned Faculty</Label>
+                  <Select value={programForm.assignedFaculty} onValueChange={(value) => setProgramForm({ ...programForm, assignedFaculty: value })}>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select trainer" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {sampleFaculty.map((faculty) => (
+                        <SelectItem key={faculty.id} value={faculty.id}>{faculty.name}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+
+              {/* Exercises */}
+              <div className="space-y-4">
+                <div className="flex justify-between items-center">
+                  <h4 className="font-medium text-sm text-gray-700">Exercises</h4>
+                  <Button type="button" variant="outline" size="sm" onClick={addExerciseField}>
+                    <Plus className="h-4 w-4 mr-1" /> Add Exercise
+                  </Button>
+                </div>
+                {programForm.exercises.map((exercise, index) => (
+                  <div key={index} className="grid grid-cols-3 gap-2">
+                    <Input
+                      placeholder="Exercise name"
+                      value={exercise.name}
+                      onChange={(e) => updateExercise(index, 'name', e.target.value)}
+                    />
+                    <Input
+                      type="number"
+                      placeholder="Sets"
+                      value={exercise.sets}
+                      onChange={(e) => updateExercise(index, 'sets', parseInt(e.target.value) || 0)}
+                    />
+                    <Input
+                      placeholder="Reps (e.g., 10-12)"
+                      value={exercise.reps}
+                      onChange={(e) => updateExercise(index, 'reps', e.target.value)}
+                    />
+                  </div>
+                ))}
+              </div>
+
+              {/* Status */}
+              <div className="flex items-center space-x-2">
+                <Switch
+                  id="isActive"
+                  checked={programForm.isActive}
+                  onCheckedChange={(checked) => setProgramForm({ ...programForm, isActive: checked })}
+                />
+                <Label htmlFor="isActive">Active Program</Label>
+              </div>
+            </div>
+            <DialogFooter>
+              <Button variant="outline" onClick={() => setIsRoleDialogOpen(false)}>Cancel</Button>
+              <Button onClick={handleSaveProgram}>{editingProgram ? 'Update' : 'Create'} Program</Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
+
+        {/* Add/Edit Role Mapping Dialog Or Popup*/}
+        <Dialog open={isRoleMappingDialogOpen} onOpenChange={setIsRoleMappingDialogOpen}>
+          <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+            <DialogHeader>
+              <DialogTitle>{editingProgram ? 'Edit Company' : 'Add New Company'}</DialogTitle>
+              <DialogDescription>
+                {editingProgram ? 'Update the company details' : 'Create a new company'}
+              </DialogDescription>
+            </DialogHeader>
+            <div className="grid gap-6 py-4">
+              {/* Program Details */}
+              <div className="space-y-4">
+                <h4 className="font-medium text-sm text-gray-700">Company Details</h4>
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="name">Program Name</Label>
+                    <Input
+                      id="name"
+                      value={programForm.name}
+                      onChange={(e) => setProgramForm({ ...programForm, name: e.target.value })}
+                      placeholder="e.g., Weight Loss Transformation"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="category">Category</Label>
+                    <Select value={programForm.category} onValueChange={(value) => setProgramForm({ ...programForm, category: value })}>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select category" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="Strength">Strength</SelectItem>
+                        <SelectItem value="Cardio">Cardio</SelectItem>
+                        <SelectItem value="HIIT">HIIT</SelectItem>
+                        <SelectItem value="Yoga">Yoga</SelectItem>
+                        <SelectItem value="CrossFit">CrossFit</SelectItem>
+                        <SelectItem value="Flexibility">Flexibility</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                </div>
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="difficulty">Difficulty Level</Label>
+                    <Select value={programForm.difficultyLevel} onValueChange={(value) => setProgramForm({ ...programForm, difficultyLevel: value })}>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select difficulty" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="Beginner">Beginner</SelectItem>
+                        <SelectItem value="Intermediate">Intermediate</SelectItem>
+                        <SelectItem value="Advanced">Advanced</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="goals">Goals (comma-separated)</Label>
+                    <Input
+                      id="goals"
+                      value={programForm.goals}
+                      onChange={(e) => setProgramForm({ ...programForm, goals: e.target.value })}
+                      placeholder="e.g., Weight Loss, Endurance"
+                    />
+                  </div>
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="description">Description</Label>
+                  <Textarea
+                    id="description"
+                    value={programForm.description}
+                    onChange={(e) => setProgramForm({ ...programForm, description: e.target.value })}
+                    placeholder="Describe the program..."
+                  />
+                </div>
+              </div>
+
+              {/* Schedule Section */}
+              <div className="space-y-4">
+                <h4 className="font-medium text-sm text-gray-700">Schedule</h4>
+                <div className="grid grid-cols-3 gap-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="duration">Duration Per Session</Label>
+                    <Input
+                      id="duration"
+                      value={programForm.durationPerSession}
+                      onChange={(e) => setProgramForm({ ...programForm, durationPerSession: e.target.value })}
+                      placeholder="e.g., 45 minutes"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="sessions">Sessions Per Week</Label>
+                    <Input
+                      id="sessions"
+                      type="number"
+                      min={1}
+                      max={7}
+                      value={programForm.sessionsPerWeek}
+                      onChange={(e) => setProgramForm({ ...programForm, sessionsPerWeek: parseInt(e.target.value) || 1 })}
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="workingHours">Working Hours</Label>
+                    <Input
+                      id="workingHours"
+                      value={programForm.workingHours}
+                      onChange={(e) => setProgramForm({ ...programForm, workingHours: e.target.value })}
+                      placeholder="e.g., 6AM-10AM, 5PM-9PM"
+                    />
+                  </div>
+                </div>
+              </div>
+
+              {/* Faculty Assignment */}
+              <div className="space-y-4">
+                <h4 className="font-medium text-sm text-gray-700">Faculty Assignment</h4>
+                <div className="space-y-2">
+                  <Label htmlFor="faculty">Assigned Faculty</Label>
+                  <Select value={programForm.assignedFaculty} onValueChange={(value) => setProgramForm({ ...programForm, assignedFaculty: value })}>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select trainer" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {sampleFaculty.map((faculty) => (
+                        <SelectItem key={faculty.id} value={faculty.id}>{faculty.name}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+
+              {/* Exercises */}
+              <div className="space-y-4">
+                <div className="flex justify-between items-center">
+                  <h4 className="font-medium text-sm text-gray-700">Exercises</h4>
+                  <Button type="button" variant="outline" size="sm" onClick={addExerciseField}>
+                    <Plus className="h-4 w-4 mr-1" /> Add Exercise
+                  </Button>
+                </div>
+                {programForm.exercises.map((exercise, index) => (
+                  <div key={index} className="grid grid-cols-3 gap-2">
+                    <Input
+                      placeholder="Exercise name"
+                      value={exercise.name}
+                      onChange={(e) => updateExercise(index, 'name', e.target.value)}
+                    />
+                    <Input
+                      type="number"
+                      placeholder="Sets"
+                      value={exercise.sets}
+                      onChange={(e) => updateExercise(index, 'sets', parseInt(e.target.value) || 0)}
+                    />
+                    <Input
+                      placeholder="Reps (e.g., 10-12)"
+                      value={exercise.reps}
+                      onChange={(e) => updateExercise(index, 'reps', e.target.value)}
+                    />
+                  </div>
+                ))}
+              </div>
+
+              {/* Status */}
+              <div className="flex items-center space-x-2">
+                <Switch
+                  id="isActive"
+                  checked={programForm.isActive}
+                  onCheckedChange={(checked) => setProgramForm({ ...programForm, isActive: checked })}
+                />
+                <Label htmlFor="isActive">Active Program</Label>
+              </div>
+            </div>
+            <DialogFooter>
+              <Button variant="outline" onClick={() => setIsRoleMappingDialogOpen(false)}>Cancel</Button>
+              <Button onClick={handleSaveProgram}>{editingProgram ? 'Update' : 'Create'} Program</Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
+
+        {/* Add/Edit Role Rights Dialog Or Popup*/}
+        <Dialog open={isRoleRightsDialogOpen} onOpenChange={setIsRoleRightsDialogOpen}>
+          <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+            <DialogHeader>
+              <DialogTitle>{editingProgram ? 'Edit Company' : 'Add New Company'}</DialogTitle>
+              <DialogDescription>
+                {editingProgram ? 'Update the company details' : 'Create a new company'}
+              </DialogDescription>
+            </DialogHeader>
+            <div className="grid gap-6 py-4">
+              {/* Program Details */}
+              <div className="space-y-4">
+                <h4 className="font-medium text-sm text-gray-700">Company Details</h4>
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="name">Program Name</Label>
+                    <Input
+                      id="name"
+                      value={programForm.name}
+                      onChange={(e) => setProgramForm({ ...programForm, name: e.target.value })}
+                      placeholder="e.g., Weight Loss Transformation"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="category">Category</Label>
+                    <Select value={programForm.category} onValueChange={(value) => setProgramForm({ ...programForm, category: value })}>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select category" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="Strength">Strength</SelectItem>
+                        <SelectItem value="Cardio">Cardio</SelectItem>
+                        <SelectItem value="HIIT">HIIT</SelectItem>
+                        <SelectItem value="Yoga">Yoga</SelectItem>
+                        <SelectItem value="CrossFit">CrossFit</SelectItem>
+                        <SelectItem value="Flexibility">Flexibility</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                </div>
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="difficulty">Difficulty Level</Label>
+                    <Select value={programForm.difficultyLevel} onValueChange={(value) => setProgramForm({ ...programForm, difficultyLevel: value })}>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select difficulty" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="Beginner">Beginner</SelectItem>
+                        <SelectItem value="Intermediate">Intermediate</SelectItem>
+                        <SelectItem value="Advanced">Advanced</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="goals">Goals (comma-separated)</Label>
+                    <Input
+                      id="goals"
+                      value={programForm.goals}
+                      onChange={(e) => setProgramForm({ ...programForm, goals: e.target.value })}
+                      placeholder="e.g., Weight Loss, Endurance"
+                    />
+                  </div>
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="description">Description</Label>
+                  <Textarea
+                    id="description"
+                    value={programForm.description}
+                    onChange={(e) => setProgramForm({ ...programForm, description: e.target.value })}
+                    placeholder="Describe the program..."
+                  />
+                </div>
+              </div>
+
+              {/* Schedule Section */}
+              <div className="space-y-4">
+                <h4 className="font-medium text-sm text-gray-700">Schedule</h4>
+                <div className="grid grid-cols-3 gap-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="duration">Duration Per Session</Label>
+                    <Input
+                      id="duration"
+                      value={programForm.durationPerSession}
+                      onChange={(e) => setProgramForm({ ...programForm, durationPerSession: e.target.value })}
+                      placeholder="e.g., 45 minutes"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="sessions">Sessions Per Week</Label>
+                    <Input
+                      id="sessions"
+                      type="number"
+                      min={1}
+                      max={7}
+                      value={programForm.sessionsPerWeek}
+                      onChange={(e) => setProgramForm({ ...programForm, sessionsPerWeek: parseInt(e.target.value) || 1 })}
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="workingHours">Working Hours</Label>
+                    <Input
+                      id="workingHours"
+                      value={programForm.workingHours}
+                      onChange={(e) => setProgramForm({ ...programForm, workingHours: e.target.value })}
+                      placeholder="e.g., 6AM-10AM, 5PM-9PM"
+                    />
+                  </div>
+                </div>
+              </div>
+
+              {/* Faculty Assignment */}
+              <div className="space-y-4">
+                <h4 className="font-medium text-sm text-gray-700">Faculty Assignment</h4>
+                <div className="space-y-2">
+                  <Label htmlFor="faculty">Assigned Faculty</Label>
+                  <Select value={programForm.assignedFaculty} onValueChange={(value) => setProgramForm({ ...programForm, assignedFaculty: value })}>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select trainer" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {sampleFaculty.map((faculty) => (
+                        <SelectItem key={faculty.id} value={faculty.id}>{faculty.name}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+
+              {/* Exercises */}
+              <div className="space-y-4">
+                <div className="flex justify-between items-center">
+                  <h4 className="font-medium text-sm text-gray-700">Exercises</h4>
+                  <Button type="button" variant="outline" size="sm" onClick={addExerciseField}>
+                    <Plus className="h-4 w-4 mr-1" /> Add Exercise
+                  </Button>
+                </div>
+                {programForm.exercises.map((exercise, index) => (
+                  <div key={index} className="grid grid-cols-3 gap-2">
+                    <Input
+                      placeholder="Exercise name"
+                      value={exercise.name}
+                      onChange={(e) => updateExercise(index, 'name', e.target.value)}
+                    />
+                    <Input
+                      type="number"
+                      placeholder="Sets"
+                      value={exercise.sets}
+                      onChange={(e) => updateExercise(index, 'sets', parseInt(e.target.value) || 0)}
+                    />
+                    <Input
+                      placeholder="Reps (e.g., 10-12)"
+                      value={exercise.reps}
+                      onChange={(e) => updateExercise(index, 'reps', e.target.value)}
+                    />
+                  </div>
+                ))}
+              </div>
+
+              {/* Status */}
+              <div className="flex items-center space-x-2">
+                <Switch
+                  id="isActive"
+                  checked={programForm.isActive}
+                  onCheckedChange={(checked) => setProgramForm({ ...programForm, isActive: checked })}
+                />
+                <Label htmlFor="isActive">Active Program</Label>
+              </div>
+            </div>
+            <DialogFooter>
+              <Button variant="outline" onClick={() => setIsRoleRightsDialogOpen(false)}>Cancel</Button>
+              <Button onClick={handleSaveProgram}>{editingProgram ? 'Update' : 'Create'} Program</Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
+
+        {/* Add/Edit User Dialog Or Popup*/}
+        <Dialog open={isUserDialogOpen} onOpenChange={setIsUserDialogOpen}>
+          <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+            <DialogHeader>
+              <DialogTitle>{editingProgram ? 'Edit Company' : 'Add New Company'}</DialogTitle>
+              <DialogDescription>
+                {editingProgram ? 'Update the company details' : 'Create a new company'}
+              </DialogDescription>
+            </DialogHeader>
+            <div className="grid gap-6 py-4">
+              {/* Program Details */}
+              <div className="space-y-4">
+                <h4 className="font-medium text-sm text-gray-700">Company Details</h4>
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="name">Program Name</Label>
+                    <Input
+                      id="name"
+                      value={programForm.name}
+                      onChange={(e) => setProgramForm({ ...programForm, name: e.target.value })}
+                      placeholder="e.g., Weight Loss Transformation"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="category">Category</Label>
+                    <Select value={programForm.category} onValueChange={(value) => setProgramForm({ ...programForm, category: value })}>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select category" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="Strength">Strength</SelectItem>
+                        <SelectItem value="Cardio">Cardio</SelectItem>
+                        <SelectItem value="HIIT">HIIT</SelectItem>
+                        <SelectItem value="Yoga">Yoga</SelectItem>
+                        <SelectItem value="CrossFit">CrossFit</SelectItem>
+                        <SelectItem value="Flexibility">Flexibility</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                </div>
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="difficulty">Difficulty Level</Label>
+                    <Select value={programForm.difficultyLevel} onValueChange={(value) => setProgramForm({ ...programForm, difficultyLevel: value })}>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select difficulty" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="Beginner">Beginner</SelectItem>
+                        <SelectItem value="Intermediate">Intermediate</SelectItem>
+                        <SelectItem value="Advanced">Advanced</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="goals">Goals (comma-separated)</Label>
+                    <Input
+                      id="goals"
+                      value={programForm.goals}
+                      onChange={(e) => setProgramForm({ ...programForm, goals: e.target.value })}
+                      placeholder="e.g., Weight Loss, Endurance"
+                    />
+                  </div>
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="description">Description</Label>
+                  <Textarea
+                    id="description"
+                    value={programForm.description}
+                    onChange={(e) => setProgramForm({ ...programForm, description: e.target.value })}
+                    placeholder="Describe the program..."
+                  />
+                </div>
+              </div>
+
+              {/* Schedule Section */}
+              <div className="space-y-4">
+                <h4 className="font-medium text-sm text-gray-700">Schedule</h4>
+                <div className="grid grid-cols-3 gap-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="duration">Duration Per Session</Label>
+                    <Input
+                      id="duration"
+                      value={programForm.durationPerSession}
+                      onChange={(e) => setProgramForm({ ...programForm, durationPerSession: e.target.value })}
+                      placeholder="e.g., 45 minutes"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="sessions">Sessions Per Week</Label>
+                    <Input
+                      id="sessions"
+                      type="number"
+                      min={1}
+                      max={7}
+                      value={programForm.sessionsPerWeek}
+                      onChange={(e) => setProgramForm({ ...programForm, sessionsPerWeek: parseInt(e.target.value) || 1 })}
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="workingHours">Working Hours</Label>
+                    <Input
+                      id="workingHours"
+                      value={programForm.workingHours}
+                      onChange={(e) => setProgramForm({ ...programForm, workingHours: e.target.value })}
+                      placeholder="e.g., 6AM-10AM, 5PM-9PM"
+                    />
+                  </div>
+                </div>
+              </div>
+
+              {/* Faculty Assignment */}
+              <div className="space-y-4">
+                <h4 className="font-medium text-sm text-gray-700">Faculty Assignment</h4>
+                <div className="space-y-2">
+                  <Label htmlFor="faculty">Assigned Faculty</Label>
+                  <Select value={programForm.assignedFaculty} onValueChange={(value) => setProgramForm({ ...programForm, assignedFaculty: value })}>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select trainer" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {sampleFaculty.map((faculty) => (
+                        <SelectItem key={faculty.id} value={faculty.id}>{faculty.name}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+
+              {/* Exercises */}
+              <div className="space-y-4">
+                <div className="flex justify-between items-center">
+                  <h4 className="font-medium text-sm text-gray-700">Exercises</h4>
+                  <Button type="button" variant="outline" size="sm" onClick={addExerciseField}>
+                    <Plus className="h-4 w-4 mr-1" /> Add Exercise
+                  </Button>
+                </div>
+                {programForm.exercises.map((exercise, index) => (
+                  <div key={index} className="grid grid-cols-3 gap-2">
+                    <Input
+                      placeholder="Exercise name"
+                      value={exercise.name}
+                      onChange={(e) => updateExercise(index, 'name', e.target.value)}
+                    />
+                    <Input
+                      type="number"
+                      placeholder="Sets"
+                      value={exercise.sets}
+                      onChange={(e) => updateExercise(index, 'sets', parseInt(e.target.value) || 0)}
+                    />
+                    <Input
+                      placeholder="Reps (e.g., 10-12)"
+                      value={exercise.reps}
+                      onChange={(e) => updateExercise(index, 'reps', e.target.value)}
+                    />
+                  </div>
+                ))}
+              </div>
+
+              {/* Status */}
+              <div className="flex items-center space-x-2">
+                <Switch
+                  id="isActive"
+                  checked={programForm.isActive}
+                  onCheckedChange={(checked) => setProgramForm({ ...programForm, isActive: checked })}
+                />
+                <Label htmlFor="isActive">Active Program</Label>
+              </div>
+            </div>
+            <DialogFooter>
+              <Button variant="outline" onClick={() => setIsUserDialogOpen(false)}>Cancel</Button>
+              <Button onClick={handleSaveProgram}>{editingProgram ? 'Update' : 'Create'} Program</Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
+
+        {/* Add/Edit Attribute Dialog Or Popup*/}
+        <Dialog open={isAttributeDialogOpen} onOpenChange={setIsAttributeDialogOpen}>
+          <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+            <DialogHeader>
+              <DialogTitle>{editingProgram ? 'Edit Company' : 'Add New Company'}</DialogTitle>
+              <DialogDescription>
+                {editingProgram ? 'Update the company details' : 'Create a new company'}
+              </DialogDescription>
+            </DialogHeader>
+            <div className="grid gap-6 py-4">
+              {/* Program Details */}
+              <div className="space-y-4">
+                <h4 className="font-medium text-sm text-gray-700">Company Details</h4>
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="name">Program Name</Label>
+                    <Input
+                      id="name"
+                      value={programForm.name}
+                      onChange={(e) => setProgramForm({ ...programForm, name: e.target.value })}
+                      placeholder="e.g., Weight Loss Transformation"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="category">Category</Label>
+                    <Select value={programForm.category} onValueChange={(value) => setProgramForm({ ...programForm, category: value })}>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select category" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="Strength">Strength</SelectItem>
+                        <SelectItem value="Cardio">Cardio</SelectItem>
+                        <SelectItem value="HIIT">HIIT</SelectItem>
+                        <SelectItem value="Yoga">Yoga</SelectItem>
+                        <SelectItem value="CrossFit">CrossFit</SelectItem>
+                        <SelectItem value="Flexibility">Flexibility</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                </div>
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="difficulty">Difficulty Level</Label>
+                    <Select value={programForm.difficultyLevel} onValueChange={(value) => setProgramForm({ ...programForm, difficultyLevel: value })}>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select difficulty" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="Beginner">Beginner</SelectItem>
+                        <SelectItem value="Intermediate">Intermediate</SelectItem>
+                        <SelectItem value="Advanced">Advanced</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="goals">Goals (comma-separated)</Label>
+                    <Input
+                      id="goals"
+                      value={programForm.goals}
+                      onChange={(e) => setProgramForm({ ...programForm, goals: e.target.value })}
+                      placeholder="e.g., Weight Loss, Endurance"
+                    />
+                  </div>
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="description">Description</Label>
+                  <Textarea
+                    id="description"
+                    value={programForm.description}
+                    onChange={(e) => setProgramForm({ ...programForm, description: e.target.value })}
+                    placeholder="Describe the program..."
+                  />
+                </div>
+              </div>
+
+              {/* Schedule Section */}
+              <div className="space-y-4">
+                <h4 className="font-medium text-sm text-gray-700">Schedule</h4>
+                <div className="grid grid-cols-3 gap-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="duration">Duration Per Session</Label>
+                    <Input
+                      id="duration"
+                      value={programForm.durationPerSession}
+                      onChange={(e) => setProgramForm({ ...programForm, durationPerSession: e.target.value })}
+                      placeholder="e.g., 45 minutes"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="sessions">Sessions Per Week</Label>
+                    <Input
+                      id="sessions"
+                      type="number"
+                      min={1}
+                      max={7}
+                      value={programForm.sessionsPerWeek}
+                      onChange={(e) => setProgramForm({ ...programForm, sessionsPerWeek: parseInt(e.target.value) || 1 })}
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="workingHours">Working Hours</Label>
+                    <Input
+                      id="workingHours"
+                      value={programForm.workingHours}
+                      onChange={(e) => setProgramForm({ ...programForm, workingHours: e.target.value })}
+                      placeholder="e.g., 6AM-10AM, 5PM-9PM"
+                    />
+                  </div>
+                </div>
+              </div>
+
+              {/* Faculty Assignment */}
+              <div className="space-y-4">
+                <h4 className="font-medium text-sm text-gray-700">Faculty Assignment</h4>
+                <div className="space-y-2">
+                  <Label htmlFor="faculty">Assigned Faculty</Label>
+                  <Select value={programForm.assignedFaculty} onValueChange={(value) => setProgramForm({ ...programForm, assignedFaculty: value })}>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select trainer" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {sampleFaculty.map((faculty) => (
+                        <SelectItem key={faculty.id} value={faculty.id}>{faculty.name}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+
+              {/* Exercises */}
+              <div className="space-y-4">
+                <div className="flex justify-between items-center">
+                  <h4 className="font-medium text-sm text-gray-700">Exercises</h4>
+                  <Button type="button" variant="outline" size="sm" onClick={addExerciseField}>
+                    <Plus className="h-4 w-4 mr-1" /> Add Exercise
+                  </Button>
+                </div>
+                {programForm.exercises.map((exercise, index) => (
+                  <div key={index} className="grid grid-cols-3 gap-2">
+                    <Input
+                      placeholder="Exercise name"
+                      value={exercise.name}
+                      onChange={(e) => updateExercise(index, 'name', e.target.value)}
+                    />
+                    <Input
+                      type="number"
+                      placeholder="Sets"
+                      value={exercise.sets}
+                      onChange={(e) => updateExercise(index, 'sets', parseInt(e.target.value) || 0)}
+                    />
+                    <Input
+                      placeholder="Reps (e.g., 10-12)"
+                      value={exercise.reps}
+                      onChange={(e) => updateExercise(index, 'reps', e.target.value)}
+                    />
+                  </div>
+                ))}
+              </div>
+
+              {/* Status */}
+              <div className="flex items-center space-x-2">
+                <Switch
+                  id="isActive"
+                  checked={programForm.isActive}
+                  onCheckedChange={(checked) => setProgramForm({ ...programForm, isActive: checked })}
+                />
+                <Label htmlFor="isActive">Active Program</Label>
+              </div>
+            </div>
+            <DialogFooter>
+              <Button variant="outline" onClick={() => setIsAttributeDialogOpen(false)}>Cancel</Button>
               <Button onClick={handleSaveProgram}>{editingProgram ? 'Update' : 'Create'} Program</Button>
             </DialogFooter>
           </DialogContent>
