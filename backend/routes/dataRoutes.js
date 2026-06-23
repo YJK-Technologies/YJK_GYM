@@ -107,6 +107,7 @@ router.post("/Screens",dataController.getScreens)
 router.post("/Permissions",dataController.getPermissions)
 router.post("/Loginorout", dataController.getLoginorout)
 router.post("/gender", dataController.getGender)
+router.post("/addattriData",dataController.addattrihdrData)
 
 
 module.exports = router;
