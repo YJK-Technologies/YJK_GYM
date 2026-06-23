@@ -23,7 +23,6 @@ const WorkoutProgramManagement = () => {
   const { toast } = useToast();
   const [activeTab, setActiveTab] = useState('company');
   const [searchTerm, setSearchTerm] = useState('');
-  const [images, setImages] = useState<(string | null)[]>([null, null, null]);
   const [packageForm, setPackageForm] = useState({
     name: '',
     packageType: 'Monthly' as 'Monthly' | 'Quarterly' | 'Half-Yearly',
@@ -36,10 +35,6 @@ const WorkoutProgramManagement = () => {
     features: '',
   });
 
-  const [isRoleMappingDialogOpen, setIsRoleMappingDialogOpen] = useState(false);
-  const [isRoleRightsDialogOpen, setIsRoleRightsDialogOpen] = useState(false);
-  const [isUserDialogOpen, setIsUserDialogOpen] = useState(false);
-  const [isAttributeDialogOpen, setIsAttributeDialogOpen] = useState(false);
 
   //Company Dialog States
   const [companies, setCompanies] = useState([]);
@@ -117,7 +112,6 @@ const WorkoutProgramManagement = () => {
   const [roles, setRoles] = useState([]);
   const [editingRole, setEditingRole] = useState<any>(null);
   const [isRoleDialogOpen, setIsRoleDialogOpen] = useState(false);
-
   const [roleForm, setRoleForm] = useState({
     company_code: "",
     role_id: "",
@@ -127,7 +121,78 @@ const WorkoutProgramManagement = () => {
     modified_by: "admin",
   });
 
-  // Company CRUD Functions
+  //Role Mapping Dialog States
+  const [roleMappings, setRoleMappings] = useState([]);
+  const [editingRoleMapping, setEditingRoleMapping] = useState<any>(null);
+  const [isRoleMappingDialogOpen, setIsRoleMappingDialogOpen] = useState(false);
+  const [roleMappingForm, setRoleMappingForm] = useState({
+    company_code: "",
+    user_code: "",
+    role_id: "",
+    keyfield: "",
+    created_by: "admin",
+    modified_by: "admin",
+  });
+
+  //Role Rights Dialog States
+  const [roleRights, setRoleRights] = useState([]);
+  const [editingRoleRight, setEditingRoleRight] = useState<any>(null);
+  const [isRoleRightsDialogOpen, setIsRoleRightsDialogOpen] = useState(false);
+  const [roleRightsForm, setRoleRightsForm] = useState({
+    company_code: "",
+    role_id: "",
+    screen_type: "",
+    permission_type: "",
+    keyfield: "",
+    created_by: "admin",
+    modified_by: "admin",
+  });
+
+  //User Dialog States
+  const [users, setUsers] = useState([]);
+  const [editingUser, setEditingUser] = useState<any>(null);
+  const [isUserDialogOpen, setIsUserDialogOpen] = useState(false);
+  const [userForm, setUserForm] = useState({
+    company_code: "",
+    user_code: "",
+    user_name: "",
+    first_name: "",
+    last_name: "",
+    user_password: "",
+    user_status: "Active",
+    log_in_out: "",
+    user_type: "",
+    email_id: "",
+    dob: "",
+    gender: "",
+    role_id: "",
+    super_admin: false,
+    created_by: "admin",
+    modified_by: "admin",
+  });
+  const [images, setImages] = useState<(string | null)[]>(null);
+  const [userImages, setUserImages] = useState<(File | null)[]>(null);
+
+  const handleUserFiles = (file: (File | null)[]) => {
+    setUserImages(file);
+  };
+
+  //Attribute Dialog States
+  const [attributes, setAttributes] = useState([]);
+  const [editingAttribute, setEditingAttribute] = useState<any>(null);
+  const [isAttributeDialogOpen, setIsAttributeDialogOpen] = useState(false);
+  const [attributeForm, setAttributeForm] = useState({
+    company_code: "COMP001",
+    attributeheader_code: "",
+    attributedetails_code: "",
+    attributedetails_name: "",
+    descriptions: "",
+    created_by: "admin",
+    modified_by: "admin",
+  });
+
+
+  //Company CRUD Functions
   const handleAddCompany = () => {
     setEditingCompany(null);
     setCompanyForm({
@@ -297,7 +362,7 @@ const WorkoutProgramManagement = () => {
     setIsCompanyDialogOpen(true);
   };
 
-  // Company Mapping CRUD Functions
+  //Company Mapping CRUD Functions
   const handleAddCompanyMapping = () => {
     setEditingCompanyMapping(null);
     setCompanyMappingForm({
@@ -598,7 +663,7 @@ const WorkoutProgramManagement = () => {
   const handleUpdateRole = async () => {
     try {
       const response = await fetch(`${BASE_URL}/RoleUpdates`, {
-        method: "PUT",
+        method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
@@ -625,7 +690,7 @@ const WorkoutProgramManagement = () => {
 
     try {
       const response = await fetch(`${BASE_URL}/roledelete`, {
-        method: "DELETE",
+        method: "POST",
         headers: {
           "Content-Type": "application/json",
           "modified-by": "admin",
@@ -672,67 +737,503 @@ const WorkoutProgramManagement = () => {
     setIsRoleDialogOpen(true);
   };
 
+  //Role Mapping CRUD Functions
   const handleAddRoleMapping = () => {
-    setEditingCompanyMapping(null);
-    setPackageForm({
-      name: '',
-      packageType: 'Monthly',
-      price: 0,
-      programId: '',
-      facultyId: '',
-      workingHours: '',
-      discountPercentage: 0,
-      isActive: true,
-      features: '',
+    setEditingRoleMapping(null);
+    setRoleMappingForm({
+      company_code: "",
+      user_code: "",
+      role_id: "",
+      keyfield: "",
+      created_by: "admin",
+      modified_by: "admin",
     });
     setIsRoleMappingDialogOpen(true);
   };
 
+  const handleCreateRoleMapping = async () => {
+    try {
+      const response = await fetch(`${BASE_URL}/addUserRoleMappingData`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(roleMappingForm),
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        alert(data.message);
+        // fetchRoleMappings();
+        setIsRoleMappingDialogOpen(false);
+      } else {
+        alert(data.message);
+      }
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  const handleUpdateRoleMapping = async () => {
+    try {
+      const response = await fetch(`${BASE_URL}/RoleMappingUpdate`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(roleMappingForm),
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        alert(data);
+
+        // fetchRoleMappings();
+
+        setEditingRoleMapping(null);
+        setIsRoleMappingDialogOpen(false);
+      }
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  const handleDeleteRoleMapping = async (keyfield: string) => {
+    if (!window.confirm("Delete this role mapping?")) return;
+
+    try {
+      const response = await fetch(`${BASE_URL}/RollMappingDelete`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "modified-by": "admin",
+        },
+        body: JSON.stringify({
+          keyfield: [keyfield],
+        }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        alert(data);
+        // fetchRoleMappings();
+      } else {
+        alert(data.message || data);
+      }
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  const handleSaveRoleMapping = async () => {
+    if (editingRoleMapping) {
+      await handleUpdateRoleMapping();
+    } else {
+      await handleCreateRoleMapping();
+    }
+  };
+
+  const handleEditRoleMapping = (mapping: any) => {
+    setEditingRoleMapping(mapping);
+
+    setRoleMappingForm({
+      company_code: mapping.company_code,
+      user_code: mapping.user_code,
+      role_id: mapping.role_id,
+      keyfield: mapping.keyfield,
+      created_by: mapping.created_by,
+      modified_by: "admin",
+    });
+
+    setIsRoleMappingDialogOpen(true);
+  };
+
+  //Role Rights CRUD Functions
   const handleAddRoleRights = () => {
-    setEditingCompanyMapping(null);
-    setPackageForm({
-      name: '',
-      packageType: 'Monthly',
-      price: 0,
-      programId: '',
-      facultyId: '',
-      workingHours: '',
-      discountPercentage: 0,
-      isActive: true,
-      features: '',
+    setEditingRoleRight(null);
+    setRoleRightsForm({
+      company_code: "COMP001",
+      role_id: "",
+      screen_type: "",
+      permission_type: "",
+      keyfield: "",
+      created_by: "admin",
+      modified_by: "admin",
     });
     setIsRoleRightsDialogOpen(true);
   };
 
-  const handleAddUser = () => {
-    setEditingCompanyMapping(null);
-    setPackageForm({
-      name: '',
-      packageType: 'Monthly',
-      price: 0,
-      programId: '',
-      facultyId: '',
-      workingHours: '',
-      discountPercentage: 0,
-      isActive: true,
-      features: '',
+  const handleCreateRoleRight = async () => {
+    try {
+      const response = await fetch(`${BASE_URL}/adduserscreenmap`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(roleRightsForm),
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        alert(data.message);
+        // fetchRoleRights();
+        setIsRoleRightsDialogOpen(false);
+      } else {
+        alert(data.message);
+      }
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  const handleUpdateRoleRight = async () => {
+    try {
+      const response = await fetch(`${BASE_URL}/updateRoleRights`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(roleRightsForm),
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        alert(data);
+
+        // fetchRoleRights();
+
+        setEditingRoleRight(null);
+        setIsRoleRightsDialogOpen(false);
+      }
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  const handleDeleteRoleRight = async (keyfield: string) => {
+    if (!window.confirm("Delete this Role Right?")) return;
+
+    try {
+      const response = await fetch(`${BASE_URL}/userscreenmapdeleteData`, {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+          "modified-by": "admin",
+        },
+        body: JSON.stringify({
+          keyfield: [keyfield],
+        }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        alert(data);
+        // fetchRoleRights();
+      } else {
+        alert(data.message || data);
+      }
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  const handleSaveRoleRight = async () => {
+    if (editingRoleRight) {
+      await handleUpdateRoleRight();
+    } else {
+      await handleCreateRoleRight();
+    }
+  };
+
+  const handleEditRoleRight = (item: any) => {
+    setEditingRoleRight(item);
+
+    setRoleRightsForm({
+      company_code: item.company_code,
+      role_id: item.role_id,
+      screen_type: item.screen_type,
+      permission_type: item.permission_type,
+      keyfield: item.keyfield,
+      created_by: item.created_by,
+      modified_by: "admin",
     });
+
+    setIsRoleRightsDialogOpen(true);
+  };
+
+  //User CRUD Functions
+  const handleAddUser = () => {
+    setEditingUser(null);
+    setUserForm({
+      company_code: "",
+      user_code: "",
+      user_name: "",
+      first_name: "",
+      last_name: "",
+      user_password: "",
+      user_status: "Active",
+      log_in_out: "",
+      user_type: "",
+      email_id: "",
+      dob: "",
+      gender: "",
+      role_id: "",
+      super_admin: false,
+      created_by: "admin",
+      modified_by: "admin",
+    });
+    setImages([]);
     setIsUserDialogOpen(true);
   };
 
-  const handleAddAttribute = () => {
-    setEditingCompanyMapping(null);
-    setPackageForm({
-      name: '',
-      packageType: 'Monthly',
-      price: 0,
-      programId: '',
-      facultyId: '',
-      workingHours: '',
-      discountPercentage: 0,
-      isActive: true,
-      features: '',
+  const handleCreateUser = async () => {
+    try {
+      const formData = new FormData();
+
+      Object.entries(userForm).forEach(([key, value]) => {
+        formData.append(key, value as string);
+      });
+
+      if (userImages.length > 0) {
+        formData.append("user_img", userImages[0]);
+      }
+
+      const response = await fetch(`${BASE_URL}/useradd`, {
+        method: "POST",
+        body: formData,
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        alert(data.message);
+        setIsUserDialogOpen(false);
+        // fetchUsers();
+      } else {
+        alert(data.message);
+      }
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  const handleUpdateUser = async () => {
+    try {
+      const formData = new FormData();
+
+      Object.entries(userForm).forEach(([key, value]) => {
+        formData.append(key, value as string);
+      });
+
+      if (userImages.length > 0) {
+        formData.append("user_images", userImages[0]);
+      }
+
+      const response = await fetch(`${BASE_URL}/UserUpdates`, {
+        method: "PUT",
+        body: formData,
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        alert(data);
+        setEditingUser(null);
+        setIsUserDialogOpen(false);
+        // fetchUsers();
+      }
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  const handleDeleteUser = async (user_code: string) => {
+    if (!window.confirm("Delete this User?")) return;
+
+    try {
+      const response = await fetch(`${BASE_URL}/userdelete`, {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+          "modified-by": "admin",
+          "company_code": "COMP001",
+        },
+        body: JSON.stringify({
+          user_codes: [user_code],
+        }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        alert(data);
+        // fetchUsers();
+      } else {
+        alert(data.message || data);
+      }
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  const handleSaveUser = async () => {
+    if (editingUser) {
+      await handleUpdateUser();
+    } else {
+      await handleCreateUser();
+    }
+  };
+
+  const handleEditUser = (user: any) => {
+    setEditingUser(user);
+
+    setUserForm({
+      company_code: user.company_code,
+      user_code: user.user_code,
+      user_name: user.user_name,
+      first_name: user.first_name,
+      last_name: user.last_name,
+      user_password: user.user_password,
+      user_status: user.user_status,
+      log_in_out: user.log_in_out,
+      user_type: user.user_type,
+      email_id: user.email_id,
+      dob: user.dob,
+      gender: user.gender,
+      role_id: user.role_id,
+      super_admin: user.super_admin,
+      created_by: user.created_by,
+      modified_by: user.modified_by,
     });
+
+    setImages([]);
+    setIsUserDialogOpen(true);
+  };
+
+  //Attribute CRUD Functions
+  const handleAddAttribute = () => {
+    setEditingAttribute(null);
+    setAttributeForm({
+      company_code: "",
+      attributeheader_code: "",
+      attributedetails_code: "",
+      attributedetails_name: "",
+      descriptions: "",
+      created_by: "admin",
+      modified_by: "admin",
+    });
+    setIsAttributeDialogOpen(true);
+  };
+
+  const handleCreateAttribute = async () => {
+    try {
+      const response = await fetch(`${BASE_URL}/addattridetData`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(attributeForm),
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        alert(data.message);
+        // fetchAttributes();
+        setIsAttributeDialogOpen(false);
+      } else {
+        alert(data.message);
+      }
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  const handleUpdateAttribute = async () => {
+    try {
+      const response = await fetch(`${BASE_URL}/AttributeUpdate`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(attributeForm),
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        alert(data);
+        // fetchAttributes();
+        setEditingAttribute(null);
+        setIsAttributeDialogOpen(false);
+      } else {
+        alert(data.message);
+      }
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  const handleDeleteAttribute = async (
+    attributeheader_code: string,
+    attributedetails_code: string
+  ) => {
+    if (!window.confirm("Delete this Attribute?")) return;
+
+    try {
+      const response = await fetch(`${BASE_URL}/delattridetData`, {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+          "modified-by": "admin",
+          "company_code": "COMP001",
+        },
+        body: JSON.stringify({
+          attributeheader_codesToDelete: [attributeheader_code],
+          attributedetails_codeToDelete: [attributedetails_code],
+        }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        alert(data);
+        // fetchAttributes();
+      } else {
+        alert(data.message || data);
+      }
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  const handleSaveAttribute = async () => {
+    if (editingAttribute) {
+      await handleUpdateAttribute();
+    } else {
+      await handleCreateAttribute();
+    }
+  };
+
+  const handleEditAttribute = (attribute: any) => {
+    setEditingAttribute(attribute);
+
+    setAttributeForm({
+      company_code: attribute.company_code,
+      attributeheader_code: attribute.attributeheader_code,
+      attributedetails_code: attribute.attributedetails_code,
+      attributedetails_name: attribute.attributedetails_name,
+      descriptions: attribute.descriptions,
+      created_by: attribute.created_by,
+      modified_by: "admin",
+    });
+
     setIsAttributeDialogOpen(true);
   };
 
@@ -1006,7 +1507,7 @@ const WorkoutProgramManagement = () => {
             <Card>
               <CardHeader>
                 <CardTitle>Location</CardTitle>
-                <CardDescription>Manage all mapping companies and their details</CardDescription>
+                <CardDescription>Manage all locations and their details</CardDescription>
               </CardHeader>
               <CardContent>
                 <Table>
@@ -1137,7 +1638,7 @@ const WorkoutProgramManagement = () => {
           </TabsContent>
 
           {/* Role Mapping Tab */}
-          {/* <TabsContent value="roleMapping">
+          <TabsContent value="roleMapping">
             <Card>
               <CardHeader>
                 <CardTitle>Role Mapping</CardTitle>
@@ -1156,34 +1657,31 @@ const WorkoutProgramManagement = () => {
                     </TableRow>
                   </TableHeader>
                   <TableBody>
-                    {filteredCompanies.map((program) => (
-                      <TableRow key={program.id}>
-                        <TableCell className="font-medium">{program.name}</TableCell>
-                        <TableCell>
-                          <Badge variant="outline">{program.category}</Badge>
-                        </TableCell>
-                        <TableCell>
-                          <Badge variant={
-                            program.difficultyLevel === 'Beginner' ? 'secondary' :
-                              program.difficultyLevel === 'Intermediate' ? 'default' : 'destructive'
-                          }>
-                            {program.difficultyLevel}
-                          </Badge>
-                        </TableCell>
-                        <TableCell className="text-sm text-gray-600">{program.workingHours}</TableCell>
-                        <TableCell>
-                          {program.isActive ? (
-                            <Badge className="bg-green-500"><CheckCircle className="h-3 w-3 mr-1" />Active</Badge>
-                          ) : (
-                            <Badge variant="secondary"><XCircle className="h-3 w-3 mr-1" />Inactive</Badge>
-                          )}
-                        </TableCell>
+                    {roleMappings.map((item: any) => (
+                      <TableRow key={item.keyfield}>
+                        <TableCell>{item.user_code}</TableCell>
+                        <TableCell>{item.user_name}</TableCell>
+                        <TableCell>{item.role_id}</TableCell>
+                        <TableCell>{item.role_name}</TableCell>
+                        <TableCell>{item.keyfield}</TableCell>
+
                         <TableCell className="text-right">
                           <div className="flex justify-end gap-2">
-                            <Button variant="ghost" size="sm" onClick={() => handleEditCompany(program)}>
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              onClick={() => handleEditRoleMapping(item)}
+                            >
                               <Edit className="h-4 w-4" />
                             </Button>
-                            <Button variant="ghost" size="sm" onClick={() => handleDeleteCompany(program.id)}>
+
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              onClick={() =>
+                                handleDeleteRoleMapping(item.keyfield)
+                              }
+                            >
                               <Trash2 className="h-4 w-4 text-red-500" />
                             </Button>
                           </div>
@@ -1194,14 +1692,14 @@ const WorkoutProgramManagement = () => {
                 </Table>
               </CardContent>
             </Card>
-          </TabsContent> */}
+          </TabsContent>
 
           {/* Role Rights Tab */}
-          {/* <TabsContent value="roleRights">
+          <TabsContent value="roleRights">
             <Card>
               <CardHeader>
                 <CardTitle>Role Rights</CardTitle>
-                <CardDescription>Manage all mapping companies and their details</CardDescription>
+                <CardDescription>Manage all role and their rights detail</CardDescription>
               </CardHeader>
               <CardContent>
                 <Table>
@@ -1215,33 +1713,30 @@ const WorkoutProgramManagement = () => {
                     </TableRow>
                   </TableHeader>
                   <TableBody>
-                    {filteredCompanies.map((program) => (
-                      <TableRow key={program.id}>
-                        <TableCell className="font-medium">{program.name}</TableCell>
-                        <TableCell>
-                          <Badge variant="outline">{program.category}</Badge>
-                        </TableCell>
-                        <TableCell>
-                          <Badge variant={
-                            program.difficultyLevel === 'Beginner' ? 'secondary' :
-                              program.difficultyLevel === 'Intermediate' ? 'default' : 'destructive'
-                          }>
-                            {program.difficultyLevel}
-                          </Badge>
-                        </TableCell>
-                        <TableCell>
-                          {program.isActive ? (
-                            <Badge className="bg-green-500"><CheckCircle className="h-3 w-3 mr-1" />Active</Badge>
-                          ) : (
-                            <Badge variant="secondary"><XCircle className="h-3 w-3 mr-1" />Inactive</Badge>
-                          )}
-                        </TableCell>
+                    {roleRights.map((item: any) => (
+                      <TableRow key={item.keyfield}>
+                        <TableCell>{item.role_id}</TableCell>
+                        <TableCell>{item.screen_type}</TableCell>
+                        <TableCell>{item.permission_type}</TableCell>
+                        <TableCell>{item.keyfield}</TableCell>
+
                         <TableCell className="text-right">
                           <div className="flex justify-end gap-2">
-                            <Button variant="ghost" size="sm" onClick={() => handleEditCompany(program)}>
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              onClick={() => handleEditRoleRight(item)}
+                            >
                               <Edit className="h-4 w-4" />
                             </Button>
-                            <Button variant="ghost" size="sm" onClick={() => handleDeleteCompany(program.id)}>
+
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              onClick={() =>
+                                handleDeleteRoleRight(item.keyfield)
+                              }
+                            >
                               <Trash2 className="h-4 w-4 text-red-500" />
                             </Button>
                           </div>
@@ -1252,10 +1747,10 @@ const WorkoutProgramManagement = () => {
                 </Table>
               </CardContent>
             </Card>
-          </TabsContent> */}
+          </TabsContent>
 
           {/* User Tab */}
-          {/* <TabsContent value="user">
+          <TabsContent value="user">
             <Card>
               <CardHeader>
                 <CardTitle>User</CardTitle>
@@ -1276,36 +1771,31 @@ const WorkoutProgramManagement = () => {
                     </TableRow>
                   </TableHeader>
                   <TableBody>
-                    {filteredCompanies.map((program) => (
-                      <TableRow key={program.id}>
-                        <TableCell className="font-medium">{program.name}</TableCell>
-                        <TableCell>
-                          <Badge variant="outline">{program.category}</Badge>
-                        </TableCell>
-                        <TableCell>
-                          <Badge variant={
-                            program.difficultyLevel === 'Beginner' ? 'secondary' :
-                              program.difficultyLevel === 'Intermediate' ? 'default' : 'destructive'
-                          }>
-                            {program.difficultyLevel}
-                          </Badge>
-                        </TableCell>
-                        <TableCell className="text-sm text-gray-600">{program.workingHours}</TableCell>
-                        <TableCell className="text-sm text-gray-600">{program.workingHours}</TableCell>
-                        <TableCell className="text-sm text-gray-600">{program.workingHours}</TableCell>
-                        <TableCell>
-                          {program.isActive ? (
-                            <Badge className="bg-green-500"><CheckCircle className="h-3 w-3 mr-1" />Active</Badge>
-                          ) : (
-                            <Badge variant="secondary"><XCircle className="h-3 w-3 mr-1" />Inactive</Badge>
-                          )}
-                        </TableCell>
+                    {users.map((user: any) => (
+                      <TableRow key={user.user_code}>
+                        <TableCell>{user.user_code}</TableCell>
+                        <TableCell>{user.user_name}</TableCell>
+                        <TableCell>{user.first_name}</TableCell>
+                        <TableCell>{user.last_name}</TableCell>
+                        <TableCell>{user.user_status}</TableCell>
+                        <TableCell>{user.dob}</TableCell>
+                        <TableCell>{user.gender}</TableCell>
+
                         <TableCell className="text-right">
                           <div className="flex justify-end gap-2">
-                            <Button variant="ghost" size="sm" onClick={() => handleEditCompany(program)}>
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              onClick={() => handleEditUser(user)}
+                            >
                               <Edit className="h-4 w-4" />
                             </Button>
-                            <Button variant="ghost" size="sm" onClick={() => handleDeleteCompany(program.id)}>
+
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              onClick={() => handleDeleteUser(user.user_code)}
+                            >
                               <Trash2 className="h-4 w-4 text-red-500" />
                             </Button>
                           </div>
@@ -1316,10 +1806,10 @@ const WorkoutProgramManagement = () => {
                 </Table>
               </CardContent>
             </Card>
-          </TabsContent> */}
+          </TabsContent>
 
           {/* Attribute Tab */}
-          {/* <TabsContent value="attribute">
+          <TabsContent value="attribute">
             <Card>
               <CardHeader>
                 <CardTitle>Attribute</CardTitle>
@@ -1337,33 +1827,34 @@ const WorkoutProgramManagement = () => {
                     </TableRow>
                   </TableHeader>
                   <TableBody>
-                    {filteredCompanies.map((program) => (
-                      <TableRow key={program.id}>
-                        <TableCell className="font-medium">{program.name}</TableCell>
-                        <TableCell>
-                          <Badge variant="outline">{program.category}</Badge>
-                        </TableCell>
-                        <TableCell>
-                          <Badge variant={
-                            program.difficultyLevel === 'Beginner' ? 'secondary' :
-                              program.difficultyLevel === 'Intermediate' ? 'default' : 'destructive'
-                          }>
-                            {program.difficultyLevel}
-                          </Badge>
-                        </TableCell>
-                        <TableCell>
-                          {program.isActive ? (
-                            <Badge className="bg-green-500"><CheckCircle className="h-3 w-3 mr-1" />Active</Badge>
-                          ) : (
-                            <Badge variant="secondary"><XCircle className="h-3 w-3 mr-1" />Inactive</Badge>
-                          )}
-                        </TableCell>
+                    {attributes.map((attribute: any) => (
+                      <TableRow
+                        key={`${attribute.attributeheader_code}-${attribute.attributedetails_code}`}
+                      >
+                        <TableCell>{attribute.attributeheader_code}</TableCell>
+                        <TableCell>{attribute.attributedetails_code}</TableCell>
+                        <TableCell>{attribute.attributedetails_name}</TableCell>
+                        <TableCell>{attribute.descriptions}</TableCell>
                         <TableCell className="text-right">
                           <div className="flex justify-end gap-2">
-                            <Button variant="ghost" size="sm" onClick={() => handleEditCompany(program)}>
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              onClick={() => handleEditAttribute(attribute)}
+                            >
                               <Edit className="h-4 w-4" />
                             </Button>
-                            <Button variant="ghost" size="sm" onClick={() => handleDeleteCompany(program.id)}>
+
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              onClick={() =>
+                                handleDeleteAttribute(
+                                  attribute.attributeheader_code,
+                                  attribute.attributedetails_code
+                                )
+                              }
+                            >
                               <Trash2 className="h-4 w-4 text-red-500" />
                             </Button>
                           </div>
@@ -1374,7 +1865,7 @@ const WorkoutProgramManagement = () => {
                 </Table>
               </CardContent>
             </Card>
-          </TabsContent> */}
+          </TabsContent>
 
         </Tabs>
 
@@ -1939,14 +2430,14 @@ const WorkoutProgramManagement = () => {
                   </div>
                 </div>
                 <div className="space-y-2">
-                    <Label htmlFor="name">Description</Label>
-                    <Textarea
-                      id="name"
-                      value={roleForm.description}
-                      onChange={(e) => setRoleForm({ ...roleForm, description: e.target.value })}
-                      placeholder="e.g., Weight Loss Transformation"
-                    />
-                  </div>
+                  <Label htmlFor="name">Description</Label>
+                  <Textarea
+                    id="name"
+                    value={roleForm.description}
+                    onChange={(e) => setRoleForm({ ...roleForm, description: e.target.value })}
+                    placeholder="e.g., Weight Loss Transformation"
+                  />
+                </div>
               </div>
             </div>
 
@@ -1958,22 +2449,22 @@ const WorkoutProgramManagement = () => {
         </Dialog>
 
         {/* Add/Edit Role Mapping Dialog Or Popup*/}
-        {/* <Dialog open={isRoleMappingDialogOpen} onOpenChange={setIsRoleMappingDialogOpen}>
+        <Dialog open={isRoleMappingDialogOpen} onOpenChange={setIsRoleMappingDialogOpen}>
           <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
             <DialogHeader>
-              <DialogTitle>{editingCompany ? 'Edit Role Mapping' : 'Add New Role Mapping'}</DialogTitle>
+              <DialogTitle>{editingRoleMapping ? 'Edit Role Mapping' : 'Add New Role Mapping'}</DialogTitle>
               <DialogDescription>
-                {editingCompany ? 'Update the role mapping details' : 'Create a new role mapping'}
+                {editingRoleMapping ? 'Update the role mapping details' : 'Create a new role mapping'}
               </DialogDescription>
             </DialogHeader>
             <div className="grid gap-6 py-4">
               <div className="space-y-4">
-                <h4 className="font-medium text-sm text-gray-700">Company Details</h4>
+                <h4 className="font-medium text-sm text-gray-700">Role Mapping Details</h4>
                 <div className="grid grid-cols-2 gap-4">
 
                   <div className="space-y-2">
                     <Label htmlFor="category">User Code*</Label>
-                    <Select value={companyForm.category} onValueChange={(value) => setCompanyForm({ ...companyForm, category: value })}>
+                    <Select value={roleMappingForm.user_code} onValueChange={(value) => setRoleMappingForm({ ...roleMappingForm, user_code: value })}>
                       <SelectTrigger>
                         <SelectValue placeholder="Select category" />
                       </SelectTrigger>
@@ -1990,7 +2481,7 @@ const WorkoutProgramManagement = () => {
 
                   <div className="space-y-2">
                     <Label htmlFor="category">Role ID*</Label>
-                    <Select value={companyForm.category} onValueChange={(value) => setCompanyForm({ ...companyForm, category: value })}>
+                    <Select value={roleMappingForm.role_id} onValueChange={(value) => setRoleMappingForm({ ...roleMappingForm, role_id: value })}>
                       <SelectTrigger>
                         <SelectValue placeholder="Select category" />
                       </SelectTrigger>
@@ -2009,28 +2500,28 @@ const WorkoutProgramManagement = () => {
             </div>
             <DialogFooter>
               <Button variant="outline" onClick={() => setIsRoleMappingDialogOpen(false)}>Cancel</Button>
-              <Button onClick={handleSaveProgram}>{editingCompany ? 'Update' : 'Create'} Role Mapping</Button>
+              <Button onClick={handleSaveRoleMapping}>{editingRoleMapping ? 'Update' : 'Create'} Role Mapping</Button>
             </DialogFooter>
           </DialogContent>
-        </Dialog> */}
+        </Dialog>
 
         {/* Add/Edit Role Rights Dialog Or Popup*/}
-        {/* <Dialog open={isRoleRightsDialogOpen} onOpenChange={setIsRoleRightsDialogOpen}>
+        <Dialog open={isRoleRightsDialogOpen} onOpenChange={setIsRoleRightsDialogOpen}>
           <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
             <DialogHeader>
-              <DialogTitle>{editingCompany ? 'Edit Role Right' : 'Add New Role Right'}</DialogTitle>
+              <DialogTitle>{editingRoleRight ? 'Edit Role Rights' : 'Add New Role Rights'}</DialogTitle>
               <DialogDescription>
-                {editingCompany ? 'Update the role right details' : 'Create a new role right'}
+                {editingRoleRight ? 'Update the role rights details' : 'Create a new role rights'}
               </DialogDescription>
             </DialogHeader>
             <div className="grid gap-6 py-4">
               <div className="space-y-4">
-                <h4 className="font-medium text-sm text-gray-700">Company Details</h4>
+                <h4 className="font-medium text-sm text-gray-700">Role Rights Details</h4>
                 <div className="grid grid-cols-2 gap-4">
 
                   <div className="space-y-2">
                     <Label htmlFor="category">Role ID*</Label>
-                    <Select value={companyForm.category} onValueChange={(value) => setCompanyForm({ ...companyForm, category: value })}>
+                    <Select value={roleRightsForm.role_id} onValueChange={(value) => setRoleRightsForm({ ...roleRightsForm, role_id: value })}>
                       <SelectTrigger>
                         <SelectValue placeholder="Select category" />
                       </SelectTrigger>
@@ -2047,7 +2538,7 @@ const WorkoutProgramManagement = () => {
 
                   <div className="space-y-2">
                     <Label htmlFor="category">Screen Type*</Label>
-                    <Select value={companyForm.category} onValueChange={(value) => setCompanyForm({ ...companyForm, category: value })}>
+                    <Select value={roleRightsForm.screen_type} onValueChange={(value) => setRoleRightsForm({ ...roleRightsForm, screen_type: value })}>
                       <SelectTrigger>
                         <SelectValue placeholder="Select category" />
                       </SelectTrigger>
@@ -2064,7 +2555,7 @@ const WorkoutProgramManagement = () => {
 
                   <div className="space-y-2">
                     <Label htmlFor="category">Permission Type*</Label>
-                    <Select value={companyForm.category} onValueChange={(value) => setCompanyForm({ ...companyForm, category: value })}>
+                    <Select value={roleRightsForm.permission_type} onValueChange={(value) => setRoleRightsForm({ ...roleRightsForm, permission_type: value })}>
                       <SelectTrigger>
                         <SelectValue placeholder="Select category" />
                       </SelectTrigger>
@@ -2084,18 +2575,18 @@ const WorkoutProgramManagement = () => {
             </div>
             <DialogFooter>
               <Button variant="outline" onClick={() => setIsRoleRightsDialogOpen(false)}>Cancel</Button>
-              <Button onClick={handleSaveProgram}>{editingCompany ? 'Update' : 'Create'} Role Right</Button>
+              <Button onClick={handleSaveRoleRight}>{editingRoleRight ? 'Update' : 'Create'} Role Rights</Button>
             </DialogFooter>
           </DialogContent>
-        </Dialog> */}
+        </Dialog>
 
         {/* Add/Edit User Dialog Or Popup*/}
-        {/* <Dialog open={isUserDialogOpen} onOpenChange={setIsUserDialogOpen}>
+        <Dialog open={isUserDialogOpen} onOpenChange={setIsUserDialogOpen}>
           <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
             <DialogHeader>
-              <DialogTitle>{editingCompany ? 'Edit User' : 'Add User'}</DialogTitle>
+              <DialogTitle>{editingUser ? 'Edit User' : 'Add User'}</DialogTitle>
               <DialogDescription>
-                {editingCompany ? 'Update the User details' : 'Create a new User'}
+                {editingUser ? 'Update the User details' : 'Create a new User'}
               </DialogDescription>
             </DialogHeader>
             <div className="grid gap-6 py-4">
@@ -2105,7 +2596,7 @@ const WorkoutProgramManagement = () => {
 
                   <div className="space-y-2">
                     <Label htmlFor="UserCode">User Code</Label>
-                    <Select value={companyForm.category} onValueChange={(value) => setCompanyForm({ ...companyForm, category: value })}>
+                    <Select value={userForm.user_code} onValueChange={(value) => setUserForm({ ...userForm, user_code: value })}>
                       <SelectTrigger>
                         <SelectValue placeholder="Select User Code" />
                       </SelectTrigger>
@@ -2124,8 +2615,8 @@ const WorkoutProgramManagement = () => {
                     <Label htmlFor="name">User Name</Label>
                     <Input
                       id="UserName"
-                      value={companyForm.name}
-                      onChange={(e) => setCompanyForm({ ...companyForm, name: e.target.value })}
+                      value={userForm.user_name}
+                      onChange={(e) => setUserForm({ ...userForm, user_name: e.target.value })}
                       placeholder="e.g., User Name"
                     />
                   </div>
@@ -2133,8 +2624,8 @@ const WorkoutProgramManagement = () => {
                     <Label htmlFor="FirstName">First Name</Label>
                     <Input
                       id="FirstName"
-                      value={companyForm.name}
-                      onChange={(e) => setCompanyForm({ ...companyForm, name: e.target.value })}
+                      value={userForm.first_name}
+                      onChange={(e) => setUserForm({ ...userForm, first_name: e.target.value })}
                       placeholder="e.g., First Name"
                     />
                   </div>
@@ -2142,8 +2633,8 @@ const WorkoutProgramManagement = () => {
                     <Label htmlFor="LastName">Last Name</Label>
                     <Input
                       id="LastName"
-                      value={companyForm.name}
-                      onChange={(e) => setCompanyForm({ ...companyForm, name: e.target.value })}
+                      value={userForm.last_name}
+                      onChange={(e) => setUserForm({ ...userForm, last_name: e.target.value })}
                       placeholder="e.g., LastName"
                     />
                   </div>
@@ -2151,14 +2642,14 @@ const WorkoutProgramManagement = () => {
                     <Label htmlFor="name">Password</Label>
                     <Input
                       id="Password"
-                      value={companyForm.name}
-                      onChange={(e) => setCompanyForm({ ...companyForm, name: e.target.value })}
+                      value={userForm.user_password}
+                      onChange={(e) => setUserForm({ ...userForm, user_password: e.target.value })}
                       placeholder="e.g., Password"
                     />
                   </div>
                   <div className="space-y-2">
                     <Label htmlFor="UserCode">Status</Label>
-                    <Select value={companyForm.category} onValueChange={(value) => setCompanyForm({ ...companyForm, category: value })}>
+                    <Select value={userForm.user_status} onValueChange={(value) => setUserForm({ ...userForm, user_status: value })}>
                       <SelectTrigger>
                         <SelectValue placeholder="Select Status" />
                       </SelectTrigger>
@@ -2175,7 +2666,7 @@ const WorkoutProgramManagement = () => {
 
                   <div className="space-y-2">
                     <Label htmlFor="Log">Log in/out</Label>
-                    <Select value={companyForm.category} onValueChange={(value) => setCompanyForm({ ...companyForm, category: value })}>
+                    <Select value={userForm.log_in_out} onValueChange={(value) => setUserForm({ ...userForm, log_in_out: value })}>
                       <SelectTrigger>
                         <SelectValue placeholder="Select Log in Or out" />
                       </SelectTrigger>
@@ -2192,7 +2683,7 @@ const WorkoutProgramManagement = () => {
 
                   <div className="space-y-2">
                     <Label htmlFor="RoleID">Role ID</Label>
-                    <Select value={companyForm.category} onValueChange={(value) => setCompanyForm({ ...companyForm, category: value })}>
+                    <Select value={userForm.role_id} onValueChange={(value) => setUserForm({ ...userForm, role_id: value })}>
                       <SelectTrigger>
                         <SelectValue placeholder="Select Role ID" />
                       </SelectTrigger>
@@ -2211,8 +2702,8 @@ const WorkoutProgramManagement = () => {
                     <Label htmlFor="Email">Email</Label>
                     <Input
                       id="Email"
-                      value={companyForm.name}
-                      onChange={(e) => setCompanyForm({ ...companyForm, name: e.target.value })}
+                      value={userForm.email_id}
+                      onChange={(e) => setUserForm({ ...userForm, email_id: e.target.value })}
                       placeholder="e.g., Email"
                     />
                   </div>
@@ -2220,14 +2711,14 @@ const WorkoutProgramManagement = () => {
                     <Label htmlFor="DOB">DOB</Label>
                     <Input
                       id="DOB"
-                      value={companyForm.name}
-                      onChange={(e) => setCompanyForm({ ...companyForm, name: e.target.value })}
+                      value={userForm.dob}
+                      onChange={(e) => setUserForm({ ...userForm, dob: e.target.value })}
                       placeholder="e.g., DOB"
                     />
                   </div>
                   <div className="space-y-2">
                     <Label htmlFor="Gender">Gender</Label>
-                    <Select value={companyForm.category} onValueChange={(value) => setCompanyForm({ ...companyForm, category: value })}>
+                    <Select value={userForm.gender} onValueChange={(value) => setUserForm({ ...userForm, gender: value })}>
                       <SelectTrigger>
                         <SelectValue placeholder="SelectGender" />
                       </SelectTrigger>
@@ -2245,8 +2736,8 @@ const WorkoutProgramManagement = () => {
                   <div className="space-x-2">
                     <Switch
                       id="isActive"
-                      checked={companyForm.isActive}
-                      onCheckedChange={(checked) => setCompanyForm({ ...companyForm, isActive: checked })}
+                      checked={userForm.super_admin}
+                      onCheckedChange={(checked) => setUserForm({ ...userForm, super_admin: checked })}
                     />
                     <Label htmlFor="isActive">Super Admin</Label>
                   </div>
@@ -2257,24 +2748,25 @@ const WorkoutProgramManagement = () => {
                 label="User Image"
                 images={images}
                 onImagesChange={setImages}
+                onFilesChange={handleUserFiles}
                 maxImages={1}
               />
 
             </div>
             <DialogFooter>
               <Button variant="outline" onClick={() => setIsUserDialogOpen(false)}>Cancel</Button>
-              <Button onClick={handleSaveProgram}>{editingCompany ? 'Update' : 'Create'} Program</Button>
+              <Button onClick={handleSaveUser}>{editingUser ? 'Update' : 'Create'} Program</Button>
             </DialogFooter>
           </DialogContent>
-        </Dialog> */}
+        </Dialog>
 
         {/* Add/Edit Attribute Dialog Or Popup*/}
-        {/* <Dialog open={isAttributeDialogOpen} onOpenChange={setIsAttributeDialogOpen}>
+        <Dialog open={isAttributeDialogOpen} onOpenChange={setIsAttributeDialogOpen}>
           <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
             <DialogHeader>
-              <DialogTitle>{editingCompany ? 'Edit Attribute' : 'Add Attribute'}</DialogTitle>
+              <DialogTitle>{editingAttribute ? 'Edit Attribute' : 'Add Attribute'}</DialogTitle>
               <DialogDescription>
-                {editingCompany ? 'Update the Attribute details' : 'Create a new Attribute'}
+                {editingAttribute ? 'Update the Attribute details' : 'Create a new Attribute'}
               </DialogDescription>
             </DialogHeader>
             <div className="grid gap-6 py-4">
@@ -2284,7 +2776,7 @@ const WorkoutProgramManagement = () => {
 
                   <div className="space-y-2">
                     <Label htmlFor="Code">Code</Label>
-                    <Select value={companyForm.category} onValueChange={(value) => setCompanyForm({ ...companyForm, category: value })}>
+                    <Select value={attributeForm.attributeheader_code} onValueChange={(value) => setAttributeForm({ ...attributeForm, attributeheader_code: value })}>
                       <SelectTrigger>
                         <SelectValue placeholder="Select Code" />
                       </SelectTrigger>
@@ -2303,8 +2795,8 @@ const WorkoutProgramManagement = () => {
                     <Label htmlFor="SubCode">Sub Code</Label>
                     <Input
                       id="SubCode"
-                      value={companyForm.name}
-                      onChange={(e) => setCompanyForm({ ...companyForm, name: e.target.value })}
+                      value={attributeForm.attributedetails_code}
+                      onChange={(e) => setAttributeForm({ ...attributeForm, attributedetails_code: e.target.value })}
                       placeholder="e.g., SubCode"
                     />
                   </div>
@@ -2312,8 +2804,8 @@ const WorkoutProgramManagement = () => {
                     <Label htmlFor="DetailsName">Details Name</Label>
                     <Input
                       id="DetailsName"
-                      value={companyForm.name}
-                      onChange={(e) => setCompanyForm({ ...companyForm, name: e.target.value })}
+                      value={attributeForm.attributedetails_name}
+                      onChange={(e) => setAttributeForm({ ...attributeForm, attributedetails_name: e.target.value })}
                       placeholder="e.g., Details Name"
                     />
                   </div>
@@ -2323,8 +2815,8 @@ const WorkoutProgramManagement = () => {
                   <Label htmlFor="description">Description</Label>
                   <Textarea
                     id="description"
-                    value={companyForm.description}
-                    onChange={(e) => setCompanyForm({ ...companyForm, description: e.target.value })}
+                    value={attributeForm.descriptions}
+                    onChange={(e) => setAttributeForm({ ...attributeForm, descriptions: e.target.value })}
                     placeholder="Description..."
                   />
                 </div>
@@ -2333,10 +2825,10 @@ const WorkoutProgramManagement = () => {
             </div>
             <DialogFooter>
               <Button variant="outline" onClick={() => setIsAttributeDialogOpen(false)}>Cancel</Button>
-              <Button onClick={handleSaveProgram}>{editingCompany ? 'Update' : 'Create'} Program</Button>
+              <Button onClick={handleSaveAttribute}>{editingAttribute ? 'Update' : 'Create'} Program</Button>
             </DialogFooter>
           </DialogContent>
-        </Dialog> */}
+        </Dialog>
 
       </main>
     </div>
