@@ -47,7 +47,7 @@ const WorkoutProgramManagement = () => {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          company_code: "AKPON007",
+          company_code: "YJK",
         }),
       });
 
@@ -71,7 +71,7 @@ const WorkoutProgramManagement = () => {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          company_code: "AKPON007",
+          company_code: "YJK",
         }),
       });
 
@@ -95,7 +95,7 @@ const WorkoutProgramManagement = () => {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          company_code: "AKPON007",
+          company_code: "YJK",
         }),
       });
 
@@ -214,7 +214,7 @@ const WorkoutProgramManagement = () => {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          company_code: "AKPON007",
+          company_code: "YJK",
         }),
       });
 
@@ -239,7 +239,7 @@ const WorkoutProgramManagement = () => {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          company_code: "AKPON007",
+          company_code: "YJK",
         }),
       });
 
@@ -264,7 +264,7 @@ const WorkoutProgramManagement = () => {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          company_code: "AKPON007",
+          company_code: "YJK",
         }),
       });
 
@@ -372,7 +372,7 @@ const WorkoutProgramManagement = () => {
   const [editingCompanyMapping, setEditingCompanyMapping] = useState<any>(null);
   const [isCompanyMappingDialogOpen, setIsCompanyMappingDialogOpen] = useState(false);
   const [companyMappingForm, setCompanyMappingForm] = useState({
-    company_code: "",
+    company_code: "YJK",
     user_code: "",
     company_no: "",
     location_no: "",
@@ -412,7 +412,7 @@ const WorkoutProgramManagement = () => {
   const [editingRole, setEditingRole] = useState<any>(null);
   const [isRoleDialogOpen, setIsRoleDialogOpen] = useState(false);
   const [roleForm, setRoleForm] = useState({
-    company_code: "",
+    company_code: "YJK",
     role_id: "",
     role_name: "",
     description: "",
@@ -426,7 +426,7 @@ const WorkoutProgramManagement = () => {
   const [editingRoleMapping, setEditingRoleMapping] = useState<any>(null);
   const [isRoleMappingDialogOpen, setIsRoleMappingDialogOpen] = useState(false);
   const [roleMappingForm, setRoleMappingForm] = useState({
-    company_code: "",
+    company_code: "YJK",
     user_code: "",
     role_id: "",
     keyfield: "",
@@ -440,7 +440,7 @@ const WorkoutProgramManagement = () => {
   const [editingRoleRight, setEditingRoleRight] = useState<any>(null);
   const [isRoleRightsDialogOpen, setIsRoleRightsDialogOpen] = useState(false);
   const [roleRightsForm, setRoleRightsForm] = useState({
-    company_code: "",
+    company_code: "YJK",
     role_id: "",
     screen_type: "",
     permission_type: "",
@@ -528,6 +528,13 @@ const WorkoutProgramManagement = () => {
     descriptions: "",
     created_by: "admin",
     modified_by: "admin",
+  });
+
+  //Add Attribute Header Dialog States
+  const [isAttributeHdrDialogOpen, setIsAttributeHdrDialogOpen] = useState(false);
+  const [attributeHdrForm, setAttributeHdrForm] = useState({
+    company_code: "COMP001", attributeheader_code: "", attributeheader_name: "", status: "Active", created_by: "admin", modified_by: "admin", tempstr1: "", tempstr2: "",
+    tempstr3: "", tempstr4: "", datetime1: "", datetime2: "", datetime3: "", datetime4: "",
   });
 
 
@@ -2269,6 +2276,56 @@ const WorkoutProgramManagement = () => {
     setIsAttributeDialogOpen(true);
   };
 
+  //add Attribute CRUD Functions
+  const handleAddAttributeHdr = () => {
+    setIsAttributeHdrDialogOpen(true);
+    setAttributeHdrForm({
+      company_code: "COMP001",
+      attributeheader_code: "",
+      attributeheader_name: "",
+      status: "Active",
+      created_by: "admin",
+      modified_by: "admin",
+      tempstr1: "",
+      tempstr2: "",
+      tempstr3: "",
+      tempstr4: "",
+      datetime1: "",
+      datetime2: "",
+      datetime3: "",
+      datetime4: "",
+    });
+  };
+
+  const handleCreateAttributeHdr = async () => {
+    try {
+      const response = await fetch(`${BASE_URL}/addattriData`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(attributeHdrForm),
+        }
+      );
+
+      const data = await response.json();
+
+      if (response.ok) {
+        alert(data.message);
+
+        setIsAttributeHdrDialogOpen(false);
+
+        // fetchAttributeHdr(); // if list api available
+      } else {
+        alert(data.message);
+      }
+    } catch (err) {
+      console.error(err);
+      alert("Something went wrong");
+    }
+  };
+
   const filteredCompanies = companies.filter(p =>
     p.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
     p.category.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -2903,10 +2960,11 @@ const WorkoutProgramManagement = () => {
 
         {/* Add/Edit Company Dialog Or Popup*/}
         <Dialog open={isCompanyDialogOpen} onOpenChange={(open) => {
-          if(!open){
+          if (!open) {
             setSubmittedCompany(false);
           }
-          setIsCompanyDialogOpen(open); }}>
+          setIsCompanyDialogOpen(open);
+        }}>
           <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
 
             <DialogHeader>
@@ -3171,10 +3229,11 @@ const WorkoutProgramManagement = () => {
 
         {/* Add/Edit Company Mapping Dialog Or Popup*/}
         <Dialog open={isCompanyMappingDialogOpen} onOpenChange={(open) => {
-          if(!open){
+          if (!open) {
             setSubmittedCompanyMapping(false);
           }
-          setIsCompanyMappingDialogOpen(open); }}>
+          setIsCompanyMappingDialogOpen(open);
+        }}>
           <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
             <DialogHeader>
               <DialogTitle>{editingCompanyMapping ? 'Edit Company Mapping' : 'Add New Company Mapping'}</DialogTitle>
@@ -3288,10 +3347,11 @@ const WorkoutProgramManagement = () => {
 
         {/* Add/Edit Location Dialog Or Popup*/}
         <Dialog open={isLocationDialogOpen} onOpenChange={(open) => {
-          if(!open){
+          if (!open) {
             setSubmittedLocation(false);
           }
-          setIsLocationDialogOpen(open); }}>
+          setIsLocationDialogOpen(open);
+        }}>
           <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
             <DialogHeader>
               <DialogTitle>{editingLocation ? 'Edit Location' : 'Add New Location'}</DialogTitle>
@@ -3484,10 +3544,11 @@ const WorkoutProgramManagement = () => {
 
         {/* Add/Edit Role Dialog Or Popup*/}
         <Dialog open={isRoleDialogOpen} onOpenChange={(open) => {
-          if(!open){
+          if (!open) {
             setSubmittedRole(false);
           }
-          setIsRoleDialogOpen(open); }}>
+          setIsRoleDialogOpen(open);
+        }}>
           <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
             <DialogHeader>
               <DialogTitle>{editingRole ? 'Edit Role' : 'Add New Role'}</DialogTitle>
@@ -3544,10 +3605,11 @@ const WorkoutProgramManagement = () => {
 
         {/* Add/Edit Role Mapping Dialog Or Popup*/}
         <Dialog open={isRoleMappingDialogOpen} onOpenChange={(open) => {
-          if(!open){
+          if (!open) {
             setSubmittedRoleMapping(false);
           }
-          setIsRoleMappingDialogOpen(open); }}>
+          setIsRoleMappingDialogOpen(open);
+        }}>
           <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
             <DialogHeader>
               <DialogTitle>{editingRoleMapping ? 'Edit Role Mapping' : 'Add New Role Mapping'}</DialogTitle>
@@ -3615,7 +3677,8 @@ const WorkoutProgramManagement = () => {
           if (!open) {
             setSubmittedRoleRights(false);
           }
-          setIsRoleRightsDialogOpen(open); }}>
+          setIsRoleRightsDialogOpen(open);
+        }}>
           <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
             <DialogHeader>
               <DialogTitle>{editingRoleRight ? 'Edit Role Rights' : 'Add New Role Rights'}</DialogTitle>
@@ -3917,7 +3980,7 @@ const WorkoutProgramManagement = () => {
           </DialogContent>
         </Dialog>
 
-        {/* Add/Edit Attribute Dialog Or Popup*/}
+        {/* Add/Edit Attribute Detail Dialog Or Popup*/}
         <Dialog open={isAttributeDialogOpen} onOpenChange={setIsAttributeDialogOpen}>
           <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
             <DialogHeader>
@@ -3932,20 +3995,30 @@ const WorkoutProgramManagement = () => {
                 <div className="grid grid-cols-2 gap-4">
 
                   <div className="space-y-2">
-                    <Label htmlFor="Code">Code</Label>
-                    <Select value={attributeForm.attributeheader_code} onValueChange={(value) => setAttributeForm({ ...attributeForm, attributeheader_code: value })}>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select Code" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="Strength">Strength</SelectItem>
-                        <SelectItem value="Cardio">Cardio</SelectItem>
-                        <SelectItem value="HIIT">HIIT</SelectItem>
-                        <SelectItem value="Yoga">Yoga</SelectItem>
-                        <SelectItem value="CrossFit">CrossFit</SelectItem>
-                        <SelectItem value="Flexibility">Flexibility</SelectItem>
-                      </SelectContent>
-                    </Select>
+                    <Label htmlFor="attributeheader_code">Code*</Label>
+                    <div className="flex gap-2">
+                      <Select
+                        value={attributeForm.attributeheader_code}
+                        onValueChange={(value) =>
+                          setAttributeForm({
+                            ...attributeForm,
+                            attributeheader_code: value,
+                          })
+                        }
+                      >
+                        <SelectTrigger className="flex-1">
+                          <SelectValue placeholder="Select Code" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="Strength">Strength</SelectItem>
+                          <SelectItem value="Cardio">Cardio</SelectItem>
+                          <SelectItem value="Flexibility">Flexibility</SelectItem>
+                        </SelectContent>
+                      </Select>
+                      <Button type="button" variant="outline" onClick={handleAddAttributeHdr}>
+                        <Plus className="h-4 w-4" />
+                      </Button>
+                    </div>
                   </div>
 
                   <div className="space-y-2">
@@ -3983,6 +4056,84 @@ const WorkoutProgramManagement = () => {
             <DialogFooter>
               <Button variant="outline" onClick={() => setIsAttributeDialogOpen(false)}>Cancel</Button>
               <Button onClick={handleSaveAttribute}>{editingAttribute ? 'Update' : 'Create'} Program</Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
+
+        {/* Add Attribute Header Dialog  Or Popup*/}
+        <Dialog
+          open={isAttributeHdrDialogOpen}
+          onOpenChange={setIsAttributeHdrDialogOpen}
+        >
+          <DialogContent className="max-w-md">
+            <DialogHeader>
+              <DialogTitle>Add Attribute Hdr</DialogTitle>
+
+              <DialogDescription>
+                Create a new Attribute Header
+              </DialogDescription>
+            </DialogHeader>
+
+            <div className="grid gap-4 py-4">
+
+              <div className="space-y-2">
+                <Label>Code*</Label>
+
+                <Input
+                  value={attributeHdrForm.attributeheader_code}
+                  onChange={(e) =>
+                    setAttributeHdrForm({
+                      ...attributeHdrForm,
+                      attributeheader_code: e.target.value,
+                    })
+                  }
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label>Name*</Label>
+
+                <Input
+                  value={attributeHdrForm.attributeheader_name}
+                  onChange={(e) =>
+                    setAttributeHdrForm({
+                      ...attributeHdrForm,
+                      attributeheader_name: e.target.value,
+
+                    })
+                  }
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label>Status*</Label>
+                <Select
+                  value={attributeHdrForm.status}
+                  onValueChange={(value) =>
+                    setAttributeHdrForm({
+                      ...attributeHdrForm,
+                      status: value,
+
+                    })
+                  }
+                >
+                  <SelectTrigger>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="Active">Active</SelectItem>
+                    <SelectItem value="Inactive">Inactive</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+
+            <DialogFooter>
+              <Button variant="outline" onClick={() => setIsAttributeHdrDialogOpen(false)}>
+                Cancel
+              </Button>
+
+              <Button onClick={handleCreateAttributeHdr}>Save</Button>
             </DialogFooter>
           </DialogContent>
         </Dialog>
