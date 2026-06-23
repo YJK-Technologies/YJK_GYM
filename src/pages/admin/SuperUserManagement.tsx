@@ -441,6 +441,7 @@ const WorkoutProgramManagement = () => {
   });
 
   //Add Attribute Header Dialog States
+  const [submittedAttributeHdr, setSubmittedAttributeHdr] = useState(false);
   const [isAttributeHdrDialogOpen, setIsAttributeHdrDialogOpen] = useState(false);
   const [attributeHdrForm, setAttributeHdrForm] = useState({
     company_code: "COMP001", attributeheader_code: "", attributeheader_name: "", status: "Active", created_by: "admin", modified_by: "admin", tempstr1: "", tempstr2: "",
@@ -1986,9 +1987,9 @@ const WorkoutProgramManagement = () => {
 
   //add Attribute CRUD Functions
   const handleAddAttributeHdr = () => {
-    setIsAttributeHdrDialogOpen(true);
+    fetchStatus();
     setAttributeHdrForm({
-      company_code: "COMP001",
+      company_code: "YJK",
       attributeheader_code: "",
       attributeheader_name: "",
       status: "Active",
@@ -2003,9 +2004,31 @@ const WorkoutProgramManagement = () => {
       datetime3: "",
       datetime4: "",
     });
+    setIsAttributeHdrDialogOpen(true);
+  };
+
+  const validateAttributeHdr = () => {
+    if (
+      !attributeHdrForm.attributeheader_code ||
+      !attributeHdrForm.attributeheader_name ||
+      !attributeHdrForm.status
+    ) {
+      toast({
+        title: "Required Fields",
+        description: "Please fill all required fields.",
+        variant: "destructive",
+      });
+      return false;
+    }
+
+    return true;
   };
 
   const handleCreateAttributeHdr = async () => {
+    setSubmittedAttributeHdr(true);
+
+    if (!validateAttributeHdr()) return;
+
     try {
       const response = await fetch(`${BASE_URL}/addattriData`,
         {
@@ -2023,8 +2046,7 @@ const WorkoutProgramManagement = () => {
         alert(data.message);
 
         setIsAttributeHdrDialogOpen(false);
-
-        // fetchAttributeHdr(); // if list api available
+        setSubmittedAttributeHdr(true);
       } else {
         alert(data.message);
       }
@@ -3385,8 +3407,7 @@ const WorkoutProgramManagement = () => {
           if (!open) {
             setSubmittedRoleRights(false);
           }
-          setIsRoleRightsDialogOpen(open);
-        }}>
+          setIsRoleRightsDialogOpen(open); }}>
           <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
             <DialogHeader>
               <DialogTitle>{editingRoleRight ? 'Edit Role Rights' : 'Add New Role Rights'}</DialogTitle>
@@ -3668,20 +3689,20 @@ const WorkoutProgramManagement = () => {
                     <div className="flex gap-2">
                       <Select
                         value={attributeForm.attributeheader_code}
-                        onValueChange={(value) =>
-                          setAttributeForm({
-                            ...attributeForm,
-                            attributeheader_code: value,
-                          })
-                        }
+                        onValueChange={(value) => setAttributeForm({ ...attributeForm, attributeheader_code: value, })}
                       >
                         <SelectTrigger className="flex-1">
                           <SelectValue placeholder="Select Code" />
                         </SelectTrigger>
                         <SelectContent>
-                          <SelectItem value="Strength">Strength</SelectItem>
-                          <SelectItem value="Cardio">Cardio</SelectItem>
-                          <SelectItem value="Flexibility">Flexibility</SelectItem>
+                          {status.map((status: any) => (
+                            <SelectItem
+                              key={status.attributedetails_code}
+                              value={status.attributedetails_code}
+                            >
+                              {status.attributedetails_name}
+                            </SelectItem>
+                          ))}
                         </SelectContent>
                       </Select>
                       <Button type="button" variant="outline" onClick={handleAddAttributeHdr}>
@@ -3730,78 +3751,64 @@ const WorkoutProgramManagement = () => {
         </Dialog>
 
         {/* Add Attribute Header Dialog  Or Popup*/}
-        <Dialog
-          open={isAttributeHdrDialogOpen}
-          onOpenChange={setIsAttributeHdrDialogOpen}
-        >
+        <Dialog open={isAttributeHdrDialogOpen} onOpenChange={(open) => {
+          if(!open){
+            setSubmittedAttributeHdr(false);
+          }
+          setIsAttributeHdrDialogOpen(open); }}>
           <DialogContent className="max-w-md">
             <DialogHeader>
               <DialogTitle>Add Attribute Hdr</DialogTitle>
-
-              <DialogDescription>
-                Create a new Attribute Header
-              </DialogDescription>
+              <DialogDescription>Create a new Attribute Header</DialogDescription>
             </DialogHeader>
 
             <div className="grid gap-4 py-4">
 
               <div className="space-y-2">
-                <Label>Code*</Label>
-
+                <Label htmlFor="code" className={submittedAttributeHdr && !attributeHdrForm.attributeheader_code ? "text-red-500" : ""}>Code*</Label>
                 <Input
+                  id="Code"
                   value={attributeHdrForm.attributeheader_code}
-                  onChange={(e) =>
-                    setAttributeHdrForm({
-                      ...attributeHdrForm,
-                      attributeheader_code: e.target.value,
-                    })
-                  }
+                  onChange={(e) => setAttributeHdrForm({ ...attributeHdrForm, attributeheader_code: e.target.value, })}
+                  placeholder="Enter attribute code (e.g., ACCOUNT_TYPE)"
                 />
               </div>
 
               <div className="space-y-2">
-                <Label>Name*</Label>
-
+                <Label htmlFor="code" className={submittedAttributeHdr && !attributeHdrForm.attributeheader_name ? "text-red-500" : ""}>Name*</Label>
                 <Input
+                  id="Name"
                   value={attributeHdrForm.attributeheader_name}
-                  onChange={(e) =>
-                    setAttributeHdrForm({
-                      ...attributeHdrForm,
-                      attributeheader_name: e.target.value,
-
-                    })
-                  }
+                  onChange={(e) => setAttributeHdrForm({ ...attributeHdrForm, attributeheader_name: e.target.value, })}
+                  placeholder="Enter attribute name (e.g., Account Type)"
                 />
               </div>
 
               <div className="space-y-2">
-                <Label>Status*</Label>
-                <Select
-                  value={attributeHdrForm.status}
-                  onValueChange={(value) =>
-                    setAttributeHdrForm({
-                      ...attributeHdrForm,
-                      status: value,
-
-                    })
-                  }
-                >
+                <Label htmlFor="code" className={submittedAttributeHdr && !attributeHdrForm.status ? "text-red-500" : ""}>Status*</Label>
+                <Select value={attributeHdrForm.status} onValueChange={(value) => setAttributeHdrForm({ ...attributeHdrForm, status: value, })}>
                   <SelectTrigger>
-                    <SelectValue />
+                    <SelectValue placeholder="Select Status" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="Active">Active</SelectItem>
-                    <SelectItem value="Inactive">Inactive</SelectItem>
+                    {status.map((status: any) => (
+                      <SelectItem
+                        key={status.attributedetails_code}
+                        value={status.attributedetails_code}
+                      >
+                        {status.attributedetails_name}
+                      </SelectItem>
+                    ))}
                   </SelectContent>
                 </Select>
               </div>
             </div>
 
             <DialogFooter>
-              <Button variant="outline" onClick={() => setIsAttributeHdrDialogOpen(false)}>
-                Cancel
-              </Button>
-
+              <Button variant="outline" onClick={() => {
+                setSubmittedAttributeHdr(false);
+                setIsAttributeHdrDialogOpen(false);
+                }}>Cancel</Button>
               <Button onClick={handleCreateAttributeHdr}>Save</Button>
             </DialogFooter>
           </DialogContent>
