@@ -80,15 +80,15 @@ jobs:
       # -------------------------------------------------
       # 6️⃣ Restart backend via PM2
       # -------------------------------------------------
-      - name: Restart backend
-        shell: powershell
-        run: |
-          if (pm2 list | Select-String "GYM") {
-            pm2 restart GYM
-          } else {
-            pm2 start C:\inetpub\wwwroot\GYM\backend\https.js --name GYM
-          }
-          pm2 save
+      # - name: Restart backend
+      #   shell: powershell
+      #   run: |
+      #     if (pm2 list | Select-String "GYM") {
+      #       pm2 restart GYM
+      #     } else {
+      #       pm2 start C:\inetpub\wwwroot\GYM\backend\https.js --name GYM
+      #     }
+      #     pm2 save
 
       - name: Restart backend (NSSM)
         shell: powershell
