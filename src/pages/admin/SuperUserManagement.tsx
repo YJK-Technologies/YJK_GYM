@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -140,6 +140,9 @@ const WorkoutProgramManagement = () => {
   const [users, setUsers] = useState([]);
   const [editingUser, setEditingUser] = useState<any>(null);
   const [isUserDialogOpen, setIsUserDialogOpen] = useState(false);
+  const [userCodeNameDrop, setUserCodeNameDrop] = useState([]);
+  const [statusdrop, setStatusdrop] = useState([]);
+  const company_code = sessionStorage.getItem('selectedCompanyCode');
   const [userForm, setUserForm] = useState({
     company_code: "",
     user_code: "",
@@ -159,11 +162,47 @@ const WorkoutProgramManagement = () => {
     modified_by: "admin",
   });
   const [images, setImages] = useState<(string | null)[]>([null, null]);
-  const [userImages, setUserImages] = useState<(File | null)[]>(null);
+  const [userImages, setUserImages] = useState<(File | null)[]>([]);
 
   const handleUserFiles = (file: (File | null)[]) => {
     setUserImages(file);
   };
+
+  // -- This dropdown values should come from member, trainer and admin tables 
+  // User Code DropDown for User
+//   useEffect(() => {
+//   const company_code = sessionStorage.getItem('selectedCompanyCode');
+
+//   fetch(`${BASE_URL}/getUCN`, {
+//     method: 'POST',
+//     headers: {
+//       'Content-Type': 'application/json',
+//     },
+//     body: JSON.stringify({ company_code })
+//   })
+//     .then((data) => data.json())
+//     .then((val) => {
+//       console.log("Dropdown Data:", val);
+//       setUserCodeNameDrop(val);
+//     })
+//     .catch((error) => console.error('Error fetching data:', error));
+// }, []);
+
+  // Status DropDown for User
+useEffect(() => {
+    const company_code = "YJKT" // const company_code = sessionStorage.getItem('selectedCompanyCode');
+
+    fetch(`${BASE_URL}/status`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ company_code })
+    })
+      .then((data) => data.json())
+      .then((val) => setStatusdrop(val))
+      .catch((error) => console.error('Error fetching data:', error));
+  }, []);
 
   //Attribute Dialog States
   const [attributes, setAttributes] = useState([]);
@@ -959,7 +998,7 @@ const WorkoutProgramManagement = () => {
   const handleAddUser = () => {
     setEditingUser(null);
     setUserForm({
-      company_code: "",
+      company_code: "YJKT",
       user_code: "",
       user_name: "",
       first_name: "",
@@ -988,10 +1027,9 @@ const WorkoutProgramManagement = () => {
         formData.append(key, value as string);
       });
 
-      if (userImages.length > 0) {
+      if (userImages?.length > 0 && userImages[0]) {
         formData.append("user_img", userImages[0]);
       }
-
       const response = await fetch(`${BASE_URL}/useradd`, {
         method: "POST",
         body: formData,
@@ -2589,12 +2627,14 @@ const WorkoutProgramManagement = () => {
                         <SelectValue placeholder="Select User Code" />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="Strength">Strength</SelectItem>
-                        <SelectItem value="Cardio">Cardio</SelectItem>
-                        <SelectItem value="HIIT">HIIT</SelectItem>
-                        <SelectItem value="Yoga">Yoga</SelectItem>
-                        <SelectItem value="CrossFit">CrossFit</SelectItem>
-                        <SelectItem value="Flexibility">Flexibility</SelectItem>
+                        {userCodeNameDrop.map((item: any) => (
+                          <SelectItem
+                            key={item.user_code}
+                            value={item.user_code}
+                          >
+                            {item.user_code} - {item.user_name}
+                          </SelectItem>
+                        ))}
                       </SelectContent>
                     </Select>
                   </div>
@@ -2642,12 +2682,14 @@ const WorkoutProgramManagement = () => {
                         <SelectValue placeholder="Select Status" />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="Strength">Strength</SelectItem>
-                        <SelectItem value="Cardio">Cardio</SelectItem>
-                        <SelectItem value="HIIT">HIIT</SelectItem>
-                        <SelectItem value="Yoga">Yoga</SelectItem>
-                        <SelectItem value="CrossFit">CrossFit</SelectItem>
-                        <SelectItem value="Flexibility">Flexibility</SelectItem>
+                        {statusdrop.map((item: any) => (
+                          <SelectItem
+                            key={item.user_code}
+                            value={item.user_code}
+                          >
+                            {item.user_code} - {item.user_name}
+                          </SelectItem>
+                        ))}
                       </SelectContent>
                     </Select>
                   </div>
@@ -2743,7 +2785,7 @@ const WorkoutProgramManagement = () => {
             </div>
             <DialogFooter>
               <Button variant="outline" onClick={() => setIsUserDialogOpen(false)}>Cancel</Button>
-              <Button onClick={handleSaveUser}>{editingUser ? 'Update' : 'Create'} Program</Button>
+              <Button onClick={handleSaveUser}>{editingUser ? 'Update User' : 'Create User'} Program</Button>
             </DialogFooter>
           </DialogContent>
         </Dialog>
