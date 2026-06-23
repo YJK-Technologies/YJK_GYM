@@ -18,6 +18,7 @@ const AdminDashboard = () => {
   ];
 
   const quickActions = [
+    { title: 'Super User Management', description: 'Add, edit, or remove members', route: '/admin/super-user' },
     { title: 'Member Management', description: 'Add, edit, or remove members', route: '/admin/members' },
     { title: 'Workout Programs', description: 'Create and assign workout plans', route: '/admin/programs' },
     { title: 'Payment Management', description: 'Process payments (Cash/Online/BenefitPay)', route: '/admin/payments' },
