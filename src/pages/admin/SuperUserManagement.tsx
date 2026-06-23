@@ -23,8 +23,125 @@ const WorkoutProgramManagement = () => {
   const { toast } = useToast();
   const [activeTab, setActiveTab] = useState('company');
   const [searchTerm, setSearchTerm] = useState('');
+  const [cities, setCities] = useState([]);
+  const [states, setStates] = useState([]);
+  const [countries, setCountries] = useState([]);
+  const [status, setStatus] = useState([]);
+  const [location, setLocation] = useState([]);
+
+  const fetchCities = async () => {
+    try {
+      const response = await fetch(`${BASE_URL}/city`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          company_code: "AKPON007",
+        }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        setCities(data);
+      } else {
+        console.error("Failed to fetch cities");
+      }
+    } catch (error) {
+      console.error("Error fetching cities:", error);
+    }
+  };
+
+  const fetchStates = async () => {
+    try {
+      const response = await fetch(`${BASE_URL}/state`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          company_code: "AKPON007",
+        }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        setStates(data);
+      } else {
+        console.error("Failed to fetch states");
+      }
+    } catch (error) {
+      console.error("Error fetching states:", error);
+    }
+  };
+
+  const fetchCountries = async () => {
+    try {
+      const response = await fetch(`${BASE_URL}/country`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          company_code: "AKPON007",
+        }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        setCountries(data);
+      } else {
+        console.error("Failed to fetch countries");
+      }
+    } catch (error) {
+      console.error("Error fetching countries:", error);
+    }
+  };
+
+  const fetchStatus = async () => {
+    try {
+      const response = await fetch(`${BASE_URL}/status`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          company_code: "AKPON007",
+        }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        setStatus(data);
+      } else {
+        console.error("Failed to fetch status");
+      }
+    } catch (error) {
+      console.error("Error fetching status:", error);
+    }
+  };
+
+  const fetchLocation = async () => {
+    try {
+      const response = await fetch(`${BASE_URL}/locationno`);
+
+      if (!response.ok) {
+        throw new Error("Failed to fetch locations");
+      }
+
+      const data = await response.json();
+      setLocation(data);
+    } catch (error) {
+      console.error("Error fetching locations:", error);
+    }
+  };
 
   //Company Dialog States
+  const [submittedCompany, setSubmittedCompany] = useState(false);
   const [companies, setCompanies] = useState([]);
   const [isCompanyDialogOpen, setIsCompanyDialogOpen] = useState(false);
   const [editingCompany, setEditingCompany] = useState<any>(null);
@@ -75,6 +192,7 @@ const WorkoutProgramManagement = () => {
   });
 
   //Location Dialog States
+  const [submittedLocation, setSubmittedLocation] = useState(false);
   const [locations, setLocations] = useState([]);
   const [editingLocation, setEditingLocation] = useState<any>(null);
   const [isLocationDialogOpen, setIsLocationDialogOpen] = useState(false);
@@ -221,6 +339,11 @@ useEffect(() => {
 
   //Company CRUD Functions
   const handleAddCompany = () => {
+    fetchCities();
+    fetchStates();
+    fetchCountries();
+    fetchStatus();
+    fetchLocation();
     setEditingCompany(null);
     setCompanyForm({
       company_no: "",
@@ -247,7 +370,48 @@ useEffect(() => {
     setIsCompanyDialogOpen(true);
   };
 
+  const validateCompany = () => {
+    if (
+      !companyForm.company_no ||
+      !companyForm.company_name ||
+      !companyForm.address1 ||
+      !companyForm.address2 ||
+      !companyForm.city ||
+      !companyForm.state ||
+      !companyForm.pincode ||
+      !companyForm.country ||
+      !companyForm.email_id ||
+      !companyForm.contact_no ||
+      !companyForm.location_no
+    ) {
+      toast({
+        title: "Required Fields",
+        description: "Please fill all required fields.",
+        variant: "destructive",
+      });
+      return false;
+    }
+
+    // Email validation
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+    if (!emailRegex.test(companyForm.email_id)) {
+      toast({
+        title: "Invalid Email",
+        description: "Please enter a valid email address.",
+        variant: "destructive",
+      });
+      return false;
+    }
+
+    return true;
+  };
+
   const handleCreateCompany = async () => {
+    setSubmittedCompany(true);
+
+    if (!validateCompany()) return;
+
     try {
       const formData = new FormData();
 
@@ -276,6 +440,7 @@ useEffect(() => {
         alert(data.message);
         // fetchCompanies();
         setIsCompanyDialogOpen(false);
+        setSubmittedCompany(false);
       } else {
         alert(data.message);
       }
@@ -285,6 +450,10 @@ useEffect(() => {
   };
 
   const handleUpdateCompany = async () => {
+    setSubmittedCompany(true);
+
+    if (!validateCompany()) return;
+
     try {
       const formData = new FormData();
 
@@ -314,6 +483,7 @@ useEffect(() => {
         // fetchCompanies();
         setEditingCompany(null);
         setIsCompanyDialogOpen(false);
+        setSubmittedCompany(false);
       }
     } catch (error) {
       console.error(error);
@@ -391,6 +561,7 @@ useEffect(() => {
 
   //Company Mapping CRUD Functions
   const handleAddCompanyMapping = () => {
+    fetchStatus();
     setEditingCompanyMapping(null);
     setCompanyMappingForm({
       company_code: "",
@@ -515,6 +686,10 @@ useEffect(() => {
 
   // Location CRUD Functions
   const handleAddLocation = () => {
+    fetchCities();
+    fetchStates();
+    fetchCountries();
+    fetchStatus();
     setEditingLocation(null);
     setLocationForm({
       location_no: "",
@@ -536,7 +711,48 @@ useEffect(() => {
     setIsLocationDialogOpen(true);
   };
 
+  const validateLocation = () => {
+    if (
+      !locationForm.location_no ||
+      !locationForm.location_name ||
+      !locationForm.short_name ||
+      !locationForm.address1 ||
+      !locationForm.address2 ||
+      !locationForm.city ||
+      !locationForm.state ||
+      !locationForm.pincode ||
+      !locationForm.country ||
+      !locationForm.contact_no ||
+      !locationForm.email_id
+    ) {
+      toast({
+        title: "Required Fields",
+        description: "Please fill all required fields.",
+        variant: "destructive",
+      });
+      return false;
+    }
+
+    // Email validation
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+    if (!emailRegex.test(locationForm.email_id)) {
+      toast({
+        title: "Invalid Email",
+        description: "Please enter a valid email address.",
+        variant: "destructive",
+      });
+      return false;
+    }
+
+    return true;
+  };
+
   const handleCreateLocation = async () => {
+    setSubmittedLocation(true);
+
+    if (!validateLocation()) return;
+
     try {
       const response = await fetch(`${BASE_URL}/addlocationinfo`,
         {
@@ -551,18 +767,37 @@ useEffect(() => {
       const data = await response.json();
 
       if (response.ok) {
-        alert(data.message);
+        toast({
+          title: "Success",
+          description: data.message || "Location created successfully.",
+        });
+
         // fetchLocations();
         setIsLocationDialogOpen(false);
+        setSubmittedLocation(false);
       } else {
-        alert(data.message);
+        toast({
+          title: "Error",
+          description: data.message || "Failed to create location.",
+          variant: "destructive",
+        });
       }
-    } catch (err) {
+    } catch (err: any) {
       console.error(err);
+
+      toast({
+        title: "Server Error",
+        description: err.message || "Something went wrong.",
+        variant: "destructive",
+      });
     }
   };
 
   const handleUpdateLocation = async () => {
+    setSubmittedLocation(true);
+
+    if (!validateLocation()) return;
+
     try {
       const response = await fetch(`${BASE_URL}/LocationUpdate`,
         {
@@ -577,13 +812,30 @@ useEffect(() => {
       const data = await response.json();
 
       if (response.ok) {
-        alert(data);
+        toast({
+          title: "Success",
+          description: data.message || data || "Location updated successfully.",
+        });
+
         // fetchLocations();
         setEditingLocation(null);
         setIsLocationDialogOpen(false);
+        setSubmittedLocation(false);
+      } else {
+        toast({
+          title: "Error",
+          description: data.message || "Failed to update location.",
+          variant: "destructive",
+        });
       }
-    } catch (err) {
+    } catch (err: any) {
       console.error(err);
+
+      toast({
+        title: "Server Error",
+        description: err.message || "Something went wrong.",
+        variant: "destructive",
+      });
     }
   };
 
@@ -607,13 +859,27 @@ useEffect(() => {
       const data = await response.json();
 
       if (response.ok) {
-        alert(data);
+        toast({
+          title: "Success",
+          description: data.message || data || "Location deleted successfully.",
+        });
+
         // fetchLocations();
       } else {
-        alert(data.message || data);
+        toast({
+          title: "Error",
+          description: data.message || data || "Failed to delete location.",
+          variant: "destructive",
+        });
       }
-    } catch (err) {
+    } catch (err: any) {
       console.error(err);
+
+      toast({
+        title: "Server Error",
+        description: err.message || "Something went wrong.",
+        variant: "destructive",
+      });
     }
   };
 
@@ -1912,22 +2178,22 @@ useEffect(() => {
                 <div className="grid grid-cols-2 gap-4">
 
                   <div className="space-y-2">
-                    <Label htmlFor="name">Company Code*</Label>
+                    <Label htmlFor="name" className={submittedCompany && !companyForm.company_no ? "text-red-500" : ""}>Company Code*</Label>
                     <Input
                       id="name"
                       value={companyForm.company_no}
                       onChange={(e) => setCompanyForm({ ...companyForm, company_no: e.target.value })}
-                      placeholder="e.g., Weight Loss Transformation"
+                      placeholder="Enter company code (e.g., CMP001)"
                     />
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="name">Company Name*</Label>
+                    <Label htmlFor="name" className={submittedCompany && !companyForm.company_name ? "text-red-500" : ""}>Company Name*</Label>
                     <Input
                       id="name"
                       value={companyForm.company_name}
                       onChange={(e) => setCompanyForm({ ...companyForm, company_name: e.target.value })}
-                      placeholder="e.g., Weight Loss Transformation"
+                      placeholder="Enter company name (e.g., ABC Fitness Pvt Ltd)"
                     />
                   </div>
 
@@ -1937,27 +2203,27 @@ useEffect(() => {
                       id="name"
                       value={companyForm.short_name}
                       onChange={(e) => setCompanyForm({ ...companyForm, short_name: e.target.value })}
-                      placeholder="e.g., Weight Loss Transformation"
+                      placeholder="Enter short name (e.g., ABC)"
                     />
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="name">Address 1*</Label>
+                    <Label htmlFor="name" className={submittedCompany && !companyForm.address1 ? "text-red-500" : ""}>Address 1*</Label>
                     <Input
                       id="name"
                       value={companyForm.address1}
                       onChange={(e) => setCompanyForm({ ...companyForm, address1: e.target.value })}
-                      placeholder="e.g., Weight Loss Transformation"
+                      placeholder="Enter address line 1"
                     />
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="name">Address 2*</Label>
+                    <Label htmlFor="name" className={submittedCompany && !companyForm.address2 ? "text-red-500" : ""}>Address 2*</Label>
                     <Input
                       id="name"
                       value={companyForm.address2}
                       onChange={(e) => setCompanyForm({ ...companyForm, address2: e.target.value })}
-                      placeholder="e.g., Weight Loss Transformation"
+                      placeholder="Enter address line 2"
                     />
                   </div>
 
@@ -1967,94 +2233,102 @@ useEffect(() => {
                       id="name"
                       value={companyForm.address3}
                       onChange={(e) => setCompanyForm({ ...companyForm, address3: e.target.value })}
-                      placeholder="e.g., Weight Loss Transformation"
+                      placeholder="Enter address line 3 (optional)"
                     />
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="category">City*</Label>
+                    <Label htmlFor="city" className={submittedCompany && !companyForm.city ? "text-red-500" : ""}>City*</Label>
                     <Select value={companyForm.city} onValueChange={(value) => setCompanyForm({ ...companyForm, city: value })}>
                       <SelectTrigger>
-                        <SelectValue placeholder="Select category" />
+                        <SelectValue placeholder="Select City" />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="Strength">Strength</SelectItem>
-                        <SelectItem value="Cardio">Cardio</SelectItem>
-                        <SelectItem value="HIIT">HIIT</SelectItem>
-                        <SelectItem value="Yoga">Yoga</SelectItem>
-                        <SelectItem value="CrossFit">CrossFit</SelectItem>
-                        <SelectItem value="Flexibility">Flexibility</SelectItem>
+                        {cities.map((city: any) => (
+                          <SelectItem
+                            key={city.attributedetails_code}
+                            value={city.attributedetails_code}
+                          >
+                            {city.attributedetails_name}
+                          </SelectItem>
+                        ))}
                       </SelectContent>
                     </Select>
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="category">State*</Label>
+                    <Label htmlFor="state" className={submittedCompany && !companyForm.state ? "text-red-500" : ""}>State*</Label>
                     <Select value={companyForm.state} onValueChange={(value) => setCompanyForm({ ...companyForm, state: value })}>
                       <SelectTrigger>
-                        <SelectValue placeholder="Select category" />
+                        <SelectValue placeholder="Select State" />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="Strength">Strength</SelectItem>
-                        <SelectItem value="Cardio">Cardio</SelectItem>
-                        <SelectItem value="HIIT">HIIT</SelectItem>
-                        <SelectItem value="Yoga">Yoga</SelectItem>
-                        <SelectItem value="CrossFit">CrossFit</SelectItem>
-                        <SelectItem value="Flexibility">Flexibility</SelectItem>
+                        {states.map((state: any) => (
+                          <SelectItem
+                            key={state.attributedetails_code}
+                            value={state.attributedetails_code}
+                          >
+                            {state.attributedetails_name}
+                          </SelectItem>
+                        ))}
                       </SelectContent>
                     </Select>
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="name">Pin Code*</Label>
+                    <Label htmlFor="name" className={submittedCompany && !companyForm.pincode ? "text-red-500" : ""}>Pin Code*</Label>
                     <Input
                       id="name"
                       value={companyForm.pincode}
                       onChange={(e) => setCompanyForm({ ...companyForm, pincode: e.target.value })}
-                      placeholder="e.g., Weight Loss Transformation"
+                      placeholder="Enter PIN code (e.g., 600001)"
                     />
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="category">Country*</Label>
+                    <Label htmlFor="country" className={submittedCompany && !companyForm.country ? "text-red-500" : ""}>Country*</Label>
                     <Select value={companyForm.country} onValueChange={(value) => setCompanyForm({ ...companyForm, country: value })}>
                       <SelectTrigger>
-                        <SelectValue placeholder="Select category" />
+                        <SelectValue placeholder="Select Country" />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="Strength">Strength</SelectItem>
-                        <SelectItem value="Cardio">Cardio</SelectItem>
-                        <SelectItem value="HIIT">HIIT</SelectItem>
-                        <SelectItem value="Yoga">Yoga</SelectItem>
-                        <SelectItem value="CrossFit">CrossFit</SelectItem>
-                        <SelectItem value="Flexibility">Flexibility</SelectItem>
+                        {countries.map((country: any) => (
+                          <SelectItem
+                            key={country.attributedetails_code}
+                            value={country.attributedetails_code}
+                          >
+                            {country.attributedetails_name}
+                          </SelectItem>
+                        ))}
                       </SelectContent>
                     </Select>
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="name">Email*</Label>
+                    <Label htmlFor="name" className={submittedCompany && !companyForm.email_id ? "text-red-500" : ""}>Email*</Label>
                     <Input
                       id="name"
                       value={companyForm.email_id}
                       onChange={(e) => setCompanyForm({ ...companyForm, email_id: e.target.value })}
-                      placeholder="e.g., Weight Loss Transformation"
+                      placeholder="Enter email address (e.g., info@company.com)"
                     />
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="category">Status*</Label>
+                    <Label htmlFor="status" className={submittedCompany && !companyForm.status ? "text-red-500" : ""}>Status*</Label>
                     <Select value={companyForm.status} onValueChange={(value) => setCompanyForm({ ...companyForm, status: value })}>
                       <SelectTrigger>
-                        <SelectValue placeholder="Select category" />
+                        <SelectValue placeholder="Select Status" />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="Strength">Strength</SelectItem>
-                        <SelectItem value="Cardio">Cardio</SelectItem>
-                        <SelectItem value="HIIT">HIIT</SelectItem>
-                        <SelectItem value="Yoga">Yoga</SelectItem>
-                        <SelectItem value="CrossFit">CrossFit</SelectItem>
-                        <SelectItem value="Flexibility">Flexibility</SelectItem>
+                        {status.map((status: any) => (
+                          <SelectItem
+                            key={status.attributedetails_code}
+                            value={status.attributedetails_code}
+                          >
+                            {status.attributedetails_name}
+                          </SelectItem>
+                        ))}
                       </SelectContent>
                     </Select>
                   </div>
@@ -2063,9 +2337,10 @@ useEffect(() => {
                     <Label htmlFor="name">Founded Date</Label>
                     <Input
                       id="name"
+                      type="date"
                       value={companyForm.foundedDate}
                       onChange={(e) => setCompanyForm({ ...companyForm, foundedDate: e.target.value })}
-                      placeholder="e.g., Weight Loss Transformation"
+                      placeholder="Select founded date"
                     />
                   </div>
 
@@ -2075,17 +2350,17 @@ useEffect(() => {
                       id="name"
                       value={companyForm.websiteURL}
                       onChange={(e) => setCompanyForm({ ...companyForm, websiteURL: e.target.value })}
-                      placeholder="e.g., Weight Loss Transformation"
+                      placeholder="Enter website URL (e.g., https://www.company.com)"
                     />
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="name">Contact No*</Label>
+                    <Label htmlFor="name" className={submittedCompany && !companyForm.contact_no ? "text-red-500" : ""}>Contact No*</Label>
                     <Input
                       id="name"
                       value={companyForm.contact_no}
                       onChange={(e) => setCompanyForm({ ...companyForm, contact_no: e.target.value })}
-                      placeholder="e.g., Weight Loss Transformation"
+                      placeholder="Enter contact number (e.g., +91 9876543210)"
                     />
                   </div>
 
@@ -2095,7 +2370,7 @@ useEffect(() => {
                       id="name"
                       value={companyForm.annualReportURL}
                       onChange={(e) => setCompanyForm({ ...companyForm, annualReportURL: e.target.value })}
-                      placeholder="e.g., Weight Loss Transformation"
+                      placeholder="Enter annual report URL"
                     />
                   </div>
 
@@ -2105,18 +2380,27 @@ useEffect(() => {
                       id="name"
                       value={companyForm.company_gst_no}
                       onChange={(e) => setCompanyForm({ ...companyForm, company_gst_no: e.target.value })}
-                      placeholder="e.g., Weight Loss Transformation"
+                      placeholder="Enter GST number (e.g., 33ABCDE1234F1Z5)"
                     />
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="name">Location No*</Label>
-                    <Input
-                      id="name"
-                      value={companyForm.location_no}
-                      onChange={(e) => setCompanyForm({ ...companyForm, location_no: e.target.value })}
-                      placeholder="e.g., Weight Loss Transformation"
-                    />
+                    <Label htmlFor="name" className={submittedCompany && !companyForm.location_no ? "text-red-500" : ""}>Location No*</Label>
+                    <Select value={companyForm.location_no} onValueChange={(value) => setCompanyForm({ ...companyForm, location_no: value })}>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select Location" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {location.map((location: any) => (
+                          <SelectItem
+                            key={location.location_no}
+                            value={location.location_no}
+                          >
+                            {location.location_name}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
                   </div>
 
                 </div>
@@ -2132,7 +2416,10 @@ useEffect(() => {
 
             </div>
             <DialogFooter>
-              <Button variant="outline" onClick={() => setIsCompanyDialogOpen(false)}>Cancel</Button>
+              <Button variant="outline" onClick={() => { 
+                setSubmittedCompany(false);
+                setIsCompanyDialogOpen(false);
+              }}>Cancel</Button>
               <Button onClick={handleSaveCompany}>{editingCompany ? 'Update' : 'Create'} Company</Button>
             </DialogFooter>
           </DialogContent>
@@ -2204,18 +2491,20 @@ useEffect(() => {
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="category">Status*</Label>
+                    <Label htmlFor="status">Status*</Label>
                     <Select value={companyMappingForm.status} onValueChange={(value) => setCompanyMappingForm({ ...companyMappingForm, status: value })}>
                       <SelectTrigger>
-                        <SelectValue placeholder="Select category" />
+                        <SelectValue placeholder="Select Status" />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="Strength">Strength</SelectItem>
-                        <SelectItem value="Cardio">Cardio</SelectItem>
-                        <SelectItem value="HIIT">HIIT</SelectItem>
-                        <SelectItem value="Yoga">Yoga</SelectItem>
-                        <SelectItem value="CrossFit">CrossFit</SelectItem>
-                        <SelectItem value="Flexibility">Flexibility</SelectItem>
+                        {status.map((status: any) => (
+                          <SelectItem
+                            key={status.attributedetails_code}
+                            value={status.attributedetails_code}
+                          >
+                            {status.attributedetails_name}
+                          </SelectItem>
+                        ))}
                       </SelectContent>
                     </Select>
                   </div>
@@ -2255,52 +2544,52 @@ useEffect(() => {
                 <div className="grid grid-cols-2 gap-4">
 
                   <div className="space-y-2">
-                    <Label htmlFor="name">Location No*</Label>
+                    <Label htmlFor="name" className={submittedLocation && !locationForm.location_no ? "text-red-500" : ""}>Location No*</Label>
                     <Input
                       id="name"
                       value={locationForm.location_no}
                       onChange={(e) => setLocationForm({ ...locationForm, location_no: e.target.value })}
-                      placeholder="e.g., Weight Loss Transformation"
+                      placeholder="Enter location number (e.g., LOC001)"
                     />
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="name">Location Name*</Label>
+                    <Label htmlFor="name" className={submittedLocation && !locationForm.location_name ? "text-red-500" : ""}>Location Name*</Label>
                     <Input
                       id="name"
                       value={locationForm.location_name}
                       onChange={(e) => setLocationForm({ ...locationForm, location_name: e.target.value })}
-                      placeholder="e.g., Weight Loss Transformation"
+                      placeholder="Enter location name (e.g., Chennai Branch)"
                     />
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="name">Short Name*</Label>
+                    <Label htmlFor="name" className={submittedLocation && !locationForm.short_name ? "text-red-500" : ""}>Short Name*</Label>
                     <Input
                       id="name"
                       value={locationForm.short_name}
                       onChange={(e) => setLocationForm({ ...locationForm, short_name: e.target.value })}
-                      placeholder="e.g., Weight Loss Transformation"
+                      placeholder="Enter short name (e.g., CHN)"
                     />
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="name">Address 1*</Label>
+                    <Label htmlFor="name" className={submittedLocation && !locationForm.address1 ? "text-red-500" : ""}>Address 1*</Label>
                     <Input
                       id="name"
                       value={locationForm.address1}
                       onChange={(e) => setLocationForm({ ...locationForm, address1: e.target.value })}
-                      placeholder="e.g., Weight Loss Transformation"
+                      placeholder="Enter address line 1"
                     />
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="name">Address 2*</Label>
+                    <Label htmlFor="name" className={submittedLocation && !locationForm.address2 ? "text-red-500" : ""}>Address 2*</Label>
                     <Input
                       id="name"
                       value={locationForm.address2}
                       onChange={(e) => setLocationForm({ ...locationForm, address2: e.target.value })}
-                      placeholder="e.g., Weight Loss Transformation"
+                      placeholder="Enter address line 2"
                     />
                   </div>
 
@@ -2310,112 +2599,123 @@ useEffect(() => {
                       id="name"
                       value={locationForm.address3}
                       onChange={(e) => setLocationForm({ ...locationForm, address3: e.target.value })}
-                      placeholder="e.g., Weight Loss Transformation"
+                      placeholder="Enter address line 3 (optional)"
                     />
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="category">City*</Label>
+                    <Label htmlFor="city" className={submittedLocation && !locationForm.city ? "text-red-500" : ""}>City*</Label>
                     <Select value={locationForm.city} onValueChange={(value) => setLocationForm({ ...locationForm, city: value })}>
                       <SelectTrigger>
-                        <SelectValue placeholder="Select category" />
+                        <SelectValue placeholder="Select City" />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="Strength">Strength</SelectItem>
-                        <SelectItem value="Cardio">Cardio</SelectItem>
-                        <SelectItem value="HIIT">HIIT</SelectItem>
-                        <SelectItem value="Yoga">Yoga</SelectItem>
-                        <SelectItem value="CrossFit">CrossFit</SelectItem>
-                        <SelectItem value="Flexibility">Flexibility</SelectItem>
+                        {cities.map((city: any) => (
+                          <SelectItem
+                            key={city.attributedetails_code}
+                            value={city.attributedetails_code}
+                          >
+                            {city.attributedetails_name}
+                          </SelectItem>
+                        ))}
                       </SelectContent>
                     </Select>
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="category">State*</Label>
+                    <Label htmlFor="state" className={submittedLocation && !locationForm.state ? "text-red-500" : ""}>State*</Label>
                     <Select value={locationForm.state} onValueChange={(value) => setLocationForm({ ...locationForm, state: value })}>
                       <SelectTrigger>
-                        <SelectValue placeholder="Select category" />
+                        <SelectValue placeholder="Select State" />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="Strength">Strength</SelectItem>
-                        <SelectItem value="Cardio">Cardio</SelectItem>
-                        <SelectItem value="HIIT">HIIT</SelectItem>
-                        <SelectItem value="Yoga">Yoga</SelectItem>
-                        <SelectItem value="CrossFit">CrossFit</SelectItem>
-                        <SelectItem value="Flexibility">Flexibility</SelectItem>
+                        {states.map((city: any) => (
+                          <SelectItem
+                            key={city.attributedetails_code}
+                            value={city.attributedetails_code}
+                          >
+                            {city.attributedetails_name}
+                          </SelectItem>
+                        ))}
                       </SelectContent>
                     </Select>
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="name">Pin Code*</Label>
+                    <Label htmlFor="name" className={submittedLocation && !locationForm.pincode ? "text-red-500" : ""}>Pin Code*</Label>
                     <Input
                       id="name"
                       value={locationForm.pincode}
                       onChange={(e) => setLocationForm({ ...locationForm, pincode: e.target.value })}
-                      placeholder="e.g., Weight Loss Transformation"
+                      placeholder="Enter PIN code (e.g., 600001)"
                     />
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="category">Country*</Label>
+                    <Label htmlFor="country" className={submittedLocation && !locationForm.country ? "text-red-500" : ""}>Country*</Label>
                     <Select value={locationForm.country} onValueChange={(value) => setLocationForm({ ...locationForm, country: value })}>
                       <SelectTrigger>
-                        <SelectValue placeholder="Select category" />
+                        <SelectValue placeholder="Select Country" />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="Strength">Strength</SelectItem>
-                        <SelectItem value="Cardio">Cardio</SelectItem>
-                        <SelectItem value="HIIT">HIIT</SelectItem>
-                        <SelectItem value="Yoga">Yoga</SelectItem>
-                        <SelectItem value="CrossFit">CrossFit</SelectItem>
-                        <SelectItem value="Flexibility">Flexibility</SelectItem>
+                        {countries.map((city: any) => (
+                          <SelectItem
+                            key={city.attributedetails_code}
+                            value={city.attributedetails_code}
+                          >
+                            {city.attributedetails_name}
+                          </SelectItem>
+                        ))}
                       </SelectContent>
                     </Select>
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="name">Email*</Label>
+                    <Label htmlFor="name" className={submittedLocation && !locationForm.email_id ? "text-red-500" : ""}>Email*</Label>
                     <Input
                       id="name"
                       value={locationForm.email_id}
                       onChange={(e) => setLocationForm({ ...locationForm, email_id: e.target.value })}
-                      placeholder="e.g., Weight Loss Transformation"
+                      placeholder="Enter email address (e.g., branch@example.com)"
                     />
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="category">Status*</Label>
+                    <Label htmlFor="status" className={submittedLocation && !locationForm.status ? "text-red-500" : ""}>Status*</Label>
                     <Select value={locationForm.status} onValueChange={(value) => setLocationForm({ ...locationForm, status: value })}>
                       <SelectTrigger>
-                        <SelectValue placeholder="Select category" />
+                        <SelectValue placeholder="Select Status" />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="Strength">Strength</SelectItem>
-                        <SelectItem value="Cardio">Cardio</SelectItem>
-                        <SelectItem value="HIIT">HIIT</SelectItem>
-                        <SelectItem value="Yoga">Yoga</SelectItem>
-                        <SelectItem value="CrossFit">CrossFit</SelectItem>
-                        <SelectItem value="Flexibility">Flexibility</SelectItem>
+                        {status.map((status: any) => (
+                          <SelectItem
+                            key={status.attributedetails_code}
+                            value={status.attributedetails_code}
+                          >
+                            {status.attributedetails_name}
+                          </SelectItem>
+                        ))}
                       </SelectContent>
                     </Select>
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="name">Contact No*</Label>
+                    <Label htmlFor="name" className={submittedLocation && !locationForm.contact_no ? "text-red-500" : ""}>Contact No*</Label>
                     <Input
                       id="name"
                       value={locationForm.contact_no}
-                      onChange={(e) => setLocationForm({ ...locationForm, contact_no: e.target.value })}
-                      placeholder="e.g., Weight Loss Transformation"
+                      onChange={(e) => setLocationForm({ ...locationForm, contact_no: e.target.value.replace(/\D/g, ""), })}
+                      placeholder="Enter contact number (e.g., +91 9876543210)"
                     />
                   </div>
                 </div>
               </div>
             </div>
             <DialogFooter>
-              <Button variant="outline" onClick={() => setIsLocationDialogOpen(false)}>Cancel</Button>
+              <Button variant="outline" onClick={() => {
+                setSubmittedLocation(false);
+                setIsLocationDialogOpen(false);
+              }}>Cancel</Button>
               <Button onClick={handleSaveLocation}>{editingLocation ? 'Update' : 'Create'} Location</Button>
             </DialogFooter>
           </DialogContent>
