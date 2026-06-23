@@ -1258,13 +1258,9 @@ const addUserRoleMappingData = async (req, res) => {
 
     res.json({ success: true, message: "Data inserted successfully" });
   } catch (err) {
-    if (err.class === 16 && err.number === 50000) {
-      // Custom error from the stored procedure
-      res.status(400).json({ message: "User & Role already exists" });
-    } else {
       // Handle unexpected errors
       res.status(500).json({ message: err.message || "Internal Server Error" });
-    }
+   
   }
 };
 

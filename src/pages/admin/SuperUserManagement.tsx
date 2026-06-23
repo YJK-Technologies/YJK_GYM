@@ -23,11 +23,19 @@ const WorkoutProgramManagement = () => {
   const { toast } = useToast();
   const [activeTab, setActiveTab] = useState('company');
   const [searchTerm, setSearchTerm] = useState('');
-  const [cities, setCities] = useState([]);
-  const [states, setStates] = useState([]);
-  const [countries, setCountries] = useState([]);
-  const [status, setStatus] = useState([]);
-  const [location, setLocation] = useState([]);
+  const [cities, setCities] = useState<any[]>([]);
+  const [states, setStates] = useState<any[]>([]);
+  const [countries, setCountries] = useState<any[]>([]);
+  const [status, setStatus] = useState<any[]>([]);
+  const [location, setLocation] = useState<any[]>([]);
+  const [user, setUser] = useState<any[]>([]);
+  const [company, setCompany] = useState<any[]>([]);
+  const [role, setRole] = useState<any[]>([]);
+
+  //Role Rights Screen
+  const [permission, setPermission] = useState<any[]>([]);
+  const [screen, setScreen] = useState<any[]>([]);
+  const [roleRight, setRoleRight] = useState<any[]>([]);
   const [logInLogOut, setLogInLogOut] = useState([]);
   const [gender, setGender] = useState([]);
 
@@ -142,6 +150,137 @@ const WorkoutProgramManagement = () => {
     }
   };
 
+  const fetchUsers = async () => {
+    try {
+      const response = await fetch(`${BASE_URL}/usercode`);
+
+      if (!response.ok) {
+        throw new Error("Failed to fetch users");
+      }
+
+      const data = await response.json();
+      setUser(data);
+    } catch (error) {
+      console.error("Error fetching users:", error);
+    }
+  };
+
+  const fetchCompanies = async () => {
+    try {
+      const response = await fetch(`${BASE_URL}/Companyno`);
+
+      if (!response.ok) {
+        throw new Error("Failed to fetch companies");
+      }
+
+      const data = await response.json();
+      setCompany(data);
+    } catch (error) {
+      console.error("Error fetching companies:", error);
+    }
+  };
+
+  const fetchRole = async () => {
+    try {
+      const response = await fetch(`${BASE_URL}/roleid`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          company_code: "AKPON007",
+        }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        setRole(data);
+      } else {
+        console.error("Failed to fetch cities");
+      }
+
+    } catch (error) {
+      console.error("Error fetching companies:", error);
+    }
+  };
+
+  //Role Rights Screen
+  const fetchPermission = async () => {
+    try {
+      const response = await fetch(`${BASE_URL}/Permissions`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          company_code: "AKPON007",
+        }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        setPermission(data);
+      } else {
+        console.error("Failed to fetch cities");
+      }
+
+    } catch (error) {
+      console.error("Error fetching companies:", error);
+    }
+  };
+
+  const fetchRoleRight = async () => {
+    try {
+      const response = await fetch(`${BASE_URL}/roleid`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          company_code: "AKPON007",
+        }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        setRoleRight(data);
+      } else {
+        console.error("Failed to fetch cities");
+      }
+
+    } catch (error) {
+      console.error("Error fetching companies:", error);
+    }
+  };
+
+  const fetchScreen = async () => {
+    try {
+      const response = await fetch(`${BASE_URL}/Screens`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          company_code: "AKPON007",
+        }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        setScreen(data);
+      } else {
+        console.error("Failed to fetch cities");
+      }
+
+    } catch (error) {
+      console.error("Error fetching companies:", error);
+    }
+  };
+
   // Added by Dinesh Gokul - 23-06-2026 for User
   const fetchLogInLogOut = async () => {
     try {
@@ -228,6 +367,7 @@ const WorkoutProgramManagement = () => {
   };
 
   //Company Mapping Dialog States
+  const [submittedCompanyMapping, setSubmittedCompanyMapping] = useState(false);
   const [companyMappings, setCompanyMappings] = useState([]);
   const [editingCompanyMapping, setEditingCompanyMapping] = useState<any>(null);
   const [isCompanyMappingDialogOpen, setIsCompanyMappingDialogOpen] = useState(false);
@@ -267,6 +407,7 @@ const WorkoutProgramManagement = () => {
   });
 
   //Role Dialog States
+  const [submittedRole, setSubmittedRole] = useState(false);
   const [roles, setRoles] = useState([]);
   const [editingRole, setEditingRole] = useState<any>(null);
   const [isRoleDialogOpen, setIsRoleDialogOpen] = useState(false);
@@ -280,6 +421,7 @@ const WorkoutProgramManagement = () => {
   });
 
   //Role Mapping Dialog States
+  const [submittedRoleMapping, setSubmittedRoleMapping] = useState(false);
   const [roleMappings, setRoleMappings] = useState([]);
   const [editingRoleMapping, setEditingRoleMapping] = useState<any>(null);
   const [isRoleMappingDialogOpen, setIsRoleMappingDialogOpen] = useState(false);
@@ -293,6 +435,7 @@ const WorkoutProgramManagement = () => {
   });
 
   //Role Rights Dialog States
+  const [submittedRoleRights, setSubmittedRoleRights] = useState(false);
   const [roleRights, setRoleRights] = useState([]);
   const [editingRoleRight, setEditingRoleRight] = useState<any>(null);
   const [isRoleRightsDialogOpen, setIsRoleRightsDialogOpen] = useState(false);
@@ -488,12 +631,20 @@ const WorkoutProgramManagement = () => {
       const data = await response.json();
 
       if (response.ok) {
-        alert(data.message);
+        toast({
+          title: "Success",
+          description: data.message || "Company created successfully.",
+        });
+
         // fetchCompanies();
         setIsCompanyDialogOpen(false);
         setSubmittedCompany(false);
       } else {
-        alert(data.message);
+        toast({
+          title: "Error",
+          description: data.message || "Failed to create company.",
+          variant: "destructive",
+        });
       }
     } catch (error) {
       console.error(error);
@@ -530,14 +681,30 @@ const WorkoutProgramManagement = () => {
       const data = await response.json();
 
       if (response.ok) {
-        alert(data);
+        toast({
+          title: "Success",
+          description: data.message || "Company updated successfully.",
+        });
+
         // fetchCompanies();
         setEditingCompany(null);
         setIsCompanyDialogOpen(false);
         setSubmittedCompany(false);
+      } else {
+        toast({
+          title: "Error",
+          description: data.message || "Failed to update company.",
+          variant: "destructive",
+        });
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error(error);
+
+      toast({
+        title: "Server Error",
+        description: error.message || "Something went wrong.",
+        variant: "destructive",
+      });
     }
   };
 
@@ -565,11 +732,27 @@ const WorkoutProgramManagement = () => {
       const data = await response.json();
 
       if (response.ok) {
-        alert(data);
+        toast({
+          title: "Success",
+          description: data.message || "Company deleted successfully.",
+        });
+
         // fetchCompanies();
+      } else {
+        toast({
+          title: "Error",
+          description: data.message || "Failed to delete company.",
+          variant: "destructive",
+        });
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error(error);
+
+      toast({
+        title: "Server Error",
+        description: error.message || "Something went wrong.",
+        variant: "destructive",
+      });
     }
   };
 
@@ -612,7 +795,10 @@ const WorkoutProgramManagement = () => {
 
   //Company Mapping CRUD Functions
   const handleAddCompanyMapping = () => {
+    fetchUsers();
+    fetchCompanies();
     fetchStatus();
+    fetchLocation();
     setEditingCompanyMapping(null);
     setCompanyMappingForm({
       company_code: "",
@@ -628,7 +814,29 @@ const WorkoutProgramManagement = () => {
     setIsCompanyMappingDialogOpen(true);
   };
 
+  const validateCompanyMapping = () => {
+    if (
+      !companyMappingForm.user_code ||
+      !companyMappingForm.company_no ||
+      !companyMappingForm.location_no ||
+      !companyMappingForm.status
+    ) {
+      toast({
+        title: "Required Fields",
+        description: "Please fill all required fields.",
+        variant: "destructive",
+      });
+      return false;
+    }
+
+    return true;
+  };
+
   const handleCreateCompanyMapping = async () => {
+    setSubmittedCompanyMapping(true);
+
+    if (!validateCompanyMapping()) return;
+
     try {
       const response = await fetch(`${BASE_URL}/addCompanyMappingData`,
         {
@@ -643,18 +851,37 @@ const WorkoutProgramManagement = () => {
       const data = await response.json();
 
       if (response.ok) {
-        alert(data.message);
+        toast({
+          title: "Success",
+          description: data.message || "Company mapping created successfully.",
+        });
+
         // fetchCompanyMappings();
         setIsCompanyMappingDialogOpen(false);
+        setSubmittedCompanyMapping(false);
       } else {
-        alert(data.message);
+        toast({
+          title: "Error",
+          description: data.message || "Failed to create company mapping.",
+          variant: "destructive",
+        });
       }
-    } catch (err) {
+    } catch (err: any) {
       console.error(err);
+
+      toast({
+        title: "Server Error",
+        description: err.message || "Something went wrong.",
+        variant: "destructive",
+      });
     }
   };
 
   const handleUpdateCompanyMapping = async () => {
+    setSubmittedCompanyMapping(true);
+
+    if (!validateCompanyMapping()) return;
+
     try {
       const response = await fetch(`${BASE_URL}/CompanyMappingUpdate`,
         {
@@ -669,18 +896,39 @@ const WorkoutProgramManagement = () => {
       const data = await response.json();
 
       if (response.ok) {
-        alert(data);
+        toast({
+          title: "Success",
+          description: data.message || "Company mapping updated successfully.",
+        });
+
         // fetchCompanyMappings();
         setEditingCompanyMapping(null);
         setIsCompanyMappingDialogOpen(false);
+        setSubmittedCompanyMapping(false);
+      } else {
+        toast({
+          title: "Error",
+          description: data.message || "Failed to update company mapping.",
+          variant: "destructive",
+        });
       }
-    } catch (err) {
+    } catch (err: any) {
       console.error(err);
+
+      toast({
+        title: "Server Error",
+        description: err.message || "Something went wrong.",
+        variant: "destructive",
+      });
     }
   };
 
   const handleDeleteCompanyMapping = async (keyfiels: string) => {
-    if (!window.confirm("Delete this mapping?")) return;
+    const confirmed = window.confirm(
+      "Are you sure you want to delete this company mapping? This action cannot be undone."
+    );
+
+    if (!confirmed) return;
 
     try {
       const response = await fetch(`${BASE_URL}/commappingdeleteData`,
@@ -699,13 +947,29 @@ const WorkoutProgramManagement = () => {
       const data = await response.json();
 
       if (response.ok) {
-        alert(data);
+        toast({
+          title: "Success",
+          description:
+            data.message || "Company mapping deleted successfully.",
+        });
+
         // fetchCompanyMappings();
       } else {
-        alert(data.message || data);
+        toast({
+          title: "Error",
+          description:
+            data.message || "Failed to delete company mapping.",
+          variant: "destructive",
+        });
       }
-    } catch (err) {
+    } catch (err: any) {
       console.error(err);
+
+      toast({
+        title: "Server Error",
+        description: err.message || "Something went wrong.",
+        variant: "destructive",
+      });
     }
   };
 
@@ -912,14 +1176,14 @@ const WorkoutProgramManagement = () => {
       if (response.ok) {
         toast({
           title: "Success",
-          description: data.message || data || "Location deleted successfully.",
+          description: data.message || "Location deleted successfully.",
         });
 
         // fetchLocations();
       } else {
         toast({
           title: "Error",
-          description: data.message || data || "Failed to delete location.",
+          description: data.message || "Failed to delete location.",
           variant: "destructive",
         });
       }
@@ -980,7 +1244,27 @@ const WorkoutProgramManagement = () => {
     setIsRoleDialogOpen(true);
   };
 
+  const validateRole = () => {
+    if (
+      !roleForm.role_id ||
+      !roleForm.role_name
+    ) {
+      toast({
+        title: "Required Fields",
+        description: "Please fill all required fields.",
+        variant: "destructive",
+      });
+      return false;
+    }
+
+    return true;
+  };
+
   const handleCreateRole = async () => {
+    setSubmittedRole(true);
+
+    if (!validateRole()) return;
+
     try {
       const response = await fetch(`${BASE_URL}/addRoleInfoData`, {
         method: "POST",
@@ -993,18 +1277,37 @@ const WorkoutProgramManagement = () => {
       const data = await response.json();
 
       if (response.ok) {
-        alert(data.message);
+        toast({
+          title: "Success",
+          description: data.message || "Role created successfully.",
+        });
+
         // fetchRoles();
         setIsRoleDialogOpen(false);
+        setSubmittedRole(false);
       } else {
-        alert(data.message || "Failed to create role");
+        toast({
+          title: "Error",
+          description: data.message || "Failed to create role.",
+          variant: "destructive",
+        });
       }
-    } catch (err) {
+    } catch (err: any) {
       console.error(err);
+
+      toast({
+        title: "Server Error",
+        description: err.message || "Something went wrong.",
+        variant: "destructive",
+      });
     }
   };
 
   const handleUpdateRole = async () => {
+    setSubmittedRole(true);
+
+    if (!validateRole()) return;
+
     try {
       const response = await fetch(`${BASE_URL}/RoleUpdates`, {
         method: "POST",
@@ -1017,20 +1320,39 @@ const WorkoutProgramManagement = () => {
       const data = await response.json();
 
       if (response.ok) {
-        alert(data);
+        toast({
+          title: "Success",
+          description: data.message || "Role updated successfully.",
+        });
+
         // fetchRoles();
         setEditingRole(null);
         setIsRoleDialogOpen(false);
+        setSubmittedRole(false);
       } else {
-        alert(data.message || "Update failed");
+        toast({
+          title: "Error",
+          description: data.message || "Failed to update role.",
+          variant: "destructive",
+        });
       }
-    } catch (err) {
+    } catch (err: any) {
       console.error(err);
+
+      toast({
+        title: "Server Error",
+        description: err.message || "Something went wrong.",
+        variant: "destructive",
+      });
     }
   };
 
   const handleDeleteRole = async (role_id: string) => {
-    if (!window.confirm("Delete this role?")) return;
+    const confirmed = window.confirm(
+      "Are you sure you want to delete this role? This action cannot be undone."
+    );
+
+    if (!confirmed) return;
 
     try {
       const response = await fetch(`${BASE_URL}/roledelete`, {
@@ -1048,13 +1370,27 @@ const WorkoutProgramManagement = () => {
       const data = await response.json();
 
       if (response.ok) {
-        alert(data);
+        toast({
+          title: "Success",
+          description: data.message || "Role deleted successfully.",
+        });
+
         // fetchRoles();
       } else {
-        alert(data.message || data);
+        toast({
+          title: "Error",
+          description: data.message || "Failed to delete role.",
+          variant: "destructive",
+        });
       }
-    } catch (err) {
+    } catch (err: any) {
       console.error(err);
+
+      toast({
+        title: "Server Error",
+        description: err.message || "Something went wrong.",
+        variant: "destructive",
+      });
     }
   };
 
@@ -1083,6 +1419,8 @@ const WorkoutProgramManagement = () => {
 
   //Role Mapping CRUD Functions
   const handleAddRoleMapping = () => {
+    fetchUsers();
+    fetchRole();
     setEditingRoleMapping(null);
     setRoleMappingForm({
       company_code: "",
@@ -1095,7 +1433,27 @@ const WorkoutProgramManagement = () => {
     setIsRoleMappingDialogOpen(true);
   };
 
+  const validateRoleMapping = () => {
+    if (
+      !roleMappingForm.user_code ||
+      !roleMappingForm.role_id
+    ) {
+      toast({
+        title: "Required Fields",
+        description: "Please fill all required fields.",
+        variant: "destructive",
+      });
+      return false;
+    }
+
+    return true;
+  };
+
   const handleCreateRoleMapping = async () => {
+    setSubmittedRoleMapping(true);
+
+    if (!validateRoleMapping()) return;
+
     try {
       const response = await fetch(`${BASE_URL}/addUserRoleMappingData`, {
         method: "POST",
@@ -1108,18 +1466,37 @@ const WorkoutProgramManagement = () => {
       const data = await response.json();
 
       if (response.ok) {
-        alert(data.message);
+        toast({
+          title: "Success",
+          description: data.message || "Role mapping created successfully.",
+        });
+
         // fetchRoleMappings();
         setIsRoleMappingDialogOpen(false);
+        setSubmittedRoleMapping(false);
       } else {
-        alert(data.message);
+        toast({
+          title: "Error",
+          description: data.message || "Failed to create role mapping.",
+          variant: "destructive",
+        });
       }
-    } catch (err) {
+    } catch (err: any) {
       console.error(err);
+
+      toast({
+        title: "Server Error",
+        description: err.message || "Something went wrong.",
+        variant: "destructive",
+      });
     }
   };
 
   const handleUpdateRoleMapping = async () => {
+    setSubmittedRoleMapping(true);
+
+    if (!validateRoleMapping()) return;
+
     try {
       const response = await fetch(`${BASE_URL}/RoleMappingUpdate`, {
         method: "POST",
@@ -1132,20 +1509,39 @@ const WorkoutProgramManagement = () => {
       const data = await response.json();
 
       if (response.ok) {
-        alert(data);
+        toast({
+          title: "Success",
+          description: data.message || "Role mapping updated successfully.",
+        });
 
         // fetchRoleMappings();
-
         setEditingRoleMapping(null);
         setIsRoleMappingDialogOpen(false);
+        setSubmittedRoleMapping(false);
+      } else {
+        toast({
+          title: "Error",
+          description: data.message || "Failed to update role mapping.",
+          variant: "destructive",
+        });
       }
-    } catch (err) {
+    } catch (err: any) {
       console.error(err);
+
+      toast({
+        title: "Server Error",
+        description: err.message || "Something went wrong.",
+        variant: "destructive",
+      });
     }
   };
 
   const handleDeleteRoleMapping = async (keyfield: string) => {
-    if (!window.confirm("Delete this role mapping?")) return;
+    const confirmed = window.confirm(
+      "Are you sure you want to delete this role mapping? This action cannot be undone."
+    );
+
+    if (!confirmed) return;
 
     try {
       const response = await fetch(`${BASE_URL}/RollMappingDelete`, {
@@ -1162,13 +1558,27 @@ const WorkoutProgramManagement = () => {
       const data = await response.json();
 
       if (response.ok) {
-        alert(data);
+        toast({
+          title: "Success",
+          description: data.message || "Role mapping deleted successfully.",
+        });
+
         // fetchRoleMappings();
       } else {
-        alert(data.message || data);
+        toast({
+          title: "Error",
+          description: data.message || "Failed to delete role mapping.",
+          variant: "destructive",
+        });
       }
-    } catch (err) {
+    } catch (err: any) {
       console.error(err);
+
+      toast({
+        title: "Server Error",
+        description: err.message || "Something went wrong.",
+        variant: "destructive",
+      });
     }
   };
 
@@ -1197,9 +1607,12 @@ const WorkoutProgramManagement = () => {
 
   //Role Rights CRUD Functions
   const handleAddRoleRights = () => {
+    fetchPermission();
+    fetchRoleRight();
+    fetchScreen();
     setEditingRoleRight(null);
     setRoleRightsForm({
-      company_code: "COMP001",
+      company_code: "",
       role_id: "",
       screen_type: "",
       permission_type: "",
@@ -1210,7 +1623,28 @@ const WorkoutProgramManagement = () => {
     setIsRoleRightsDialogOpen(true);
   };
 
+  const validateRoleRights = () => {
+    if (
+      !roleRightsForm.role_id ||
+      !roleRightsForm.screen_type ||
+      !roleRightsForm.permission_type
+    ) {
+      toast({
+        title: "Required Fields",
+        description: "Please fill all required fields.",
+        variant: "destructive",
+      });
+      return false;
+    }
+
+    return true;
+  };
+
   const handleCreateRoleRight = async () => {
+    setSubmittedRoleRights(true);
+
+    if (!validateRoleRights()) return;
+
     try {
       const response = await fetch(`${BASE_URL}/adduserscreenmap`, {
         method: "POST",
@@ -1223,18 +1657,37 @@ const WorkoutProgramManagement = () => {
       const data = await response.json();
 
       if (response.ok) {
-        alert(data.message);
+        toast({
+          title: "Success",
+          description: data.message || "Role rights created successfully.",
+        });
+
         // fetchRoleRights();
         setIsRoleRightsDialogOpen(false);
+        setSubmittedRoleRights(false);
       } else {
-        alert(data.message);
+        toast({
+          title: "Error",
+          description: data.message || "Failed to create role rights.",
+          variant: "destructive",
+        });
       }
-    } catch (err) {
+    } catch (err: any) {
       console.error(err);
+
+      toast({
+        title: "Server Error",
+        description: err.message || "Something went wrong.",
+        variant: "destructive",
+      });
     }
   };
 
   const handleUpdateRoleRight = async () => {
+    setSubmittedRoleRights(true);
+
+    if (!validateRoleRights()) return;
+
     try {
       const response = await fetch(`${BASE_URL}/updateRoleRights`, {
         method: "PUT",
@@ -1247,20 +1700,39 @@ const WorkoutProgramManagement = () => {
       const data = await response.json();
 
       if (response.ok) {
-        alert(data);
+        toast({
+          title: "Success",
+          description: data.message || "Role rights updated successfully.",
+        });
 
         // fetchRoleRights();
-
         setEditingRoleRight(null);
         setIsRoleRightsDialogOpen(false);
+        setSubmittedRoleRights(false);
+      } else {
+        toast({
+          title: "Error",
+          description: data.message || "Failed to update role rights.",
+          variant: "destructive",
+        });
       }
-    } catch (err) {
+    } catch (err: any) {
       console.error(err);
+
+      toast({
+        title: "Server Error",
+        description: err.message || "Something went wrong.",
+        variant: "destructive",
+      });
     }
   };
 
   const handleDeleteRoleRight = async (keyfield: string) => {
-    if (!window.confirm("Delete this Role Right?")) return;
+    const confirmed = window.confirm(
+      "Are you sure you want to delete this role right? This action cannot be undone."
+    );
+
+    if (!confirmed) return;
 
     try {
       const response = await fetch(`${BASE_URL}/userscreenmapdeleteData`, {
@@ -1277,13 +1749,27 @@ const WorkoutProgramManagement = () => {
       const data = await response.json();
 
       if (response.ok) {
-        alert(data);
+        toast({
+          title: "Success",
+          description: data.message || "Role rights deleted successfully.",
+        });
+
         // fetchRoleRights();
       } else {
-        alert(data.message || data);
+        toast({
+          title: "Error",
+          description: data.message || "Failed to delete role rights.",
+          variant: "destructive",
+        });
       }
-    } catch (err) {
+    } catch (err: any) {
       console.error(err);
+
+      toast({
+        title: "Server Error",
+        description: err.message || "Something went wrong.",
+        variant: "destructive",
+      });
     }
   };
 
@@ -2264,7 +2750,11 @@ const WorkoutProgramManagement = () => {
         </Tabs>
 
         {/* Add/Edit Company Dialog Or Popup*/}
-        <Dialog open={isCompanyDialogOpen} onOpenChange={setIsCompanyDialogOpen}>
+        <Dialog open={isCompanyDialogOpen} onOpenChange={(open) => {
+          if(!open){
+            setSubmittedCompany(false);
+          }
+          setIsCompanyDialogOpen(open); }}>
           <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
 
             <DialogHeader>
@@ -2498,7 +2988,7 @@ const WorkoutProgramManagement = () => {
                             key={location.location_no}
                             value={location.location_no}
                           >
-                            {location.location_name}
+                            {location.location_no} - {location.location_name}
                           </SelectItem>
                         ))}
                       </SelectContent>
@@ -2518,7 +3008,7 @@ const WorkoutProgramManagement = () => {
 
             </div>
             <DialogFooter>
-              <Button variant="outline" onClick={() => { 
+              <Button variant="outline" onClick={() => {
                 setSubmittedCompany(false);
                 setIsCompanyDialogOpen(false);
               }}>Cancel</Button>
@@ -2528,7 +3018,11 @@ const WorkoutProgramManagement = () => {
         </Dialog>
 
         {/* Add/Edit Company Mapping Dialog Or Popup*/}
-        <Dialog open={isCompanyMappingDialogOpen} onOpenChange={setIsCompanyMappingDialogOpen}>
+        <Dialog open={isCompanyMappingDialogOpen} onOpenChange={(open) => {
+          if(!open){
+            setSubmittedCompanyMapping(false);
+          }
+          setIsCompanyMappingDialogOpen(open); }}>
           <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
             <DialogHeader>
               <DialogTitle>{editingCompanyMapping ? 'Edit Company Mapping' : 'Add New Company Mapping'}</DialogTitle>
@@ -2542,58 +3036,64 @@ const WorkoutProgramManagement = () => {
                 <div className="grid grid-cols-2 gap-4">
 
                   <div className="space-y-2">
-                    <Label htmlFor="category">User Code*</Label>
+                    <Label htmlFor="user" className={submittedCompanyMapping && !companyMappingForm.user_code ? "text-red-500" : ""}>User Code*</Label>
                     <Select value={companyMappingForm.user_code} onValueChange={(value) => setCompanyMappingForm({ ...companyMappingForm, user_code: value })}>
                       <SelectTrigger>
-                        <SelectValue placeholder="Select category" />
+                        <SelectValue placeholder="Select User Code" />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="Strength">Strength</SelectItem>
-                        <SelectItem value="Cardio">Cardio</SelectItem>
-                        <SelectItem value="HIIT">HIIT</SelectItem>
-                        <SelectItem value="Yoga">Yoga</SelectItem>
-                        <SelectItem value="CrossFit">CrossFit</SelectItem>
-                        <SelectItem value="Flexibility">Flexibility</SelectItem>
+                        {user.map((user: any) => (
+                          <SelectItem
+                            key={user.user_code}
+                            value={user.user_code}
+                          >
+                            {user.user_code} - {user.user_name}
+                          </SelectItem>
+                        ))}
                       </SelectContent>
                     </Select>
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="category">Company Code*</Label>
+                    <Label htmlFor="company" className={submittedCompanyMapping && !companyMappingForm.company_no ? "text-red-500" : ""}>Company Code*</Label>
                     <Select value={companyMappingForm.company_no} onValueChange={(value) => setCompanyMappingForm({ ...companyMappingForm, company_no: value })}>
                       <SelectTrigger>
-                        <SelectValue placeholder="Select category" />
+                        <SelectValue placeholder="Select Company Code" />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="Strength">Strength</SelectItem>
-                        <SelectItem value="Cardio">Cardio</SelectItem>
-                        <SelectItem value="HIIT">HIIT</SelectItem>
-                        <SelectItem value="Yoga">Yoga</SelectItem>
-                        <SelectItem value="CrossFit">CrossFit</SelectItem>
-                        <SelectItem value="Flexibility">Flexibility</SelectItem>
+                        {company.map((company: any) => (
+                          <SelectItem
+                            key={company.company_no}
+                            value={company.company_no}
+                          >
+                            {company.company_no} - {company.company_name}
+                          </SelectItem>
+                        ))}
                       </SelectContent>
                     </Select>
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="category">Location No*</Label>
+                    <Label htmlFor="location" className={submittedCompanyMapping && !companyMappingForm.location_no ? "text-red-500" : ""}>Location No*</Label>
                     <Select value={companyMappingForm.location_no} onValueChange={(value) => setCompanyMappingForm({ ...companyMappingForm, location_no: value })}>
                       <SelectTrigger>
-                        <SelectValue placeholder="Select category" />
+                        <SelectValue placeholder="Select Location No" />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="Strength">Strength</SelectItem>
-                        <SelectItem value="Cardio">Cardio</SelectItem>
-                        <SelectItem value="HIIT">HIIT</SelectItem>
-                        <SelectItem value="Yoga">Yoga</SelectItem>
-                        <SelectItem value="CrossFit">CrossFit</SelectItem>
-                        <SelectItem value="Flexibility">Flexibility</SelectItem>
+                        {location.map((location: any) => (
+                          <SelectItem
+                            key={location.location_no}
+                            value={location.location_no}
+                          >
+                            {location.location_no} - {location.location_name}
+                          </SelectItem>
+                        ))}
                       </SelectContent>
                     </Select>
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="status">Status*</Label>
+                    <Label htmlFor="status" className={submittedCompanyMapping && !companyMappingForm.status ? "text-red-500" : ""}>Status*</Label>
                     <Select value={companyMappingForm.status} onValueChange={(value) => setCompanyMappingForm({ ...companyMappingForm, status: value })}>
                       <SelectTrigger>
                         <SelectValue placeholder="Select Status" />
@@ -2625,14 +3125,21 @@ const WorkoutProgramManagement = () => {
               </div>
             </div>
             <DialogFooter>
-              <Button variant="outline" onClick={() => setIsCompanyMappingDialogOpen(false)}>Cancel</Button>
+              <Button variant="outline" onClick={() => {
+                setSubmittedCompanyMapping(false);
+                setIsCompanyMappingDialogOpen(false);
+              }}>Cancel</Button>
               <Button onClick={handleSaveCompanyMapping}>{editingCompanyMapping ? 'Update' : 'Create'} Company Mapping</Button>
             </DialogFooter>
           </DialogContent>
         </Dialog>
 
         {/* Add/Edit Location Dialog Or Popup*/}
-        <Dialog open={isLocationDialogOpen} onOpenChange={setIsLocationDialogOpen}>
+        <Dialog open={isLocationDialogOpen} onOpenChange={(open) => {
+          if(!open){
+            setSubmittedLocation(false);
+          }
+          setIsLocationDialogOpen(open); }}>
           <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
             <DialogHeader>
               <DialogTitle>{editingLocation ? 'Edit Location' : 'Add New Location'}</DialogTitle>
@@ -2824,7 +3331,11 @@ const WorkoutProgramManagement = () => {
         </Dialog>
 
         {/* Add/Edit Role Dialog Or Popup*/}
-        <Dialog open={isRoleDialogOpen} onOpenChange={setIsRoleDialogOpen}>
+        <Dialog open={isRoleDialogOpen} onOpenChange={(open) => {
+          if(!open){
+            setSubmittedRole(false);
+          }
+          setIsRoleDialogOpen(open); }}>
           <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
             <DialogHeader>
               <DialogTitle>{editingRole ? 'Edit Role' : 'Add New Role'}</DialogTitle>
@@ -2838,7 +3349,7 @@ const WorkoutProgramManagement = () => {
                 <div className="grid grid-cols-2 gap-4">
 
                   <div className="space-y-2">
-                    <Label htmlFor="name">Role ID*</Label>
+                    <Label htmlFor="name" className={submittedRole && !roleForm.role_id ? "text-red-500" : ""}>Role ID*</Label>
                     <Input
                       id="name"
                       value={roleForm.role_id}
@@ -2848,7 +3359,7 @@ const WorkoutProgramManagement = () => {
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="name">Role Name*</Label>
+                    <Label htmlFor="name" className={submittedRole && !roleForm.role_name ? "text-red-500" : ""}>Role Name*</Label>
                     <Input
                       id="name"
                       value={roleForm.role_name}
@@ -2870,14 +3381,21 @@ const WorkoutProgramManagement = () => {
             </div>
 
             <DialogFooter>
-              <Button variant="outline" onClick={() => setIsRoleDialogOpen(false)}>Cancel</Button>
+              <Button variant="outline" onClick={() => {
+                setSubmittedRole(false);
+                setIsRoleDialogOpen(false);
+              }}>Cancel</Button>
               <Button onClick={handleSaveRole}>{editingRole ? 'Update' : 'Create'} Role</Button>
             </DialogFooter>
           </DialogContent>
         </Dialog>
 
         {/* Add/Edit Role Mapping Dialog Or Popup*/}
-        <Dialog open={isRoleMappingDialogOpen} onOpenChange={setIsRoleMappingDialogOpen}>
+        <Dialog open={isRoleMappingDialogOpen} onOpenChange={(open) => {
+          if(!open){
+            setSubmittedRoleMapping(false);
+          }
+          setIsRoleMappingDialogOpen(open); }}>
           <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
             <DialogHeader>
               <DialogTitle>{editingRoleMapping ? 'Edit Role Mapping' : 'Add New Role Mapping'}</DialogTitle>
@@ -2891,35 +3409,39 @@ const WorkoutProgramManagement = () => {
                 <div className="grid grid-cols-2 gap-4">
 
                   <div className="space-y-2">
-                    <Label htmlFor="category">User Code*</Label>
+                    <Label htmlFor="user" className={submittedRoleMapping && !roleMappingForm.user_code ? "text-red-500" : ""}>User Code*</Label>
                     <Select value={roleMappingForm.user_code} onValueChange={(value) => setRoleMappingForm({ ...roleMappingForm, user_code: value })}>
                       <SelectTrigger>
-                        <SelectValue placeholder="Select category" />
+                        <SelectValue placeholder="Select User Code" />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="Strength">Strength</SelectItem>
-                        <SelectItem value="Cardio">Cardio</SelectItem>
-                        <SelectItem value="HIIT">HIIT</SelectItem>
-                        <SelectItem value="Yoga">Yoga</SelectItem>
-                        <SelectItem value="CrossFit">CrossFit</SelectItem>
-                        <SelectItem value="Flexibility">Flexibility</SelectItem>
+                        {user.map((user: any) => (
+                          <SelectItem
+                            key={user.user_code}
+                            value={user.user_code}
+                          >
+                            {user.user_code} - {user.user_name}
+                          </SelectItem>
+                        ))}
                       </SelectContent>
                     </Select>
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="category">Role ID*</Label>
+                    <Label htmlFor="role" className={submittedRoleMapping && !roleMappingForm.role_id ? "text-red-500" : ""}>Role ID*</Label>
                     <Select value={roleMappingForm.role_id} onValueChange={(value) => setRoleMappingForm({ ...roleMappingForm, role_id: value })}>
                       <SelectTrigger>
-                        <SelectValue placeholder="Select category" />
+                        <SelectValue placeholder="Select Role ID" />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="Strength">Strength</SelectItem>
-                        <SelectItem value="Cardio">Cardio</SelectItem>
-                        <SelectItem value="HIIT">HIIT</SelectItem>
-                        <SelectItem value="Yoga">Yoga</SelectItem>
-                        <SelectItem value="CrossFit">CrossFit</SelectItem>
-                        <SelectItem value="Flexibility">Flexibility</SelectItem>
+                        {role.map((role: any) => (
+                          <SelectItem
+                            key={role.role_id}
+                            value={role.role_id}
+                          >
+                            {role.role_id} - {role.role_name}
+                          </SelectItem>
+                        ))}
                       </SelectContent>
                     </Select>
                   </div>
@@ -2927,14 +3449,21 @@ const WorkoutProgramManagement = () => {
               </div>
             </div>
             <DialogFooter>
-              <Button variant="outline" onClick={() => setIsRoleMappingDialogOpen(false)}>Cancel</Button>
+              <Button variant="outline" onClick={() => {
+                setSubmittedRoleMapping(false);
+                setIsRoleMappingDialogOpen(false)
+              }}>Cancel</Button>
               <Button onClick={handleSaveRoleMapping}>{editingRoleMapping ? 'Update' : 'Create'} Role Mapping</Button>
             </DialogFooter>
           </DialogContent>
         </Dialog>
 
         {/* Add/Edit Role Rights Dialog Or Popup*/}
-        <Dialog open={isRoleRightsDialogOpen} onOpenChange={setIsRoleRightsDialogOpen}>
+        <Dialog open={isRoleRightsDialogOpen} onOpenChange={(open) => {
+          if (!open) {
+            setSubmittedRoleRights(false);
+          }
+          setIsRoleRightsDialogOpen(open); }}>
           <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
             <DialogHeader>
               <DialogTitle>{editingRoleRight ? 'Edit Role Rights' : 'Add New Role Rights'}</DialogTitle>
@@ -2948,52 +3477,58 @@ const WorkoutProgramManagement = () => {
                 <div className="grid grid-cols-2 gap-4">
 
                   <div className="space-y-2">
-                    <Label htmlFor="category">Role ID*</Label>
+                    <Label htmlFor="role" className={submittedRoleRights && !roleRightsForm.role_id ? "text-red-500" : ""}>Role ID*</Label>
                     <Select value={roleRightsForm.role_id} onValueChange={(value) => setRoleRightsForm({ ...roleRightsForm, role_id: value })}>
                       <SelectTrigger>
-                        <SelectValue placeholder="Select category" />
+                        <SelectValue placeholder="Select Role ID" />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="Strength">Strength</SelectItem>
-                        <SelectItem value="Cardio">Cardio</SelectItem>
-                        <SelectItem value="HIIT">HIIT</SelectItem>
-                        <SelectItem value="Yoga">Yoga</SelectItem>
-                        <SelectItem value="CrossFit">CrossFit</SelectItem>
-                        <SelectItem value="Flexibility">Flexibility</SelectItem>
+                        {roleRight.map((roleRight: any) => (
+                          <SelectItem
+                            key={roleRight.role_id}
+                            value={roleRight.role_id}
+                          >
+                            {roleRight.role_id} - {roleRight.role_name}
+                          </SelectItem>
+                        ))}
                       </SelectContent>
                     </Select>
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="category">Screen Type*</Label>
+                    <Label htmlFor="screen" className={submittedRoleRights && !roleRightsForm.screen_type ? "text-red-500" : ""}>Screen Type*</Label>
                     <Select value={roleRightsForm.screen_type} onValueChange={(value) => setRoleRightsForm({ ...roleRightsForm, screen_type: value })}>
                       <SelectTrigger>
-                        <SelectValue placeholder="Select category" />
+                        <SelectValue placeholder="Select Screen Type" />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="Strength">Strength</SelectItem>
-                        <SelectItem value="Cardio">Cardio</SelectItem>
-                        <SelectItem value="HIIT">HIIT</SelectItem>
-                        <SelectItem value="Yoga">Yoga</SelectItem>
-                        <SelectItem value="CrossFit">CrossFit</SelectItem>
-                        <SelectItem value="Flexibility">Flexibility</SelectItem>
+                        {screen.map((screen: any) => (
+                          <SelectItem
+                            key={screen.attributedetails_code}
+                            value={screen.attributedetails_code}
+                          >
+                            {screen.attributedetails_name}
+                          </SelectItem>
+                        ))}
                       </SelectContent>
                     </Select>
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="category">Permission Type*</Label>
+                    <Label htmlFor="permission" className={submittedRoleRights && !roleRightsForm.permission_type ? "text-red-500" : ""}>Permission Type*</Label>
                     <Select value={roleRightsForm.permission_type} onValueChange={(value) => setRoleRightsForm({ ...roleRightsForm, permission_type: value })}>
                       <SelectTrigger>
-                        <SelectValue placeholder="Select category" />
+                        <SelectValue placeholder="Select Permission Type" />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="Strength">Strength</SelectItem>
-                        <SelectItem value="Cardio">Cardio</SelectItem>
-                        <SelectItem value="HIIT">HIIT</SelectItem>
-                        <SelectItem value="Yoga">Yoga</SelectItem>
-                        <SelectItem value="CrossFit">CrossFit</SelectItem>
-                        <SelectItem value="Flexibility">Flexibility</SelectItem>
+                        {permission.map((permission: any) => (
+                          <SelectItem
+                            key={permission.attributedetails_code}
+                            value={permission.attributedetails_code}
+                          >
+                            {permission.attributedetails_name}
+                          </SelectItem>
+                        ))}
                       </SelectContent>
                     </Select>
                   </div>
@@ -3002,7 +3537,10 @@ const WorkoutProgramManagement = () => {
 
             </div>
             <DialogFooter>
-              <Button variant="outline" onClick={() => setIsRoleRightsDialogOpen(false)}>Cancel</Button>
+              <Button variant="outline" onClick={() => {
+                setSubmittedRoleRights(false);
+                setIsRoleRightsDialogOpen(false);
+              }}>Cancel</Button>
               <Button onClick={handleSaveRoleRight}>{editingRoleRight ? 'Update' : 'Create'} Role Rights</Button>
             </DialogFooter>
           </DialogContent>
