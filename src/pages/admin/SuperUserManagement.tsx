@@ -1,5 +1,5 @@
 
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -119,7 +119,7 @@ const WorkoutProgramManagement = () => {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          company_code: "AKPON007",
+          company_code: "YJK",
         }),
       });
 
@@ -188,7 +188,7 @@ const WorkoutProgramManagement = () => {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          company_code: "AKPON007",
+          company_code: "YJK",
         }),
       });
 
@@ -290,7 +290,7 @@ const WorkoutProgramManagement = () => {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          company_code: "AKPON007",
+          company_code: "YJK",
         }),
       });
 
@@ -315,7 +315,7 @@ const WorkoutProgramManagement = () => {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          company_code: "AKPON007",
+          company_code: "YJK",
         }),
       });
 
@@ -1802,6 +1802,7 @@ const WorkoutProgramManagement = () => {
     fetchStatus();
     fetchLogInLogOut();
     fetchGender();
+    fetchRole();
     setEditingUser(null);
     setUserForm({
       company_code: "YJKT",
@@ -1861,106 +1862,257 @@ const WorkoutProgramManagement = () => {
     return true;
   };
 
+  // const handleCreateUser = async () => {
+
+  //   setSubmittedUser(true);
+
+  //   if (!validateUser()) return;
+  //   try {
+  //     const formData = new FormData();
+
+  //     Object.entries(userForm).forEach(([key, value]) => {
+  //       formData.append(key, value as string);
+  //     });
+
+  //     if (userImages?.length > 0 && userImages[0]) {
+  //       formData.append("user_img", userImages[0]);
+  //     }
+  //     const response = await fetch(`${BASE_URL}/useradd`, {
+  //       method: "POST",
+  //       body: formData,
+  //     });
+
+  //     const data = await response.json();
+
+  //     if (response.ok) {
+  //       alert(data.message);
+  //       setIsUserDialogOpen(false);
+  //       setSubmittedUser(false);
+  //       // fetchUsers();
+  //     } else {
+  //       alert(data.message);
+  //     }
+  //   } catch (err) {
+  //     console.error(err);
+  //   }
+  // };
+
   const handleCreateUser = async () => {
-    setSubmittedUser(true);
+  setSubmittedUser(true);
 
-    if (!validateUser()) return;
-    try {
-      const formData = new FormData();
+  if (!validateUser()) return;
 
-      Object.entries(userForm).forEach(([key, value]) => {
-        formData.append(key, value as string);
-      });
+  try {
+    const formData = new FormData();
 
-      if (userImages?.length > 0 && userImages[0]) {
-        formData.append("user_img", userImages[0]);
-      }
-      const response = await fetch(`${BASE_URL}/useradd`, {
-        method: "POST",
-        body: formData,
-      });
+    Object.entries(userForm).forEach(([key, value]) => {
+      formData.append(key, value as string);
+    });
 
-      const data = await response.json();
-
-      if (response.ok) {
-        alert(data.message);
-        setIsUserDialogOpen(false);
-        setSubmittedUser(false);
-        // fetchUsers();
-      } else {
-        alert(data.message);
-      }
-    } catch (err) {
-      console.error(err);
+    if (userImages?.length > 0 && userImages[0]) {
+      formData.append("user_img", userImages[0]);
     }
-  };
+
+    const response = await fetch(`${BASE_URL}/useradd`, {
+      method: "POST",
+      body: formData,
+    });
+
+    const data = await response.json();
+
+    if (response.ok) {
+      toast({
+        title: "Success",
+        description: data.message || "User created successfully.",
+      });
+
+      setIsUserDialogOpen(false);
+      setSubmittedUser(false);
+
+      // fetchUsers();
+    } else {
+      toast({
+        title: "Error",
+        description: data.message || "Failed to create user.",
+        variant: "destructive",
+      });
+    }
+  } catch (err) {
+    console.error(err);
+
+    toast({
+      title: "Error",
+      description: "Something went wrong. Please try again.",
+      variant: "destructive",
+    });
+  }
+};
+
+  // const handleUpdateUser = async () => {
+  //   setSubmittedUser(true);
+
+  //   if (!validateUser()) return;
+  //   try {
+  //     const formData = new FormData();
+
+  //     Object.entries(userForm).forEach(([key, value]) => {
+  //       formData.append(key, value as string);
+  //     });
+
+  //     if (userImages.length > 0) {
+  //       formData.append("user_images", userImages[0]);
+  //     }
+
+  //     const response = await fetch(`${BASE_URL}/UserUpdates`, {
+  //       method: "PUT",
+  //       body: formData,
+  //     });
+
+  //     const data = await response.json();
+
+  //     if (response.ok) {
+  //       alert(data);
+  //       setEditingUser(null);
+  //       setIsUserDialogOpen(false);
+  //       setSubmittedUser(false);
+  //       // fetchUsers();
+  //     }
+  //   } catch (err) {
+  //     console.error(err);
+  //   }
+  // };
 
   const handleUpdateUser = async () => {
-    setSubmittedUser(true);
+  setSubmittedUser(true);
 
-    if (!validateUser()) return;
-    try {
-      const formData = new FormData();
+  if (!validateUser()) return;
 
-      Object.entries(userForm).forEach(([key, value]) => {
-        formData.append(key, value as string);
-      });
+  try {
+    const formData = new FormData();
 
-      if (userImages.length > 0) {
-        formData.append("user_images", userImages[0]);
-      }
+    Object.entries(userForm).forEach(([key, value]) => {
+      formData.append(key, value as string);
+    });
 
-      const response = await fetch(`${BASE_URL}/UserUpdates`, {
-        method: "PUT",
-        body: formData,
-      });
-
-      const data = await response.json();
-
-      if (response.ok) {
-        alert(data);
-        setEditingUser(null);
-        setIsUserDialogOpen(false);
-        setSubmittedUser(false);
-        // fetchUsers();
-      }
-    } catch (err) {
-      console.error(err);
+    if (userImages.length > 0) {
+      formData.append("user_images", userImages[0]);
     }
-  };
+
+    const response = await fetch(`${BASE_URL}/UserUpdates`, {
+      method: "PUT",
+      body: formData,
+    });
+
+    const data = await response.json();
+
+    if (response.ok) {
+      toast({
+        title: "Success",
+        description: data.message || "User updated successfully.",
+      });
+
+      setEditingUser(null);
+      setIsUserDialogOpen(false);
+      setSubmittedUser(false);
+
+      // fetchUsers();
+    } else {
+      toast({
+        title: "Error",
+        description: data.message || "Failed to update user.",
+        variant: "destructive",
+      });
+    }
+  } catch (err: any) {
+    console.error(err);
+
+    toast({
+      title: "Server Error",
+      description: err.message || "Something went wrong.",
+      variant: "destructive",
+    });
+  }
+};
+
+  // const handleDeleteUser = async (user_code: string) => {
+  //   const confirmDelete = window.confirm(
+  //     "Are you sure you want to delete this company?"
+  //   );
+
+  //   if (!confirmDelete) return;
+
+  //   try {
+  //     const response = await fetch(`${BASE_URL}/userdelete`, {
+  //       method: "DELETE",
+  //       headers: {
+  //         "Content-Type": "application/json",
+  //         "modified-by": "admin",
+  //         "company_code": "COMP001",
+  //       },
+  //       body: JSON.stringify({
+  //         user_codes: [user_code],
+  //       }),
+  //     });
+
+  //     const data = await response.json();
+
+  //     if (response.ok) {
+  //       alert(data);
+  //       // fetchUsers();
+  //     } else {
+  //       alert(data.message || data);
+  //     }
+  //   } catch (err) {
+  //     console.error(err);
+  //   }
+  // };
 
   const handleDeleteUser = async (user_code: string) => {
-    const confirmDelete = window.confirm(
-      "Are you sure you want to delete this company?"
-    );
+  const confirmDelete = window.confirm(
+    "Are you sure you want to delete this user?"
+  );
 
-    if (!confirmDelete) return;
+  if (!confirmDelete) return;
 
-    try {
-      const response = await fetch(`${BASE_URL}/userdelete`, {
-        method: "DELETE",
-        headers: {
-          "Content-Type": "application/json",
-          "modified-by": "admin",
-          "company_code": "COMP001",
-        },
-        body: JSON.stringify({
-          user_codes: [user_code],
-        }),
+  try {
+    const response = await fetch(`${BASE_URL}/userdelete`, {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+        "modified-by": "admin",
+        "company_code": "COMP001",
+      },
+      body: JSON.stringify({
+        user_codes: [user_code],
+      }),
+    });
+
+    const data = await response.json();
+
+    if (response.ok) {
+      toast({
+        title: "Success",
+        description: data.message || "User deleted successfully.",
       });
 
-      const data = await response.json();
-
-      if (response.ok) {
-        alert(data);
-        // fetchUsers();
-      } else {
-        alert(data.message || data);
-      }
-    } catch (err) {
-      console.error(err);
+      // fetchUsers();
+    } else {
+      toast({
+        title: "Error",
+        description: data.message || "Failed to delete user.",
+        variant: "destructive",
+      });
     }
-  };
+  } catch (err: any) {
+    console.error(err);
+
+    toast({
+      title: "Server Error",
+      description: err.message || "Something went wrong.",
+      variant: "destructive",
+    });
+  }
+};
 
   const handleSaveUser = async () => {
     if (editingUser) {
@@ -3560,14 +3712,14 @@ const WorkoutProgramManagement = () => {
                 <h4 className="font-medium text-sm text-gray-700">User Details</h4>
                 <div className="grid grid-cols-2 gap-4">
 
-                  <div className="space-y-2">
+                  {/* <div className="space-y-2"> */}
                     {/* <Label htmlFor="UserCode">User Code*</Label> */}
-                    <Label htmlFor="city" className={submittedUser && !userForm.user_code ? "text-red-500" : ""}>User Code*</Label>
-                    <Select value={userForm.user_code} onValueChange={(value) => setUserForm({ ...userForm, user_code: value })}>
-                      <SelectTrigger>
+                    {/* <Label htmlFor="city" className={submittedUser && !userForm.user_code ? "text-red-500" : ""}>User Code*</Label> */}
+                    {/* <Select value={userForm.user_code} onValueChange={(value) => setUserForm({ ...userForm, user_code: value })}> */}
+                      {/* <SelectTrigger>
                         <SelectValue placeholder="Select User Code" />
-                      </SelectTrigger>
-                      <SelectContent>
+                      </SelectTrigger> */}
+                      {/* <SelectContent> */}
                         {/* {userCodeNameDrop.map((item: any) => (
                           <SelectItem
                             key={item.user_code}
@@ -3576,14 +3728,25 @@ const WorkoutProgramManagement = () => {
                             {item.user_code} - {item.user_name}
                           </SelectItem>
                         ))} */}
-                        <SelectItem value="User1">User 1</SelectItem>
+                        {/* <SelectItem value="User1">User 1</SelectItem>
                         <SelectItem value="User2">User 2</SelectItem>
                         <SelectItem value="User3">User 3</SelectItem>
                         <SelectItem value="User4">User 4</SelectItem>
                         <SelectItem value="User5">User 5</SelectItem>
-                        <SelectItem value="User6">User 6</SelectItem>
-                      </SelectContent>
-                    </Select>
+                        <SelectItem value="User6">User 6</SelectItem> */}
+                      {/* </SelectContent> */}
+                    {/* </Select> */}
+                  {/* </div> */}
+
+                  <div className="space-y-2">
+                    {/* <Label htmlFor="LastName">Last Name*</Label> */}
+                    <Label htmlFor="name" className={submittedUser && !userForm.user_code ? "text-red-500" : ""}>User Code*</Label>
+                    <Input
+                      id="UserCode"
+                      value={userForm.user_code}
+                      onChange={(e) => setUserForm({ ...userForm, user_code: e.target.value })}
+                      placeholder="e.g., Last Name"
+                    />
                   </div>
 
                   <div className="space-y-2">
@@ -3613,7 +3776,7 @@ const WorkoutProgramManagement = () => {
                       id="LastName"
                       value={userForm.last_name}
                       onChange={(e) => setUserForm({ ...userForm, last_name: e.target.value })}
-                      placeholder="e.g., LastName"
+                      placeholder="e.g., Last Name"
                     />
                   </div>
                   <div className="space-y-2">
@@ -3673,12 +3836,14 @@ const WorkoutProgramManagement = () => {
                         <SelectValue placeholder="Select Role ID" />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="Strength">Strength</SelectItem>
-                        <SelectItem value="Cardio">Cardio</SelectItem>
-                        <SelectItem value="HIIT">HIIT</SelectItem>
-                        <SelectItem value="Yoga">Yoga</SelectItem>
-                        <SelectItem value="CrossFit">CrossFit</SelectItem>
-                        <SelectItem value="Flexibility">Flexibility</SelectItem>
+                        {role.map((role: any) => (
+                          <SelectItem
+                            key={role.role_id}
+                            value={role.role_id}
+                          >
+                            {role.role_id} - {role.role_name}
+                          </SelectItem>
+                        ))}
                       </SelectContent>
                     </Select>
                   </div>
