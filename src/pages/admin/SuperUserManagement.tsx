@@ -28,6 +28,8 @@ const WorkoutProgramManagement = () => {
   const [countries, setCountries] = useState([]);
   const [status, setStatus] = useState([]);
   const [location, setLocation] = useState([]);
+  const [logInLogOut, setLogInLogOut] = useState([]);
+  const [gender, setGender] = useState([]);
 
   const fetchCities = async () => {
     try {
@@ -137,6 +139,56 @@ const WorkoutProgramManagement = () => {
       setLocation(data);
     } catch (error) {
       console.error("Error fetching locations:", error);
+    }
+  };
+
+  // Added by Dinesh Gokul - 23-06-2026 for User
+  const fetchLogInLogOut = async () => {
+    try {
+      const response = await fetch(`${BASE_URL}/Loginorout`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          company_code: "AKPON007",
+        }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        setLogInLogOut(data);
+      } else {
+        console.error("Failed to fetch status");
+      }
+    } catch (error) {
+      console.error("Error fetching status:", error);
+    }
+  };
+
+  // Added by Dinesh Gokul - 23-06-2026 for User
+  const fetchGender = async () => {
+    try {
+      const response = await fetch(`${BASE_URL}/gender`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          company_code: "AKPON007",
+        }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        setGender(data);
+      } else {
+        console.error("Failed to fetch status");
+      }
+    } catch (error) {
+      console.error("Error fetching status:", error);
     }
   };
 
@@ -255,12 +307,11 @@ const WorkoutProgramManagement = () => {
   });
 
   //User Dialog States
+  const [submittedUser, setSubmittedUser] = useState(false);
   const [users, setUsers] = useState([]);
   const [editingUser, setEditingUser] = useState<any>(null);
   const [isUserDialogOpen, setIsUserDialogOpen] = useState(false);
   const [userCodeNameDrop, setUserCodeNameDrop] = useState([]);
-  const [statusdrop, setStatusdrop] = useState([]);
-  const company_code = sessionStorage.getItem('selectedCompanyCode');
   const [userForm, setUserForm] = useState({
     company_code: "",
     user_code: "",
@@ -289,7 +340,7 @@ const WorkoutProgramManagement = () => {
   // -- This dropdown values should come from member, trainer and admin tables 
   // User Code DropDown for User
 //   useEffect(() => {
-//   const company_code = sessionStorage.getItem('selectedCompanyCode');
+//   const company_code = "YJKT" // const company_code = sessionStorage.getItem('selectedCompanyCode');
 
 //   fetch(`${BASE_URL}/getUCN`, {
 //     method: 'POST',
@@ -307,20 +358,20 @@ const WorkoutProgramManagement = () => {
 // }, []);
 
   // Status DropDown for User
-useEffect(() => {
-    const company_code = "YJKT" // const company_code = sessionStorage.getItem('selectedCompanyCode');
+// useEffect(() => {
+//     const company_code = "YJKT" // const company_code = sessionStorage.getItem('selectedCompanyCode');
 
-    fetch(`${BASE_URL}/status`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ company_code })
-    })
-      .then((data) => data.json())
-      .then((val) => setStatusdrop(val))
-      .catch((error) => console.error('Error fetching data:', error));
-  }, []);
+//     fetch(`${BASE_URL}/status`, {
+//       method: 'POST',
+//       headers: {
+//         'Content-Type': 'application/json',
+//       },
+//       body: JSON.stringify({ company_code })
+//     })
+//       .then((data) => data.json())
+//       .then((val) => setStatusdrop(val))
+//       .catch((error) => console.error('Error fetching data:', error));
+//   }, []);
 
   //Attribute Dialog States
   const [attributes, setAttributes] = useState([]);
@@ -1262,6 +1313,9 @@ useEffect(() => {
 
   //User CRUD Functions
   const handleAddUser = () => {
+    fetchStatus();
+    fetchLogInLogOut();
+    fetchGender();
     setEditingUser(null);
     setUserForm({
       company_code: "YJKT",
@@ -1285,7 +1339,46 @@ useEffect(() => {
     setIsUserDialogOpen(true);
   };
 
+  const validateUser = () => {
+    if (
+      !userForm.company_code ||
+      !userForm.user_code ||
+      !userForm.user_name ||
+      !userForm.first_name ||
+      !userForm.last_name ||
+      !userForm.user_password ||
+      !userForm.user_status ||
+      !userForm.email_id ||
+      !userForm.dob ||
+      !userForm.role_id
+    ) {
+      toast({
+        title: "Required Fields",
+        description: "Please fill all required fields.",
+        variant: "destructive",
+      });
+      return false;
+    }
+
+    // Email validation
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+    if (!emailRegex.test(userForm.email_id)) {
+      toast({
+        title: "Invalid Email",
+        description: "Please enter a valid email address.",
+        variant: "destructive",
+      });
+      return false;
+    }
+
+    return true;
+  };
+
   const handleCreateUser = async () => {
+    setSubmittedUser(true);
+
+    if (!validateUser()) return;
     try {
       const formData = new FormData();
 
@@ -1306,6 +1399,7 @@ useEffect(() => {
       if (response.ok) {
         alert(data.message);
         setIsUserDialogOpen(false);
+        setSubmittedUser(false);
         // fetchUsers();
       } else {
         alert(data.message);
@@ -1316,6 +1410,9 @@ useEffect(() => {
   };
 
   const handleUpdateUser = async () => {
+    setSubmittedUser(true);
+
+    if (!validateUser()) return;
     try {
       const formData = new FormData();
 
@@ -1338,6 +1435,7 @@ useEffect(() => {
         alert(data);
         setEditingUser(null);
         setIsUserDialogOpen(false);
+        setSubmittedUser(false);
         // fetchUsers();
       }
     } catch (err) {
@@ -1346,7 +1444,11 @@ useEffect(() => {
   };
 
   const handleDeleteUser = async (user_code: string) => {
-    if (!window.confirm("Delete this User?")) return;
+    const confirmDelete = window.confirm(
+      "Are you sure you want to delete this company?"
+    );
+
+    if (!confirmDelete) return;
 
     try {
       const response = await fetch(`${BASE_URL}/userdelete`, {
@@ -1404,7 +1506,7 @@ useEffect(() => {
       modified_by: user.modified_by,
     });
 
-    setImages([]);
+    // setImages([]);
     setIsUserDialogOpen(true);
   };
 
@@ -2921,26 +3023,34 @@ useEffect(() => {
                 <div className="grid grid-cols-2 gap-4">
 
                   <div className="space-y-2">
-                    <Label htmlFor="UserCode">User Code</Label>
+                    {/* <Label htmlFor="UserCode">User Code*</Label> */}
+                    <Label htmlFor="city" className={submittedUser && !userForm.user_code ? "text-red-500" : ""}>User Code*</Label>
                     <Select value={userForm.user_code} onValueChange={(value) => setUserForm({ ...userForm, user_code: value })}>
                       <SelectTrigger>
                         <SelectValue placeholder="Select User Code" />
                       </SelectTrigger>
                       <SelectContent>
-                        {userCodeNameDrop.map((item: any) => (
+                        {/* {userCodeNameDrop.map((item: any) => (
                           <SelectItem
                             key={item.user_code}
                             value={item.user_code}
                           >
                             {item.user_code} - {item.user_name}
                           </SelectItem>
-                        ))}
+                        ))} */}
+                        <SelectItem value="User1">User 1</SelectItem>
+                        <SelectItem value="User2">User 2</SelectItem>
+                        <SelectItem value="User3">User 3</SelectItem>
+                        <SelectItem value="User4">User 4</SelectItem>
+                        <SelectItem value="User5">User 5</SelectItem>
+                        <SelectItem value="User6">User 6</SelectItem>
                       </SelectContent>
                     </Select>
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="name">User Name</Label>
+                    {/* <Label htmlFor="name">User Name*</Label> */}
+                    <Label htmlFor="name" className={submittedUser && !userForm.user_name ? "text-red-500" : ""}>User Name*</Label>
                     <Input
                       id="UserName"
                       value={userForm.user_name}
@@ -2949,7 +3059,8 @@ useEffect(() => {
                     />
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="FirstName">First Name</Label>
+                    {/* <Label htmlFor="FirstName">First Name*</Label> */}
+                    <Label htmlFor="name" className={submittedUser && !userForm.first_name ? "text-red-500" : ""}>First Name*</Label>
                     <Input
                       id="FirstName"
                       value={userForm.first_name}
@@ -2958,7 +3069,8 @@ useEffect(() => {
                     />
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="LastName">Last Name</Label>
+                    {/* <Label htmlFor="LastName">Last Name*</Label> */}
+                    <Label htmlFor="name" className={submittedUser && !userForm.last_name ? "text-red-500" : ""}>Last Name*</Label>
                     <Input
                       id="LastName"
                       value={userForm.last_name}
@@ -2967,7 +3079,8 @@ useEffect(() => {
                     />
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="name">Password</Label>
+                    {/* <Label htmlFor="name">Password*</Label> */}
+                    <Label htmlFor="name" className={submittedUser && !userForm.user_password ? "text-red-500" : ""}>Password*</Label>
                     <Input
                       id="Password"
                       value={userForm.user_password}
@@ -2976,18 +3089,19 @@ useEffect(() => {
                     />
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="UserCode">Status</Label>
+                    {/* <Label htmlFor="UserCode">Status*</Label> */}
+                    <Label htmlFor="name" className={submittedUser && !userForm.user_status ? "text-red-500" : ""}>Status*</Label>
                     <Select value={userForm.user_status} onValueChange={(value) => setUserForm({ ...userForm, user_status: value })}>
                       <SelectTrigger>
                         <SelectValue placeholder="Select Status" />
                       </SelectTrigger>
                       <SelectContent>
-                        {statusdrop.map((item: any) => (
+                        {status.map((status: any) => (
                           <SelectItem
-                            key={item.user_code}
-                            value={item.user_code}
+                            key={status.attributedetails_code}
+                            value={status.attributedetails_code}
                           >
-                            {item.user_code} - {item.user_name}
+                            {status.attributedetails_name}
                           </SelectItem>
                         ))}
                       </SelectContent>
@@ -3001,18 +3115,21 @@ useEffect(() => {
                         <SelectValue placeholder="Select Log in Or out" />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="Strength">Strength</SelectItem>
-                        <SelectItem value="Cardio">Cardio</SelectItem>
-                        <SelectItem value="HIIT">HIIT</SelectItem>
-                        <SelectItem value="Yoga">Yoga</SelectItem>
-                        <SelectItem value="CrossFit">CrossFit</SelectItem>
-                        <SelectItem value="Flexibility">Flexibility</SelectItem>
+                        {logInLogOut.map((status: any) => (
+                          <SelectItem
+                            key={status.attributedetails_code}
+                            value={status.attributedetails_code}
+                          >
+                            {status.attributedetails_name}
+                          </SelectItem>
+                        ))}
                       </SelectContent>
                     </Select>
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="RoleID">Role ID</Label>
+                    {/* <Label htmlFor="RoleID">Role ID*</Label> */}
+                    <Label htmlFor="name" className={submittedUser && !userForm.role_id ? "text-red-500" : ""}>Role ID*</Label>
                     <Select value={userForm.role_id} onValueChange={(value) => setUserForm({ ...userForm, role_id: value })}>
                       <SelectTrigger>
                         <SelectValue placeholder="Select Role ID" />
@@ -3029,7 +3146,8 @@ useEffect(() => {
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="Email">Email</Label>
+                    {/* <Label htmlFor="Email">Email*</Label> */}
+                    <Label htmlFor="name" className={submittedUser && !userForm.email_id ? "text-red-500" : ""}>Email*</Label>
                     <Input
                       id="Email"
                       value={userForm.email_id}
@@ -3038,7 +3156,8 @@ useEffect(() => {
                     />
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="DOB">DOB</Label>
+                    {/* <Label htmlFor="DOB">DOB*</Label> */}
+                    <Label htmlFor="name" className={submittedUser && !userForm.dob ? "text-red-500" : ""}>DOB*</Label>
                     <Input
                       id="DOB"
                       value={userForm.dob}
@@ -3053,12 +3172,14 @@ useEffect(() => {
                         <SelectValue placeholder="SelectGender" />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="Strength">Strength</SelectItem>
-                        <SelectItem value="Cardio">Cardio</SelectItem>
-                        <SelectItem value="HIIT">HIIT</SelectItem>
-                        <SelectItem value="Yoga">Yoga</SelectItem>
-                        <SelectItem value="CrossFit">CrossFit</SelectItem>
-                        <SelectItem value="Flexibility">Flexibility</SelectItem>
+                        {gender.map((status: any) => (
+                          <SelectItem
+                            key={status.attributedetails_code}
+                            value={status.attributedetails_code}
+                          >
+                            {status.attributedetails_name}
+                          </SelectItem>
+                        ))}
                       </SelectContent>
                     </Select>
                   </div>
@@ -3084,7 +3205,10 @@ useEffect(() => {
 
             </div>
             <DialogFooter>
-              <Button variant="outline" onClick={() => setIsUserDialogOpen(false)}>Cancel</Button>
+              <Button variant="outline" onClick={() => {
+                setIsUserDialogOpen(false);
+                setSubmittedUser(false);
+                }}>Cancel</Button>
               <Button onClick={handleSaveUser}>{editingUser ? 'Update User' : 'Create User'} Program</Button>
             </DialogFooter>
           </DialogContent>
