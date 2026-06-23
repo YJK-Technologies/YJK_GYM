@@ -2542,6 +2542,63 @@ const getGender = async (req, res) => {
 };
 // Code ended by Dinesh Gokul 22-06-2026
 
+// Code added by Dinesh Gokul 23-06-2026
+const addattrihdrData = async (req, res) => {
+  const {
+    company_code,
+    attributeheader_code,
+    attributeheader_name,
+    status,
+    created_by,
+    modified_by,
+    tempstr1,
+    tempstr2,
+    tempstr3,
+    tempstr4,
+    datetime1,
+    datetime2,
+    datetime3,
+    datetime4,
+  } = req.body;
+
+  try {
+    const pool = await sql.connect(dbConfig);
+
+    const result = await pool
+      .request()
+      .input("mode", sql.NVarChar, "I")
+      .input("company_code", sql.NVarChar, company_code)
+      .input("attributeheader_code", sql.NVarChar, attributeheader_code)
+      .input("attributeheader_name", sql.NVarChar, attributeheader_name)
+      .input("status", sql.NVarChar, status)
+      .input("created_by", sql.NVarChar, created_by)
+      .input("modified_by", sql.NVarChar, modified_by)
+      .input("tempstr1", sql.NVarChar, tempstr1)
+      .input("tempstr2", sql.NVarChar, tempstr2)
+      .input("tempstr3", sql.NVarChar, tempstr3)
+      .input("tempstr4", sql.NVarChar, tempstr4)
+      .input("datetime1", sql.NVarChar, datetime1)
+      .input("datetime2", sql.NVarChar, datetime2)
+      .input("datetime3", sql.NVarChar, datetime3)
+      .input("datetime4", sql.NVarChar, datetime4)
+      .query(
+        `EXEC sp_attribute_hdr @mode,@company_code,@attributeheader_code,@attributeheader_name,@status,@created_by,@modified_by,@tempstr1,@tempstr2,@tempstr3,@tempstr4,@datetime1,@datetime2,@datetime3,@datetime4`,
+      );
+
+    // Return success response
+    if (result.rowsAffected && result.rowsAffected[0] > 0) {
+      return res
+        .status(200)
+        .json({ success: true, message: "Data inserted successfully" });
+    }
+  } catch (err) {
+    {
+      // Handle unexpected errors
+      res.status(500).json({ message: err.message || "Internal Server Error" });
+    }
+  }
+};
+// Code ended by Dinesh Gokul 23-06-2026
 module.exports = {
 getCompanyno,
 getsearchdata,
@@ -2623,7 +2680,8 @@ getStatus,
 getScreens,
 getPermissions,
 getLoginorout,
-getGender
+getGender,
+addattrihdrData
 
 
 
