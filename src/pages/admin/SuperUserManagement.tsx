@@ -36,6 +36,8 @@ const WorkoutProgramManagement = () => {
   const [permission, setPermission] = useState<any[]>([]);
   const [screen, setScreen] = useState<any[]>([]);
   const [roleRight, setRoleRight] = useState<any[]>([]);
+  const [logInLogOut, setLogInLogOut] = useState([]);
+  const [gender, setGender] = useState([]);
 
   const fetchCities = async () => {
     try {
@@ -279,6 +281,56 @@ const WorkoutProgramManagement = () => {
     }
   };
 
+  // Added by Dinesh Gokul - 23-06-2026 for User
+  const fetchLogInLogOut = async () => {
+    try {
+      const response = await fetch(`${BASE_URL}/Loginorout`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          company_code: "YJK",
+        }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        setLogInLogOut(data);
+      } else {
+        console.error("Failed to fetch status");
+      }
+    } catch (error) {
+      console.error("Error fetching status:", error);
+    }
+  };
+
+  // Added by Dinesh Gokul - 23-06-2026 for User
+  const fetchGender = async () => {
+    try {
+      const response = await fetch(`${BASE_URL}/gender`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          company_code: "YJK",
+        }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        setGender(data);
+      } else {
+        console.error("Failed to fetch status");
+      }
+    } catch (error) {
+      console.error("Error fetching status:", error);
+    }
+  };
+
   //Company Dialog States
   const [submittedCompany, setSubmittedCompany] = useState(false);
   const [companies, setCompanies] = useState([]);
@@ -398,9 +450,11 @@ const WorkoutProgramManagement = () => {
   });
 
   //User Dialog States
+  const [submittedUser, setSubmittedUser] = useState(false);
   const [users, setUsers] = useState([]);
   const [editingUser, setEditingUser] = useState<any>(null);
   const [isUserDialogOpen, setIsUserDialogOpen] = useState(false);
+  const [userCodeNameDrop, setUserCodeNameDrop] = useState([]);
   const [userForm, setUserForm] = useState({
     company_code: "",
     user_code: "",
@@ -420,11 +474,47 @@ const WorkoutProgramManagement = () => {
     modified_by: "admin",
   });
   const [images, setImages] = useState<(string | null)[]>([null, null]);
-  const [userImages, setUserImages] = useState<(File | null)[]>(null);
+  const [userImages, setUserImages] = useState<(File | null)[]>([]);
 
   const handleUserFiles = (file: (File | null)[]) => {
     setUserImages(file);
   };
+
+  // -- This dropdown values should come from member, trainer and admin tables 
+  // User Code DropDown for User
+//   useEffect(() => {
+//   const company_code = "YJKT" // const company_code = sessionStorage.getItem('selectedCompanyCode');
+
+//   fetch(`${BASE_URL}/getUCN`, {
+//     method: 'POST',
+//     headers: {
+//       'Content-Type': 'application/json',
+//     },
+//     body: JSON.stringify({ company_code })
+//   })
+//     .then((data) => data.json())
+//     .then((val) => {
+//       console.log("Dropdown Data:", val);
+//       setUserCodeNameDrop(val);
+//     })
+//     .catch((error) => console.error('Error fetching data:', error));
+// }, []);
+
+  // Status DropDown for User
+// useEffect(() => {
+//     const company_code = "YJKT" // const company_code = sessionStorage.getItem('selectedCompanyCode');
+
+//     fetch(`${BASE_URL}/status`, {
+//       method: 'POST',
+//       headers: {
+//         'Content-Type': 'application/json',
+//       },
+//       body: JSON.stringify({ company_code })
+//     })
+//       .then((data) => data.json())
+//       .then((val) => setStatusdrop(val))
+//       .catch((error) => console.error('Error fetching data:', error));
+//   }, []);
 
   //Attribute Dialog States
   const [attributes, setAttributes] = useState([]);
@@ -1716,9 +1806,13 @@ const WorkoutProgramManagement = () => {
 
   //User CRUD Functions
   const handleAddUser = () => {
+    fetchStatus();
+    fetchLogInLogOut();
+    fetchGender();
+    fetchRole();
     setEditingUser(null);
     setUserForm({
-      company_code: "",
+      company_code: "YJKT",
       user_code: "",
       user_name: "",
       first_name: "",
@@ -1739,95 +1833,293 @@ const WorkoutProgramManagement = () => {
     setIsUserDialogOpen(true);
   };
 
-  const handleCreateUser = async () => {
-    try {
-      const formData = new FormData();
-
-      Object.entries(userForm).forEach(([key, value]) => {
-        formData.append(key, value as string);
+  const validateUser = () => {
+    if (
+      !userForm.company_code ||
+      !userForm.user_code ||
+      !userForm.user_name ||
+      !userForm.first_name ||
+      !userForm.last_name ||
+      !userForm.user_password ||
+      !userForm.user_status ||
+      !userForm.email_id ||
+      !userForm.dob ||
+      !userForm.role_id
+    ) {
+      toast({
+        title: "Required Fields",
+        description: "Please fill all required fields.",
+        variant: "destructive",
       });
-
-      if (userImages.length > 0) {
-        formData.append("user_img", userImages[0]);
-      }
-
-      const response = await fetch(`${BASE_URL}/useradd`, {
-        method: "POST",
-        body: formData,
-      });
-
-      const data = await response.json();
-
-      if (response.ok) {
-        alert(data.message);
-        setIsUserDialogOpen(false);
-        // fetchUsers();
-      } else {
-        alert(data.message);
-      }
-    } catch (err) {
-      console.error(err);
+      return false;
     }
+
+    // Email validation
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+    if (!emailRegex.test(userForm.email_id)) {
+      toast({
+        title: "Invalid Email",
+        description: "Please enter a valid email address.",
+        variant: "destructive",
+      });
+      return false;
+    }
+
+    return true;
   };
+
+  // const handleCreateUser = async () => {
+
+  //   setSubmittedUser(true);
+
+  //   if (!validateUser()) return;
+  //   try {
+  //     const formData = new FormData();
+
+  //     Object.entries(userForm).forEach(([key, value]) => {
+  //       formData.append(key, value as string);
+  //     });
+
+  //     if (userImages?.length > 0 && userImages[0]) {
+  //       formData.append("user_img", userImages[0]);
+  //     }
+  //     const response = await fetch(`${BASE_URL}/useradd`, {
+  //       method: "POST",
+  //       body: formData,
+  //     });
+
+  //     const data = await response.json();
+
+  //     if (response.ok) {
+  //       alert(data.message);
+  //       setIsUserDialogOpen(false);
+  //       setSubmittedUser(false);
+  //       // fetchUsers();
+  //     } else {
+  //       alert(data.message);
+  //     }
+  //   } catch (err) {
+  //     console.error(err);
+  //   }
+  // };
+
+  const handleCreateUser = async () => {
+  setSubmittedUser(true);
+
+  if (!validateUser()) return;
+
+  try {
+    const formData = new FormData();
+
+    Object.entries(userForm).forEach(([key, value]) => {
+      formData.append(key, value as string);
+    });
+
+    if (userImages?.length > 0 && userImages[0]) {
+      formData.append("user_img", userImages[0]);
+    }
+
+    const response = await fetch(`${BASE_URL}/useradd`, {
+      method: "POST",
+      body: formData,
+    });
+
+    const data = await response.json();
+
+    if (response.ok) {
+      toast({
+        title: "Success",
+        description: data.message || "User created successfully.",
+      });
+
+      setIsUserDialogOpen(false);
+      setSubmittedUser(false);
+
+      // fetchUsers();
+    } else {
+      toast({
+        title: "Error",
+        description: data.message || "Failed to create user.",
+        variant: "destructive",
+      });
+    }
+  } catch (err) {
+    console.error(err);
+
+    toast({
+      title: "Error",
+      description: "Something went wrong. Please try again.",
+      variant: "destructive",
+    });
+  }
+};
+
+  // const handleUpdateUser = async () => {
+  //   setSubmittedUser(true);
+
+  //   if (!validateUser()) return;
+  //   try {
+  //     const formData = new FormData();
+
+  //     Object.entries(userForm).forEach(([key, value]) => {
+  //       formData.append(key, value as string);
+  //     });
+
+  //     if (userImages.length > 0) {
+  //       formData.append("user_images", userImages[0]);
+  //     }
+
+  //     const response = await fetch(`${BASE_URL}/UserUpdates`, {
+  //       method: "PUT",
+  //       body: formData,
+  //     });
+
+  //     const data = await response.json();
+
+  //     if (response.ok) {
+  //       alert(data);
+  //       setEditingUser(null);
+  //       setIsUserDialogOpen(false);
+  //       setSubmittedUser(false);
+  //       // fetchUsers();
+  //     }
+  //   } catch (err) {
+  //     console.error(err);
+  //   }
+  // };
 
   const handleUpdateUser = async () => {
-    try {
-      const formData = new FormData();
+  setSubmittedUser(true);
 
-      Object.entries(userForm).forEach(([key, value]) => {
-        formData.append(key, value as string);
-      });
+  if (!validateUser()) return;
 
-      if (userImages.length > 0) {
-        formData.append("user_images", userImages[0]);
-      }
+  try {
+    const formData = new FormData();
 
-      const response = await fetch(`${BASE_URL}/UserUpdates`, {
-        method: "PUT",
-        body: formData,
-      });
+    Object.entries(userForm).forEach(([key, value]) => {
+      formData.append(key, value as string);
+    });
 
-      const data = await response.json();
-
-      if (response.ok) {
-        alert(data);
-        setEditingUser(null);
-        setIsUserDialogOpen(false);
-        // fetchUsers();
-      }
-    } catch (err) {
-      console.error(err);
+    if (userImages.length > 0) {
+      formData.append("user_images", userImages[0]);
     }
-  };
+
+    const response = await fetch(`${BASE_URL}/UserUpdates`, {
+      method: "PUT",
+      body: formData,
+    });
+
+    const data = await response.json();
+
+    if (response.ok) {
+      toast({
+        title: "Success",
+        description: data.message || "User updated successfully.",
+      });
+
+      setEditingUser(null);
+      setIsUserDialogOpen(false);
+      setSubmittedUser(false);
+
+      // fetchUsers();
+    } else {
+      toast({
+        title: "Error",
+        description: data.message || "Failed to update user.",
+        variant: "destructive",
+      });
+    }
+  } catch (err: any) {
+    console.error(err);
+
+    toast({
+      title: "Server Error",
+      description: err.message || "Something went wrong.",
+      variant: "destructive",
+    });
+  }
+};
+
+  // const handleDeleteUser = async (user_code: string) => {
+  //   const confirmDelete = window.confirm(
+  //     "Are you sure you want to delete this company?"
+  //   );
+
+  //   if (!confirmDelete) return;
+
+  //   try {
+  //     const response = await fetch(`${BASE_URL}/userdelete`, {
+  //       method: "DELETE",
+  //       headers: {
+  //         "Content-Type": "application/json",
+  //         "modified-by": "admin",
+  //         "company_code": "COMP001",
+  //       },
+  //       body: JSON.stringify({
+  //         user_codes: [user_code],
+  //       }),
+  //     });
+
+  //     const data = await response.json();
+
+  //     if (response.ok) {
+  //       alert(data);
+  //       // fetchUsers();
+  //     } else {
+  //       alert(data.message || data);
+  //     }
+  //   } catch (err) {
+  //     console.error(err);
+  //   }
+  // };
 
   const handleDeleteUser = async (user_code: string) => {
-    if (!window.confirm("Delete this User?")) return;
+  const confirmDelete = window.confirm(
+    "Are you sure you want to delete this user?"
+  );
 
-    try {
-      const response = await fetch(`${BASE_URL}/userdelete`, {
-        method: "DELETE",
-        headers: {
-          "Content-Type": "application/json",
-          "modified-by": "admin",
-          "company_code": "COMP001",
-        },
-        body: JSON.stringify({
-          user_codes: [user_code],
-        }),
+  if (!confirmDelete) return;
+
+  try {
+    const response = await fetch(`${BASE_URL}/userdelete`, {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+        "modified-by": "admin",
+        "company_code": "COMP001",
+      },
+      body: JSON.stringify({
+        user_codes: [user_code],
+      }),
+    });
+
+    const data = await response.json();
+
+    if (response.ok) {
+      toast({
+        title: "Success",
+        description: data.message || "User deleted successfully.",
       });
 
-      const data = await response.json();
-
-      if (response.ok) {
-        alert(data);
-        // fetchUsers();
-      } else {
-        alert(data.message || data);
-      }
-    } catch (err) {
-      console.error(err);
+      // fetchUsers();
+    } else {
+      toast({
+        title: "Error",
+        description: data.message || "Failed to delete user.",
+        variant: "destructive",
+      });
     }
-  };
+  } catch (err: any) {
+    console.error(err);
+
+    toast({
+      title: "Server Error",
+      description: err.message || "Something went wrong.",
+      variant: "destructive",
+    });
+  }
+};
 
   const handleSaveUser = async () => {
     if (editingUser) {
@@ -1859,7 +2151,7 @@ const WorkoutProgramManagement = () => {
       modified_by: user.modified_by,
     });
 
-    setImages([]);
+    // setImages([]);
     setIsUserDialogOpen(true);
   };
 
@@ -3483,25 +3775,46 @@ const WorkoutProgramManagement = () => {
                 <h4 className="font-medium text-sm text-gray-700">User Details</h4>
                 <div className="grid grid-cols-2 gap-4">
 
-                  <div className="space-y-2">
-                    <Label htmlFor="UserCode">User Code</Label>
-                    <Select value={userForm.user_code} onValueChange={(value) => setUserForm({ ...userForm, user_code: value })}>
-                      <SelectTrigger>
+                  {/* <div className="space-y-2"> */}
+                    {/* <Label htmlFor="UserCode">User Code*</Label> */}
+                    {/* <Label htmlFor="city" className={submittedUser && !userForm.user_code ? "text-red-500" : ""}>User Code*</Label> */}
+                    {/* <Select value={userForm.user_code} onValueChange={(value) => setUserForm({ ...userForm, user_code: value })}> */}
+                      {/* <SelectTrigger>
                         <SelectValue placeholder="Select User Code" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="Strength">Strength</SelectItem>
-                        <SelectItem value="Cardio">Cardio</SelectItem>
-                        <SelectItem value="HIIT">HIIT</SelectItem>
-                        <SelectItem value="Yoga">Yoga</SelectItem>
-                        <SelectItem value="CrossFit">CrossFit</SelectItem>
-                        <SelectItem value="Flexibility">Flexibility</SelectItem>
-                      </SelectContent>
-                    </Select>
+                      </SelectTrigger> */}
+                      {/* <SelectContent> */}
+                        {/* {userCodeNameDrop.map((item: any) => (
+                          <SelectItem
+                            key={item.user_code}
+                            value={item.user_code}
+                          >
+                            {item.user_code} - {item.user_name}
+                          </SelectItem>
+                        ))} */}
+                        {/* <SelectItem value="User1">User 1</SelectItem>
+                        <SelectItem value="User2">User 2</SelectItem>
+                        <SelectItem value="User3">User 3</SelectItem>
+                        <SelectItem value="User4">User 4</SelectItem>
+                        <SelectItem value="User5">User 5</SelectItem>
+                        <SelectItem value="User6">User 6</SelectItem> */}
+                      {/* </SelectContent> */}
+                    {/* </Select> */}
+                  {/* </div> */}
+
+                  <div className="space-y-2">
+                    {/* <Label htmlFor="LastName">Last Name*</Label> */}
+                    <Label htmlFor="name" className={submittedUser && !userForm.user_code ? "text-red-500" : ""}>User Code*</Label>
+                    <Input
+                      id="UserCode"
+                      value={userForm.user_code}
+                      onChange={(e) => setUserForm({ ...userForm, user_code: e.target.value })}
+                      placeholder="e.g., Last Name"
+                    />
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="name">User Name</Label>
+                    {/* <Label htmlFor="name">User Name*</Label> */}
+                    <Label htmlFor="name" className={submittedUser && !userForm.user_name ? "text-red-500" : ""}>User Name*</Label>
                     <Input
                       id="UserName"
                       value={userForm.user_name}
@@ -3510,7 +3823,8 @@ const WorkoutProgramManagement = () => {
                     />
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="FirstName">First Name</Label>
+                    {/* <Label htmlFor="FirstName">First Name*</Label> */}
+                    <Label htmlFor="name" className={submittedUser && !userForm.first_name ? "text-red-500" : ""}>First Name*</Label>
                     <Input
                       id="FirstName"
                       value={userForm.first_name}
@@ -3519,16 +3833,18 @@ const WorkoutProgramManagement = () => {
                     />
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="LastName">Last Name</Label>
+                    {/* <Label htmlFor="LastName">Last Name*</Label> */}
+                    <Label htmlFor="name" className={submittedUser && !userForm.last_name ? "text-red-500" : ""}>Last Name*</Label>
                     <Input
                       id="LastName"
                       value={userForm.last_name}
                       onChange={(e) => setUserForm({ ...userForm, last_name: e.target.value })}
-                      placeholder="e.g., LastName"
+                      placeholder="e.g., Last Name"
                     />
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="name">Password</Label>
+                    {/* <Label htmlFor="name">Password*</Label> */}
+                    <Label htmlFor="name" className={submittedUser && !userForm.user_password ? "text-red-500" : ""}>Password*</Label>
                     <Input
                       id="Password"
                       value={userForm.user_password}
@@ -3537,18 +3853,21 @@ const WorkoutProgramManagement = () => {
                     />
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="UserCode">Status</Label>
+                    {/* <Label htmlFor="UserCode">Status*</Label> */}
+                    <Label htmlFor="name" className={submittedUser && !userForm.user_status ? "text-red-500" : ""}>Status*</Label>
                     <Select value={userForm.user_status} onValueChange={(value) => setUserForm({ ...userForm, user_status: value })}>
                       <SelectTrigger>
                         <SelectValue placeholder="Select Status" />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="Strength">Strength</SelectItem>
-                        <SelectItem value="Cardio">Cardio</SelectItem>
-                        <SelectItem value="HIIT">HIIT</SelectItem>
-                        <SelectItem value="Yoga">Yoga</SelectItem>
-                        <SelectItem value="CrossFit">CrossFit</SelectItem>
-                        <SelectItem value="Flexibility">Flexibility</SelectItem>
+                        {status.map((status: any) => (
+                          <SelectItem
+                            key={status.attributedetails_code}
+                            value={status.attributedetails_code}
+                          >
+                            {status.attributedetails_name}
+                          </SelectItem>
+                        ))}
                       </SelectContent>
                     </Select>
                   </div>
@@ -3560,35 +3879,41 @@ const WorkoutProgramManagement = () => {
                         <SelectValue placeholder="Select Log in Or out" />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="Strength">Strength</SelectItem>
-                        <SelectItem value="Cardio">Cardio</SelectItem>
-                        <SelectItem value="HIIT">HIIT</SelectItem>
-                        <SelectItem value="Yoga">Yoga</SelectItem>
-                        <SelectItem value="CrossFit">CrossFit</SelectItem>
-                        <SelectItem value="Flexibility">Flexibility</SelectItem>
+                        {logInLogOut.map((status: any) => (
+                          <SelectItem
+                            key={status.attributedetails_code}
+                            value={status.attributedetails_code}
+                          >
+                            {status.attributedetails_name}
+                          </SelectItem>
+                        ))}
                       </SelectContent>
                     </Select>
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="RoleID">Role ID</Label>
+                    {/* <Label htmlFor="RoleID">Role ID*</Label> */}
+                    <Label htmlFor="name" className={submittedUser && !userForm.role_id ? "text-red-500" : ""}>Role ID*</Label>
                     <Select value={userForm.role_id} onValueChange={(value) => setUserForm({ ...userForm, role_id: value })}>
                       <SelectTrigger>
                         <SelectValue placeholder="Select Role ID" />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="Strength">Strength</SelectItem>
-                        <SelectItem value="Cardio">Cardio</SelectItem>
-                        <SelectItem value="HIIT">HIIT</SelectItem>
-                        <SelectItem value="Yoga">Yoga</SelectItem>
-                        <SelectItem value="CrossFit">CrossFit</SelectItem>
-                        <SelectItem value="Flexibility">Flexibility</SelectItem>
+                        {role.map((role: any) => (
+                          <SelectItem
+                            key={role.role_id}
+                            value={role.role_id}
+                          >
+                            {role.role_id} - {role.role_name}
+                          </SelectItem>
+                        ))}
                       </SelectContent>
                     </Select>
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="Email">Email</Label>
+                    {/* <Label htmlFor="Email">Email*</Label> */}
+                    <Label htmlFor="name" className={submittedUser && !userForm.email_id ? "text-red-500" : ""}>Email*</Label>
                     <Input
                       id="Email"
                       value={userForm.email_id}
@@ -3597,7 +3922,8 @@ const WorkoutProgramManagement = () => {
                     />
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="DOB">DOB</Label>
+                    {/* <Label htmlFor="DOB">DOB*</Label> */}
+                    <Label htmlFor="name" className={submittedUser && !userForm.dob ? "text-red-500" : ""}>DOB*</Label>
                     <Input
                       id="DOB"
                       value={userForm.dob}
@@ -3612,12 +3938,14 @@ const WorkoutProgramManagement = () => {
                         <SelectValue placeholder="SelectGender" />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="Strength">Strength</SelectItem>
-                        <SelectItem value="Cardio">Cardio</SelectItem>
-                        <SelectItem value="HIIT">HIIT</SelectItem>
-                        <SelectItem value="Yoga">Yoga</SelectItem>
-                        <SelectItem value="CrossFit">CrossFit</SelectItem>
-                        <SelectItem value="Flexibility">Flexibility</SelectItem>
+                        {gender.map((status: any) => (
+                          <SelectItem
+                            key={status.attributedetails_code}
+                            value={status.attributedetails_code}
+                          >
+                            {status.attributedetails_name}
+                          </SelectItem>
+                        ))}
                       </SelectContent>
                     </Select>
                   </div>
@@ -3643,8 +3971,11 @@ const WorkoutProgramManagement = () => {
 
             </div>
             <DialogFooter>
-              <Button variant="outline" onClick={() => setIsUserDialogOpen(false)}>Cancel</Button>
-              <Button onClick={handleSaveUser}>{editingUser ? 'Update' : 'Create'} Program</Button>
+              <Button variant="outline" onClick={() => {
+                setIsUserDialogOpen(false);
+                setSubmittedUser(false);
+                }}>Cancel</Button>
+              <Button onClick={handleSaveUser}>{editingUser ? 'Update User' : 'Create User'} Program</Button>
             </DialogFooter>
           </DialogContent>
         </Dialog>
