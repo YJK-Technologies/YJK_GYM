@@ -23,18 +23,6 @@ const WorkoutProgramManagement = () => {
   const { toast } = useToast();
   const [activeTab, setActiveTab] = useState('company');
   const [searchTerm, setSearchTerm] = useState('');
-  const [packageForm, setPackageForm] = useState({
-    name: '',
-    packageType: 'Monthly' as 'Monthly' | 'Quarterly' | 'Half-Yearly',
-    price: 0,
-    programId: '',
-    facultyId: '',
-    workingHours: '',
-    discountPercentage: 0,
-    isActive: true,
-    features: '',
-  });
-
 
   //Company Dialog States
   const [companies, setCompanies] = useState([]);
@@ -170,7 +158,7 @@ const WorkoutProgramManagement = () => {
     created_by: "admin",
     modified_by: "admin",
   });
-  const [images, setImages] = useState<(string | null)[]>(null);
+  const [images, setImages] = useState<(string | null)[]>([null, null]);
   const [userImages, setUserImages] = useState<(File | null)[]>(null);
 
   const handleUserFiles = (file: (File | null)[]) => {
