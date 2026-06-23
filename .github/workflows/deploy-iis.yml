@@ -51,69 +51,69 @@ jobs:
       # -------------------------------------------------
       # 4️⃣ Sync BACKEND code to IIS
       # -------------------------------------------------
-      # - name: Sync backend code to IIS
-      #   shell: powershell
-      #   run: |
-      #     $src = "$env:GITHUB_WORKSPACE\backend"
-      #     $dest = "C:\inetpub\wwwroot\GYM\server"
+      - name: Sync backend code to IIS
+        shell: powershell
+        run: |
+          $src = "$env:GITHUB_WORKSPACE\backend"
+          $dest = "C:\inetpub\wwwroot\GYM\backend"
 
-      #     if (!(Test-Path $src)) {
-      #       Write-Error "Backend source folder not found: $src"
-      #       exit 1
-      #     }
+          if (!(Test-Path $src)) {
+            Write-Error "Backend source folder not found: $src"
+            exit 1
+          }
 
-      #     robocopy $src $dest /MIR /XD node_modules
-      #     if ($LASTEXITCODE -le 7) { exit 0 } else { exit $LASTEXITCODE }
+          robocopy $src $dest /MIR /XD node_modules
+          if ($LASTEXITCODE -le 7) { exit 0 } else { exit $LASTEXITCODE }
 
       # -------------------------------------------------
       # 5️⃣ Backend npm install (CLEAN)
       # -------------------------------------------------
-      # - name: Install backend dependencies
-      #   shell: powershell
-      #   run: |
-      #     cd C:\inetpub\wwwroot\GYM\server
-      #     if (Test-Path node_modules) {
-      #       Remove-Item -Recurse -Force node_modules
-      #     }
-      #     npm ci --legacy-peer-deps
+      - name: Install backend dependencies
+        shell: powershell
+        run: |
+          cd C:\inetpub\wwwroot\GYM\backend
+          if (Test-Path node_modules) {
+            Remove-Item -Recurse -Force node_modules
+          }
+          npm ci --legacy-peer-deps
 
       # -------------------------------------------------
       # 6️⃣ Restart backend via PM2
       # -------------------------------------------------
-      # - name: Restart backend
-      #   shell: powershell
-      #   run: |
-      #     if (pm2 list | Select-String "GYM") {
-      #       pm2 restart GYM
-      #     } else {
-      #       pm2 start C:\inetpub\wwwroot\GYM\server\https.js --name GYM
-      #     }
-      #     pm2 save
+      - name: Restart backend
+        shell: powershell
+        run: |
+          if (pm2 list | Select-String "GYM") {
+            pm2 restart GYM
+          } else {
+            pm2 start C:\inetpub\wwwroot\GYM\backend\https.js --name GYM
+          }
+          pm2 save
 
-      # - name: Restart backend (NSSM)
-      #   shell: powershell
-      #   run: |
-      #     $serviceName = "GYM"
-      #     $nssm = "C:\Windows\System32\nssm.exe"
-      #     $node = "C:\Program Files\nodejs\node.exe"
-      #     $app = "C:\inetpub\wwwroot\GYM\server\https.js"
-      #     $appDir = "C:\inetpub\wwwroot\GYM\server"
+      - name: Restart backend (NSSM)
+        shell: powershell
+        run: |
+          $serviceName = "GYM"
+          $nssm = "C:\Windows\System32\nssm.exe"
+          $node = "C:\Program Files\nodejs\node.exe"
+          $app = "C:\inetpub\wwwroot\GYM\backend\https.js"
+          $appDir = "C:\inetpub\wwwroot\GYM\backend"
 
-      #     if (Get-Service -Name $serviceName -ErrorAction SilentlyContinue) {
-      #         Write-Host "Service exists. Restarting..."
-      #         & $nssm restart $serviceName
-      #     }
-      #     else {
-      #         Write-Host "Service not found. Creating NSSM service..."
+          if (Get-Service -Name $serviceName -ErrorAction SilentlyContinue) {
+              Write-Host "Service exists. Restarting..."
+              & $nssm restart $serviceName
+          }
+          else {
+              Write-Host "Service not found. Creating NSSM service..."
 
-      #         & $nssm install $serviceName $node $app
-      #         & $nssm set $serviceName AppDirectory $appDir
-      #         & $nssm set $serviceName Start SERVICE_AUTO_START
-      #         & $nssm set $serviceName AppStdout "$appDir\nssm-out.log"
-      #         & $nssm set $serviceName AppStderr "$appDir\nssm-err.log"
+              & $nssm install $serviceName $node $app
+              & $nssm set $serviceName AppDirectory $appDir
+              & $nssm set $serviceName Start SERVICE_AUTO_START
+              & $nssm set $serviceName AppStdout "$appDir\nssm-out.log"
+              & $nssm set $serviceName AppStderr "$appDir\nssm-err.log"
 
-      #         & $nssm start $serviceName
-      #     }
+              & $nssm start $serviceName
+          }
 
       # -------------------------------------------------
       # 7️⃣ Frontend npm install (LOCK FILE STRICT)
