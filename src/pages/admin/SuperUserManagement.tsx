@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -9,14 +8,13 @@ import { Textarea } from '@/components/ui/textarea';
 import { Switch } from '@/components/ui/switch';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useNavigate } from 'react-router-dom';
 import { useToast } from '@/hooks/use-toast';
-import { ArrowLeft, Plus, Search, RotateCcw, Dumbbell, Package, Users, Clock, Edit, Trash2, Eye, Calendar, DollarSign, CheckCircle, XCircle } from 'lucide-react';
+import { ArrowLeft, Plus, Search, RotateCcw, Dumbbell, Package, Edit, Trash2 } from 'lucide-react';
 import ImageUpload from "../ImageUpload";
 import { BASE_URL } from '../ApiConfig';
-
 
 const WorkoutProgramManagement = () => {
   const navigate = useNavigate();
@@ -411,6 +409,8 @@ const WorkoutProgramManagement = () => {
     created_by: "admin",
     modified_by: "admin",
   });
+
+  //Company Search States
   const [companySearchForm, setCompanySearchForm] = useState({
     company_no: "",
     company_name: "",
@@ -470,6 +470,8 @@ const WorkoutProgramManagement = () => {
     created_by: "admin",
     modified_by: "admin",
   });
+
+  //Company Mapping Search States
   const [companyMappingSearchForm, setCompanyMappingSearchForm] = useState({
     user_code: "",
     company_no: "",
@@ -499,6 +501,8 @@ const WorkoutProgramManagement = () => {
     created_by: "admin",
     modified_by: "admin",
   });
+
+  //Location Search States
   const [locationSearchForm, setLocationSearchForm] = useState({
     location_no: "",
     location_name: "",
@@ -523,6 +527,12 @@ const WorkoutProgramManagement = () => {
     modified_by: "admin",
   });
 
+  //Role Search States
+  const [roleSearchForm, setRoleSearchForm] = useState({
+    role_id: "",
+    role_name: "",
+  });
+
   //Role Mapping Dialog States
   const [submittedRoleMapping, setSubmittedRoleMapping] = useState(false);
   const [roleMappings, setRoleMappings] = useState([]);
@@ -535,6 +545,14 @@ const WorkoutProgramManagement = () => {
     keyfield: "",
     created_by: "admin",
     modified_by: "admin",
+  });
+
+  //Role Mapping Search States
+  const [roleMappingSearchForm, setRoleMappingSearchForm] = useState({
+    user_code: "",
+    user_name: "",
+    role_id: "",
+    role_name: "",
   });
 
   //Role Rights Dialog States
@@ -552,12 +570,18 @@ const WorkoutProgramManagement = () => {
     modified_by: "admin",
   });
 
+  //Role Rights Search States
+  const [roleRightsSearchForm, setRoleRightsSearchForm] = useState({
+    role_id: "",
+    screen_type: "",
+    permission_type: "",
+  });
+
   //User Dialog States
   const [submittedUser, setSubmittedUser] = useState(false);
   const [users, setUsers] = useState([]);
   const [editingUser, setEditingUser] = useState<any>(null);
   const [isUserDialogOpen, setIsUserDialogOpen] = useState(false);
-  const [userCodeNameDrop, setUserCodeNameDrop] = useState([]);
   const [userForm, setUserForm] = useState({
     company_code: "",
     user_code: "",
@@ -583,7 +607,7 @@ const WorkoutProgramManagement = () => {
     setUserImages(file);
   };
 
-  //Attribute Dialog States
+  //Attribute Detail Dialog States
   const [submittedAttributeDet, setSubmittedAttributeDet] = useState(false);
   const [attributes, setAttributes] = useState([]);
   const [editingAttribute, setEditingAttribute] = useState<any>(null);
@@ -598,7 +622,15 @@ const WorkoutProgramManagement = () => {
     modified_by: "admin",
   });
 
-  //Add Attribute Header Dialog States
+  //Attribute Detail Search States
+  const [attributeSearchForm, setAttributeSearchForm] = useState({
+    attributeheader_code: "",
+    attributedetails_code: "",
+    attributedetails_name: "",
+    descriptions: "",
+  });
+
+  //Attribute Header Dialog States
   const [submittedAttributeHdr, setSubmittedAttributeHdr] = useState(false);
   const [isAttributeHdrDialogOpen, setIsAttributeHdrDialogOpen] = useState(false);
   const [attributeHdrForm, setAttributeHdrForm] = useState({
@@ -740,8 +772,14 @@ const WorkoutProgramManagement = () => {
           variant: "destructive",
         });
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error(error);
+
+      toast({
+        title: "Server Error",
+        description: error.message || "Something went wrong.",
+        variant: "destructive",
+      });
     }
   };
 
@@ -915,28 +953,6 @@ const WorkoutProgramManagement = () => {
       modified_by: company.modified_by,
     });
 
-    // if (company.company_logo?.data) {
-    //   const uint8ArrayLogo = new Uint8Array(company.company_logo.data);
-    //   const logoFile = new File([uint8ArrayLogo], "company_logo.png", {
-    //     type: "image/png",
-    //   });
-
-    //   setCompanyLogo(logoFile);
-    // }
-
-    // if (company.authorisedSignatur?.data) {
-    //   const uint8ArraySignature = new Uint8Array(
-    //     company.authorisedSignatur.data
-    //   );
-
-    //   const signatureFile = new File([uint8ArraySignature], "signature.png", {
-    //     type: "image/png",
-    //   }
-    //   );
-
-    //   setAuthorisedSignature(signatureFile);
-    // }
-
     const logo =
       company.company_logo?.data &&
         Array.isArray(company.company_logo.data)
@@ -976,16 +992,36 @@ const WorkoutProgramManagement = () => {
       const data = await response.json();
 
       if (response.ok) {
-        // Update your table/grid data
         setCompanies(data);
+      } else if (response.status === 404) {
+        setCompanies([]);
 
-        // or if your state is named differently:
-        // setCompanyData(data);
+        toast({
+          title: "Data Not Found",
+          description: data?.message || "No matching companies found.",
+          variant: "destructive",
+        });
       } else {
-        alert(data);
+        setCompanies([]);
+
+        toast({
+          title: "Search Failed",
+          description: data?.message || "Something went wrong while searching.",
+          variant: "destructive",
+        });
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error("Search Error:", error);
+
+      setCompanies([]);
+
+      toast({
+        title: "Server Error",
+        description:
+          error?.message ||
+          "Unable to connect to the server. Please try again later.",
+        variant: "destructive",
+      });
     }
   };
 
@@ -1195,11 +1231,35 @@ const WorkoutProgramManagement = () => {
 
       if (response.ok) {
         setCompanyMappings(data);
+      } else if (response.status === 404) {
+        setCompanies([]);
+
+        toast({
+          title: "Data Not Found",
+          description: data?.message || "No matching companies found.",
+          variant: "destructive",
+        });
       } else {
-        alert(data.message || "No data found");
+        setCompanies([]);
+
+        toast({
+          title: "Search Failed",
+          description: data?.message || "Something went wrong while searching.",
+          variant: "destructive",
+        });
       }
-    } catch (error) {
-      console.error("Company Mapping Search Error:", error);
+    } catch (error: any) {
+      console.error("Search Error:", error);
+
+      setCompanies([]);
+
+      toast({
+        title: "Server Error",
+        description:
+          error?.message ||
+          "Unable to connect to the server. Please try again later.",
+        variant: "destructive",
+      });
     }
   };
 
@@ -1207,7 +1267,7 @@ const WorkoutProgramManagement = () => {
     setEditingCompanyMapping(mapping);
 
     setCompanyMappingForm({
-      company_code: mapping.company_code,
+      company_code: "YJK",
       user_code: mapping.user_code,
       company_no: mapping.company_no,
       location_no: mapping.location_no,
@@ -1373,7 +1433,11 @@ const WorkoutProgramManagement = () => {
   };
 
   const handleDeleteLocation = async (location_no: string) => {
-    if (!window.confirm("Delete this location?")) return;
+    const confirmed = window.confirm(
+      "Are you sure you want to delete this location? This action cannot be undone."
+    );
+
+    if (!confirmed) return;
 
     try {
       const response = await fetch(`${BASE_URL}/deletelocation`,
@@ -1446,11 +1510,35 @@ const WorkoutProgramManagement = () => {
 
       if (response.ok) {
         setLocations(data);
+      } else if (response.status === 404) {
+        setCompanies([]);
+
+        toast({
+          title: "Data Not Found",
+          description: data?.message || "No matching locations found.",
+          variant: "destructive",
+        });
       } else {
-        alert(data.message || "No data found");
+        setCompanies([]);
+
+        toast({
+          title: "Search Failed",
+          description: data?.message || "Something went wrong while searching.",
+          variant: "destructive",
+        });
       }
-    } catch (error) {
-      console.error("Location Search Error:", error);
+    } catch (error: any) {
+      console.error("Search Error:", error);
+
+      setCompanies([]);
+
+      toast({
+        title: "Server Error",
+        description:
+          error?.message ||
+          "Unable to connect to the server. Please try again later.",
+        variant: "destructive",
+      });
     }
   };
 
@@ -1482,7 +1570,7 @@ const WorkoutProgramManagement = () => {
   const handleAddRole = () => {
     setEditingRole(null);
     setRoleForm({
-      company_code: "",
+      company_code: "YJK",
       role_id: "",
       role_name: "",
       description: "",
@@ -1530,7 +1618,7 @@ const WorkoutProgramManagement = () => {
           description: data.message || "Role created successfully.",
         });
 
-        // fetchRoles();
+        handleRoleSearch();
         setIsRoleDialogOpen(false);
         setSubmittedRole(false);
       } else {
@@ -1573,7 +1661,7 @@ const WorkoutProgramManagement = () => {
           description: data.message || "Role updated successfully.",
         });
 
-        // fetchRoles();
+        handleRoleSearch();
         setEditingRole(null);
         setIsRoleDialogOpen(false);
         setSubmittedRole(false);
@@ -1623,7 +1711,7 @@ const WorkoutProgramManagement = () => {
           description: data.message || "Role deleted successfully.",
         });
 
-        // fetchRoles();
+        handleRoleSearch();
       } else {
         toast({
           title: "Error",
@@ -1650,11 +1738,61 @@ const WorkoutProgramManagement = () => {
     }
   };
 
+  const handleRoleSearch = async () => {
+    try {
+      const response = await fetch(`${BASE_URL}/Rolesearchdata`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          company_code: "YJK",
+          role_id: roleSearchForm.role_id,
+          role_name: roleSearchForm.role_name,
+        }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        setRoles(data);
+      } else if (response.status === 404) {
+        setCompanies([]);
+
+        toast({
+          title: "Data Not Found",
+          description: data?.message || "No matching roles found.",
+          variant: "destructive",
+        });
+      } else {
+        setCompanies([]);
+
+        toast({
+          title: "Search Failed",
+          description: data?.message || "Something went wrong while searching.",
+          variant: "destructive",
+        });
+      }
+    } catch (error: any) {
+      console.error("Search Error:", error);
+
+      setCompanies([]);
+
+      toast({
+        title: "Server Error",
+        description:
+          error?.message ||
+          "Unable to connect to the server. Please try again later.",
+        variant: "destructive",
+      });
+    }
+  };
+
   const handleEditRole = (role: any) => {
     setEditingRole(role);
 
     setRoleForm({
-      company_code: role.company_code,
+      company_code: "YJK",
       role_id: role.role_id,
       role_name: role.role_name,
       description: role.description,
@@ -1669,7 +1807,7 @@ const WorkoutProgramManagement = () => {
   const handleAddRoleMapping = () => {
     setEditingRoleMapping(null);
     setRoleMappingForm({
-      company_code: "",
+      company_code: "YJK",
       user_code: "",
       role_id: "",
       keyfield: "",
@@ -1717,7 +1855,7 @@ const WorkoutProgramManagement = () => {
           description: data.message || "Role mapping created successfully.",
         });
 
-        // fetchRoleMappings();
+        handleRoleMappingSearch();
         setIsRoleMappingDialogOpen(false);
         setSubmittedRoleMapping(false);
       } else {
@@ -1760,7 +1898,7 @@ const WorkoutProgramManagement = () => {
           description: data.message || "Role mapping updated successfully.",
         });
 
-        // fetchRoleMappings();
+        handleRoleMappingSearch();
         setEditingRoleMapping(null);
         setIsRoleMappingDialogOpen(false);
         setSubmittedRoleMapping(false);
@@ -1809,7 +1947,7 @@ const WorkoutProgramManagement = () => {
           description: data.message || "Role mapping deleted successfully.",
         });
 
-        // fetchRoleMappings();
+        handleRoleMappingSearch();
       } else {
         toast({
           title: "Error",
@@ -1836,11 +1974,65 @@ const WorkoutProgramManagement = () => {
     }
   };
 
+  const handleRoleMappingSearch = async () => {
+    try {
+      const response = await fetch(`${BASE_URL}/userrolsearchdata`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            company_code: "YJK",
+            user_code: roleMappingSearchForm.user_code,
+            user_name: roleMappingSearchForm.user_name,
+            role_id: roleMappingSearchForm.role_id,
+            role_name: roleMappingSearchForm.role_name,
+          }),
+        }
+      );
+
+      const data = await response.json();
+
+      if (response.ok) {
+        setRoleMappings(data);
+      } else if (response.status === 404) {
+        setCompanies([]);
+
+        toast({
+          title: "Data Not Found",
+          description: data?.message || "No matching roles found.",
+          variant: "destructive",
+        });
+      } else {
+        setCompanies([]);
+
+        toast({
+          title: "Search Failed",
+          description: data?.message || "Something went wrong while searching.",
+          variant: "destructive",
+        });
+      }
+    } catch (error: any) {
+      console.error("Search Error:", error);
+
+      setCompanies([]);
+
+      toast({
+        title: "Server Error",
+        description:
+          error?.message ||
+          "Unable to connect to the server. Please try again later.",
+        variant: "destructive",
+      });
+    }
+  };
+
   const handleEditRoleMapping = (mapping: any) => {
     setEditingRoleMapping(mapping);
 
     setRoleMappingForm({
-      company_code: mapping.company_code,
+      company_code: "YJK",
       user_code: mapping.user_code,
       role_id: mapping.role_id,
       keyfield: mapping.keyfield,
@@ -1855,7 +2047,7 @@ const WorkoutProgramManagement = () => {
   const handleAddRoleRights = () => {
     setEditingRoleRight(null);
     setRoleRightsForm({
-      company_code: "",
+      company_code: "YJK",
       role_id: "",
       screen_type: "",
       permission_type: "",
@@ -1905,7 +2097,7 @@ const WorkoutProgramManagement = () => {
           description: data.message || "Role rights created successfully.",
         });
 
-        // fetchRoleRights();
+        handleRoleRightsSearch();
         setIsRoleRightsDialogOpen(false);
         setSubmittedRoleRights(false);
       } else {
@@ -1933,7 +2125,7 @@ const WorkoutProgramManagement = () => {
 
     try {
       const response = await fetch(`${BASE_URL}/updateRoleRights`, {
-        method: "PUT",
+        method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
@@ -1948,7 +2140,7 @@ const WorkoutProgramManagement = () => {
           description: data.message || "Role rights updated successfully.",
         });
 
-        // fetchRoleRights();
+        handleRoleRightsSearch();
         setEditingRoleRight(null);
         setIsRoleRightsDialogOpen(false);
         setSubmittedRoleRights(false);
@@ -1979,7 +2171,7 @@ const WorkoutProgramManagement = () => {
 
     try {
       const response = await fetch(`${BASE_URL}/userscreenmapdeleteData`, {
-        method: "DELETE",
+        method: "POST",
         headers: {
           "Content-Type": "application/json",
           "modified-by": "admin",
@@ -1997,7 +2189,7 @@ const WorkoutProgramManagement = () => {
           description: data.message || "Role rights deleted successfully.",
         });
 
-        // fetchRoleRights();
+        handleRoleRightsSearch();
       } else {
         toast({
           title: "Error",
@@ -2024,11 +2216,64 @@ const WorkoutProgramManagement = () => {
     }
   };
 
+  const handleRoleRightsSearch = async () => {
+    try {
+      const response = await fetch(`${BASE_URL}/userscreensearchdata`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            company_code: "YJK",
+            role_id: roleRightsSearchForm.role_id,
+            screen_type: roleRightsSearchForm.screen_type,
+            permission_type: roleRightsSearchForm.permission_type,
+          }),
+        }
+      );
+
+      const data = await response.json();
+
+      if (response.ok) {
+        setRoleRights(data);
+      } else if (response.status === 404) {
+        setCompanies([]);
+
+        toast({
+          title: "Data Not Found",
+          description: data?.message || "No matching role rights found.",
+          variant: "destructive",
+        });
+      } else {
+        setCompanies([]);
+
+        toast({
+          title: "Search Failed",
+          description: data?.message || "Something went wrong while searching.",
+          variant: "destructive",
+        });
+      }
+    } catch (error: any) {
+      console.error("Search Error:", error);
+
+      setCompanies([]);
+
+      toast({
+        title: "Server Error",
+        description:
+          error?.message ||
+          "Unable to connect to the server. Please try again later.",
+        variant: "destructive",
+      });
+    }
+  };
+
   const handleEditRoleRight = (item: any) => {
     setEditingRoleRight(item);
 
     setRoleRightsForm({
-      company_code: item.company_code,
+      company_code: "YJK",
       role_id: item.role_id,
       screen_type: item.screen_type,
       permission_type: item.permission_type,
@@ -2407,8 +2652,7 @@ const WorkoutProgramManagement = () => {
             data.message || "Attribute details created successfully.",
         });
 
-        // fetchAttributes();
-
+        handleAttributeSearch();
         setIsAttributeDialogOpen(false);
         setSubmittedAttributeDet(false);
       } else {
@@ -2437,7 +2681,7 @@ const WorkoutProgramManagement = () => {
 
     try {
       const response = await fetch(`${BASE_URL}/AttributeUpdate`, {
-        method: "PUT",
+        method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
@@ -2453,7 +2697,7 @@ const WorkoutProgramManagement = () => {
             data.message || data || "Attribute details updated successfully.",
         });
 
-        // fetchAttributes();
+        handleAttributeSearch();
         setEditingAttribute(null);
         setIsAttributeDialogOpen(false);
         setSubmittedAttributeDet(false);
@@ -2485,11 +2729,11 @@ const WorkoutProgramManagement = () => {
 
     try {
       const response = await fetch(`${BASE_URL}/delattridetData`, {
-        method: "DELETE",
+        method: "POST",
         headers: {
           "Content-Type": "application/json",
           "modified-by": "admin",
-          "company_code": "COMP001",
+          "company_code": "YJK",
         },
         body: JSON.stringify({
           attributeheader_codesToDelete: [attributeheader_code],
@@ -2506,7 +2750,7 @@ const WorkoutProgramManagement = () => {
             data.message || data || "Attribute details deleted successfully.",
         });
 
-        // fetchAttributes();
+        handleAttributeSearch();
       } else {
         toast({
           title: "Error",
@@ -2531,6 +2775,58 @@ const WorkoutProgramManagement = () => {
       await handleUpdateAttribute();
     } else {
       await handleCreateAttribute();
+    }
+  };
+
+  const handleAttributeSearch = async () => {
+    try {
+      const response = await fetch(`${BASE_URL}/attributeSearchdata`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          company_code: "YJK",
+          attributeheader_code: attributeSearchForm.attributeheader_code,
+          attributedetails_code: attributeSearchForm.attributedetails_code,
+          attributedetails_name: attributeSearchForm.attributedetails_name,
+          descriptions: attributeSearchForm.descriptions,
+        }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        setAttributes(data);
+      } else if (response.status === 404) {
+        setCompanies([]);
+
+        toast({
+          title: "Data Not Found",
+          description: data?.message || "No matching attributes found.",
+          variant: "destructive",
+        });
+      } else {
+        setCompanies([]);
+
+        toast({
+          title: "Search Failed",
+          description: data?.message || "Something went wrong while searching.",
+          variant: "destructive",
+        });
+      }
+    } catch (error: any) {
+      console.error("Search Error:", error);
+
+      setCompanies([]);
+
+      toast({
+        title: "Server Error",
+        description:
+          error?.message ||
+          "Unable to connect to the server. Please try again later.",
+        variant: "destructive",
+      });
     }
   };
 
@@ -2633,6 +2929,7 @@ const WorkoutProgramManagement = () => {
     }
   };
 
+  //TAB BUTTON LABELS
   const addLabels = {
     company: "Company",
     companyMapping: "Company Mapping",
@@ -2880,6 +3177,134 @@ const WorkoutProgramManagement = () => {
     </div>
   );
 
+  const renderRoleSearch = () => (
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+
+      <div className="space-y-2">
+        <Label>Role ID</Label>
+        <Input
+          placeholder="Enter Role ID"
+          value={roleSearchForm.role_id}
+          onChange={(e) => setRoleSearchForm({ ...roleSearchForm, role_id: e.target.value, })} />
+      </div>
+
+      <div className="space-y-2">
+        <Label>Role Name</Label>
+        <Input
+          placeholder="Enter Role Name"
+          value={roleSearchForm.role_name}
+          onChange={(e) => setRoleSearchForm({ ...roleSearchForm, role_name: e.target.value, })} />
+      </div>
+
+    </div>
+  );
+
+  const renderRoleMappingSearch = () => (
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+
+      <div className="space-y-2">
+        <Label>User Code</Label>
+        <Input
+          placeholder="Enter User Code"
+          value={roleMappingSearchForm.user_code}
+          onChange={(e) => setRoleMappingSearchForm({ ...roleMappingSearchForm, user_code: e.target.value, })} />
+      </div>
+
+      <div className="space-y-2">
+        <Label>User Name</Label>
+        <Input
+          placeholder="Enter User Name"
+          value={roleMappingSearchForm.user_name}
+          onChange={(e) => setRoleMappingSearchForm({ ...roleMappingSearchForm, user_name: e.target.value, })} />
+      </div>
+
+      <div className="space-y-2">
+        <Label>Role ID</Label>
+        <Input
+          placeholder="Enter Role ID"
+          value={roleMappingSearchForm.role_id}
+          onChange={(e) => setRoleMappingSearchForm({ ...roleMappingSearchForm, role_id: e.target.value, })} />
+      </div>
+
+      <div className="space-y-2">
+        <Label>Role Name</Label>
+        <Input
+          placeholder="Enter Role Name"
+          value={roleMappingSearchForm.role_name}
+          onChange={(e) => setRoleMappingSearchForm({ ...roleMappingSearchForm, role_name: e.target.value, })} />
+      </div>
+
+    </div>
+  );
+
+  const renderRoleRightsSearch = () => (
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+
+      <div className="space-y-2">
+        <Label>Role ID</Label>
+        <Input
+          placeholder="Enter Role ID"
+          value={roleRightsSearchForm.role_id}
+          onChange={(e) => setRoleRightsSearchForm({ ...roleRightsSearchForm, role_id: e.target.value, })} />
+      </div>
+
+      <div className="space-y-2">
+        <Label>Screen Type</Label>
+        <Input
+          placeholder="Enter Screen Type"
+          value={roleRightsSearchForm.screen_type}
+          onChange={(e) => setRoleRightsSearchForm({ ...roleRightsSearchForm, screen_type: e.target.value, })} />
+      </div>
+
+      <div className="space-y-2">
+        <Label>Permission Type</Label>
+        <Input
+          placeholder="Enter Permission Type"
+          value={roleRightsSearchForm.permission_type}
+          onChange={(e) => setRoleRightsSearchForm({ ...roleRightsSearchForm, permission_type: e.target.value, })} />
+      </div>
+
+    </div>
+  );
+
+  const renderAttributeSearch = () => (
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+
+      <div className="space-y-2">
+        <Label>Code</Label>
+        <Input
+          placeholder="Enter Code"
+          value={attributeSearchForm.attributeheader_code}
+          onChange={(e) => setAttributeSearchForm({ ...attributeSearchForm, attributeheader_code: e.target.value, })} />
+      </div>
+
+      <div className="space-y-2">
+        <Label>Sub Code</Label>
+        <Input
+          placeholder="Enter Sub Code"
+          value={attributeSearchForm.attributedetails_code}
+          onChange={(e) => setAttributeSearchForm({ ...attributeSearchForm, attributedetails_code: e.target.value, })} />
+      </div>
+
+      <div className="space-y-2">
+        <Label>Detail Name</Label>
+        <Input
+          placeholder="Enter Detail Name"
+          value={attributeSearchForm.attributedetails_name}
+          onChange={(e) => setAttributeSearchForm({ ...attributeSearchForm, attributedetails_name: e.target.value, })} />
+      </div>
+
+      <div className="space-y-2">
+        <Label>Description</Label>
+        <Input
+          placeholder="Enter Description"
+          value={attributeSearchForm.descriptions}
+          onChange={(e) => setAttributeSearchForm({ ...attributeSearchForm, descriptions: e.target.value, })} />
+      </div>
+
+    </div>
+  );
+
   const handleSearch = () => {
     switch (activeTab) {
       case "company":
@@ -2895,15 +3320,15 @@ const WorkoutProgramManagement = () => {
         break;
 
       case "role":
-        // handleRoleSearch();
+        handleRoleSearch();
         break;
 
       case "roleMapping":
-        // handleRoleMappingSearch();
+        handleRoleMappingSearch();
         break;
 
       case "roleRights":
-        // handleRoleRightsSearch();
+        handleRoleRightsSearch();
         break;
 
       case "user":
@@ -2911,7 +3336,7 @@ const WorkoutProgramManagement = () => {
         break;
 
       case "attribute":
-        // handleAttributeSearch();
+        handleAttributeSearch();
         break;
 
       default:
@@ -2948,15 +3373,15 @@ const WorkoutProgramManagement = () => {
 
             {activeTab === "location" && renderLocationSearch()}
 
-            {/* {activeTab === "role" && renderRoleSearch()} */}
+            {activeTab === "role" && renderRoleSearch()}
 
-            {/* {activeTab === "roleMapping" && renderRoleMappingSearch()} */}
+            {activeTab === "roleMapping" && renderRoleMappingSearch()}
 
-            {/* {activeTab === "roleRights" && renderRoleRightsSearch()} */}
+            {activeTab === "roleRights" && renderRoleRightsSearch()}
 
             {/* {activeTab === "user" && renderUserSearch()} */}
 
-            {/* {activeTab === "attribute" && renderAttributeSearch()} */}
+            {activeTab === "attribute" && renderAttributeSearch()}
 
             <div className="flex justify-end gap-4 mt-6">
               <Button
@@ -3251,7 +3676,6 @@ const WorkoutProgramManagement = () => {
                       <TableHead>Role ID</TableHead>
                       <TableHead>Role Name</TableHead>
                       <TableHead>Description</TableHead>
-                      <TableHead>Keyfield</TableHead>
                       <TableHead className="text-right">Actions</TableHead>
                     </TableRow>
                   </TableHeader>
@@ -3259,16 +3683,9 @@ const WorkoutProgramManagement = () => {
                   <TableBody>
                     {roles.map((role: any) => (
                       <TableRow key={role.role_id}>
-                        <TableCell className="font-medium">
-                          {role.role_id}
-                        </TableCell>
-
+                        <TableCell className="font-medium">{role.role_id}</TableCell>
                         <TableCell>{role.role_name}</TableCell>
-
                         <TableCell>{role.description}</TableCell>
-
-                        <TableCell>{role.keyfield}</TableCell>
-
                         <TableCell className="text-right">
                           <div className="flex justify-end gap-2">
                             <Button
@@ -3311,7 +3728,6 @@ const WorkoutProgramManagement = () => {
                       <TableHead>User Name</TableHead>
                       <TableHead>Role ID</TableHead>
                       <TableHead>Role Name</TableHead>
-                      <TableHead>Keyfield</TableHead>
                       <TableHead className="text-right">Actions</TableHead>
                     </TableRow>
                   </TableHeader>
@@ -3322,7 +3738,6 @@ const WorkoutProgramManagement = () => {
                         <TableCell>{item.user_name}</TableCell>
                         <TableCell>{item.role_id}</TableCell>
                         <TableCell>{item.role_name}</TableCell>
-                        <TableCell>{item.keyfield}</TableCell>
 
                         <TableCell className="text-right">
                           <div className="flex justify-end gap-2">
@@ -3367,7 +3782,6 @@ const WorkoutProgramManagement = () => {
                       <TableHead>Role ID</TableHead>
                       <TableHead>Screen Type</TableHead>
                       <TableHead>Permission Type</TableHead>
-                      <TableHead>Keyfield</TableHead>
                       <TableHead className="text-right">Actions</TableHead>
                     </TableRow>
                   </TableHeader>
@@ -3377,7 +3791,6 @@ const WorkoutProgramManagement = () => {
                         <TableCell>{item.role_id}</TableCell>
                         <TableCell>{item.screen_type}</TableCell>
                         <TableCell>{item.permission_type}</TableCell>
-                        <TableCell>{item.keyfield}</TableCell>
 
                         <TableCell className="text-right">
                           <div className="flex justify-end gap-2">
@@ -4308,8 +4721,8 @@ const WorkoutProgramManagement = () => {
                       <SelectContent>
                         {permission.map((permission: any) => (
                           <SelectItem
-                            key={permission.attributedetails_code}
-                            value={permission.attributedetails_code}
+                            key={permission.attributedetails_name}
+                            value={permission.attributedetails_name}
                           >
                             {permission.attributedetails_name}
                           </SelectItem>
@@ -4580,12 +4993,12 @@ const WorkoutProgramManagement = () => {
                           <SelectValue placeholder="Select Code" />
                         </SelectTrigger>
                         <SelectContent>
-                          {attributehdr.map((status: any) => (
+                          {attributehdr.map((attributeheader: any) => (
                             <SelectItem
-                              key={status.attributeheader_code}
-                              value={status.attributeheader_code}
+                              key={attributeheader.attributeheader_code}
+                              value={attributeheader.attributeheader_code}
                             >
-                              {status.attributeheader_code} - {status.attributeheader_name}
+                              {attributeheader.attributeheader_code} - {attributeheader.attributeheader_name}
                             </SelectItem>
                           ))}
                         </SelectContent>
