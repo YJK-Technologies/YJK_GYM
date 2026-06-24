@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -43,7 +43,6 @@ const WorkoutProgramManagement = () => {
 
   //Attribute Detail Screen
   const [attributehdr, setAttributeHdr] = useState<any[]>([]);
-
 
   const fetchCities = async () => {
     try {
@@ -362,6 +361,29 @@ const WorkoutProgramManagement = () => {
     }
   };
 
+  useEffect(() => {
+    const loadData = async () => {
+      await Promise.all([
+        fetchCities(),
+        fetchStates(),
+        fetchCountries(),
+        fetchStatus(),
+        fetchLocation(),
+        fetchUsers(),
+        fetchCompanies(),
+        fetchRole(),
+        fetchPermission(),
+        fetchRoleRight(),
+        fetchScreen(),
+        fetchLogInLogOut(),
+        fetchGender(),
+        fetchAttributeHdr(),
+      ]);
+    };
+
+    loadData();
+  }, []);
+
   //Company Dialog States
   const [submittedCompany, setSubmittedCompany] = useState(false);
   const [companies, setCompanies] = useState([]);
@@ -402,9 +424,36 @@ const WorkoutProgramManagement = () => {
   const [companyLogo, setCompanyLogo] = useState<File | null>(null);
   const [authorisedSignature, setAuthorisedSignature] = useState<File | null>(null);
 
-  const handleCompanyFiles = (files: (File | null)[]) => {
-    setCompanyLogo(files[0]);
-    setAuthorisedSignature(files[1]);
+  // Preview images for ImageUpload component
+  const [companyImages, setCompanyImages] = useState<(string | null)[]>([
+    null,
+    null,
+  ]);
+
+  const handleCompanyFiles = async (files: (File | null)[]) => {
+    const convertedImages = await Promise.all(
+      files.map((file, index) => {
+        return new Promise<string | null>((resolve) => {
+          // Keep existing image if no new file is selected
+          if (!file) {
+            resolve(companyImages[index] ?? null);
+            return;
+          }
+
+          const reader = new FileReader();
+
+          reader.onload = (e) => {
+            resolve(e.target?.result as string);
+          };
+
+          reader.onerror = () => resolve(null);
+
+          reader.readAsDataURL(file);
+        });
+      })
+    );
+
+    setCompanyImages(convertedImages);
   };
 
   //Company Mapping Dialog States
@@ -547,11 +596,6 @@ const WorkoutProgramManagement = () => {
 
   //Company CRUD Functions
   const handleAddCompany = () => {
-    fetchCities();
-    fetchStates();
-    fetchCountries();
-    fetchStatus();
-    fetchLocation();
     setEditingCompany(null);
     setCompanyForm({
       company_no: "",
@@ -575,6 +619,10 @@ const WorkoutProgramManagement = () => {
       created_by: "admin",
       modified_by: "admin",
     });
+    setCompanyImages([null, null]);
+    setCompanyLogo(null);
+    setAuthorisedSignature(null);
+
     setIsCompanyDialogOpen(true);
   };
 
@@ -627,13 +675,34 @@ const WorkoutProgramManagement = () => {
         formData.append(key, companyForm[key as keyof typeof companyForm]);
       });
 
-      if (companyLogo) {
-        formData.append("company_logo", companyLogo);
-      }
+      companyImages.forEach((img, index) => {
+        if (!img) return;
 
-      if (authorisedSignature) {
-        formData.append("authorisedSignatur", authorisedSignature);
-      }
+        const base64 = img.split(",")[1];
+        const byteCharacters = atob(base64);
+
+        const byteNumbers = Array.from(byteCharacters, (char) =>
+          char.charCodeAt(0)
+        );
+
+        const byteArray = new Uint8Array(byteNumbers);
+
+        const blob = new Blob([byteArray], {
+          type: "image/png",
+        });
+
+        if (index === 0) {
+          formData.append("company_logo", blob, "company_logo.png");
+        }
+
+        if (index === 1) {
+          formData.append(
+            "authorisedSignatur",
+            blob,
+            "authorisedSignatur.png"
+          );
+        }
+      });
 
       const response = await fetch(`${BASE_URL}/add`,
         {
@@ -674,20 +743,41 @@ const WorkoutProgramManagement = () => {
       const formData = new FormData();
 
       Object.keys(companyForm).forEach((key) => {
-        formData.append(key, companyForm[key as keyof typeof companyForm]);
+        formData.append(key, companyForm[key as keyof typeof companyForm] ?? "");
       });
 
-      if (companyLogo) {
-        formData.append("company_logo", companyLogo);
-      }
+      companyImages.forEach((img, index) => {
+        if (!img) return;
 
-      if (authorisedSignature) {
-        formData.append("authorisedSignatur", authorisedSignature);
-      }
+        const base64 = img.split(",")[1];
+        const byteCharacters = atob(base64);
+
+        const byteNumbers = Array.from(byteCharacters, (char) =>
+          char.charCodeAt(0)
+        );
+
+        const byteArray = new Uint8Array(byteNumbers);
+
+        const blob = new Blob([byteArray], {
+          type: "image/png",
+        });
+
+        if (index === 0) {
+          formData.append("company_logo", blob, "company_logo.png");
+        }
+
+        if (index === 1) {
+          formData.append(
+            "authorisedSignatur",
+            blob,
+            "authorisedSignatur.png"
+          );
+        }
+      });
 
       const response = await fetch(`${BASE_URL}/CompanyUpdate`,
         {
-          method: "PUT",
+          method: "POST",
           body: formData,
         }
       );
@@ -700,7 +790,7 @@ const WorkoutProgramManagement = () => {
           description: data.message || "Company updated successfully.",
         });
 
-        // fetchCompanies();
+        handleCompanySearch();
         setEditingCompany(null);
         setIsCompanyDialogOpen(false);
         setSubmittedCompany(false);
@@ -732,7 +822,7 @@ const WorkoutProgramManagement = () => {
     try {
       const response = await fetch(`${BASE_URL}/delete`,
         {
-          method: "DELETE",
+          method: "POST",
           headers: {
             "Content-Type": "application/json",
             "modified-by": "admin",
@@ -778,6 +868,16 @@ const WorkoutProgramManagement = () => {
     }
   };
 
+  const bufferToBase64 = (buffer: number[], mimeType: string = "image/png") => {
+    let binary = "";
+
+    buffer.forEach((byte) => {
+      binary += String.fromCharCode(byte);
+    });
+
+    return `data:${mimeType};base64,${window.btoa(binary)}`;
+  };
+
   const handleEditCompany = (company: any) => {
     setEditingCompany(company);
 
@@ -803,6 +903,42 @@ const WorkoutProgramManagement = () => {
       created_by: company.created_by,
       modified_by: company.modified_by,
     });
+
+    // if (company.company_logo?.data) {
+    //   const uint8ArrayLogo = new Uint8Array(company.company_logo.data);
+    //   const logoFile = new File([uint8ArrayLogo], "company_logo.png", {
+    //     type: "image/png",
+    //   });
+
+    //   setCompanyLogo(logoFile);
+    // }
+
+    // if (company.authorisedSignatur?.data) {
+    //   const uint8ArraySignature = new Uint8Array(
+    //     company.authorisedSignatur.data
+    //   );
+
+    //   const signatureFile = new File([uint8ArraySignature], "signature.png", {
+    //     type: "image/png",
+    //   }
+    //   );
+
+    //   setAuthorisedSignature(signatureFile);
+    // }
+
+    const logo =
+      company.company_logo?.data &&
+        Array.isArray(company.company_logo.data)
+        ? bufferToBase64(company.company_logo.data)
+        : null;
+
+    const signature =
+      company.authorisedSignatur?.data &&
+        Array.isArray(company.authorisedSignatur.data)
+        ? bufferToBase64(company.authorisedSignatur.data)
+        : null;
+
+    setCompanyImages([logo, signature]);
 
     setIsCompanyDialogOpen(true);
   };
@@ -844,10 +980,6 @@ const WorkoutProgramManagement = () => {
 
   //Company Mapping CRUD Functions
   const handleAddCompanyMapping = () => {
-    fetchUsers();
-    fetchCompanies();
-    fetchStatus();
-    fetchLocation();
     setEditingCompanyMapping(null);
     setCompanyMappingForm({
       company_code: "",
@@ -1050,10 +1182,6 @@ const WorkoutProgramManagement = () => {
 
   // Location CRUD Functions
   const handleAddLocation = () => {
-    fetchCities();
-    fetchStates();
-    fetchCountries();
-    fetchStatus();
     setEditingLocation(null);
     setLocationForm({
       location_no: "",
@@ -1468,8 +1596,6 @@ const WorkoutProgramManagement = () => {
 
   //Role Mapping CRUD Functions
   const handleAddRoleMapping = () => {
-    fetchUsers();
-    fetchRole();
     setEditingRoleMapping(null);
     setRoleMappingForm({
       company_code: "",
@@ -1656,9 +1782,6 @@ const WorkoutProgramManagement = () => {
 
   //Role Rights CRUD Functions
   const handleAddRoleRights = () => {
-    fetchPermission();
-    fetchRoleRight();
-    fetchScreen();
     setEditingRoleRight(null);
     setRoleRightsForm({
       company_code: "",
@@ -1848,10 +1971,6 @@ const WorkoutProgramManagement = () => {
 
   //User CRUD Functions
   const handleAddUser = () => {
-    fetchStatus();
-    fetchLogInLogOut();
-    fetchGender();
-    fetchRole();
     setEditingUser(null);
     setUserForm({
       company_code: "YJKT",
@@ -1910,7 +2029,6 @@ const WorkoutProgramManagement = () => {
 
     return true;
   };
-
 
   const handleCreateUser = async () => {
     setSubmittedUser(true);
@@ -2165,7 +2283,6 @@ const WorkoutProgramManagement = () => {
 
   //Attribute Detail CRUD Functions
   const handleAddAttribute = () => {
-    fetchAttributeHdr();
     setEditingAttribute(null);
     setAttributeForm({
       company_code: "",
@@ -2364,7 +2481,6 @@ const WorkoutProgramManagement = () => {
 
   //add Attribute CRUD Functions
   const handleAddAttributeHdr = () => {
-    fetchStatus();
     setAttributeHdrForm({
       company_code: "YJK",
       attributeheader_code: "",
@@ -2445,12 +2561,6 @@ const WorkoutProgramManagement = () => {
       });
     }
   };
-
-  const filteredCompanies = companies.filter(p =>
-    p.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    p.category.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    p.facultyName.toLowerCase().includes(searchTerm.toLowerCase())
-  );
 
   const addLabels = {
     company: "Company",
@@ -2690,7 +2800,7 @@ const WorkoutProgramManagement = () => {
                     </TableRow>
                   </TableHeader>
                   <TableBody>
-                    {filteredCompanies.map((company) => (
+                    {companies.map((company) => (
                       <TableRow key={company.company_no}>
                         <TableCell>{company.company_no}</TableCell>
                         <TableCell>{company.company_name}</TableCell>
@@ -3252,8 +3362,8 @@ const WorkoutProgramManagement = () => {
                       <SelectContent>
                         {cities.map((city: any) => (
                           <SelectItem
-                            key={city.attributedetails_code}
-                            value={city.attributedetails_code}
+                            key={city.attributedetails_name}
+                            value={city.attributedetails_name}
                           >
                             {city.attributedetails_name}
                           </SelectItem>
@@ -3271,8 +3381,8 @@ const WorkoutProgramManagement = () => {
                       <SelectContent>
                         {states.map((state: any) => (
                           <SelectItem
-                            key={state.attributedetails_code}
-                            value={state.attributedetails_code}
+                            key={state.attributedetails_name}
+                            value={state.attributedetails_name}
                           >
                             {state.attributedetails_name}
                           </SelectItem>
@@ -3300,8 +3410,8 @@ const WorkoutProgramManagement = () => {
                       <SelectContent>
                         {countries.map((country: any) => (
                           <SelectItem
-                            key={country.attributedetails_code}
-                            value={country.attributedetails_code}
+                            key={country.attributedetails_name}
+                            value={country.attributedetails_name}
                           >
                             {country.attributedetails_name}
                           </SelectItem>
@@ -3414,8 +3524,8 @@ const WorkoutProgramManagement = () => {
 
               <ImageUpload
                 label="Company Images"
-                images={images}
-                onImagesChange={setImages}
+                images={companyImages}
+                onImagesChange={setCompanyImages}
                 onFilesChange={handleCompanyFiles}
                 maxImages={2}
               />

@@ -14,6 +14,8 @@ module.exports = {
   options: {
     encrypt: false,
   },   
+  requestTimeout: 300000, // 5 minutes
+  connectionTimeout: 300000, // 5 minutes
   // user: "sample",
   // password: "123456789",
   // server: "192.168.29.229",
