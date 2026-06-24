@@ -1,5 +1,4 @@
-
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -9,14 +8,13 @@ import { Textarea } from '@/components/ui/textarea';
 import { Switch } from '@/components/ui/switch';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useNavigate } from 'react-router-dom';
 import { useToast } from '@/hooks/use-toast';
-import { ArrowLeft, Plus, Search, Dumbbell, Package, Users, Clock, Edit, Trash2, Eye, Calendar, DollarSign, CheckCircle, XCircle } from 'lucide-react';
+import { ArrowLeft, Plus, Search, RotateCcw, Dumbbell, Package, Edit, Trash2 } from 'lucide-react';
 import ImageUpload from "../ImageUpload";
 import { BASE_URL } from '../ApiConfig';
-
 
 const WorkoutProgramManagement = () => {
   const navigate = useNavigate();
@@ -36,8 +34,13 @@ const WorkoutProgramManagement = () => {
   const [permission, setPermission] = useState<any[]>([]);
   const [screen, setScreen] = useState<any[]>([]);
   const [roleRight, setRoleRight] = useState<any[]>([]);
-  const [logInLogOut, setLogInLogOut] = useState([]);
-  const [gender, setGender] = useState([]);
+
+  //User Screen
+  const [logInLogOut, setLogInLogOut] = useState<any[]>([]);
+  const [gender, setGender] = useState<any[]>([]);
+
+  //Attribute Detail Screen
+  const [attributehdr, setAttributeHdr] = useState<any[]>([]);
 
   const fetchCities = async () => {
     try {
@@ -331,6 +334,54 @@ const WorkoutProgramManagement = () => {
     }
   };
 
+  //Attribute Detail Screen
+  const fetchAttributeHdr = async () => {
+    try {
+      const response = await fetch(`${BASE_URL}/hdrcode`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          company_code: "YJK",
+        }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        setAttributeHdr(data);
+      } else {
+        console.error("Failed to fetch status");
+      }
+    } catch (error) {
+      console.error("Error fetching status:", error);
+    }
+  };
+
+  useEffect(() => {
+    const loadData = async () => {
+      await Promise.all([
+        fetchCities(),
+        fetchStates(),
+        fetchCountries(),
+        fetchStatus(),
+        fetchLocation(),
+        fetchUsers(),
+        fetchCompanies(),
+        fetchRole(),
+        fetchPermission(),
+        fetchRoleRight(),
+        fetchScreen(),
+        fetchLogInLogOut(),
+        fetchGender(),
+        fetchAttributeHdr(),
+      ]);
+    };
+
+    loadData();
+  }, []);
+
   //Company Dialog States
   const [submittedCompany, setSubmittedCompany] = useState(false);
   const [companies, setCompanies] = useState([]);
@@ -358,12 +409,49 @@ const WorkoutProgramManagement = () => {
     created_by: "admin",
     modified_by: "admin",
   });
-  const [companyLogo, setCompanyLogo] = useState<File | null>(null);
-  const [authorisedSignature, setAuthorisedSignature] = useState<File | null>(null);
 
-  const handleCompanyFiles = (files: (File | null)[]) => {
-    setCompanyLogo(files[0]);
-    setAuthorisedSignature(files[1]);
+  //Company Search States
+  const [companySearchForm, setCompanySearchForm] = useState({
+    company_no: "",
+    company_name: "",
+    city: "",
+    state: "",
+    pincode: "",
+    country: "",
+    gst_no: "",
+    status: "",
+  });
+
+  // Preview images for ImageUpload component
+  const [companyImages, setCompanyImages] = useState<(string | null)[]>([
+    null,
+    null,
+  ]);
+
+  const handleCompanyFiles = async (files: (File | null)[]) => {
+    const convertedImages = await Promise.all(
+      files.map((file, index) => {
+        return new Promise<string | null>((resolve) => {
+          // Keep existing image if no new file is selected
+          if (!file) {
+            resolve(companyImages[index] ?? null);
+            return;
+          }
+
+          const reader = new FileReader();
+
+          reader.onload = (e) => {
+            resolve(e.target?.result as string);
+          };
+
+          reader.onerror = () => resolve(null);
+
+          reader.readAsDataURL(file);
+        });
+      })
+    );
+
+    setCompanyImages(convertedImages);
   };
 
   //Company Mapping Dialog States
@@ -381,6 +469,14 @@ const WorkoutProgramManagement = () => {
     keyfiels: "",
     created_by: "admin",
     modified_by: "admin",
+  });
+
+  //Company Mapping Search States
+  const [companyMappingSearchForm, setCompanyMappingSearchForm] = useState({
+    user_code: "",
+    company_no: "",
+    location_no: "",
+    status: "",
   });
 
   //Location Dialog States
@@ -406,6 +502,17 @@ const WorkoutProgramManagement = () => {
     modified_by: "admin",
   });
 
+  //Location Search States
+  const [locationSearchForm, setLocationSearchForm] = useState({
+    location_no: "",
+    location_name: "",
+    city: "",
+    state: "",
+    pincode: "",
+    country: "",
+    status: "",
+  });
+
   //Role Dialog States
   const [submittedRole, setSubmittedRole] = useState(false);
   const [roles, setRoles] = useState([]);
@@ -420,6 +527,12 @@ const WorkoutProgramManagement = () => {
     modified_by: "admin",
   });
 
+  //Role Search States
+  const [roleSearchForm, setRoleSearchForm] = useState({
+    role_id: "",
+    role_name: "",
+  });
+
   //Role Mapping Dialog States
   const [submittedRoleMapping, setSubmittedRoleMapping] = useState(false);
   const [roleMappings, setRoleMappings] = useState([]);
@@ -432,6 +545,14 @@ const WorkoutProgramManagement = () => {
     keyfield: "",
     created_by: "admin",
     modified_by: "admin",
+  });
+
+  //Role Mapping Search States
+  const [roleMappingSearchForm, setRoleMappingSearchForm] = useState({
+    user_code: "",
+    user_name: "",
+    role_id: "",
+    role_name: "",
   });
 
   //Role Rights Dialog States
@@ -449,12 +570,18 @@ const WorkoutProgramManagement = () => {
     modified_by: "admin",
   });
 
+  //Role Rights Search States
+  const [roleRightsSearchForm, setRoleRightsSearchForm] = useState({
+    role_id: "",
+    screen_type: "",
+    permission_type: "",
+  });
+
   //User Dialog States
   const [submittedUser, setSubmittedUser] = useState(false);
   const [users, setUsers] = useState([]);
   const [editingUser, setEditingUser] = useState<any>(null);
   const [isUserDialogOpen, setIsUserDialogOpen] = useState(false);
-  const [userCodeNameDrop, setUserCodeNameDrop] = useState([]);
   const [userForm, setUserForm] = useState({
     company_code: "",
     user_code: "",
@@ -480,48 +607,13 @@ const WorkoutProgramManagement = () => {
     setUserImages(file);
   };
 
-  // -- This dropdown values should come from member, trainer and admin tables 
-  // User Code DropDown for User
-//   useEffect(() => {
-//   const company_code = "YJKT" // const company_code = sessionStorage.getItem('selectedCompanyCode');
-
-//   fetch(`${BASE_URL}/getUCN`, {
-//     method: 'POST',
-//     headers: {
-//       'Content-Type': 'application/json',
-//     },
-//     body: JSON.stringify({ company_code })
-//   })
-//     .then((data) => data.json())
-//     .then((val) => {
-//       console.log("Dropdown Data:", val);
-//       setUserCodeNameDrop(val);
-//     })
-//     .catch((error) => console.error('Error fetching data:', error));
-// }, []);
-
-  // Status DropDown for User
-// useEffect(() => {
-//     const company_code = "YJKT" // const company_code = sessionStorage.getItem('selectedCompanyCode');
-
-//     fetch(`${BASE_URL}/status`, {
-//       method: 'POST',
-//       headers: {
-//         'Content-Type': 'application/json',
-//       },
-//       body: JSON.stringify({ company_code })
-//     })
-//       .then((data) => data.json())
-//       .then((val) => setStatusdrop(val))
-//       .catch((error) => console.error('Error fetching data:', error));
-//   }, []);
-
-  //Attribute Dialog States
+  //Attribute Detail Dialog States
+  const [submittedAttributeDet, setSubmittedAttributeDet] = useState(false);
   const [attributes, setAttributes] = useState([]);
   const [editingAttribute, setEditingAttribute] = useState<any>(null);
   const [isAttributeDialogOpen, setIsAttributeDialogOpen] = useState(false);
   const [attributeForm, setAttributeForm] = useState({
-    company_code: "COMP001",
+    company_code: "YJK",
     attributeheader_code: "",
     attributedetails_code: "",
     attributedetails_name: "",
@@ -530,21 +622,25 @@ const WorkoutProgramManagement = () => {
     modified_by: "admin",
   });
 
-  //Add Attribute Header Dialog States
+  //Attribute Detail Search States
+  const [attributeSearchForm, setAttributeSearchForm] = useState({
+    attributeheader_code: "",
+    attributedetails_code: "",
+    attributedetails_name: "",
+    descriptions: "",
+  });
+
+  //Attribute Header Dialog States
+  const [submittedAttributeHdr, setSubmittedAttributeHdr] = useState(false);
   const [isAttributeHdrDialogOpen, setIsAttributeHdrDialogOpen] = useState(false);
   const [attributeHdrForm, setAttributeHdrForm] = useState({
-    company_code: "COMP001", attributeheader_code: "", attributeheader_name: "", status: "Active", created_by: "admin", modified_by: "admin", tempstr1: "", tempstr2: "",
+    company_code: "YJK", attributeheader_code: "", attributeheader_name: "", status: "Active", created_by: "admin", modified_by: "admin", tempstr1: "", tempstr2: "",
     tempstr3: "", tempstr4: "", datetime1: "", datetime2: "", datetime3: "", datetime4: "",
   });
 
 
   //Company CRUD Functions
   const handleAddCompany = () => {
-    fetchCities();
-    fetchStates();
-    fetchCountries();
-    fetchStatus();
-    fetchLocation();
     setEditingCompany(null);
     setCompanyForm({
       company_no: "",
@@ -568,6 +664,8 @@ const WorkoutProgramManagement = () => {
       created_by: "admin",
       modified_by: "admin",
     });
+    setCompanyImages([null, null]);
+
     setIsCompanyDialogOpen(true);
   };
 
@@ -620,13 +718,34 @@ const WorkoutProgramManagement = () => {
         formData.append(key, companyForm[key as keyof typeof companyForm]);
       });
 
-      if (companyLogo) {
-        formData.append("company_logo", companyLogo);
-      }
+      companyImages.forEach((img, index) => {
+        if (!img) return;
 
-      if (authorisedSignature) {
-        formData.append("authorisedSignatur", authorisedSignature);
-      }
+        const base64 = img.split(",")[1];
+        const byteCharacters = atob(base64);
+
+        const byteNumbers = Array.from(byteCharacters, (char) =>
+          char.charCodeAt(0)
+        );
+
+        const byteArray = new Uint8Array(byteNumbers);
+
+        const blob = new Blob([byteArray], {
+          type: "image/png",
+        });
+
+        if (index === 0) {
+          formData.append("company_logo", blob, "company_logo.png");
+        }
+
+        if (index === 1) {
+          formData.append(
+            "authorisedSignatur",
+            blob,
+            "authorisedSignatur.png"
+          );
+        }
+      });
 
       const response = await fetch(`${BASE_URL}/add`,
         {
@@ -643,7 +762,7 @@ const WorkoutProgramManagement = () => {
           description: data.message || "Company created successfully.",
         });
 
-        // fetchCompanies();
+        handleCompanySearch();
         setIsCompanyDialogOpen(false);
         setSubmittedCompany(false);
       } else {
@@ -653,8 +772,14 @@ const WorkoutProgramManagement = () => {
           variant: "destructive",
         });
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error(error);
+
+      toast({
+        title: "Server Error",
+        description: error.message || "Something went wrong.",
+        variant: "destructive",
+      });
     }
   };
 
@@ -667,20 +792,41 @@ const WorkoutProgramManagement = () => {
       const formData = new FormData();
 
       Object.keys(companyForm).forEach((key) => {
-        formData.append(key, companyForm[key as keyof typeof companyForm]);
+        formData.append(key, companyForm[key as keyof typeof companyForm] ?? "");
       });
 
-      if (companyLogo) {
-        formData.append("company_logo", companyLogo);
-      }
+      companyImages.forEach((img, index) => {
+        if (!img) return;
 
-      if (authorisedSignature) {
-        formData.append("authorisedSignatur", authorisedSignature);
-      }
+        const base64 = img.split(",")[1];
+        const byteCharacters = atob(base64);
+
+        const byteNumbers = Array.from(byteCharacters, (char) =>
+          char.charCodeAt(0)
+        );
+
+        const byteArray = new Uint8Array(byteNumbers);
+
+        const blob = new Blob([byteArray], {
+          type: "image/png",
+        });
+
+        if (index === 0) {
+          formData.append("company_logo", blob, "company_logo.png");
+        }
+
+        if (index === 1) {
+          formData.append(
+            "authorisedSignatur",
+            blob,
+            "authorisedSignatur.png"
+          );
+        }
+      });
 
       const response = await fetch(`${BASE_URL}/CompanyUpdate`,
         {
-          method: "PUT",
+          method: "POST",
           body: formData,
         }
       );
@@ -693,7 +839,7 @@ const WorkoutProgramManagement = () => {
           description: data.message || "Company updated successfully.",
         });
 
-        // fetchCompanies();
+        handleCompanySearch();
         setEditingCompany(null);
         setIsCompanyDialogOpen(false);
         setSubmittedCompany(false);
@@ -725,7 +871,7 @@ const WorkoutProgramManagement = () => {
     try {
       const response = await fetch(`${BASE_URL}/delete`,
         {
-          method: "DELETE",
+          method: "POST",
           headers: {
             "Content-Type": "application/json",
             "modified-by": "admin",
@@ -744,7 +890,7 @@ const WorkoutProgramManagement = () => {
           description: data.message || "Company deleted successfully.",
         });
 
-        // fetchCompanies();
+        handleCompanySearch();
       } else {
         toast({
           title: "Error",
@@ -769,6 +915,16 @@ const WorkoutProgramManagement = () => {
     } else {
       await handleCreateCompany();
     }
+  };
+
+  const bufferToBase64 = (buffer: number[], mimeType: string = "image/png") => {
+    let binary = "";
+
+    buffer.forEach((byte) => {
+      binary += String.fromCharCode(byte);
+    });
+
+    return `data:${mimeType};base64,${window.btoa(binary)}`;
   };
 
   const handleEditCompany = (company: any) => {
@@ -797,18 +953,83 @@ const WorkoutProgramManagement = () => {
       modified_by: company.modified_by,
     });
 
+    const logo =
+      company.company_logo?.data &&
+        Array.isArray(company.company_logo.data)
+        ? bufferToBase64(company.company_logo.data)
+        : null;
+
+    const signature =
+      company.authorisedSignatur?.data &&
+        Array.isArray(company.authorisedSignatur.data)
+        ? bufferToBase64(company.authorisedSignatur.data)
+        : null;
+
+    setCompanyImages([logo, signature]);
+
     setIsCompanyDialogOpen(true);
+  };
+
+  const handleCompanySearch = async () => {
+    try {
+      const response = await fetch(`${BASE_URL}/companysearchcriteria`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          company_no: companySearchForm.company_no,
+          company_name: companySearchForm.company_name,
+          city: companySearchForm.city,
+          state: companySearchForm.state,
+          pincode: companySearchForm.pincode,
+          country: companySearchForm.country,
+          company_gst_no: companySearchForm.gst_no,
+          status: companySearchForm.status,
+        }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        setCompanies(data);
+      } else if (response.status === 404) {
+        setCompanies([]);
+
+        toast({
+          title: "Data Not Found",
+          description: data?.message || "No matching companies found.",
+          variant: "destructive",
+        });
+      } else {
+        setCompanies([]);
+
+        toast({
+          title: "Search Failed",
+          description: data?.message || "Something went wrong while searching.",
+          variant: "destructive",
+        });
+      }
+    } catch (error: any) {
+      console.error("Search Error:", error);
+
+      setCompanies([]);
+
+      toast({
+        title: "Server Error",
+        description:
+          error?.message ||
+          "Unable to connect to the server. Please try again later.",
+        variant: "destructive",
+      });
+    }
   };
 
   //Company Mapping CRUD Functions
   const handleAddCompanyMapping = () => {
-    fetchUsers();
-    fetchCompanies();
-    fetchStatus();
-    fetchLocation();
     setEditingCompanyMapping(null);
     setCompanyMappingForm({
-      company_code: "",
+      company_code: "YJK",
       user_code: "",
       company_no: "",
       location_no: "",
@@ -863,7 +1084,7 @@ const WorkoutProgramManagement = () => {
           description: data.message || "Company mapping created successfully.",
         });
 
-        // fetchCompanyMappings();
+        handleCompanyMappingSearch();
         setIsCompanyMappingDialogOpen(false);
         setSubmittedCompanyMapping(false);
       } else {
@@ -892,7 +1113,7 @@ const WorkoutProgramManagement = () => {
     try {
       const response = await fetch(`${BASE_URL}/CompanyMappingUpdate`,
         {
-          method: "PUT",
+          method: "POST",
           headers: {
             "Content-Type": "application/json",
           },
@@ -908,7 +1129,7 @@ const WorkoutProgramManagement = () => {
           description: data.message || "Company mapping updated successfully.",
         });
 
-        // fetchCompanyMappings();
+        handleCompanyMappingSearch();
         setEditingCompanyMapping(null);
         setIsCompanyMappingDialogOpen(false);
         setSubmittedCompanyMapping(false);
@@ -940,7 +1161,7 @@ const WorkoutProgramManagement = () => {
     try {
       const response = await fetch(`${BASE_URL}/commappingdeleteData`,
         {
-          method: "DELETE",
+          method: "POST",
           headers: {
             "Content-Type": "application/json",
             "modified-by": "admin",
@@ -960,7 +1181,7 @@ const WorkoutProgramManagement = () => {
             data.message || "Company mapping deleted successfully.",
         });
 
-        // fetchCompanyMappings();
+        handleCompanyMappingSearch();
       } else {
         toast({
           title: "Error",
@@ -988,11 +1209,65 @@ const WorkoutProgramManagement = () => {
     }
   };
 
+  const handleCompanyMappingSearch = async () => {
+    try {
+      const response = await fetch(`${BASE_URL}/companymappingsearchdata`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            company_code: "YJK",
+            user_code: companyMappingSearchForm.user_code,
+            company_no: companyMappingSearchForm.company_no,
+            location_no: companyMappingSearchForm.location_no,
+            status: companyMappingSearchForm.status,
+          }),
+        }
+      );
+
+      const data = await response.json();
+
+      if (response.ok) {
+        setCompanyMappings(data);
+      } else if (response.status === 404) {
+        setCompanies([]);
+
+        toast({
+          title: "Data Not Found",
+          description: data?.message || "No matching companies found.",
+          variant: "destructive",
+        });
+      } else {
+        setCompanies([]);
+
+        toast({
+          title: "Search Failed",
+          description: data?.message || "Something went wrong while searching.",
+          variant: "destructive",
+        });
+      }
+    } catch (error: any) {
+      console.error("Search Error:", error);
+
+      setCompanies([]);
+
+      toast({
+        title: "Server Error",
+        description:
+          error?.message ||
+          "Unable to connect to the server. Please try again later.",
+        variant: "destructive",
+      });
+    }
+  };
+
   const handleEditCompanyMapping = (mapping: any) => {
     setEditingCompanyMapping(mapping);
 
     setCompanyMappingForm({
-      company_code: mapping.company_code,
+      company_code: "YJK",
       user_code: mapping.user_code,
       company_no: mapping.company_no,
       location_no: mapping.location_no,
@@ -1008,10 +1283,6 @@ const WorkoutProgramManagement = () => {
 
   // Location CRUD Functions
   const handleAddLocation = () => {
-    fetchCities();
-    fetchStates();
-    fetchCountries();
-    fetchStatus();
     setEditingLocation(null);
     setLocationForm({
       location_no: "",
@@ -1094,7 +1365,7 @@ const WorkoutProgramManagement = () => {
           description: data.message || "Location created successfully.",
         });
 
-        // fetchLocations();
+        handleLocationSearch();
         setIsLocationDialogOpen(false);
         setSubmittedLocation(false);
       } else {
@@ -1123,7 +1394,7 @@ const WorkoutProgramManagement = () => {
     try {
       const response = await fetch(`${BASE_URL}/LocationUpdate`,
         {
-          method: "PUT",
+          method: "POST",
           headers: {
             "Content-Type": "application/json",
           },
@@ -1139,7 +1410,7 @@ const WorkoutProgramManagement = () => {
           description: data.message || data || "Location updated successfully.",
         });
 
-        // fetchLocations();
+        handleLocationSearch();
         setEditingLocation(null);
         setIsLocationDialogOpen(false);
         setSubmittedLocation(false);
@@ -1162,12 +1433,16 @@ const WorkoutProgramManagement = () => {
   };
 
   const handleDeleteLocation = async (location_no: string) => {
-    if (!window.confirm("Delete this location?")) return;
+    const confirmed = window.confirm(
+      "Are you sure you want to delete this location? This action cannot be undone."
+    );
+
+    if (!confirmed) return;
 
     try {
       const response = await fetch(`${BASE_URL}/deletelocation`,
         {
-          method: "DELETE",
+          method: "POST",
           headers: {
             "Content-Type": "application/json",
             "modified-by": "admin",
@@ -1186,7 +1461,7 @@ const WorkoutProgramManagement = () => {
           description: data.message || "Location deleted successfully.",
         });
 
-        // fetchLocations();
+        handleLocationSearch();
       } else {
         toast({
           title: "Error",
@@ -1210,6 +1485,60 @@ const WorkoutProgramManagement = () => {
       await handleUpdateLocation();
     } else {
       await handleCreateLocation();
+    }
+  };
+
+  const handleLocationSearch = async () => {
+    try {
+      const response = await fetch(`${BASE_URL}/locationSearchdata`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          location_no: locationSearchForm.location_no,
+          location_name: locationSearchForm.location_name,
+          city: locationSearchForm.city,
+          state: locationSearchForm.state,
+          pincode: locationSearchForm.pincode,
+          country: locationSearchForm.country,
+          status: locationSearchForm.status,
+        }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        setLocations(data);
+      } else if (response.status === 404) {
+        setCompanies([]);
+
+        toast({
+          title: "Data Not Found",
+          description: data?.message || "No matching locations found.",
+          variant: "destructive",
+        });
+      } else {
+        setCompanies([]);
+
+        toast({
+          title: "Search Failed",
+          description: data?.message || "Something went wrong while searching.",
+          variant: "destructive",
+        });
+      }
+    } catch (error: any) {
+      console.error("Search Error:", error);
+
+      setCompanies([]);
+
+      toast({
+        title: "Server Error",
+        description:
+          error?.message ||
+          "Unable to connect to the server. Please try again later.",
+        variant: "destructive",
+      });
     }
   };
 
@@ -1241,7 +1570,7 @@ const WorkoutProgramManagement = () => {
   const handleAddRole = () => {
     setEditingRole(null);
     setRoleForm({
-      company_code: "",
+      company_code: "YJK",
       role_id: "",
       role_name: "",
       description: "",
@@ -1289,7 +1618,7 @@ const WorkoutProgramManagement = () => {
           description: data.message || "Role created successfully.",
         });
 
-        // fetchRoles();
+        handleRoleSearch();
         setIsRoleDialogOpen(false);
         setSubmittedRole(false);
       } else {
@@ -1332,7 +1661,7 @@ const WorkoutProgramManagement = () => {
           description: data.message || "Role updated successfully.",
         });
 
-        // fetchRoles();
+        handleRoleSearch();
         setEditingRole(null);
         setIsRoleDialogOpen(false);
         setSubmittedRole(false);
@@ -1382,7 +1711,7 @@ const WorkoutProgramManagement = () => {
           description: data.message || "Role deleted successfully.",
         });
 
-        // fetchRoles();
+        handleRoleSearch();
       } else {
         toast({
           title: "Error",
@@ -1409,11 +1738,61 @@ const WorkoutProgramManagement = () => {
     }
   };
 
+  const handleRoleSearch = async () => {
+    try {
+      const response = await fetch(`${BASE_URL}/Rolesearchdata`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          company_code: "YJK",
+          role_id: roleSearchForm.role_id,
+          role_name: roleSearchForm.role_name,
+        }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        setRoles(data);
+      } else if (response.status === 404) {
+        setCompanies([]);
+
+        toast({
+          title: "Data Not Found",
+          description: data?.message || "No matching roles found.",
+          variant: "destructive",
+        });
+      } else {
+        setCompanies([]);
+
+        toast({
+          title: "Search Failed",
+          description: data?.message || "Something went wrong while searching.",
+          variant: "destructive",
+        });
+      }
+    } catch (error: any) {
+      console.error("Search Error:", error);
+
+      setCompanies([]);
+
+      toast({
+        title: "Server Error",
+        description:
+          error?.message ||
+          "Unable to connect to the server. Please try again later.",
+        variant: "destructive",
+      });
+    }
+  };
+
   const handleEditRole = (role: any) => {
     setEditingRole(role);
 
     setRoleForm({
-      company_code: role.company_code,
+      company_code: "YJK",
       role_id: role.role_id,
       role_name: role.role_name,
       description: role.description,
@@ -1426,11 +1805,9 @@ const WorkoutProgramManagement = () => {
 
   //Role Mapping CRUD Functions
   const handleAddRoleMapping = () => {
-    fetchUsers();
-    fetchRole();
     setEditingRoleMapping(null);
     setRoleMappingForm({
-      company_code: "",
+      company_code: "YJK",
       user_code: "",
       role_id: "",
       keyfield: "",
@@ -1478,7 +1855,7 @@ const WorkoutProgramManagement = () => {
           description: data.message || "Role mapping created successfully.",
         });
 
-        // fetchRoleMappings();
+        handleRoleMappingSearch();
         setIsRoleMappingDialogOpen(false);
         setSubmittedRoleMapping(false);
       } else {
@@ -1521,7 +1898,7 @@ const WorkoutProgramManagement = () => {
           description: data.message || "Role mapping updated successfully.",
         });
 
-        // fetchRoleMappings();
+        handleRoleMappingSearch();
         setEditingRoleMapping(null);
         setIsRoleMappingDialogOpen(false);
         setSubmittedRoleMapping(false);
@@ -1570,7 +1947,7 @@ const WorkoutProgramManagement = () => {
           description: data.message || "Role mapping deleted successfully.",
         });
 
-        // fetchRoleMappings();
+        handleRoleMappingSearch();
       } else {
         toast({
           title: "Error",
@@ -1597,11 +1974,65 @@ const WorkoutProgramManagement = () => {
     }
   };
 
+  const handleRoleMappingSearch = async () => {
+    try {
+      const response = await fetch(`${BASE_URL}/userrolsearchdata`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            company_code: "YJK",
+            user_code: roleMappingSearchForm.user_code,
+            user_name: roleMappingSearchForm.user_name,
+            role_id: roleMappingSearchForm.role_id,
+            role_name: roleMappingSearchForm.role_name,
+          }),
+        }
+      );
+
+      const data = await response.json();
+
+      if (response.ok) {
+        setRoleMappings(data);
+      } else if (response.status === 404) {
+        setCompanies([]);
+
+        toast({
+          title: "Data Not Found",
+          description: data?.message || "No matching roles found.",
+          variant: "destructive",
+        });
+      } else {
+        setCompanies([]);
+
+        toast({
+          title: "Search Failed",
+          description: data?.message || "Something went wrong while searching.",
+          variant: "destructive",
+        });
+      }
+    } catch (error: any) {
+      console.error("Search Error:", error);
+
+      setCompanies([]);
+
+      toast({
+        title: "Server Error",
+        description:
+          error?.message ||
+          "Unable to connect to the server. Please try again later.",
+        variant: "destructive",
+      });
+    }
+  };
+
   const handleEditRoleMapping = (mapping: any) => {
     setEditingRoleMapping(mapping);
 
     setRoleMappingForm({
-      company_code: mapping.company_code,
+      company_code: "YJK",
       user_code: mapping.user_code,
       role_id: mapping.role_id,
       keyfield: mapping.keyfield,
@@ -1614,12 +2045,9 @@ const WorkoutProgramManagement = () => {
 
   //Role Rights CRUD Functions
   const handleAddRoleRights = () => {
-    fetchPermission();
-    fetchRoleRight();
-    fetchScreen();
     setEditingRoleRight(null);
     setRoleRightsForm({
-      company_code: "",
+      company_code: "YJK",
       role_id: "",
       screen_type: "",
       permission_type: "",
@@ -1669,7 +2097,7 @@ const WorkoutProgramManagement = () => {
           description: data.message || "Role rights created successfully.",
         });
 
-        // fetchRoleRights();
+        handleRoleRightsSearch();
         setIsRoleRightsDialogOpen(false);
         setSubmittedRoleRights(false);
       } else {
@@ -1697,7 +2125,7 @@ const WorkoutProgramManagement = () => {
 
     try {
       const response = await fetch(`${BASE_URL}/updateRoleRights`, {
-        method: "PUT",
+        method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
@@ -1712,7 +2140,7 @@ const WorkoutProgramManagement = () => {
           description: data.message || "Role rights updated successfully.",
         });
 
-        // fetchRoleRights();
+        handleRoleRightsSearch();
         setEditingRoleRight(null);
         setIsRoleRightsDialogOpen(false);
         setSubmittedRoleRights(false);
@@ -1743,7 +2171,7 @@ const WorkoutProgramManagement = () => {
 
     try {
       const response = await fetch(`${BASE_URL}/userscreenmapdeleteData`, {
-        method: "DELETE",
+        method: "POST",
         headers: {
           "Content-Type": "application/json",
           "modified-by": "admin",
@@ -1761,7 +2189,7 @@ const WorkoutProgramManagement = () => {
           description: data.message || "Role rights deleted successfully.",
         });
 
-        // fetchRoleRights();
+        handleRoleRightsSearch();
       } else {
         toast({
           title: "Error",
@@ -1788,11 +2216,64 @@ const WorkoutProgramManagement = () => {
     }
   };
 
+  const handleRoleRightsSearch = async () => {
+    try {
+      const response = await fetch(`${BASE_URL}/userscreensearchdata`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            company_code: "YJK",
+            role_id: roleRightsSearchForm.role_id,
+            screen_type: roleRightsSearchForm.screen_type,
+            permission_type: roleRightsSearchForm.permission_type,
+          }),
+        }
+      );
+
+      const data = await response.json();
+
+      if (response.ok) {
+        setRoleRights(data);
+      } else if (response.status === 404) {
+        setCompanies([]);
+
+        toast({
+          title: "Data Not Found",
+          description: data?.message || "No matching role rights found.",
+          variant: "destructive",
+        });
+      } else {
+        setCompanies([]);
+
+        toast({
+          title: "Search Failed",
+          description: data?.message || "Something went wrong while searching.",
+          variant: "destructive",
+        });
+      }
+    } catch (error: any) {
+      console.error("Search Error:", error);
+
+      setCompanies([]);
+
+      toast({
+        title: "Server Error",
+        description:
+          error?.message ||
+          "Unable to connect to the server. Please try again later.",
+        variant: "destructive",
+      });
+    }
+  };
+
   const handleEditRoleRight = (item: any) => {
     setEditingRoleRight(item);
 
     setRoleRightsForm({
-      company_code: item.company_code,
+      company_code: "YJK",
       role_id: item.role_id,
       screen_type: item.screen_type,
       permission_type: item.permission_type,
@@ -1806,10 +2287,6 @@ const WorkoutProgramManagement = () => {
 
   //User CRUD Functions
   const handleAddUser = () => {
-    fetchStatus();
-    fetchLogInLogOut();
-    fetchGender();
-    fetchRole();
     setEditingUser(null);
     setUserForm({
       company_code: "YJKT",
@@ -1869,91 +2346,56 @@ const WorkoutProgramManagement = () => {
     return true;
   };
 
-  // const handleCreateUser = async () => {
-
-  //   setSubmittedUser(true);
-
-  //   if (!validateUser()) return;
-  //   try {
-  //     const formData = new FormData();
-
-  //     Object.entries(userForm).forEach(([key, value]) => {
-  //       formData.append(key, value as string);
-  //     });
-
-  //     if (userImages?.length > 0 && userImages[0]) {
-  //       formData.append("user_img", userImages[0]);
-  //     }
-  //     const response = await fetch(`${BASE_URL}/useradd`, {
-  //       method: "POST",
-  //       body: formData,
-  //     });
-
-  //     const data = await response.json();
-
-  //     if (response.ok) {
-  //       alert(data.message);
-  //       setIsUserDialogOpen(false);
-  //       setSubmittedUser(false);
-  //       // fetchUsers();
-  //     } else {
-  //       alert(data.message);
-  //     }
-  //   } catch (err) {
-  //     console.error(err);
-  //   }
-  // };
-
   const handleCreateUser = async () => {
-  setSubmittedUser(true);
+    setSubmittedUser(true);
 
-  if (!validateUser()) return;
+    if (!validateUser()) return;
 
-  try {
-    const formData = new FormData();
+    try {
+      const formData = new FormData();
 
-    Object.entries(userForm).forEach(([key, value]) => {
-      formData.append(key, value as string);
-    });
-
-    if (userImages?.length > 0 && userImages[0]) {
-      formData.append("user_img", userImages[0]);
-    }
-
-    const response = await fetch(`${BASE_URL}/useradd`, {
-      method: "POST",
-      body: formData,
-    });
-
-    const data = await response.json();
-
-    if (response.ok) {
-      toast({
-        title: "Success",
-        description: data.message || "User created successfully.",
+      Object.entries(userForm).forEach(([key, value]) => {
+        formData.append(key, value as string);
       });
 
-      setIsUserDialogOpen(false);
-      setSubmittedUser(false);
+      if (userImages?.length > 0 && userImages[0]) {
+        formData.append("user_img", userImages[0]);
+      }
 
-      // fetchUsers();
-    } else {
+      const response = await fetch(`${BASE_URL}/useradd`, {
+        method: "POST",
+        body: formData,
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        toast({
+          title: "Success",
+          description: data.message || "User created successfully.",
+        });
+
+        setIsUserDialogOpen(false);
+        setSubmittedUser(false);
+
+        // fetchUsers();
+      } else {
+        toast({
+          title: "Error",
+          description: data.message || "Failed to create user.",
+          variant: "destructive",
+        });
+      }
+    } catch (err) {
+      console.error(err);
+
       toast({
         title: "Error",
-        description: data.message || "Failed to create user.",
+        description: "Something went wrong. Please try again.",
         variant: "destructive",
       });
     }
-  } catch (err) {
-    console.error(err);
-
-    toast({
-      title: "Error",
-      description: "Something went wrong. Please try again.",
-      variant: "destructive",
-    });
-  }
-};
+  };
 
   // const handleUpdateUser = async () => {
   //   setSubmittedUser(true);
@@ -1990,56 +2432,56 @@ const WorkoutProgramManagement = () => {
   // };
 
   const handleUpdateUser = async () => {
-  setSubmittedUser(true);
+    setSubmittedUser(true);
 
-  if (!validateUser()) return;
+    if (!validateUser()) return;
 
-  try {
-    const formData = new FormData();
+    try {
+      const formData = new FormData();
 
-    Object.entries(userForm).forEach(([key, value]) => {
-      formData.append(key, value as string);
-    });
-
-    if (userImages.length > 0) {
-      formData.append("user_images", userImages[0]);
-    }
-
-    const response = await fetch(`${BASE_URL}/UserUpdates`, {
-      method: "PUT",
-      body: formData,
-    });
-
-    const data = await response.json();
-
-    if (response.ok) {
-      toast({
-        title: "Success",
-        description: data.message || "User updated successfully.",
+      Object.entries(userForm).forEach(([key, value]) => {
+        formData.append(key, value as string);
       });
 
-      setEditingUser(null);
-      setIsUserDialogOpen(false);
-      setSubmittedUser(false);
+      if (userImages.length > 0) {
+        formData.append("user_images", userImages[0]);
+      }
 
-      // fetchUsers();
-    } else {
+      const response = await fetch(`${BASE_URL}/UserUpdates`, {
+        method: "PUT",
+        body: formData,
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        toast({
+          title: "Success",
+          description: data.message || "User updated successfully.",
+        });
+
+        setEditingUser(null);
+        setIsUserDialogOpen(false);
+        setSubmittedUser(false);
+
+        // fetchUsers();
+      } else {
+        toast({
+          title: "Error",
+          description: data.message || "Failed to update user.",
+          variant: "destructive",
+        });
+      }
+    } catch (err: any) {
+      console.error(err);
+
       toast({
-        title: "Error",
-        description: data.message || "Failed to update user.",
+        title: "Server Error",
+        description: err.message || "Something went wrong.",
         variant: "destructive",
       });
     }
-  } catch (err: any) {
-    console.error(err);
-
-    toast({
-      title: "Server Error",
-      description: err.message || "Something went wrong.",
-      variant: "destructive",
-    });
-  }
-};
+  };
 
   // const handleDeleteUser = async (user_code: string) => {
   //   const confirmDelete = window.confirm(
@@ -2075,51 +2517,51 @@ const WorkoutProgramManagement = () => {
   // };
 
   const handleDeleteUser = async (user_code: string) => {
-  const confirmDelete = window.confirm(
-    "Are you sure you want to delete this user?"
-  );
+    const confirmDelete = window.confirm(
+      "Are you sure you want to delete this user?"
+    );
 
-  if (!confirmDelete) return;
+    if (!confirmDelete) return;
 
-  try {
-    const response = await fetch(`${BASE_URL}/userdelete`, {
-      method: "DELETE",
-      headers: {
-        "Content-Type": "application/json",
-        "modified-by": "admin",
-        "company_code": "COMP001",
-      },
-      body: JSON.stringify({
-        user_codes: [user_code],
-      }),
-    });
-
-    const data = await response.json();
-
-    if (response.ok) {
-      toast({
-        title: "Success",
-        description: data.message || "User deleted successfully.",
+    try {
+      const response = await fetch(`${BASE_URL}/userdelete`, {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+          "modified-by": "admin",
+          "company_code": "COMP001",
+        },
+        body: JSON.stringify({
+          user_codes: [user_code],
+        }),
       });
 
-      // fetchUsers();
-    } else {
+      const data = await response.json();
+
+      if (response.ok) {
+        toast({
+          title: "Success",
+          description: data.message || "User deleted successfully.",
+        });
+
+        // fetchUsers();
+      } else {
+        toast({
+          title: "Error",
+          description: data.message || "Failed to delete user.",
+          variant: "destructive",
+        });
+      }
+    } catch (err: any) {
+      console.error(err);
+
       toast({
-        title: "Error",
-        description: data.message || "Failed to delete user.",
+        title: "Server Error",
+        description: err.message || "Something went wrong.",
         variant: "destructive",
       });
     }
-  } catch (err: any) {
-    console.error(err);
-
-    toast({
-      title: "Server Error",
-      description: err.message || "Something went wrong.",
-      variant: "destructive",
-    });
-  }
-};
+  };
 
   const handleSaveUser = async () => {
     if (editingUser) {
@@ -2155,7 +2597,7 @@ const WorkoutProgramManagement = () => {
     setIsUserDialogOpen(true);
   };
 
-  //Attribute CRUD Functions
+  //Attribute Detail CRUD Functions
   const handleAddAttribute = () => {
     setEditingAttribute(null);
     setAttributeForm({
@@ -2170,7 +2612,28 @@ const WorkoutProgramManagement = () => {
     setIsAttributeDialogOpen(true);
   };
 
+  const validateAttributeDet = () => {
+    if (
+      !attributeForm.attributeheader_code ||
+      !attributeForm.attributedetails_code ||
+      !attributeForm.attributedetails_name
+    ) {
+      toast({
+        title: "Required Fields",
+        description: "Please fill all required fields.",
+        variant: "destructive",
+      });
+      return false;
+    }
+
+    return true;
+  };
+
   const handleCreateAttribute = async () => {
+    setSubmittedAttributeDet(true);
+
+    if (!validateAttributeDet()) return;
+
     try {
       const response = await fetch(`${BASE_URL}/addattridetData`, {
         method: "POST",
@@ -2183,21 +2646,42 @@ const WorkoutProgramManagement = () => {
       const data = await response.json();
 
       if (response.ok) {
-        alert(data.message);
-        // fetchAttributes();
+        toast({
+          title: "Success",
+          description:
+            data.message || "Attribute details created successfully.",
+        });
+
+        handleAttributeSearch();
         setIsAttributeDialogOpen(false);
+        setSubmittedAttributeDet(false);
       } else {
-        alert(data.message);
+        toast({
+          title: "Error",
+          description:
+            data.message || "Failed to create attribute details.",
+          variant: "destructive",
+        });
       }
-    } catch (err) {
+    } catch (err: any) {
       console.error(err);
+
+      toast({
+        title: "Server Error",
+        description: err.message || "Something went wrong.",
+        variant: "destructive",
+      });
     }
   };
 
   const handleUpdateAttribute = async () => {
+    setSubmittedAttributeDet(true);
+
+    if (!validateAttributeDet()) return;
+
     try {
       const response = await fetch(`${BASE_URL}/AttributeUpdate`, {
-        method: "PUT",
+        method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
@@ -2207,31 +2691,49 @@ const WorkoutProgramManagement = () => {
       const data = await response.json();
 
       if (response.ok) {
-        alert(data);
-        // fetchAttributes();
+        toast({
+          title: "Success",
+          description:
+            data.message || data || "Attribute details updated successfully.",
+        });
+
+        handleAttributeSearch();
         setEditingAttribute(null);
         setIsAttributeDialogOpen(false);
+        setSubmittedAttributeDet(false);
       } else {
-        alert(data.message);
+        toast({
+          title: "Error",
+          description:
+            data.message || "Failed to update attribute details.",
+          variant: "destructive",
+        });
       }
-    } catch (err) {
+    } catch (err: any) {
       console.error(err);
+
+      toast({
+        title: "Server Error",
+        description: err.message || "Something went wrong.",
+        variant: "destructive",
+      });
     }
   };
 
-  const handleDeleteAttribute = async (
-    attributeheader_code: string,
-    attributedetails_code: string
-  ) => {
-    if (!window.confirm("Delete this Attribute?")) return;
+  const handleDeleteAttribute = async (attributeheader_code: string, attributedetails_code: string) => {
+    const confirmed = window.confirm(
+      "Are you sure you want to delete this attribute? This action cannot be undone."
+    );
+
+    if (!confirmed) return;
 
     try {
       const response = await fetch(`${BASE_URL}/delattridetData`, {
-        method: "DELETE",
+        method: "POST",
         headers: {
           "Content-Type": "application/json",
           "modified-by": "admin",
-          "company_code": "COMP001",
+          "company_code": "YJK",
         },
         body: JSON.stringify({
           attributeheader_codesToDelete: [attributeheader_code],
@@ -2242,13 +2744,29 @@ const WorkoutProgramManagement = () => {
       const data = await response.json();
 
       if (response.ok) {
-        alert(data);
-        // fetchAttributes();
+        toast({
+          title: "Success",
+          description:
+            data.message || data || "Attribute details deleted successfully.",
+        });
+
+        handleAttributeSearch();
       } else {
-        alert(data.message || data);
+        toast({
+          title: "Error",
+          description:
+            data.message || data || "Failed to delete attribute details.",
+          variant: "destructive",
+        });
       }
-    } catch (err) {
+    } catch (err: any) {
       console.error(err);
+
+      toast({
+        title: "Server Error",
+        description: err.message || "Something went wrong.",
+        variant: "destructive",
+      });
     }
   };
 
@@ -2257,6 +2775,58 @@ const WorkoutProgramManagement = () => {
       await handleUpdateAttribute();
     } else {
       await handleCreateAttribute();
+    }
+  };
+
+  const handleAttributeSearch = async () => {
+    try {
+      const response = await fetch(`${BASE_URL}/attributeSearchdata`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          company_code: "YJK",
+          attributeheader_code: attributeSearchForm.attributeheader_code,
+          attributedetails_code: attributeSearchForm.attributedetails_code,
+          attributedetails_name: attributeSearchForm.attributedetails_name,
+          descriptions: attributeSearchForm.descriptions,
+        }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        setAttributes(data);
+      } else if (response.status === 404) {
+        setCompanies([]);
+
+        toast({
+          title: "Data Not Found",
+          description: data?.message || "No matching attributes found.",
+          variant: "destructive",
+        });
+      } else {
+        setCompanies([]);
+
+        toast({
+          title: "Search Failed",
+          description: data?.message || "Something went wrong while searching.",
+          variant: "destructive",
+        });
+      }
+    } catch (error: any) {
+      console.error("Search Error:", error);
+
+      setCompanies([]);
+
+      toast({
+        title: "Server Error",
+        description:
+          error?.message ||
+          "Unable to connect to the server. Please try again later.",
+        variant: "destructive",
+      });
     }
   };
 
@@ -2278,9 +2848,8 @@ const WorkoutProgramManagement = () => {
 
   //add Attribute CRUD Functions
   const handleAddAttributeHdr = () => {
-    setIsAttributeHdrDialogOpen(true);
     setAttributeHdrForm({
-      company_code: "COMP001",
+      company_code: "YJK",
       attributeheader_code: "",
       attributeheader_name: "",
       status: "Active",
@@ -2295,9 +2864,31 @@ const WorkoutProgramManagement = () => {
       datetime3: "",
       datetime4: "",
     });
+    setIsAttributeHdrDialogOpen(true);
+  };
+
+  const validateAttributeHdr = () => {
+    if (
+      !attributeHdrForm.attributeheader_code ||
+      !attributeHdrForm.attributeheader_name ||
+      !attributeHdrForm.status
+    ) {
+      toast({
+        title: "Required Fields",
+        description: "Please fill all required fields.",
+        variant: "destructive",
+      });
+      return false;
+    }
+
+    return true;
   };
 
   const handleCreateAttributeHdr = async () => {
+    setSubmittedAttributeHdr(true);
+
+    if (!validateAttributeHdr()) return;
+
     try {
       const response = await fetch(`${BASE_URL}/addattriData`,
         {
@@ -2312,26 +2903,33 @@ const WorkoutProgramManagement = () => {
       const data = await response.json();
 
       if (response.ok) {
-        alert(data.message);
-
+        toast({
+          title: "Success",
+          description:
+            data.message || "Attribute header created successfully.",
+        });
         setIsAttributeHdrDialogOpen(false);
-
-        // fetchAttributeHdr(); // if list api available
+        setSubmittedAttributeHdr(false);
       } else {
-        alert(data.message);
+        toast({
+          title: "Error",
+          description:
+            data.message || "Failed to create attribute header.",
+          variant: "destructive",
+        });
       }
-    } catch (err) {
+    } catch (err: any) {
       console.error(err);
-      alert("Something went wrong");
+
+      toast({
+        title: "Server Error",
+        description: err.message || "Something went wrong.",
+        variant: "destructive",
+      });
     }
   };
 
-  const filteredCompanies = companies.filter(p =>
-    p.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    p.category.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    p.facultyName.toLowerCase().includes(searchTerm.toLowerCase())
-  );
-
+  //TAB BUTTON LABELS
   const addLabels = {
     company: "Company",
     companyMapping: "Company Mapping",
@@ -2374,6 +2972,378 @@ const WorkoutProgramManagement = () => {
     }
   };
 
+  const renderCompanySearch = () => (
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className="space-y-2">
+        <Label>Company No</Label>
+        <Input
+          placeholder="Enter Company No"
+          value={companySearchForm.company_no}
+          onChange={(e) => setCompanySearchForm({ ...companySearchForm, company_no: e.target.value, })} />
+      </div>
+
+      <div className="space-y-2">
+        <Label>Company Name</Label>
+        <Input
+          placeholder="Enter Company Name"
+          value={companySearchForm.company_name}
+          onChange={(e) => setCompanySearchForm({ ...companySearchForm, company_name: e.target.value, })} />
+      </div>
+
+      <div className="space-y-2">
+        <Label>City</Label>
+        <Input
+          placeholder="Enter City"
+          value={companySearchForm.city}
+          onChange={(e) => setCompanySearchForm({ ...companySearchForm, city: e.target.value, })} />
+      </div>
+
+      <div className="space-y-2">
+        <Label>State</Label>
+        <Input
+          placeholder="Enter State"
+          value={companySearchForm.state}
+          onChange={(e) => setCompanySearchForm({ ...companySearchForm, state: e.target.value, })} />
+      </div>
+
+      <div className="space-y-2">
+        <Label>Pin Code</Label>
+        <Input
+          placeholder="Enter Pin Code"
+          value={companySearchForm.pincode}
+          onChange={(e) => setCompanySearchForm({ ...companySearchForm, pincode: e.target.value, })} />
+      </div>
+
+      <div className="space-y-2">
+        <Label>Country</Label>
+        <Input
+          placeholder="Enter Country"
+          value={companySearchForm.country}
+          onChange={(e) => setCompanySearchForm({ ...companySearchForm, country: e.target.value, })} />
+      </div>
+
+      <div className="space-y-2">
+        <Label>GST No</Label>
+        <Input
+          placeholder="Enter GST No"
+          value={companySearchForm.gst_no}
+          onChange={(e) => setCompanySearchForm({ ...companySearchForm, gst_no: e.target.value, })} />
+      </div>
+
+      <div className="space-y-2">
+        <Label>Status</Label>
+        <Select
+          value={companySearchForm.status}
+          onValueChange={(value) => setCompanySearchForm({ ...companySearchForm, status: value, })}>
+          <SelectTrigger>
+            <SelectValue placeholder="Select Status" />
+          </SelectTrigger>
+
+          <SelectContent>
+            {status.map((status: any) => (
+              <SelectItem
+                key={status.attributedetails_name}
+                value={status.attributedetails_name}
+              >
+                {status.attributedetails_name}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+      </div>
+    </div>
+  );
+
+  const renderCompanyMappingSearch = () => (
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+
+      <div className="space-y-2">
+        <Label>User Code</Label>
+        <Input
+          placeholder="Enter User Code"
+          value={companyMappingSearchForm.user_code}
+          onChange={(e) => setCompanyMappingSearchForm({ ...companyMappingSearchForm, user_code: e.target.value, })} />
+      </div>
+
+      <div className="space-y-2">
+        <Label>Company Code</Label>
+        <Input
+          placeholder="Enter Company Code"
+          value={companyMappingSearchForm.company_no}
+          onChange={(e) => setCompanyMappingSearchForm({ ...companyMappingSearchForm, company_no: e.target.value, })} />
+      </div>
+
+      <div className="space-y-2">
+        <Label>Location No</Label>
+        <Input
+          placeholder="Enter Location No"
+          value={companyMappingSearchForm.location_no}
+          onChange={(e) => setCompanyMappingSearchForm({ ...companyMappingSearchForm, location_no: e.target.value, })} />
+      </div>
+
+      <div className="space-y-2">
+        <Label>Status</Label>
+        <Select value={companyMappingSearchForm.status} onValueChange={(value) => setCompanyMappingSearchForm({ ...companyMappingSearchForm, status: value, })}>
+          <SelectTrigger>
+            <SelectValue placeholder="Select Status" />
+          </SelectTrigger>
+          <SelectContent>
+            {status.map((item: any) => (
+              <SelectItem
+                key={item.attributedetails_code}
+                value={item.attributedetails_code}
+              >
+                {item.attributedetails_name}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+      </div>
+
+    </div>
+  );
+
+  const renderLocationSearch = () => (
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className="space-y-2">
+        <Label>Location No</Label>
+        <Input
+          placeholder="Enter Location No"
+          value={locationSearchForm.location_no}
+          onChange={(e) => setLocationSearchForm({ ...locationSearchForm, location_no: e.target.value, })} />
+      </div>
+
+      <div className="space-y-2">
+        <Label>Location Name</Label>
+        <Input
+          placeholder="Enter Location Name"
+          value={locationSearchForm.location_name}
+          onChange={(e) => setLocationSearchForm({ ...locationSearchForm, location_name: e.target.value, })} />
+      </div>
+
+      <div className="space-y-2">
+        <Label>City</Label>
+        <Input
+          placeholder="Enter City"
+          value={locationSearchForm.city}
+          onChange={(e) => setLocationSearchForm({ ...locationSearchForm, city: e.target.value, })} />
+      </div>
+
+      <div className="space-y-2">
+        <Label>State</Label>
+        <Input
+          placeholder="Enter State"
+          value={locationSearchForm.state}
+          onChange={(e) => setLocationSearchForm({ ...locationSearchForm, state: e.target.value, })} />
+      </div>
+
+      <div className="space-y-2">
+        <Label>Pin Code</Label>
+        <Input
+          placeholder="Enter Pin Code"
+          value={locationSearchForm.pincode}
+          onChange={(e) => setLocationSearchForm({ ...locationSearchForm, pincode: e.target.value, })} />
+      </div>
+
+      <div className="space-y-2">
+        <Label>Country</Label>
+        <Input
+          placeholder="Enter Country"
+          value={locationSearchForm.country}
+          onChange={(e) => setLocationSearchForm({ ...locationSearchForm, country: e.target.value, })} />
+      </div>
+
+      <div className="space-y-2">
+        <Label>Status</Label>
+        <Select
+          value={locationSearchForm.status}
+          onValueChange={(value) => setLocationSearchForm({ ...locationSearchForm, status: value, })}>
+          <SelectTrigger>
+            <SelectValue placeholder="Select Status" />
+          </SelectTrigger>
+
+          <SelectContent>
+            {status.map((status: any) => (
+              <SelectItem
+                key={status.attributedetails_name}
+                value={status.attributedetails_name}
+              >
+                {status.attributedetails_name}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+      </div>
+    </div>
+  );
+
+  const renderRoleSearch = () => (
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+
+      <div className="space-y-2">
+        <Label>Role ID</Label>
+        <Input
+          placeholder="Enter Role ID"
+          value={roleSearchForm.role_id}
+          onChange={(e) => setRoleSearchForm({ ...roleSearchForm, role_id: e.target.value, })} />
+      </div>
+
+      <div className="space-y-2">
+        <Label>Role Name</Label>
+        <Input
+          placeholder="Enter Role Name"
+          value={roleSearchForm.role_name}
+          onChange={(e) => setRoleSearchForm({ ...roleSearchForm, role_name: e.target.value, })} />
+      </div>
+
+    </div>
+  );
+
+  const renderRoleMappingSearch = () => (
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+
+      <div className="space-y-2">
+        <Label>User Code</Label>
+        <Input
+          placeholder="Enter User Code"
+          value={roleMappingSearchForm.user_code}
+          onChange={(e) => setRoleMappingSearchForm({ ...roleMappingSearchForm, user_code: e.target.value, })} />
+      </div>
+
+      <div className="space-y-2">
+        <Label>User Name</Label>
+        <Input
+          placeholder="Enter User Name"
+          value={roleMappingSearchForm.user_name}
+          onChange={(e) => setRoleMappingSearchForm({ ...roleMappingSearchForm, user_name: e.target.value, })} />
+      </div>
+
+      <div className="space-y-2">
+        <Label>Role ID</Label>
+        <Input
+          placeholder="Enter Role ID"
+          value={roleMappingSearchForm.role_id}
+          onChange={(e) => setRoleMappingSearchForm({ ...roleMappingSearchForm, role_id: e.target.value, })} />
+      </div>
+
+      <div className="space-y-2">
+        <Label>Role Name</Label>
+        <Input
+          placeholder="Enter Role Name"
+          value={roleMappingSearchForm.role_name}
+          onChange={(e) => setRoleMappingSearchForm({ ...roleMappingSearchForm, role_name: e.target.value, })} />
+      </div>
+
+    </div>
+  );
+
+  const renderRoleRightsSearch = () => (
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+
+      <div className="space-y-2">
+        <Label>Role ID</Label>
+        <Input
+          placeholder="Enter Role ID"
+          value={roleRightsSearchForm.role_id}
+          onChange={(e) => setRoleRightsSearchForm({ ...roleRightsSearchForm, role_id: e.target.value, })} />
+      </div>
+
+      <div className="space-y-2">
+        <Label>Screen Type</Label>
+        <Input
+          placeholder="Enter Screen Type"
+          value={roleRightsSearchForm.screen_type}
+          onChange={(e) => setRoleRightsSearchForm({ ...roleRightsSearchForm, screen_type: e.target.value, })} />
+      </div>
+
+      <div className="space-y-2">
+        <Label>Permission Type</Label>
+        <Input
+          placeholder="Enter Permission Type"
+          value={roleRightsSearchForm.permission_type}
+          onChange={(e) => setRoleRightsSearchForm({ ...roleRightsSearchForm, permission_type: e.target.value, })} />
+      </div>
+
+    </div>
+  );
+
+  const renderAttributeSearch = () => (
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+
+      <div className="space-y-2">
+        <Label>Code</Label>
+        <Input
+          placeholder="Enter Code"
+          value={attributeSearchForm.attributeheader_code}
+          onChange={(e) => setAttributeSearchForm({ ...attributeSearchForm, attributeheader_code: e.target.value, })} />
+      </div>
+
+      <div className="space-y-2">
+        <Label>Sub Code</Label>
+        <Input
+          placeholder="Enter Sub Code"
+          value={attributeSearchForm.attributedetails_code}
+          onChange={(e) => setAttributeSearchForm({ ...attributeSearchForm, attributedetails_code: e.target.value, })} />
+      </div>
+
+      <div className="space-y-2">
+        <Label>Detail Name</Label>
+        <Input
+          placeholder="Enter Detail Name"
+          value={attributeSearchForm.attributedetails_name}
+          onChange={(e) => setAttributeSearchForm({ ...attributeSearchForm, attributedetails_name: e.target.value, })} />
+      </div>
+
+      <div className="space-y-2">
+        <Label>Description</Label>
+        <Input
+          placeholder="Enter Description"
+          value={attributeSearchForm.descriptions}
+          onChange={(e) => setAttributeSearchForm({ ...attributeSearchForm, descriptions: e.target.value, })} />
+      </div>
+
+    </div>
+  );
+
+  const handleSearch = () => {
+    switch (activeTab) {
+      case "company":
+        handleCompanySearch();
+        break;
+
+      case "companyMapping":
+        handleCompanyMappingSearch();
+        break;
+
+      case "location":
+        handleLocationSearch();
+        break;
+
+      case "role":
+        handleRoleSearch();
+        break;
+
+      case "roleMapping":
+        handleRoleMappingSearch();
+        break;
+
+      case "roleRights":
+        handleRoleRightsSearch();
+        break;
+
+      case "user":
+        // handleUserSearch();
+        break;
+
+      case "attribute":
+        handleAttributeSearch();
+        break;
+
+      default:
+        break;
+    }
+  };
+
   return (
     <div className="min-h-screen bg-gray-50">
       <header className="bg-white shadow-sm border-b">
@@ -2395,18 +3365,43 @@ const WorkoutProgramManagement = () => {
 
         {/* Search and Add */}
         <Card className="mb-6">
-          <CardContent className="p-4">
-            <div className="flex flex-col sm:flex-row gap-4 justify-between">
-              <div className="relative flex-1">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
-                <Input
-                  placeholder="Search companies, packages, or faculty..."
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                  className="pl-10"
-                />
-              </div>
+          <CardContent className="p-6">
+
+            {activeTab === "company" && renderCompanySearch()}
+
+            {activeTab === "companyMapping" && renderCompanyMappingSearch()}
+
+            {activeTab === "location" && renderLocationSearch()}
+
+            {activeTab === "role" && renderRoleSearch()}
+
+            {activeTab === "roleMapping" && renderRoleMappingSearch()}
+
+            {activeTab === "roleRights" && renderRoleRightsSearch()}
+
+            {/* {activeTab === "user" && renderUserSearch()} */}
+
+            {activeTab === "attribute" && renderAttributeSearch()}
+
+            <div className="flex justify-end gap-4 mt-6">
+              <Button
+                size="icon"
+                className="rounded-full"
+                onClick={handleSearch}
+              >
+                <Search className="h-5 w-5" />
+              </Button>
+
+              <Button
+                size="icon"
+                variant="secondary"
+                className="rounded-full"
+              // onClick={handleReset}
+              >
+                <RotateCcw className="h-5 w-5" />
+              </Button>
             </div>
+
           </CardContent>
         </Card>
 
@@ -2486,7 +3481,7 @@ const WorkoutProgramManagement = () => {
                     </TableRow>
                   </TableHeader>
                   <TableBody>
-                    {filteredCompanies.map((company) => (
+                    {companies.map((company) => (
                       <TableRow key={company.company_no}>
                         <TableCell>{company.company_no}</TableCell>
                         <TableCell>{company.company_name}</TableCell>
@@ -2681,7 +3676,6 @@ const WorkoutProgramManagement = () => {
                       <TableHead>Role ID</TableHead>
                       <TableHead>Role Name</TableHead>
                       <TableHead>Description</TableHead>
-                      <TableHead>Keyfield</TableHead>
                       <TableHead className="text-right">Actions</TableHead>
                     </TableRow>
                   </TableHeader>
@@ -2689,16 +3683,9 @@ const WorkoutProgramManagement = () => {
                   <TableBody>
                     {roles.map((role: any) => (
                       <TableRow key={role.role_id}>
-                        <TableCell className="font-medium">
-                          {role.role_id}
-                        </TableCell>
-
+                        <TableCell className="font-medium">{role.role_id}</TableCell>
                         <TableCell>{role.role_name}</TableCell>
-
                         <TableCell>{role.description}</TableCell>
-
-                        <TableCell>{role.keyfield}</TableCell>
-
                         <TableCell className="text-right">
                           <div className="flex justify-end gap-2">
                             <Button
@@ -2741,7 +3728,6 @@ const WorkoutProgramManagement = () => {
                       <TableHead>User Name</TableHead>
                       <TableHead>Role ID</TableHead>
                       <TableHead>Role Name</TableHead>
-                      <TableHead>Keyfield</TableHead>
                       <TableHead className="text-right">Actions</TableHead>
                     </TableRow>
                   </TableHeader>
@@ -2752,7 +3738,6 @@ const WorkoutProgramManagement = () => {
                         <TableCell>{item.user_name}</TableCell>
                         <TableCell>{item.role_id}</TableCell>
                         <TableCell>{item.role_name}</TableCell>
-                        <TableCell>{item.keyfield}</TableCell>
 
                         <TableCell className="text-right">
                           <div className="flex justify-end gap-2">
@@ -2797,7 +3782,6 @@ const WorkoutProgramManagement = () => {
                       <TableHead>Role ID</TableHead>
                       <TableHead>Screen Type</TableHead>
                       <TableHead>Permission Type</TableHead>
-                      <TableHead>Keyfield</TableHead>
                       <TableHead className="text-right">Actions</TableHead>
                     </TableRow>
                   </TableHeader>
@@ -2807,7 +3791,6 @@ const WorkoutProgramManagement = () => {
                         <TableCell>{item.role_id}</TableCell>
                         <TableCell>{item.screen_type}</TableCell>
                         <TableCell>{item.permission_type}</TableCell>
-                        <TableCell>{item.keyfield}</TableCell>
 
                         <TableCell className="text-right">
                           <div className="flex justify-end gap-2">
@@ -3048,8 +4031,8 @@ const WorkoutProgramManagement = () => {
                       <SelectContent>
                         {cities.map((city: any) => (
                           <SelectItem
-                            key={city.attributedetails_code}
-                            value={city.attributedetails_code}
+                            key={city.attributedetails_name}
+                            value={city.attributedetails_name}
                           >
                             {city.attributedetails_name}
                           </SelectItem>
@@ -3067,8 +4050,8 @@ const WorkoutProgramManagement = () => {
                       <SelectContent>
                         {states.map((state: any) => (
                           <SelectItem
-                            key={state.attributedetails_code}
-                            value={state.attributedetails_code}
+                            key={state.attributedetails_name}
+                            value={state.attributedetails_name}
                           >
                             {state.attributedetails_name}
                           </SelectItem>
@@ -3096,8 +4079,8 @@ const WorkoutProgramManagement = () => {
                       <SelectContent>
                         {countries.map((country: any) => (
                           <SelectItem
-                            key={country.attributedetails_code}
-                            value={country.attributedetails_code}
+                            key={country.attributedetails_name}
+                            value={country.attributedetails_name}
                           >
                             {country.attributedetails_name}
                           </SelectItem>
@@ -3125,8 +4108,8 @@ const WorkoutProgramManagement = () => {
                       <SelectContent>
                         {status.map((status: any) => (
                           <SelectItem
-                            key={status.attributedetails_code}
-                            value={status.attributedetails_code}
+                            key={status.attributedetails_name}
+                            value={status.attributedetails_name}
                           >
                             {status.attributedetails_name}
                           </SelectItem>
@@ -3210,8 +4193,8 @@ const WorkoutProgramManagement = () => {
 
               <ImageUpload
                 label="Company Images"
-                images={images}
-                onImagesChange={setImages}
+                images={companyImages}
+                onImagesChange={setCompanyImages}
                 onFilesChange={handleCompanyFiles}
                 maxImages={2}
               />
@@ -3433,8 +4416,8 @@ const WorkoutProgramManagement = () => {
                       <SelectContent>
                         {cities.map((city: any) => (
                           <SelectItem
-                            key={city.attributedetails_code}
-                            value={city.attributedetails_code}
+                            key={city.attributedetails_name}
+                            value={city.attributedetails_name}
                           >
                             {city.attributedetails_name}
                           </SelectItem>
@@ -3452,8 +4435,8 @@ const WorkoutProgramManagement = () => {
                       <SelectContent>
                         {states.map((city: any) => (
                           <SelectItem
-                            key={city.attributedetails_code}
-                            value={city.attributedetails_code}
+                            key={city.attributedetails_name}
+                            value={city.attributedetails_name}
                           >
                             {city.attributedetails_name}
                           </SelectItem>
@@ -3479,12 +4462,12 @@ const WorkoutProgramManagement = () => {
                         <SelectValue placeholder="Select Country" />
                       </SelectTrigger>
                       <SelectContent>
-                        {countries.map((city: any) => (
+                        {countries.map((country: any) => (
                           <SelectItem
-                            key={city.attributedetails_code}
-                            value={city.attributedetails_code}
+                            key={country.attributedetails_name}
+                            value={country.attributedetails_name}
                           >
-                            {city.attributedetails_name}
+                            {country.attributedetails_name}
                           </SelectItem>
                         ))}
                       </SelectContent>
@@ -3510,8 +4493,8 @@ const WorkoutProgramManagement = () => {
                       <SelectContent>
                         {status.map((status: any) => (
                           <SelectItem
-                            key={status.attributedetails_code}
-                            value={status.attributedetails_code}
+                            key={status.attributedetails_name}
+                            value={status.attributedetails_name}
                           >
                             {status.attributedetails_name}
                           </SelectItem>
@@ -3738,8 +4721,8 @@ const WorkoutProgramManagement = () => {
                       <SelectContent>
                         {permission.map((permission: any) => (
                           <SelectItem
-                            key={permission.attributedetails_code}
-                            value={permission.attributedetails_code}
+                            key={permission.attributedetails_name}
+                            value={permission.attributedetails_name}
                           >
                             {permission.attributedetails_name}
                           </SelectItem>
@@ -3776,14 +4759,14 @@ const WorkoutProgramManagement = () => {
                 <div className="grid grid-cols-2 gap-4">
 
                   {/* <div className="space-y-2"> */}
-                    {/* <Label htmlFor="UserCode">User Code*</Label> */}
-                    {/* <Label htmlFor="city" className={submittedUser && !userForm.user_code ? "text-red-500" : ""}>User Code*</Label> */}
-                    {/* <Select value={userForm.user_code} onValueChange={(value) => setUserForm({ ...userForm, user_code: value })}> */}
-                      {/* <SelectTrigger>
+                  {/* <Label htmlFor="UserCode">User Code*</Label> */}
+                  {/* <Label htmlFor="city" className={submittedUser && !userForm.user_code ? "text-red-500" : ""}>User Code*</Label> */}
+                  {/* <Select value={userForm.user_code} onValueChange={(value) => setUserForm({ ...userForm, user_code: value })}> */}
+                  {/* <SelectTrigger>
                         <SelectValue placeholder="Select User Code" />
                       </SelectTrigger> */}
-                      {/* <SelectContent> */}
-                        {/* {userCodeNameDrop.map((item: any) => (
+                  {/* <SelectContent> */}
+                  {/* {userCodeNameDrop.map((item: any) => (
                           <SelectItem
                             key={item.user_code}
                             value={item.user_code}
@@ -3791,14 +4774,14 @@ const WorkoutProgramManagement = () => {
                             {item.user_code} - {item.user_name}
                           </SelectItem>
                         ))} */}
-                        {/* <SelectItem value="User1">User 1</SelectItem>
+                  {/* <SelectItem value="User1">User 1</SelectItem>
                         <SelectItem value="User2">User 2</SelectItem>
                         <SelectItem value="User3">User 3</SelectItem>
                         <SelectItem value="User4">User 4</SelectItem>
                         <SelectItem value="User5">User 5</SelectItem>
                         <SelectItem value="User6">User 6</SelectItem> */}
-                      {/* </SelectContent> */}
-                    {/* </Select> */}
+                  {/* </SelectContent> */}
+                  {/* </Select> */}
                   {/* </div> */}
 
                   <div className="space-y-2">
@@ -3974,14 +4957,19 @@ const WorkoutProgramManagement = () => {
               <Button variant="outline" onClick={() => {
                 setIsUserDialogOpen(false);
                 setSubmittedUser(false);
-                }}>Cancel</Button>
+              }}>Cancel</Button>
               <Button onClick={handleSaveUser}>{editingUser ? 'Update User' : 'Create User'} Program</Button>
             </DialogFooter>
           </DialogContent>
         </Dialog>
 
         {/* Add/Edit Attribute Detail Dialog Or Popup*/}
-        <Dialog open={isAttributeDialogOpen} onOpenChange={setIsAttributeDialogOpen}>
+        <Dialog open={isAttributeDialogOpen} onOpenChange={(open) => {
+          if (!open) {
+            setSubmittedAttributeDet(false);
+          }
+          setIsAttributeDialogOpen(open);
+        }}>
           <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
             <DialogHeader>
               <DialogTitle>{editingAttribute ? 'Edit Attribute' : 'Add Attribute'}</DialogTitle>
@@ -3995,24 +4983,24 @@ const WorkoutProgramManagement = () => {
                 <div className="grid grid-cols-2 gap-4">
 
                   <div className="space-y-2">
-                    <Label htmlFor="attributeheader_code">Code*</Label>
+                    <Label htmlFor="attributeheader_code" className={submittedAttributeDet && !attributeForm.attributeheader_code ? "text-red-500" : ""}>Code*</Label>
                     <div className="flex gap-2">
                       <Select
                         value={attributeForm.attributeheader_code}
-                        onValueChange={(value) =>
-                          setAttributeForm({
-                            ...attributeForm,
-                            attributeheader_code: value,
-                          })
-                        }
+                        onValueChange={(value) => setAttributeForm({ ...attributeForm, attributeheader_code: value, })}
                       >
                         <SelectTrigger className="flex-1">
                           <SelectValue placeholder="Select Code" />
                         </SelectTrigger>
                         <SelectContent>
-                          <SelectItem value="Strength">Strength</SelectItem>
-                          <SelectItem value="Cardio">Cardio</SelectItem>
-                          <SelectItem value="Flexibility">Flexibility</SelectItem>
+                          {attributehdr.map((attributeheader: any) => (
+                            <SelectItem
+                              key={attributeheader.attributeheader_code}
+                              value={attributeheader.attributeheader_code}
+                            >
+                              {attributeheader.attributeheader_code} - {attributeheader.attributeheader_name}
+                            </SelectItem>
+                          ))}
                         </SelectContent>
                       </Select>
                       <Button type="button" variant="outline" onClick={handleAddAttributeHdr}>
@@ -4022,7 +5010,7 @@ const WorkoutProgramManagement = () => {
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="SubCode">Sub Code</Label>
+                    <Label htmlFor="SubCode" className={submittedAttributeDet && !attributeForm.attributedetails_code ? "text-red-500" : ""}>Sub Code*</Label>
                     <Input
                       id="SubCode"
                       value={attributeForm.attributedetails_code}
@@ -4030,8 +5018,9 @@ const WorkoutProgramManagement = () => {
                       placeholder="e.g., SubCode"
                     />
                   </div>
+
                   <div className="space-y-2">
-                    <Label htmlFor="DetailsName">Details Name</Label>
+                    <Label htmlFor="DetailsName" className={submittedAttributeDet && !attributeForm.attributedetails_name ? "text-red-500" : ""}>Details Name*</Label>
                     <Input
                       id="DetailsName"
                       value={attributeForm.attributedetails_name}
@@ -4054,85 +5043,75 @@ const WorkoutProgramManagement = () => {
               </div>
             </div>
             <DialogFooter>
-              <Button variant="outline" onClick={() => setIsAttributeDialogOpen(false)}>Cancel</Button>
-              <Button onClick={handleSaveAttribute}>{editingAttribute ? 'Update' : 'Create'} Program</Button>
+              <Button variant="outline" onClick={() => {
+                setSubmittedAttributeDet(false);
+                setIsAttributeDialogOpen(false);
+              }}>Cancel</Button>
+              <Button onClick={handleSaveAttribute}>{editingAttribute ? 'Update' : 'Create'} Attribute Detail</Button>
             </DialogFooter>
           </DialogContent>
         </Dialog>
 
         {/* Add Attribute Header Dialog  Or Popup*/}
-        <Dialog
-          open={isAttributeHdrDialogOpen}
-          onOpenChange={setIsAttributeHdrDialogOpen}
-        >
+        <Dialog open={isAttributeHdrDialogOpen} onOpenChange={(open) => {
+          if (!open) {
+            setSubmittedAttributeHdr(false);
+          }
+          setIsAttributeHdrDialogOpen(open);
+        }}>
           <DialogContent className="max-w-md">
             <DialogHeader>
               <DialogTitle>Add Attribute Hdr</DialogTitle>
-
-              <DialogDescription>
-                Create a new Attribute Header
-              </DialogDescription>
+              <DialogDescription>Create a new Attribute Header</DialogDescription>
             </DialogHeader>
 
             <div className="grid gap-4 py-4">
 
               <div className="space-y-2">
-                <Label>Code*</Label>
-
+                <Label htmlFor="code" className={submittedAttributeHdr && !attributeHdrForm.attributeheader_code ? "text-red-500" : ""}>Code*</Label>
                 <Input
+                  id="Code"
                   value={attributeHdrForm.attributeheader_code}
-                  onChange={(e) =>
-                    setAttributeHdrForm({
-                      ...attributeHdrForm,
-                      attributeheader_code: e.target.value,
-                    })
-                  }
+                  onChange={(e) => setAttributeHdrForm({ ...attributeHdrForm, attributeheader_code: e.target.value, })}
+                  placeholder="Enter attribute code (e.g., ACCOUNT_TYPE)"
                 />
               </div>
 
               <div className="space-y-2">
-                <Label>Name*</Label>
-
+                <Label htmlFor="code" className={submittedAttributeHdr && !attributeHdrForm.attributeheader_name ? "text-red-500" : ""}>Name*</Label>
                 <Input
+                  id="Name"
                   value={attributeHdrForm.attributeheader_name}
-                  onChange={(e) =>
-                    setAttributeHdrForm({
-                      ...attributeHdrForm,
-                      attributeheader_name: e.target.value,
-
-                    })
-                  }
+                  onChange={(e) => setAttributeHdrForm({ ...attributeHdrForm, attributeheader_name: e.target.value, })}
+                  placeholder="Enter attribute name (e.g., Account Type)"
                 />
               </div>
 
               <div className="space-y-2">
-                <Label>Status*</Label>
-                <Select
-                  value={attributeHdrForm.status}
-                  onValueChange={(value) =>
-                    setAttributeHdrForm({
-                      ...attributeHdrForm,
-                      status: value,
-
-                    })
-                  }
-                >
+                <Label htmlFor="code" className={submittedAttributeHdr && !attributeHdrForm.status ? "text-red-500" : ""}>Status*</Label>
+                <Select value={attributeHdrForm.status} onValueChange={(value) => setAttributeHdrForm({ ...attributeHdrForm, status: value, })}>
                   <SelectTrigger>
-                    <SelectValue />
+                    <SelectValue placeholder="Select Status" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="Active">Active</SelectItem>
-                    <SelectItem value="Inactive">Inactive</SelectItem>
+                    {status.map((status: any) => (
+                      <SelectItem
+                        key={status.attributedetails_code}
+                        value={status.attributedetails_code}
+                      >
+                        {status.attributedetails_name}
+                      </SelectItem>
+                    ))}
                   </SelectContent>
                 </Select>
               </div>
             </div>
 
             <DialogFooter>
-              <Button variant="outline" onClick={() => setIsAttributeHdrDialogOpen(false)}>
-                Cancel
-              </Button>
-
+              <Button variant="outline" onClick={() => {
+                setSubmittedAttributeHdr(false);
+                setIsAttributeHdrDialogOpen(false);
+              }}>Cancel</Button>
               <Button onClick={handleCreateAttributeHdr}>Save</Button>
             </DialogFooter>
           </DialogContent>
