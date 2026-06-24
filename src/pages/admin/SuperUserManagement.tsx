@@ -13,7 +13,7 @@ import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, D
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useNavigate } from 'react-router-dom';
 import { useToast } from '@/hooks/use-toast';
-import { ArrowLeft, Plus, Search, Dumbbell, Package, Users, Clock, Edit, Trash2, Eye, Calendar, DollarSign, CheckCircle, XCircle } from 'lucide-react';
+import { ArrowLeft, Plus, Search, RotateCcw, Dumbbell, Package, Users, Clock, Edit, Trash2, Eye, Calendar, DollarSign, CheckCircle, XCircle } from 'lucide-react';
 import ImageUpload from "../ImageUpload";
 import { BASE_URL } from '../ApiConfig';
 
@@ -36,8 +36,14 @@ const WorkoutProgramManagement = () => {
   const [permission, setPermission] = useState<any[]>([]);
   const [screen, setScreen] = useState<any[]>([]);
   const [roleRight, setRoleRight] = useState<any[]>([]);
-  const [logInLogOut, setLogInLogOut] = useState([]);
-  const [gender, setGender] = useState([]);
+
+  //User Screen
+  const [logInLogOut, setLogInLogOut] = useState<any[]>([]);
+  const [gender, setGender] = useState<any[]>([]);
+
+  //Attribute Detail Screen
+  const [attributehdr, setAttributeHdr] = useState<any[]>([]);
+
 
   const fetchCities = async () => {
     try {
@@ -331,6 +337,31 @@ const WorkoutProgramManagement = () => {
     }
   };
 
+  //Attribute Detail Screen
+  const fetchAttributeHdr = async () => {
+    try {
+      const response = await fetch(`${BASE_URL}/hdrcode`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          company_code: "YJK",
+        }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        setAttributeHdr(data);
+      } else {
+        console.error("Failed to fetch status");
+      }
+    } catch (error) {
+      console.error("Error fetching status:", error);
+    }
+  };
+
   //Company Dialog States
   const [submittedCompany, setSubmittedCompany] = useState(false);
   const [companies, setCompanies] = useState([]);
@@ -357,6 +388,16 @@ const WorkoutProgramManagement = () => {
     company_gst_no: "",
     created_by: "admin",
     modified_by: "admin",
+  });
+  const [companySearchForm, setCompanySearchForm] = useState({
+    company_no: "",
+    company_name: "",
+    city: "",
+    state: "",
+    pincode: "",
+    country: "",
+    gst_no: "",
+    status: "",
   });
   const [companyLogo, setCompanyLogo] = useState<File | null>(null);
   const [authorisedSignature, setAuthorisedSignature] = useState<File | null>(null);
@@ -480,43 +521,8 @@ const WorkoutProgramManagement = () => {
     setUserImages(file);
   };
 
-  // -- This dropdown values should come from member, trainer and admin tables 
-  // User Code DropDown for User
-//   useEffect(() => {
-//   const company_code = "YJKT" // const company_code = sessionStorage.getItem('selectedCompanyCode');
-
-//   fetch(`${BASE_URL}/getUCN`, {
-//     method: 'POST',
-//     headers: {
-//       'Content-Type': 'application/json',
-//     },
-//     body: JSON.stringify({ company_code })
-//   })
-//     .then((data) => data.json())
-//     .then((val) => {
-//       console.log("Dropdown Data:", val);
-//       setUserCodeNameDrop(val);
-//     })
-//     .catch((error) => console.error('Error fetching data:', error));
-// }, []);
-
-  // Status DropDown for User
-// useEffect(() => {
-//     const company_code = "YJKT" // const company_code = sessionStorage.getItem('selectedCompanyCode');
-
-//     fetch(`${BASE_URL}/status`, {
-//       method: 'POST',
-//       headers: {
-//         'Content-Type': 'application/json',
-//       },
-//       body: JSON.stringify({ company_code })
-//     })
-//       .then((data) => data.json())
-//       .then((val) => setStatusdrop(val))
-//       .catch((error) => console.error('Error fetching data:', error));
-//   }, []);
-
   //Attribute Dialog States
+  const [submittedAttributeDet, setSubmittedAttributeDet] = useState(false);
   const [attributes, setAttributes] = useState([]);
   const [editingAttribute, setEditingAttribute] = useState<any>(null);
   const [isAttributeDialogOpen, setIsAttributeDialogOpen] = useState(false);
@@ -799,6 +805,41 @@ const WorkoutProgramManagement = () => {
     });
 
     setIsCompanyDialogOpen(true);
+  };
+
+  const handleCompanySearch = async () => {
+    try {
+      const response = await fetch(`${BASE_URL}/companysearchcriteria`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          company_no: companySearchForm.company_no,
+          company_name: companySearchForm.company_name,
+          city: companySearchForm.city,
+          state: companySearchForm.state,
+          pincode: companySearchForm.pincode,
+          country: companySearchForm.country,
+          company_gst_no: companySearchForm.gst_no,
+          status: companySearchForm.status,
+        }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        // Update your table/grid data
+        setCompanies(data);
+
+        // or if your state is named differently:
+        // setCompanyData(data);
+      } else {
+        alert(data);
+      }
+    } catch (error) {
+      console.error("Search Error:", error);
+    }
   };
 
   //Company Mapping CRUD Functions
@@ -1870,91 +1911,57 @@ const WorkoutProgramManagement = () => {
     return true;
   };
 
-  // const handleCreateUser = async () => {
-
-  //   setSubmittedUser(true);
-
-  //   if (!validateUser()) return;
-  //   try {
-  //     const formData = new FormData();
-
-  //     Object.entries(userForm).forEach(([key, value]) => {
-  //       formData.append(key, value as string);
-  //     });
-
-  //     if (userImages?.length > 0 && userImages[0]) {
-  //       formData.append("user_img", userImages[0]);
-  //     }
-  //     const response = await fetch(`${BASE_URL}/useradd`, {
-  //       method: "POST",
-  //       body: formData,
-  //     });
-
-  //     const data = await response.json();
-
-  //     if (response.ok) {
-  //       alert(data.message);
-  //       setIsUserDialogOpen(false);
-  //       setSubmittedUser(false);
-  //       // fetchUsers();
-  //     } else {
-  //       alert(data.message);
-  //     }
-  //   } catch (err) {
-  //     console.error(err);
-  //   }
-  // };
 
   const handleCreateUser = async () => {
-  setSubmittedUser(true);
+    setSubmittedUser(true);
 
-  if (!validateUser()) return;
+    if (!validateUser()) return;
 
-  try {
-    const formData = new FormData();
+    try {
+      const formData = new FormData();
 
-    Object.entries(userForm).forEach(([key, value]) => {
-      formData.append(key, value as string);
-    });
-
-    if (userImages?.length > 0 && userImages[0]) {
-      formData.append("user_img", userImages[0]);
-    }
-
-    const response = await fetch(`${BASE_URL}/useradd`, {
-      method: "POST",
-      body: formData,
-    });
-
-    const data = await response.json();
-
-    if (response.ok) {
-      toast({
-        title: "Success",
-        description: data.message || "User created successfully.",
+      Object.entries(userForm).forEach(([key, value]) => {
+        formData.append(key, value as string);
       });
 
-      setIsUserDialogOpen(false);
-      setSubmittedUser(false);
+      if (userImages?.length > 0 && userImages[0]) {
+        formData.append("user_img", userImages[0]);
+      }
 
-      // fetchUsers();
-    } else {
+      const response = await fetch(`${BASE_URL}/useradd`, {
+        method: "POST",
+        body: formData,
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        toast({
+          title: "Success",
+          description: data.message || "User created successfully.",
+        });
+
+        setIsUserDialogOpen(false);
+        setSubmittedUser(false);
+
+        // fetchUsers();
+      } else {
+        toast({
+          title: "Error",
+          description: data.message || "Failed to create user.",
+          variant: "destructive",
+        });
+      }
+    } catch (err) {
+      console.error(err);
+
       toast({
         title: "Error",
-        description: data.message || "Failed to create user.",
+        description: "Something went wrong. Please try again.",
         variant: "destructive",
       });
     }
-  } catch (err) {
-    console.error(err);
-
-    toast({
-      title: "Error",
-      description: "Something went wrong. Please try again.",
-      variant: "destructive",
-    });
-  }
-};
+  };
 
   // const handleUpdateUser = async () => {
   //   setSubmittedUser(true);
@@ -1991,56 +1998,56 @@ const WorkoutProgramManagement = () => {
   // };
 
   const handleUpdateUser = async () => {
-  setSubmittedUser(true);
+    setSubmittedUser(true);
 
-  if (!validateUser()) return;
+    if (!validateUser()) return;
 
-  try {
-    const formData = new FormData();
+    try {
+      const formData = new FormData();
 
-    Object.entries(userForm).forEach(([key, value]) => {
-      formData.append(key, value as string);
-    });
-
-    if (userImages.length > 0) {
-      formData.append("user_images", userImages[0]);
-    }
-
-    const response = await fetch(`${BASE_URL}/UserUpdates`, {
-      method: "PUT",
-      body: formData,
-    });
-
-    const data = await response.json();
-
-    if (response.ok) {
-      toast({
-        title: "Success",
-        description: data.message || "User updated successfully.",
+      Object.entries(userForm).forEach(([key, value]) => {
+        formData.append(key, value as string);
       });
 
-      setEditingUser(null);
-      setIsUserDialogOpen(false);
-      setSubmittedUser(false);
+      if (userImages.length > 0) {
+        formData.append("user_images", userImages[0]);
+      }
 
-      // fetchUsers();
-    } else {
+      const response = await fetch(`${BASE_URL}/UserUpdates`, {
+        method: "PUT",
+        body: formData,
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        toast({
+          title: "Success",
+          description: data.message || "User updated successfully.",
+        });
+
+        setEditingUser(null);
+        setIsUserDialogOpen(false);
+        setSubmittedUser(false);
+
+        // fetchUsers();
+      } else {
+        toast({
+          title: "Error",
+          description: data.message || "Failed to update user.",
+          variant: "destructive",
+        });
+      }
+    } catch (err: any) {
+      console.error(err);
+
       toast({
-        title: "Error",
-        description: data.message || "Failed to update user.",
+        title: "Server Error",
+        description: err.message || "Something went wrong.",
         variant: "destructive",
       });
     }
-  } catch (err: any) {
-    console.error(err);
-
-    toast({
-      title: "Server Error",
-      description: err.message || "Something went wrong.",
-      variant: "destructive",
-    });
-  }
-};
+  };
 
   // const handleDeleteUser = async (user_code: string) => {
   //   const confirmDelete = window.confirm(
@@ -2076,51 +2083,51 @@ const WorkoutProgramManagement = () => {
   // };
 
   const handleDeleteUser = async (user_code: string) => {
-  const confirmDelete = window.confirm(
-    "Are you sure you want to delete this user?"
-  );
+    const confirmDelete = window.confirm(
+      "Are you sure you want to delete this user?"
+    );
 
-  if (!confirmDelete) return;
+    if (!confirmDelete) return;
 
-  try {
-    const response = await fetch(`${BASE_URL}/userdelete`, {
-      method: "DELETE",
-      headers: {
-        "Content-Type": "application/json",
-        "modified-by": "admin",
-        "company_code": "COMP001",
-      },
-      body: JSON.stringify({
-        user_codes: [user_code],
-      }),
-    });
-
-    const data = await response.json();
-
-    if (response.ok) {
-      toast({
-        title: "Success",
-        description: data.message || "User deleted successfully.",
+    try {
+      const response = await fetch(`${BASE_URL}/userdelete`, {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+          "modified-by": "admin",
+          "company_code": "COMP001",
+        },
+        body: JSON.stringify({
+          user_codes: [user_code],
+        }),
       });
 
-      // fetchUsers();
-    } else {
+      const data = await response.json();
+
+      if (response.ok) {
+        toast({
+          title: "Success",
+          description: data.message || "User deleted successfully.",
+        });
+
+        // fetchUsers();
+      } else {
+        toast({
+          title: "Error",
+          description: data.message || "Failed to delete user.",
+          variant: "destructive",
+        });
+      }
+    } catch (err: any) {
+      console.error(err);
+
       toast({
-        title: "Error",
-        description: data.message || "Failed to delete user.",
+        title: "Server Error",
+        description: err.message || "Something went wrong.",
         variant: "destructive",
       });
     }
-  } catch (err: any) {
-    console.error(err);
-
-    toast({
-      title: "Server Error",
-      description: err.message || "Something went wrong.",
-      variant: "destructive",
-    });
-  }
-};
+  };
 
   const handleSaveUser = async () => {
     if (editingUser) {
@@ -2156,8 +2163,9 @@ const WorkoutProgramManagement = () => {
     setIsUserDialogOpen(true);
   };
 
-  //Attribute CRUD Functions
+  //Attribute Detail CRUD Functions
   const handleAddAttribute = () => {
+    fetchAttributeHdr();
     setEditingAttribute(null);
     setAttributeForm({
       company_code: "",
@@ -2171,7 +2179,28 @@ const WorkoutProgramManagement = () => {
     setIsAttributeDialogOpen(true);
   };
 
+  const validateAttributeDet = () => {
+    if (
+      !attributeForm.attributeheader_code ||
+      !attributeForm.attributedetails_code ||
+      !attributeForm.attributedetails_name
+    ) {
+      toast({
+        title: "Required Fields",
+        description: "Please fill all required fields.",
+        variant: "destructive",
+      });
+      return false;
+    }
+
+    return true;
+  };
+
   const handleCreateAttribute = async () => {
+    setSubmittedAttributeDet(true);
+
+    if (!validateAttributeDet()) return;
+
     try {
       const response = await fetch(`${BASE_URL}/addattridetData`, {
         method: "POST",
@@ -2184,18 +2213,40 @@ const WorkoutProgramManagement = () => {
       const data = await response.json();
 
       if (response.ok) {
-        alert(data.message);
+        toast({
+          title: "Success",
+          description:
+            data.message || "Attribute details created successfully.",
+        });
+
         // fetchAttributes();
+
         setIsAttributeDialogOpen(false);
+        setSubmittedAttributeDet(false);
       } else {
-        alert(data.message);
+        toast({
+          title: "Error",
+          description:
+            data.message || "Failed to create attribute details.",
+          variant: "destructive",
+        });
       }
-    } catch (err) {
+    } catch (err: any) {
       console.error(err);
+
+      toast({
+        title: "Server Error",
+        description: err.message || "Something went wrong.",
+        variant: "destructive",
+      });
     }
   };
 
   const handleUpdateAttribute = async () => {
+    setSubmittedAttributeDet(true);
+
+    if (!validateAttributeDet()) return;
+
     try {
       const response = await fetch(`${BASE_URL}/AttributeUpdate`, {
         method: "PUT",
@@ -2208,23 +2259,41 @@ const WorkoutProgramManagement = () => {
       const data = await response.json();
 
       if (response.ok) {
-        alert(data);
+        toast({
+          title: "Success",
+          description:
+            data.message || data || "Attribute details updated successfully.",
+        });
+
         // fetchAttributes();
         setEditingAttribute(null);
         setIsAttributeDialogOpen(false);
+        setSubmittedAttributeDet(false);
       } else {
-        alert(data.message);
+        toast({
+          title: "Error",
+          description:
+            data.message || "Failed to update attribute details.",
+          variant: "destructive",
+        });
       }
-    } catch (err) {
+    } catch (err: any) {
       console.error(err);
+
+      toast({
+        title: "Server Error",
+        description: err.message || "Something went wrong.",
+        variant: "destructive",
+      });
     }
   };
 
-  const handleDeleteAttribute = async (
-    attributeheader_code: string,
-    attributedetails_code: string
-  ) => {
-    if (!window.confirm("Delete this Attribute?")) return;
+  const handleDeleteAttribute = async (attributeheader_code: string, attributedetails_code: string) => {
+    const confirmed = window.confirm(
+      "Are you sure you want to delete this attribute? This action cannot be undone."
+    );
+
+    if (!confirmed) return;
 
     try {
       const response = await fetch(`${BASE_URL}/delattridetData`, {
@@ -2243,13 +2312,29 @@ const WorkoutProgramManagement = () => {
       const data = await response.json();
 
       if (response.ok) {
-        alert(data);
+        toast({
+          title: "Success",
+          description:
+            data.message || data || "Attribute details deleted successfully.",
+        });
+
         // fetchAttributes();
       } else {
-        alert(data.message || data);
+        toast({
+          title: "Error",
+          description:
+            data.message || data || "Failed to delete attribute details.",
+          variant: "destructive",
+        });
       }
-    } catch (err) {
+    } catch (err: any) {
       console.error(err);
+
+      toast({
+        title: "Server Error",
+        description: err.message || "Something went wrong.",
+        variant: "destructive",
+      });
     }
   };
 
@@ -2335,16 +2420,29 @@ const WorkoutProgramManagement = () => {
       const data = await response.json();
 
       if (response.ok) {
-        alert(data.message);
-
+        toast({
+          title: "Success",
+          description:
+            data.message || "Attribute header created successfully.",
+        });
         setIsAttributeHdrDialogOpen(false);
-        setSubmittedAttributeHdr(true);
+        setSubmittedAttributeHdr(false);
       } else {
-        alert(data.message);
+        toast({
+          title: "Error",
+          description:
+            data.message || "Failed to create attribute header.",
+          variant: "destructive",
+        });
       }
-    } catch (err) {
+    } catch (err: any) {
       console.error(err);
-      alert("Something went wrong");
+
+      toast({
+        title: "Server Error",
+        description: err.message || "Something went wrong.",
+        variant: "destructive",
+      });
     }
   };
 
@@ -2417,17 +2515,101 @@ const WorkoutProgramManagement = () => {
 
         {/* Search and Add */}
         <Card className="mb-6">
-          <CardContent className="p-4">
-            <div className="flex flex-col sm:flex-row gap-4 justify-between">
-              <div className="relative flex-1">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
+          <CardContent className="p-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+
+              {/* Company No */}
+              <div className="space-y-2">
+                <Label>Company No</Label>
                 <Input
-                  placeholder="Search companies, packages, or faculty..."
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                  className="pl-10"
-                />
+                  placeholder="Enter Company No"
+                  value={companySearchForm.company_no}
+                  onChange={(e) => setCompanySearchForm({ ...companySearchForm, company_no: e.target.value, })} />
               </div>
+
+              {/* Company Name */}
+              <div className="space-y-2">
+                <Label>Company Name</Label>
+                <Input
+                  placeholder="Enter Company Name"
+                  value={companySearchForm.company_name}
+                  onChange={(e) => setCompanySearchForm({ ...companySearchForm, company_name: e.target.value, })} />
+              </div>
+
+              {/* City */}
+              <div className="space-y-2">
+                <Label>City</Label>
+                <Input
+                  placeholder="Enter City"
+                  value={companySearchForm.city}
+                  onChange={(e) => setCompanySearchForm({ ...companySearchForm, city: e.target.value, })} />
+              </div>
+
+              {/* State */}
+              <div className="space-y-2">
+                <Label>State</Label>
+                <Input
+                  placeholder="Enter State"
+                  value={companySearchForm.state}
+                  onChange={(e) => setCompanySearchForm({ ...companySearchForm, state: e.target.value, })} />
+              </div>
+
+              {/* Pin Code */}
+              <div className="space-y-2">
+                <Label>Pin Code</Label>
+                <Input
+                  placeholder="Enter Pin Code"
+                  value={companySearchForm.pincode}
+                  onChange={(e) => setCompanySearchForm({ ...companySearchForm, pincode: e.target.value, })} />
+              </div>
+
+              {/* Country */}
+              <div className="space-y-2">
+                <Label>Country</Label>
+                <Input
+                  placeholder="Enter Country"
+                  value={companySearchForm.country}
+                  onChange={(e) => setCompanySearchForm({ ...companySearchForm, country: e.target.value, })} />
+              </div>
+
+              {/* GST No */}
+              <div className="space-y-2">
+                <Label>GST No</Label>
+                <Input
+                  placeholder="Enter GST No"
+                  value={companySearchForm.gst_no}
+                  onChange={(e) => setCompanySearchForm({ ...companySearchForm, gst_no: e.target.value, })} />
+              </div>
+
+              {/* Status */}
+              <div className="space-y-2">
+                <Label>Status</Label>
+                <Select
+                  value={companySearchForm.status}
+                  onValueChange={(value) => setCompanySearchForm({ ...companySearchForm, status: value, })}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select Status" />
+                  </SelectTrigger>
+
+                  <SelectContent>
+                    <SelectItem value="Active">Active</SelectItem>
+                    <SelectItem value="Inactive">Inactive</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+
+            {/* Buttons */}
+            <div className="flex justify-end gap-4 mt-6">
+              <Button size="icon" className="rounded-full" onClick={handleCompanySearch}>
+                <Search className="h-5 w-5" />
+              </Button>
+
+              <Button size="icon" variant="secondary" className="rounded-full"
+              // onClick={handleReset}
+              >
+                <RotateCcw className="h-5 w-5" />
+              </Button>
             </div>
           </CardContent>
         </Card>
@@ -3699,7 +3881,8 @@ const WorkoutProgramManagement = () => {
           if (!open) {
             setSubmittedRoleRights(false);
           }
-          setIsRoleRightsDialogOpen(open); }}>
+          setIsRoleRightsDialogOpen(open);
+        }}>
           <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
             <DialogHeader>
               <DialogTitle>{editingRoleRight ? 'Edit Role Rights' : 'Add New Role Rights'}</DialogTitle>
@@ -3797,14 +3980,14 @@ const WorkoutProgramManagement = () => {
                 <div className="grid grid-cols-2 gap-4">
 
                   {/* <div className="space-y-2"> */}
-                    {/* <Label htmlFor="UserCode">User Code*</Label> */}
-                    {/* <Label htmlFor="city" className={submittedUser && !userForm.user_code ? "text-red-500" : ""}>User Code*</Label> */}
-                    {/* <Select value={userForm.user_code} onValueChange={(value) => setUserForm({ ...userForm, user_code: value })}> */}
-                      {/* <SelectTrigger>
+                  {/* <Label htmlFor="UserCode">User Code*</Label> */}
+                  {/* <Label htmlFor="city" className={submittedUser && !userForm.user_code ? "text-red-500" : ""}>User Code*</Label> */}
+                  {/* <Select value={userForm.user_code} onValueChange={(value) => setUserForm({ ...userForm, user_code: value })}> */}
+                  {/* <SelectTrigger>
                         <SelectValue placeholder="Select User Code" />
                       </SelectTrigger> */}
-                      {/* <SelectContent> */}
-                        {/* {userCodeNameDrop.map((item: any) => (
+                  {/* <SelectContent> */}
+                  {/* {userCodeNameDrop.map((item: any) => (
                           <SelectItem
                             key={item.user_code}
                             value={item.user_code}
@@ -3812,14 +3995,14 @@ const WorkoutProgramManagement = () => {
                             {item.user_code} - {item.user_name}
                           </SelectItem>
                         ))} */}
-                        {/* <SelectItem value="User1">User 1</SelectItem>
+                  {/* <SelectItem value="User1">User 1</SelectItem>
                         <SelectItem value="User2">User 2</SelectItem>
                         <SelectItem value="User3">User 3</SelectItem>
                         <SelectItem value="User4">User 4</SelectItem>
                         <SelectItem value="User5">User 5</SelectItem>
                         <SelectItem value="User6">User 6</SelectItem> */}
-                      {/* </SelectContent> */}
-                    {/* </Select> */}
+                  {/* </SelectContent> */}
+                  {/* </Select> */}
                   {/* </div> */}
 
                   <div className="space-y-2">
@@ -3995,14 +4178,19 @@ const WorkoutProgramManagement = () => {
               <Button variant="outline" onClick={() => {
                 setIsUserDialogOpen(false);
                 setSubmittedUser(false);
-                }}>Cancel</Button>
+              }}>Cancel</Button>
               <Button onClick={handleSaveUser}>{editingUser ? 'Update User' : 'Create User'} Program</Button>
             </DialogFooter>
           </DialogContent>
         </Dialog>
 
         {/* Add/Edit Attribute Detail Dialog Or Popup*/}
-        <Dialog open={isAttributeDialogOpen} onOpenChange={setIsAttributeDialogOpen}>
+        <Dialog open={isAttributeDialogOpen} onOpenChange={(open) => {
+          if (!open) {
+            setSubmittedAttributeDet(false);
+          }
+          setIsAttributeDialogOpen(open);
+        }}>
           <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
             <DialogHeader>
               <DialogTitle>{editingAttribute ? 'Edit Attribute' : 'Add Attribute'}</DialogTitle>
@@ -4016,7 +4204,7 @@ const WorkoutProgramManagement = () => {
                 <div className="grid grid-cols-2 gap-4">
 
                   <div className="space-y-2">
-                    <Label htmlFor="attributeheader_code">Code*</Label>
+                    <Label htmlFor="attributeheader_code" className={submittedAttributeDet && !attributeForm.attributeheader_code ? "text-red-500" : ""}>Code*</Label>
                     <div className="flex gap-2">
                       <Select
                         value={attributeForm.attributeheader_code}
@@ -4026,12 +4214,12 @@ const WorkoutProgramManagement = () => {
                           <SelectValue placeholder="Select Code" />
                         </SelectTrigger>
                         <SelectContent>
-                          {status.map((status: any) => (
+                          {attributehdr.map((status: any) => (
                             <SelectItem
-                              key={status.attributedetails_code}
-                              value={status.attributedetails_code}
+                              key={status.attributeheader_code}
+                              value={status.attributeheader_code}
                             >
-                              {status.attributedetails_name}
+                              {status.attributeheader_code} - {status.attributeheader_name}
                             </SelectItem>
                           ))}
                         </SelectContent>
@@ -4043,7 +4231,7 @@ const WorkoutProgramManagement = () => {
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="SubCode">Sub Code</Label>
+                    <Label htmlFor="SubCode" className={submittedAttributeDet && !attributeForm.attributedetails_code ? "text-red-500" : ""}>Sub Code*</Label>
                     <Input
                       id="SubCode"
                       value={attributeForm.attributedetails_code}
@@ -4051,8 +4239,9 @@ const WorkoutProgramManagement = () => {
                       placeholder="e.g., SubCode"
                     />
                   </div>
+
                   <div className="space-y-2">
-                    <Label htmlFor="DetailsName">Details Name</Label>
+                    <Label htmlFor="DetailsName" className={submittedAttributeDet && !attributeForm.attributedetails_name ? "text-red-500" : ""}>Details Name*</Label>
                     <Input
                       id="DetailsName"
                       value={attributeForm.attributedetails_name}
@@ -4075,18 +4264,22 @@ const WorkoutProgramManagement = () => {
               </div>
             </div>
             <DialogFooter>
-              <Button variant="outline" onClick={() => setIsAttributeDialogOpen(false)}>Cancel</Button>
-              <Button onClick={handleSaveAttribute}>{editingAttribute ? 'Update' : 'Create'} Program</Button>
+              <Button variant="outline" onClick={() => {
+                setSubmittedAttributeDet(false);
+                setIsAttributeDialogOpen(false);
+              }}>Cancel</Button>
+              <Button onClick={handleSaveAttribute}>{editingAttribute ? 'Update' : 'Create'} Attribute Detail</Button>
             </DialogFooter>
           </DialogContent>
         </Dialog>
 
         {/* Add Attribute Header Dialog  Or Popup*/}
         <Dialog open={isAttributeHdrDialogOpen} onOpenChange={(open) => {
-          if(!open){
+          if (!open) {
             setSubmittedAttributeHdr(false);
           }
-          setIsAttributeHdrDialogOpen(open); }}>
+          setIsAttributeHdrDialogOpen(open);
+        }}>
           <DialogContent className="max-w-md">
             <DialogHeader>
               <DialogTitle>Add Attribute Hdr</DialogTitle>
@@ -4139,7 +4332,7 @@ const WorkoutProgramManagement = () => {
               <Button variant="outline" onClick={() => {
                 setSubmittedAttributeHdr(false);
                 setIsAttributeHdrDialogOpen(false);
-                }}>Cancel</Button>
+              }}>Cancel</Button>
               <Button onClick={handleCreateAttributeHdr}>Save</Button>
             </DialogFooter>
           </DialogContent>
