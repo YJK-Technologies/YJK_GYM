@@ -421,8 +421,6 @@ const WorkoutProgramManagement = () => {
     gst_no: "",
     status: "",
   });
-  const [companyLogo, setCompanyLogo] = useState<File | null>(null);
-  const [authorisedSignature, setAuthorisedSignature] = useState<File | null>(null);
 
   // Preview images for ImageUpload component
   const [companyImages, setCompanyImages] = useState<(string | null)[]>([
@@ -472,6 +470,12 @@ const WorkoutProgramManagement = () => {
     created_by: "admin",
     modified_by: "admin",
   });
+  const [companyMappingSearchForm, setCompanyMappingSearchForm] = useState({
+    user_code: "",
+    company_no: "",
+    location_no: "",
+    status: "",
+  });
 
   //Location Dialog States
   const [submittedLocation, setSubmittedLocation] = useState(false);
@@ -494,6 +498,15 @@ const WorkoutProgramManagement = () => {
     contact_no: "",
     created_by: "admin",
     modified_by: "admin",
+  });
+  const [locationSearchForm, setLocationSearchForm] = useState({
+    location_no: "",
+    location_name: "",
+    city: "",
+    state: "",
+    pincode: "",
+    country: "",
+    status: "",
   });
 
   //Role Dialog States
@@ -576,7 +589,7 @@ const WorkoutProgramManagement = () => {
   const [editingAttribute, setEditingAttribute] = useState<any>(null);
   const [isAttributeDialogOpen, setIsAttributeDialogOpen] = useState(false);
   const [attributeForm, setAttributeForm] = useState({
-    company_code: "COMP001",
+    company_code: "YJK",
     attributeheader_code: "",
     attributedetails_code: "",
     attributedetails_name: "",
@@ -589,7 +602,7 @@ const WorkoutProgramManagement = () => {
   const [submittedAttributeHdr, setSubmittedAttributeHdr] = useState(false);
   const [isAttributeHdrDialogOpen, setIsAttributeHdrDialogOpen] = useState(false);
   const [attributeHdrForm, setAttributeHdrForm] = useState({
-    company_code: "COMP001", attributeheader_code: "", attributeheader_name: "", status: "Active", created_by: "admin", modified_by: "admin", tempstr1: "", tempstr2: "",
+    company_code: "YJK", attributeheader_code: "", attributeheader_name: "", status: "Active", created_by: "admin", modified_by: "admin", tempstr1: "", tempstr2: "",
     tempstr3: "", tempstr4: "", datetime1: "", datetime2: "", datetime3: "", datetime4: "",
   });
 
@@ -620,8 +633,6 @@ const WorkoutProgramManagement = () => {
       modified_by: "admin",
     });
     setCompanyImages([null, null]);
-    setCompanyLogo(null);
-    setAuthorisedSignature(null);
 
     setIsCompanyDialogOpen(true);
   };
@@ -719,7 +730,7 @@ const WorkoutProgramManagement = () => {
           description: data.message || "Company created successfully.",
         });
 
-        // fetchCompanies();
+        handleCompanySearch();
         setIsCompanyDialogOpen(false);
         setSubmittedCompany(false);
       } else {
@@ -841,7 +852,7 @@ const WorkoutProgramManagement = () => {
           description: data.message || "Company deleted successfully.",
         });
 
-        // fetchCompanies();
+        handleCompanySearch();
       } else {
         toast({
           title: "Error",
@@ -982,7 +993,7 @@ const WorkoutProgramManagement = () => {
   const handleAddCompanyMapping = () => {
     setEditingCompanyMapping(null);
     setCompanyMappingForm({
-      company_code: "",
+      company_code: "YJK",
       user_code: "",
       company_no: "",
       location_no: "",
@@ -1037,7 +1048,7 @@ const WorkoutProgramManagement = () => {
           description: data.message || "Company mapping created successfully.",
         });
 
-        // fetchCompanyMappings();
+        handleCompanyMappingSearch();
         setIsCompanyMappingDialogOpen(false);
         setSubmittedCompanyMapping(false);
       } else {
@@ -1066,7 +1077,7 @@ const WorkoutProgramManagement = () => {
     try {
       const response = await fetch(`${BASE_URL}/CompanyMappingUpdate`,
         {
-          method: "PUT",
+          method: "POST",
           headers: {
             "Content-Type": "application/json",
           },
@@ -1082,7 +1093,7 @@ const WorkoutProgramManagement = () => {
           description: data.message || "Company mapping updated successfully.",
         });
 
-        // fetchCompanyMappings();
+        handleCompanyMappingSearch();
         setEditingCompanyMapping(null);
         setIsCompanyMappingDialogOpen(false);
         setSubmittedCompanyMapping(false);
@@ -1114,7 +1125,7 @@ const WorkoutProgramManagement = () => {
     try {
       const response = await fetch(`${BASE_URL}/commappingdeleteData`,
         {
-          method: "DELETE",
+          method: "POST",
           headers: {
             "Content-Type": "application/json",
             "modified-by": "admin",
@@ -1134,7 +1145,7 @@ const WorkoutProgramManagement = () => {
             data.message || "Company mapping deleted successfully.",
         });
 
-        // fetchCompanyMappings();
+        handleCompanyMappingSearch();
       } else {
         toast({
           title: "Error",
@@ -1159,6 +1170,36 @@ const WorkoutProgramManagement = () => {
       await handleUpdateCompanyMapping();
     } else {
       await handleCreateCompanyMapping();
+    }
+  };
+
+  const handleCompanyMappingSearch = async () => {
+    try {
+      const response = await fetch(`${BASE_URL}/companymappingsearchdata`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            company_code: "YJK",
+            user_code: companyMappingSearchForm.user_code,
+            company_no: companyMappingSearchForm.company_no,
+            location_no: companyMappingSearchForm.location_no,
+            status: companyMappingSearchForm.status,
+          }),
+        }
+      );
+
+      const data = await response.json();
+
+      if (response.ok) {
+        setCompanyMappings(data);
+      } else {
+        alert(data.message || "No data found");
+      }
+    } catch (error) {
+      console.error("Company Mapping Search Error:", error);
     }
   };
 
@@ -1264,7 +1305,7 @@ const WorkoutProgramManagement = () => {
           description: data.message || "Location created successfully.",
         });
 
-        // fetchLocations();
+        handleLocationSearch();
         setIsLocationDialogOpen(false);
         setSubmittedLocation(false);
       } else {
@@ -1293,7 +1334,7 @@ const WorkoutProgramManagement = () => {
     try {
       const response = await fetch(`${BASE_URL}/LocationUpdate`,
         {
-          method: "PUT",
+          method: "POST",
           headers: {
             "Content-Type": "application/json",
           },
@@ -1309,7 +1350,7 @@ const WorkoutProgramManagement = () => {
           description: data.message || data || "Location updated successfully.",
         });
 
-        // fetchLocations();
+        handleLocationSearch();
         setEditingLocation(null);
         setIsLocationDialogOpen(false);
         setSubmittedLocation(false);
@@ -1337,7 +1378,7 @@ const WorkoutProgramManagement = () => {
     try {
       const response = await fetch(`${BASE_URL}/deletelocation`,
         {
-          method: "DELETE",
+          method: "POST",
           headers: {
             "Content-Type": "application/json",
             "modified-by": "admin",
@@ -1356,7 +1397,7 @@ const WorkoutProgramManagement = () => {
           description: data.message || "Location deleted successfully.",
         });
 
-        // fetchLocations();
+        handleLocationSearch();
       } else {
         toast({
           title: "Error",
@@ -1380,6 +1421,36 @@ const WorkoutProgramManagement = () => {
       await handleUpdateLocation();
     } else {
       await handleCreateLocation();
+    }
+  };
+
+  const handleLocationSearch = async () => {
+    try {
+      const response = await fetch(`${BASE_URL}/locationSearchdata`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          location_no: locationSearchForm.location_no,
+          location_name: locationSearchForm.location_name,
+          city: locationSearchForm.city,
+          state: locationSearchForm.state,
+          pincode: locationSearchForm.pincode,
+          country: locationSearchForm.country,
+          status: locationSearchForm.status,
+        }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        setLocations(data);
+      } else {
+        alert(data.message || "No data found");
+      }
+    } catch (error) {
+      console.error("Location Search Error:", error);
     }
   };
 
@@ -2604,6 +2675,250 @@ const WorkoutProgramManagement = () => {
     }
   };
 
+  const renderCompanySearch = () => (
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className="space-y-2">
+        <Label>Company No</Label>
+        <Input
+          placeholder="Enter Company No"
+          value={companySearchForm.company_no}
+          onChange={(e) => setCompanySearchForm({ ...companySearchForm, company_no: e.target.value, })} />
+      </div>
+
+      <div className="space-y-2">
+        <Label>Company Name</Label>
+        <Input
+          placeholder="Enter Company Name"
+          value={companySearchForm.company_name}
+          onChange={(e) => setCompanySearchForm({ ...companySearchForm, company_name: e.target.value, })} />
+      </div>
+
+      <div className="space-y-2">
+        <Label>City</Label>
+        <Input
+          placeholder="Enter City"
+          value={companySearchForm.city}
+          onChange={(e) => setCompanySearchForm({ ...companySearchForm, city: e.target.value, })} />
+      </div>
+
+      <div className="space-y-2">
+        <Label>State</Label>
+        <Input
+          placeholder="Enter State"
+          value={companySearchForm.state}
+          onChange={(e) => setCompanySearchForm({ ...companySearchForm, state: e.target.value, })} />
+      </div>
+
+      <div className="space-y-2">
+        <Label>Pin Code</Label>
+        <Input
+          placeholder="Enter Pin Code"
+          value={companySearchForm.pincode}
+          onChange={(e) => setCompanySearchForm({ ...companySearchForm, pincode: e.target.value, })} />
+      </div>
+
+      <div className="space-y-2">
+        <Label>Country</Label>
+        <Input
+          placeholder="Enter Country"
+          value={companySearchForm.country}
+          onChange={(e) => setCompanySearchForm({ ...companySearchForm, country: e.target.value, })} />
+      </div>
+
+      <div className="space-y-2">
+        <Label>GST No</Label>
+        <Input
+          placeholder="Enter GST No"
+          value={companySearchForm.gst_no}
+          onChange={(e) => setCompanySearchForm({ ...companySearchForm, gst_no: e.target.value, })} />
+      </div>
+
+      <div className="space-y-2">
+        <Label>Status</Label>
+        <Select
+          value={companySearchForm.status}
+          onValueChange={(value) => setCompanySearchForm({ ...companySearchForm, status: value, })}>
+          <SelectTrigger>
+            <SelectValue placeholder="Select Status" />
+          </SelectTrigger>
+
+          <SelectContent>
+            {status.map((status: any) => (
+              <SelectItem
+                key={status.attributedetails_name}
+                value={status.attributedetails_name}
+              >
+                {status.attributedetails_name}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+      </div>
+    </div>
+  );
+
+  const renderCompanyMappingSearch = () => (
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+
+      <div className="space-y-2">
+        <Label>User Code</Label>
+        <Input
+          placeholder="Enter User Code"
+          value={companyMappingSearchForm.user_code}
+          onChange={(e) => setCompanyMappingSearchForm({ ...companyMappingSearchForm, user_code: e.target.value, })} />
+      </div>
+
+      <div className="space-y-2">
+        <Label>Company Code</Label>
+        <Input
+          placeholder="Enter Company Code"
+          value={companyMappingSearchForm.company_no}
+          onChange={(e) => setCompanyMappingSearchForm({ ...companyMappingSearchForm, company_no: e.target.value, })} />
+      </div>
+
+      <div className="space-y-2">
+        <Label>Location No</Label>
+        <Input
+          placeholder="Enter Location No"
+          value={companyMappingSearchForm.location_no}
+          onChange={(e) => setCompanyMappingSearchForm({ ...companyMappingSearchForm, location_no: e.target.value, })} />
+      </div>
+
+      <div className="space-y-2">
+        <Label>Status</Label>
+        <Select value={companyMappingSearchForm.status} onValueChange={(value) => setCompanyMappingSearchForm({ ...companyMappingSearchForm, status: value, })}>
+          <SelectTrigger>
+            <SelectValue placeholder="Select Status" />
+          </SelectTrigger>
+          <SelectContent>
+            {status.map((item: any) => (
+              <SelectItem
+                key={item.attributedetails_code}
+                value={item.attributedetails_code}
+              >
+                {item.attributedetails_name}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+      </div>
+
+    </div>
+  );
+
+  const renderLocationSearch = () => (
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className="space-y-2">
+        <Label>Location No</Label>
+        <Input
+          placeholder="Enter Location No"
+          value={locationSearchForm.location_no}
+          onChange={(e) => setLocationSearchForm({ ...locationSearchForm, location_no: e.target.value, })} />
+      </div>
+
+      <div className="space-y-2">
+        <Label>Location Name</Label>
+        <Input
+          placeholder="Enter Location Name"
+          value={locationSearchForm.location_name}
+          onChange={(e) => setLocationSearchForm({ ...locationSearchForm, location_name: e.target.value, })} />
+      </div>
+
+      <div className="space-y-2">
+        <Label>City</Label>
+        <Input
+          placeholder="Enter City"
+          value={locationSearchForm.city}
+          onChange={(e) => setLocationSearchForm({ ...locationSearchForm, city: e.target.value, })} />
+      </div>
+
+      <div className="space-y-2">
+        <Label>State</Label>
+        <Input
+          placeholder="Enter State"
+          value={locationSearchForm.state}
+          onChange={(e) => setLocationSearchForm({ ...locationSearchForm, state: e.target.value, })} />
+      </div>
+
+      <div className="space-y-2">
+        <Label>Pin Code</Label>
+        <Input
+          placeholder="Enter Pin Code"
+          value={locationSearchForm.pincode}
+          onChange={(e) => setLocationSearchForm({ ...locationSearchForm, pincode: e.target.value, })} />
+      </div>
+
+      <div className="space-y-2">
+        <Label>Country</Label>
+        <Input
+          placeholder="Enter Country"
+          value={locationSearchForm.country}
+          onChange={(e) => setLocationSearchForm({ ...locationSearchForm, country: e.target.value, })} />
+      </div>
+
+      <div className="space-y-2">
+        <Label>Status</Label>
+        <Select
+          value={locationSearchForm.status}
+          onValueChange={(value) => setLocationSearchForm({ ...locationSearchForm, status: value, })}>
+          <SelectTrigger>
+            <SelectValue placeholder="Select Status" />
+          </SelectTrigger>
+
+          <SelectContent>
+            {status.map((status: any) => (
+              <SelectItem
+                key={status.attributedetails_name}
+                value={status.attributedetails_name}
+              >
+                {status.attributedetails_name}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+      </div>
+    </div>
+  );
+
+  const handleSearch = () => {
+    switch (activeTab) {
+      case "company":
+        handleCompanySearch();
+        break;
+
+      case "companyMapping":
+        handleCompanyMappingSearch();
+        break;
+
+      case "location":
+        handleLocationSearch();
+        break;
+
+      case "role":
+        // handleRoleSearch();
+        break;
+
+      case "roleMapping":
+        // handleRoleMappingSearch();
+        break;
+
+      case "roleRights":
+        // handleRoleRightsSearch();
+        break;
+
+      case "user":
+        // handleUserSearch();
+        break;
+
+      case "attribute":
+        // handleAttributeSearch();
+        break;
+
+      default:
+        break;
+    }
+  };
+
   return (
     <div className="min-h-screen bg-gray-50">
       <header className="bg-white shadow-sm border-b">
@@ -2626,101 +2941,42 @@ const WorkoutProgramManagement = () => {
         {/* Search and Add */}
         <Card className="mb-6">
           <CardContent className="p-6">
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
 
-              {/* Company No */}
-              <div className="space-y-2">
-                <Label>Company No</Label>
-                <Input
-                  placeholder="Enter Company No"
-                  value={companySearchForm.company_no}
-                  onChange={(e) => setCompanySearchForm({ ...companySearchForm, company_no: e.target.value, })} />
-              </div>
+            {activeTab === "company" && renderCompanySearch()}
 
-              {/* Company Name */}
-              <div className="space-y-2">
-                <Label>Company Name</Label>
-                <Input
-                  placeholder="Enter Company Name"
-                  value={companySearchForm.company_name}
-                  onChange={(e) => setCompanySearchForm({ ...companySearchForm, company_name: e.target.value, })} />
-              </div>
+            {activeTab === "companyMapping" && renderCompanyMappingSearch()}
 
-              {/* City */}
-              <div className="space-y-2">
-                <Label>City</Label>
-                <Input
-                  placeholder="Enter City"
-                  value={companySearchForm.city}
-                  onChange={(e) => setCompanySearchForm({ ...companySearchForm, city: e.target.value, })} />
-              </div>
+            {activeTab === "location" && renderLocationSearch()}
 
-              {/* State */}
-              <div className="space-y-2">
-                <Label>State</Label>
-                <Input
-                  placeholder="Enter State"
-                  value={companySearchForm.state}
-                  onChange={(e) => setCompanySearchForm({ ...companySearchForm, state: e.target.value, })} />
-              </div>
+            {/* {activeTab === "role" && renderRoleSearch()} */}
 
-              {/* Pin Code */}
-              <div className="space-y-2">
-                <Label>Pin Code</Label>
-                <Input
-                  placeholder="Enter Pin Code"
-                  value={companySearchForm.pincode}
-                  onChange={(e) => setCompanySearchForm({ ...companySearchForm, pincode: e.target.value, })} />
-              </div>
+            {/* {activeTab === "roleMapping" && renderRoleMappingSearch()} */}
 
-              {/* Country */}
-              <div className="space-y-2">
-                <Label>Country</Label>
-                <Input
-                  placeholder="Enter Country"
-                  value={companySearchForm.country}
-                  onChange={(e) => setCompanySearchForm({ ...companySearchForm, country: e.target.value, })} />
-              </div>
+            {/* {activeTab === "roleRights" && renderRoleRightsSearch()} */}
 
-              {/* GST No */}
-              <div className="space-y-2">
-                <Label>GST No</Label>
-                <Input
-                  placeholder="Enter GST No"
-                  value={companySearchForm.gst_no}
-                  onChange={(e) => setCompanySearchForm({ ...companySearchForm, gst_no: e.target.value, })} />
-              </div>
+            {/* {activeTab === "user" && renderUserSearch()} */}
 
-              {/* Status */}
-              <div className="space-y-2">
-                <Label>Status</Label>
-                <Select
-                  value={companySearchForm.status}
-                  onValueChange={(value) => setCompanySearchForm({ ...companySearchForm, status: value, })}>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select Status" />
-                  </SelectTrigger>
+            {/* {activeTab === "attribute" && renderAttributeSearch()} */}
 
-                  <SelectContent>
-                    <SelectItem value="Active">Active</SelectItem>
-                    <SelectItem value="Inactive">Inactive</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-            </div>
-
-            {/* Buttons */}
             <div className="flex justify-end gap-4 mt-6">
-              <Button size="icon" className="rounded-full" onClick={handleCompanySearch}>
+              <Button
+                size="icon"
+                className="rounded-full"
+                onClick={handleSearch}
+              >
                 <Search className="h-5 w-5" />
               </Button>
 
-              <Button size="icon" variant="secondary" className="rounded-full"
+              <Button
+                size="icon"
+                variant="secondary"
+                className="rounded-full"
               // onClick={handleReset}
               >
                 <RotateCcw className="h-5 w-5" />
               </Button>
             </div>
+
           </CardContent>
         </Card>
 
@@ -3439,8 +3695,8 @@ const WorkoutProgramManagement = () => {
                       <SelectContent>
                         {status.map((status: any) => (
                           <SelectItem
-                            key={status.attributedetails_code}
-                            value={status.attributedetails_code}
+                            key={status.attributedetails_name}
+                            value={status.attributedetails_name}
                           >
                             {status.attributedetails_name}
                           </SelectItem>
@@ -3747,8 +4003,8 @@ const WorkoutProgramManagement = () => {
                       <SelectContent>
                         {cities.map((city: any) => (
                           <SelectItem
-                            key={city.attributedetails_code}
-                            value={city.attributedetails_code}
+                            key={city.attributedetails_name}
+                            value={city.attributedetails_name}
                           >
                             {city.attributedetails_name}
                           </SelectItem>
@@ -3766,8 +4022,8 @@ const WorkoutProgramManagement = () => {
                       <SelectContent>
                         {states.map((city: any) => (
                           <SelectItem
-                            key={city.attributedetails_code}
-                            value={city.attributedetails_code}
+                            key={city.attributedetails_name}
+                            value={city.attributedetails_name}
                           >
                             {city.attributedetails_name}
                           </SelectItem>
@@ -3793,12 +4049,12 @@ const WorkoutProgramManagement = () => {
                         <SelectValue placeholder="Select Country" />
                       </SelectTrigger>
                       <SelectContent>
-                        {countries.map((city: any) => (
+                        {countries.map((country: any) => (
                           <SelectItem
-                            key={city.attributedetails_code}
-                            value={city.attributedetails_code}
+                            key={country.attributedetails_name}
+                            value={country.attributedetails_name}
                           >
-                            {city.attributedetails_name}
+                            {country.attributedetails_name}
                           </SelectItem>
                         ))}
                       </SelectContent>
@@ -3824,8 +4080,8 @@ const WorkoutProgramManagement = () => {
                       <SelectContent>
                         {status.map((status: any) => (
                           <SelectItem
-                            key={status.attributedetails_code}
-                            value={status.attributedetails_code}
+                            key={status.attributedetails_name}
+                            value={status.attributedetails_name}
                           >
                             {status.attributedetails_name}
                           </SelectItem>
