@@ -75,7 +75,7 @@ router.post("/updateRoleRights",dataController.updateRoleRights)
 router.post("/getRoleRightsData",dataController.getRoleRightsData)
 
 router.post("/AttributeUpdate", dataController.AttributeUpdate)
-router.get("/hdrcode", dataController.gethdrcode)
+router.post("/hdrcode", dataController.gethdrcode)
 
 router.get("/attributedetData",dataController.getAllattributedetData)
 router.post("/addattridetData",dataController.addattridetData)
