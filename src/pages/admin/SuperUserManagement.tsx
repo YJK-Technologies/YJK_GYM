@@ -637,7 +637,16 @@ const WorkoutProgramManagement = () => {
     company_code: "YJK", attributeheader_code: "", attributeheader_name: "", status: "Active", created_by: "admin", modified_by: "admin", tempstr1: "", tempstr2: "",
     tempstr3: "", tempstr4: "", datetime1: "", datetime2: "", datetime3: "", datetime4: "",
   });
-
+  
+  //Nunmber Series 
+const [submittedNumberSeries, setSubmittedNumberSeries] = useState(false);
+const [isNumberSeriesDialogOpen, setIsNumberSeriesDialogOpen] = useState(false);
+const [editingNumberSeries, setEditingNumberSeries] = useState<any>(null);
+const [numberSeries, setNumberSeries] = useState([]);
+const [numberSeriesForm, setNumberSeriesForm] = useState({
+    company_code: "YJK",Screen_Type: "",Start_Year: "",End_Year:"",Start_No: "",Running_No: "",
+    End_No: "" ,text: "" ,number_prefix: "" ,status: "Active",
+    bill_format: "",created_by: "admin", modified_by: "admin" });
 
   //Company CRUD Functions
   const handleAddCompany = () => {
@@ -2939,6 +2948,8 @@ const WorkoutProgramManagement = () => {
     roleRights: "Role Rights",
     user: "User",
     attribute: "Attribute",
+    NumberSeries:"NumberSeries",
+    
   };
 
   const handleAdd = () => {
@@ -3405,7 +3416,7 @@ const WorkoutProgramManagement = () => {
           </CardContent>
         </Card>
 
-        {/* Tabs for companies and Packages */}
+        {/*  companies and Packages */}
         <Tabs value={activeTab} onValueChange={setActiveTab}>
           <div className="flex justify-between items-center mb-4">
             <TabsList>
@@ -3440,6 +3451,10 @@ const WorkoutProgramManagement = () => {
               <TabsTrigger value="attribute" className="flex items-center gap-2">
                 <Package className="h-4 w-4" />
                 Attribute
+              </TabsTrigger>
+              <TabsTrigger value="NumberSeries" className="flex items-center gap-2">
+                <Package className="h-4 w-4" />
+                Number Series
               </TabsTrigger>
             </TabsList>
             <Button onClick={handleAdd}>
@@ -3938,6 +3953,78 @@ const WorkoutProgramManagement = () => {
               </CardContent>
             </Card>
           </TabsContent>
+          {/* NumberSeries Tab */}
+          <TabsContent value="NumberSeries">
+            <Card>
+              <CardHeader>
+                <CardTitle>NumberSeries</CardTitle>
+                <CardDescription>Manage all NumberSeries and their details</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>Screen_Type</TableHead>
+                      <TableHead>Start_Year</TableHead>
+                      <TableHead>End_Year</TableHead>
+                      <TableHead>Start_No</TableHead>
+                      <TableHead>Running_No</TableHead>
+                      <TableHead>End_No</TableHead>
+                      <TableHead>text</TableHead>
+                      <TableHead>status</TableHead>
+                      <TableHead>bill_format</TableHead>
+                      <TableHead>created_by</TableHead>
+                      <TableHead>modified_by</TableHead>
+                      <TableHead className="text-right">Actions</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {numberSeries.map((NumberSeries: any) => (
+                      <TableRow
+                        key={`${NumberSeries.attributeheader_code}-${NumberSeries.attributedetails_code}`}
+                      >
+                        <TableCell>{NumberSeries.Screen_Type}</TableCell>
+                        <TableCell>{NumberSeries.Start_Year}</TableCell>
+                        <TableCell>{NumberSeries.End_Year}</TableCell>
+                        <TableCell>{NumberSeries.Start_No}</TableCell>
+                        <TableCell>{NumberSeries.Running_No}</TableCell>
+                        <TableCell>{NumberSeries.End_No}</TableCell>
+                        <TableCell>{NumberSeries.text}</TableCell>
+                        <TableCell>{NumberSeries.status}</TableCell>
+                        <TableCell>{NumberSeries.bill_format}</TableCell>
+                        <TableCell>{NumberSeries.created_by}</TableCell>
+                        <TableCell>{NumberSeries.modified_by}</TableCell>
+                        <TableCell className="text-right">
+                          <div className="flex justify-end gap-2">
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              onClick={() => handleEditAttribute(NumberSeries)}
+                            >
+                              <Edit className="h-4 w-4" />
+                            </Button>
+
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              // onClick={() =>
+                              //   handleDeleteAttribute(
+                              //     attribute.attributeheader_code,
+                              //     attribute.attributedetails_code
+                              //   )
+                              // }
+                            >
+                              <Trash2 className="h-4 w-4 text-red-500" />
+                            </Button>
+                          </div>
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </CardContent>
+            </Card>
+          </TabsContent>          
 
         </Tabs>
 
@@ -5113,6 +5200,70 @@ const WorkoutProgramManagement = () => {
                 setIsAttributeHdrDialogOpen(false);
               }}>Cancel</Button>
               <Button onClick={handleCreateAttributeHdr}>Save</Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
+       {/* Add Numberseries Header Dialog  Or Popup*/}
+        <Dialog open={isNumberSeriesDialogOpen} onOpenChange={(open) => {
+          if (!open) {
+            setSubmittedNumberSeries(false);
+          }
+          setIsNumberSeriesDialogOpen(open);
+        }}>
+          <DialogContent className="max-w-md">
+            <DialogHeader>
+              <DialogTitle>Add NumberSeries Hdr</DialogTitle>
+              <DialogDescription>Create a new NumberSeries Header</DialogDescription>
+            </DialogHeader>
+
+            <div className="grid gap-4 py-4">
+
+              <div className="space-y-2">
+                <Label htmlFor="code" className={submittedAttributeHdr && !attributeHdrForm.attributeheader_code ? "text-red-500" : ""}>Code*</Label>
+                <Input
+                  id="Code"
+                  value={attributeHdrForm.attributeheader_code}
+                  onChange={(e) => setAttributeHdrForm({ ...attributeHdrForm, attributeheader_code: e.target.value, })}
+                  placeholder="Enter attribute code (e.g., ACCOUNT_TYPE)"
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="code" className={submittedAttributeHdr && !attributeHdrForm.attributeheader_name ? "text-red-500" : ""}>Name*</Label>
+                <Input
+                  id="Name"
+                  value={attributeHdrForm.attributeheader_name}
+                  onChange={(e) => setAttributeHdrForm({ ...attributeHdrForm, attributeheader_name: e.target.value, })}
+                  placeholder="Enter attribute name (e.g., Account Type)"
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="code" className={submittedAttributeHdr && !attributeHdrForm.status ? "text-red-500" : ""}>Status*</Label>
+                <Select value={attributeHdrForm.status} onValueChange={(value) => setAttributeHdrForm({ ...attributeHdrForm, status: value, })}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select Status" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {status.map((status: any) => (
+                      <SelectItem
+                        key={status.attributedetails_code}
+                        value={status.attributedetails_code}
+                      >
+                        {status.attributedetails_name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+
+            <DialogFooter>
+              <Button variant="outline" onClick={() => {
+                setSubmittedNumberSeries(false);
+                setIsNumberSeriesDialogOpen(false);
+              }}>Cancel</Button>
+              <Button >Save</Button>
             </DialogFooter>
           </DialogContent>
         </Dialog>
