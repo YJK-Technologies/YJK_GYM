@@ -15,12 +15,13 @@ import { useToast } from '@/hooks/use-toast';
 import { ArrowLeft, Plus, Search, RotateCcw, Dumbbell, Package, Edit, Trash2 } from 'lucide-react';
 import ImageUpload from "../ImageUpload";
 import { BASE_URL } from '../ApiConfig';
+import AgGridTable from "@/components/ui/ag-grid-table";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 
 const WorkoutProgramManagement = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
   const [activeTab, setActiveTab] = useState('company');
-  const [searchTerm, setSearchTerm] = useState('');
   const [cities, setCities] = useState<any[]>([]);
   const [states, setStates] = useState<any[]>([]);
   const [countries, setCountries] = useState<any[]>([]);
@@ -309,7 +310,6 @@ const WorkoutProgramManagement = () => {
     }
   };
 
-  // Added by Dinesh Gokul - 23-06-2026 for User
   const fetchGender = async () => {
     try {
       const response = await fetch(`${BASE_URL}/gender`, {
@@ -532,6 +532,51 @@ const WorkoutProgramManagement = () => {
     role_id: "",
     role_name: "",
   });
+
+  //Role Ag Grid
+  const roleColumnDefs = [
+    {
+      headerName: "Role ID",
+      field: "role_id",
+      cellStyle: { fontWeight: 600 },
+    },
+    {
+      headerName: "Role Name",
+      field: "role_name",
+    },
+    {
+      headerName: "Description",
+      field: "description",
+    },
+    {
+      headerName: "Actions",
+      maxWidth: 150,
+      cellStyle: {
+        display: "flex",
+        justifyContent: "flex-end",
+        alignItems: "center",
+      },
+      cellRenderer: (params: any) => (
+        <div className="flex gap-2">
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => handleEditRole(params.data)}
+          >
+            <Edit className="h-4 w-4" />
+          </Button>
+
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => handleDeleteRole(params.data.role_id)}
+          >
+            <Trash2 className="h-4 w-4 text-red-500" />
+          </Button>
+        </div>
+      ),
+    },
+  ];
 
   //Role Mapping Dialog States
   const [submittedRoleMapping, setSubmittedRoleMapping] = useState(false);
@@ -2976,81 +3021,165 @@ const WorkoutProgramManagement = () => {
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
       <div className="space-y-2">
         <Label>Company No</Label>
-        <Input
-          placeholder="Enter Company No"
-          value={companySearchForm.company_no}
-          onChange={(e) => setCompanySearchForm({ ...companySearchForm, company_no: e.target.value, })} />
+        <TooltipProvider>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Input
+                placeholder="Enter Company No"
+                value={companySearchForm.company_no}
+                onChange={(e) => setCompanySearchForm({ ...companySearchForm, company_no: e.target.value, })} />
+            </TooltipTrigger>
+
+            <TooltipContent>
+              <p>Enter Company No</p>
+            </TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
       </div>
 
       <div className="space-y-2">
         <Label>Company Name</Label>
-        <Input
-          placeholder="Enter Company Name"
-          value={companySearchForm.company_name}
-          onChange={(e) => setCompanySearchForm({ ...companySearchForm, company_name: e.target.value, })} />
+        <TooltipProvider>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Input
+                placeholder="Enter Company Name"
+                value={companySearchForm.company_name}
+                onChange={(e) => setCompanySearchForm({ ...companySearchForm, company_name: e.target.value, })} />
+            </TooltipTrigger>
+
+            <TooltipContent>
+              <p>Enter Company Name</p>
+            </TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
       </div>
 
       <div className="space-y-2">
         <Label>City</Label>
-        <Input
-          placeholder="Enter City"
-          value={companySearchForm.city}
-          onChange={(e) => setCompanySearchForm({ ...companySearchForm, city: e.target.value, })} />
+        <TooltipProvider>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Input
+                placeholder="Enter City"
+                value={companySearchForm.city}
+                onChange={(e) => setCompanySearchForm({ ...companySearchForm, city: e.target.value, })} />
+            </TooltipTrigger>
+
+            <TooltipContent>
+              <p>Enter City</p>
+            </TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
       </div>
 
       <div className="space-y-2">
         <Label>State</Label>
-        <Input
-          placeholder="Enter State"
-          value={companySearchForm.state}
-          onChange={(e) => setCompanySearchForm({ ...companySearchForm, state: e.target.value, })} />
+        <TooltipProvider>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Input
+                placeholder="Enter State"
+                value={companySearchForm.state}
+                onChange={(e) => setCompanySearchForm({ ...companySearchForm, state: e.target.value, })} />
+            </TooltipTrigger>
+
+            <TooltipContent>
+              <p>Enter State</p>
+            </TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
       </div>
 
       <div className="space-y-2">
         <Label>Pin Code</Label>
-        <Input
-          placeholder="Enter Pin Code"
-          value={companySearchForm.pincode}
-          onChange={(e) => setCompanySearchForm({ ...companySearchForm, pincode: e.target.value, })} />
+        <TooltipProvider>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Input
+                placeholder="Enter Pin Code"
+                value={companySearchForm.pincode}
+                onChange={(e) => setCompanySearchForm({ ...companySearchForm, pincode: e.target.value, })} />
+            </TooltipTrigger>
+
+            <TooltipContent>
+              <p>Enter Pin Code</p>
+            </TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
       </div>
 
       <div className="space-y-2">
         <Label>Country</Label>
-        <Input
-          placeholder="Enter Country"
-          value={companySearchForm.country}
-          onChange={(e) => setCompanySearchForm({ ...companySearchForm, country: e.target.value, })} />
+        <TooltipProvider>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Input
+                placeholder="Enter Country"
+                value={companySearchForm.country}
+                onChange={(e) => setCompanySearchForm({ ...companySearchForm, country: e.target.value, })} />
+            </TooltipTrigger>
+
+            <TooltipContent>
+              <p>Enter Country</p>
+            </TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
       </div>
 
       <div className="space-y-2">
         <Label>GST No</Label>
-        <Input
-          placeholder="Enter GST No"
-          value={companySearchForm.gst_no}
-          onChange={(e) => setCompanySearchForm({ ...companySearchForm, gst_no: e.target.value, })} />
+        <TooltipProvider>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Input
+                placeholder="Enter GST No"
+                value={companySearchForm.gst_no}
+                onChange={(e) => setCompanySearchForm({ ...companySearchForm, gst_no: e.target.value, })} />
+            </TooltipTrigger>
+
+            <TooltipContent>
+              <p>Enter GST No</p>
+            </TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
       </div>
 
       <div className="space-y-2">
         <Label>Status</Label>
-        <Select
-          value={companySearchForm.status}
-          onValueChange={(value) => setCompanySearchForm({ ...companySearchForm, status: value, })}>
-          <SelectTrigger>
-            <SelectValue placeholder="Select Status" />
-          </SelectTrigger>
 
-          <SelectContent>
-            {status.map((status: any) => (
-              <SelectItem
-                key={status.attributedetails_name}
-                value={status.attributedetails_name}
-              >
-                {status.attributedetails_name}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
+        <TooltipProvider>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <div>
+                <Select
+                  value={companySearchForm.status}
+                  onValueChange={(value) => setCompanySearchForm({ ...companySearchForm, status: value, })}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select Status" />
+                  </SelectTrigger>
+
+                  <SelectContent>
+                    {status.map((item: any) => (
+                      <SelectItem
+                        key={item.attributedetails_name}
+                        value={item.attributedetails_name}
+                      >
+                        {item.attributedetails_name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+            </TooltipTrigger>
+
+            <TooltipContent>
+              <p>Select Status</p>
+            </TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
       </div>
+
     </div>
   );
 
@@ -3059,45 +3188,87 @@ const WorkoutProgramManagement = () => {
 
       <div className="space-y-2">
         <Label>User Code</Label>
-        <Input
-          placeholder="Enter User Code"
-          value={companyMappingSearchForm.user_code}
-          onChange={(e) => setCompanyMappingSearchForm({ ...companyMappingSearchForm, user_code: e.target.value, })} />
+        <TooltipProvider>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Input
+                placeholder="Enter User Code"
+                value={companyMappingSearchForm.user_code}
+                onChange={(e) => setCompanyMappingSearchForm({ ...companyMappingSearchForm, user_code: e.target.value, })} />
+            </TooltipTrigger>
+
+            <TooltipContent>
+              <p>Enter User Code</p>
+            </TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
       </div>
 
       <div className="space-y-2">
         <Label>Company Code</Label>
-        <Input
-          placeholder="Enter Company Code"
-          value={companyMappingSearchForm.company_no}
-          onChange={(e) => setCompanyMappingSearchForm({ ...companyMappingSearchForm, company_no: e.target.value, })} />
+        <TooltipProvider>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Input
+                placeholder="Enter Company Code"
+                value={companyMappingSearchForm.company_no}
+                onChange={(e) => setCompanyMappingSearchForm({ ...companyMappingSearchForm, company_no: e.target.value, })} />
+            </TooltipTrigger>
+
+            <TooltipContent>
+              <p>Enter Company Code</p>
+            </TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
       </div>
 
       <div className="space-y-2">
         <Label>Location No</Label>
-        <Input
-          placeholder="Enter Location No"
-          value={companyMappingSearchForm.location_no}
-          onChange={(e) => setCompanyMappingSearchForm({ ...companyMappingSearchForm, location_no: e.target.value, })} />
+        <TooltipProvider>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Input
+                placeholder="Enter Location No"
+                value={companyMappingSearchForm.location_no}
+                onChange={(e) => setCompanyMappingSearchForm({ ...companyMappingSearchForm, location_no: e.target.value, })} />
+            </TooltipTrigger>
+
+            <TooltipContent>
+              <p>Enter Location No</p>
+            </TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
       </div>
 
       <div className="space-y-2">
         <Label>Status</Label>
-        <Select value={companyMappingSearchForm.status} onValueChange={(value) => setCompanyMappingSearchForm({ ...companyMappingSearchForm, status: value, })}>
-          <SelectTrigger>
-            <SelectValue placeholder="Select Status" />
-          </SelectTrigger>
-          <SelectContent>
-            {status.map((item: any) => (
-              <SelectItem
-                key={item.attributedetails_code}
-                value={item.attributedetails_code}
-              >
-                {item.attributedetails_name}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
+        <TooltipProvider>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <div>
+                <Select value={companyMappingSearchForm.status} onValueChange={(value) => setCompanyMappingSearchForm({ ...companyMappingSearchForm, status: value, })}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select Status" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {status.map((item: any) => (
+                      <SelectItem
+                        key={item.attributedetails_code}
+                        value={item.attributedetails_code}
+                      >
+                        {item.attributedetails_name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+            </TooltipTrigger>
+
+            <TooltipContent>
+              <p>Select Status</p>
+            </TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
       </div>
 
     </div>
@@ -3107,72 +3278,144 @@ const WorkoutProgramManagement = () => {
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
       <div className="space-y-2">
         <Label>Location No</Label>
-        <Input
-          placeholder="Enter Location No"
-          value={locationSearchForm.location_no}
-          onChange={(e) => setLocationSearchForm({ ...locationSearchForm, location_no: e.target.value, })} />
+        <TooltipProvider>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Input
+                placeholder="Enter Location No"
+                value={locationSearchForm.location_no}
+                onChange={(e) => setLocationSearchForm({ ...locationSearchForm, location_no: e.target.value, })} />
+            </TooltipTrigger>
+
+            <TooltipContent>
+              <p>Enter Location No</p>
+            </TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
       </div>
 
       <div className="space-y-2">
         <Label>Location Name</Label>
-        <Input
-          placeholder="Enter Location Name"
-          value={locationSearchForm.location_name}
-          onChange={(e) => setLocationSearchForm({ ...locationSearchForm, location_name: e.target.value, })} />
+        <TooltipProvider>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Input
+                placeholder="Enter Location Name"
+                value={locationSearchForm.location_name}
+                onChange={(e) => setLocationSearchForm({ ...locationSearchForm, location_name: e.target.value, })} />
+            </TooltipTrigger>
+
+            <TooltipContent>
+              <p>Enter Location Name</p>
+            </TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
       </div>
 
       <div className="space-y-2">
         <Label>City</Label>
-        <Input
-          placeholder="Enter City"
-          value={locationSearchForm.city}
-          onChange={(e) => setLocationSearchForm({ ...locationSearchForm, city: e.target.value, })} />
+        <TooltipProvider>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Input
+                placeholder="Enter City"
+                value={locationSearchForm.city}
+                onChange={(e) => setLocationSearchForm({ ...locationSearchForm, city: e.target.value, })} />
+            </TooltipTrigger>
+
+            <TooltipContent>
+              <p>Enter City</p>
+            </TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
       </div>
 
       <div className="space-y-2">
         <Label>State</Label>
-        <Input
-          placeholder="Enter State"
-          value={locationSearchForm.state}
-          onChange={(e) => setLocationSearchForm({ ...locationSearchForm, state: e.target.value, })} />
+        <TooltipProvider>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Input
+                placeholder="Enter State"
+                value={locationSearchForm.state}
+                onChange={(e) => setLocationSearchForm({ ...locationSearchForm, state: e.target.value, })} />
+            </TooltipTrigger>
+
+            <TooltipContent>
+              <p>Enter State</p>
+            </TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
       </div>
 
       <div className="space-y-2">
         <Label>Pin Code</Label>
-        <Input
-          placeholder="Enter Pin Code"
-          value={locationSearchForm.pincode}
-          onChange={(e) => setLocationSearchForm({ ...locationSearchForm, pincode: e.target.value, })} />
+        <TooltipProvider>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Input
+                placeholder="Enter Pin Code"
+                value={locationSearchForm.pincode}
+                onChange={(e) => setLocationSearchForm({ ...locationSearchForm, pincode: e.target.value, })} />
+            </TooltipTrigger>
+
+            <TooltipContent>
+              <p>Enter Pin Code</p>
+            </TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
       </div>
 
       <div className="space-y-2">
         <Label>Country</Label>
-        <Input
-          placeholder="Enter Country"
-          value={locationSearchForm.country}
-          onChange={(e) => setLocationSearchForm({ ...locationSearchForm, country: e.target.value, })} />
+        <TooltipProvider>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Input
+                placeholder="Enter Country"
+                value={locationSearchForm.country}
+                onChange={(e) => setLocationSearchForm({ ...locationSearchForm, country: e.target.value, })} />
+            </TooltipTrigger>
+
+            <TooltipContent>
+              <p>Enter Country</p>
+            </TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
       </div>
 
       <div className="space-y-2">
         <Label>Status</Label>
-        <Select
-          value={locationSearchForm.status}
-          onValueChange={(value) => setLocationSearchForm({ ...locationSearchForm, status: value, })}>
-          <SelectTrigger>
-            <SelectValue placeholder="Select Status" />
-          </SelectTrigger>
+        <TooltipProvider>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <div>
+                <Select
+                  value={locationSearchForm.status}
+                  onValueChange={(value) => setLocationSearchForm({ ...locationSearchForm, status: value, })}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select Status" />
+                  </SelectTrigger>
 
-          <SelectContent>
-            {status.map((status: any) => (
-              <SelectItem
-                key={status.attributedetails_name}
-                value={status.attributedetails_name}
-              >
-                {status.attributedetails_name}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
+                  <SelectContent>
+                    {status.map((status: any) => (
+                      <SelectItem
+                        key={status.attributedetails_name}
+                        value={status.attributedetails_name}
+                      >
+                        {status.attributedetails_name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+            </TooltipTrigger>
+
+            <TooltipContent>
+              <p>Select Status</p>
+            </TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
       </div>
     </div>
   );
@@ -3182,18 +3425,38 @@ const WorkoutProgramManagement = () => {
 
       <div className="space-y-2">
         <Label>Role ID</Label>
-        <Input
-          placeholder="Enter Role ID"
-          value={roleSearchForm.role_id}
-          onChange={(e) => setRoleSearchForm({ ...roleSearchForm, role_id: e.target.value, })} />
+        <TooltipProvider>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Input
+                placeholder="Enter Role ID"
+                value={roleSearchForm.role_id}
+                onChange={(e) => setRoleSearchForm({ ...roleSearchForm, role_id: e.target.value, })} />
+            </TooltipTrigger>
+
+            <TooltipContent>
+              <p>Enter Role ID</p>
+            </TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
       </div>
 
       <div className="space-y-2">
         <Label>Role Name</Label>
-        <Input
-          placeholder="Enter Role Name"
-          value={roleSearchForm.role_name}
-          onChange={(e) => setRoleSearchForm({ ...roleSearchForm, role_name: e.target.value, })} />
+        <TooltipProvider>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Input
+                placeholder="Enter Role Name"
+                value={roleSearchForm.role_name}
+                onChange={(e) => setRoleSearchForm({ ...roleSearchForm, role_name: e.target.value, })} />
+            </TooltipTrigger>
+
+            <TooltipContent>
+              <p>Enter Role Name</p>
+            </TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
       </div>
 
     </div>
@@ -3204,34 +3467,74 @@ const WorkoutProgramManagement = () => {
 
       <div className="space-y-2">
         <Label>User Code</Label>
-        <Input
-          placeholder="Enter User Code"
-          value={roleMappingSearchForm.user_code}
-          onChange={(e) => setRoleMappingSearchForm({ ...roleMappingSearchForm, user_code: e.target.value, })} />
+        <TooltipProvider>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Input
+                placeholder="Enter User Code"
+                value={roleMappingSearchForm.user_code}
+                onChange={(e) => setRoleMappingSearchForm({ ...roleMappingSearchForm, user_code: e.target.value, })} />
+            </TooltipTrigger>
+
+            <TooltipContent>
+              <p>Enter User Code</p>
+            </TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
       </div>
 
       <div className="space-y-2">
         <Label>User Name</Label>
-        <Input
-          placeholder="Enter User Name"
-          value={roleMappingSearchForm.user_name}
-          onChange={(e) => setRoleMappingSearchForm({ ...roleMappingSearchForm, user_name: e.target.value, })} />
+        <TooltipProvider>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Input
+                placeholder="Enter User Name"
+                value={roleMappingSearchForm.user_name}
+                onChange={(e) => setRoleMappingSearchForm({ ...roleMappingSearchForm, user_name: e.target.value, })} />
+            </TooltipTrigger>
+
+            <TooltipContent>
+              <p>Enter User Name</p>
+            </TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
       </div>
 
       <div className="space-y-2">
         <Label>Role ID</Label>
-        <Input
-          placeholder="Enter Role ID"
-          value={roleMappingSearchForm.role_id}
-          onChange={(e) => setRoleMappingSearchForm({ ...roleMappingSearchForm, role_id: e.target.value, })} />
+        <TooltipProvider>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Input
+                placeholder="Enter Role ID"
+                value={roleMappingSearchForm.role_id}
+                onChange={(e) => setRoleMappingSearchForm({ ...roleMappingSearchForm, role_id: e.target.value, })} />
+            </TooltipTrigger>
+
+            <TooltipContent>
+              <p>Enter Role ID</p>
+            </TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
       </div>
 
       <div className="space-y-2">
         <Label>Role Name</Label>
-        <Input
-          placeholder="Enter Role Name"
-          value={roleMappingSearchForm.role_name}
-          onChange={(e) => setRoleMappingSearchForm({ ...roleMappingSearchForm, role_name: e.target.value, })} />
+        <TooltipProvider>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Input
+                placeholder="Enter Role Name"
+                value={roleMappingSearchForm.role_name}
+                onChange={(e) => setRoleMappingSearchForm({ ...roleMappingSearchForm, role_name: e.target.value, })} />
+            </TooltipTrigger>
+
+            <TooltipContent>
+              <p>Enter Role Name</p>
+            </TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
       </div>
 
     </div>
@@ -3242,64 +3545,219 @@ const WorkoutProgramManagement = () => {
 
       <div className="space-y-2">
         <Label>Role ID</Label>
-        <Input
-          placeholder="Enter Role ID"
-          value={roleRightsSearchForm.role_id}
-          onChange={(e) => setRoleRightsSearchForm({ ...roleRightsSearchForm, role_id: e.target.value, })} />
+        <TooltipProvider>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Input
+                placeholder="Enter Role ID"
+                value={roleRightsSearchForm.role_id}
+                onChange={(e) => setRoleRightsSearchForm({ ...roleRightsSearchForm, role_id: e.target.value, })} />
+            </TooltipTrigger>
+
+            <TooltipContent>
+              <p>Enter Role ID</p>
+            </TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
       </div>
 
       <div className="space-y-2">
         <Label>Screen Type</Label>
-        <Input
-          placeholder="Enter Screen Type"
-          value={roleRightsSearchForm.screen_type}
-          onChange={(e) => setRoleRightsSearchForm({ ...roleRightsSearchForm, screen_type: e.target.value, })} />
+        <TooltipProvider>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Input
+                placeholder="Enter Screen Type"
+                value={roleRightsSearchForm.screen_type}
+                onChange={(e) => setRoleRightsSearchForm({ ...roleRightsSearchForm, screen_type: e.target.value, })} />
+            </TooltipTrigger>
+
+            <TooltipContent>
+              <p>Enter Screen Type</p>
+            </TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
       </div>
 
       <div className="space-y-2">
         <Label>Permission Type</Label>
-        <Input
-          placeholder="Enter Permission Type"
-          value={roleRightsSearchForm.permission_type}
-          onChange={(e) => setRoleRightsSearchForm({ ...roleRightsSearchForm, permission_type: e.target.value, })} />
+        <TooltipProvider>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Input
+                placeholder="Enter Permission Type"
+                value={roleRightsSearchForm.permission_type}
+                onChange={(e) => setRoleRightsSearchForm({ ...roleRightsSearchForm, permission_type: e.target.value, })} />
+            </TooltipTrigger>
+
+            <TooltipContent>
+              <p>Enter Permission Type</p>
+            </TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
       </div>
 
     </div>
   );
+
+  // const renderUserSearch = () => (
+  //   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+
+  //     <div className="space-y-2">
+  //       <Label>User Code</Label>
+  //       <Input
+  //         placeholder="Enter User Code"
+  //         value={companyMappingSearchForm.user_code}
+  //         onChange={(e) => setCompanyMappingSearchForm({ ...companyMappingSearchForm, user_code: e.target.value, })} />
+  //     </div>
+
+  //     <div className="space-y-2">
+  //       <Label>User Name</Label>
+  //       <Input
+  //         placeholder="Enter User Name"
+  //         value={companyMappingSearchForm.user_code}
+  //         onChange={(e) => setCompanyMappingSearchForm({ ...companyMappingSearchForm, user_code: e.target.value, })} />
+  //     </div>
+
+  //     <div className="space-y-2">
+  //       <Label>First Name</Label>
+  //       <Input
+  //         placeholder="Enter First Name"
+  //         value={companyMappingSearchForm.user_code}
+  //         onChange={(e) => setCompanyMappingSearchForm({ ...companyMappingSearchForm, user_code: e.target.value, })} />
+  //     </div>
+
+  //     <div className="space-y-2">
+  //       <Label>Last Name</Label>
+  //       <Input
+  //         placeholder="Enter Last Name"
+  //         value={companyMappingSearchForm.user_code}
+  //         onChange={(e) => setCompanyMappingSearchForm({ ...companyMappingSearchForm, user_code: e.target.value, })} />
+  //     </div>
+
+  //     <div className="space-y-2">
+  //       <Label>User Status</Label>
+  //       <Select value={companyMappingSearchForm.status} onValueChange={(value) => setCompanyMappingSearchForm({ ...companyMappingSearchForm, status: value, })}>
+  //         <SelectTrigger>
+  //           <SelectValue placeholder="Select User Status" />
+  //         </SelectTrigger>
+  //         <SelectContent>
+  //           {status.map((item: any) => (
+  //             <SelectItem
+  //               key={item.attributedetails_code}
+  //               value={item.attributedetails_code}
+  //             >
+  //               {item.attributedetails_name}
+  //             </SelectItem>
+  //           ))}
+  //         </SelectContent>
+  //       </Select>
+  //     </div>
+
+  //     <div className="space-y-2">
+  //       <Label>DOB</Label>
+  //       <Input
+  //         type='date'
+  //         placeholder="Enter DOB"
+  //         value={companyMappingSearchForm.user_code}
+  //         onChange={(e) => setCompanyMappingSearchForm({ ...companyMappingSearchForm, user_code: e.target.value, })} />
+  //     </div>
+
+  //     <div className="space-y-2">
+  //       <Label>Gender</Label>
+  //       <Select value={companyMappingSearchForm.status} onValueChange={(value) => setCompanyMappingSearchForm({ ...companyMappingSearchForm, status: value, })}>
+  //         <SelectTrigger>
+  //           <SelectValue placeholder="Select Gender" />
+  //         </SelectTrigger>
+  //         <SelectContent>
+  //           {gender.map((gender: any) => (
+  //             <SelectItem
+  //               key={gender.attributedetails_code}
+  //               value={gender.attributedetails_code}
+  //             >
+  //               {gender.attributedetails_name}
+  //             </SelectItem>
+  //           ))}
+  //         </SelectContent>
+  //       </Select>
+  //     </div>
+
+  //   </div>
+  // );
 
   const renderAttributeSearch = () => (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
 
       <div className="space-y-2">
         <Label>Code</Label>
-        <Input
-          placeholder="Enter Code"
-          value={attributeSearchForm.attributeheader_code}
-          onChange={(e) => setAttributeSearchForm({ ...attributeSearchForm, attributeheader_code: e.target.value, })} />
+        <TooltipProvider>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Input
+                placeholder="Enter Code"
+                value={attributeSearchForm.attributeheader_code}
+                onChange={(e) => setAttributeSearchForm({ ...attributeSearchForm, attributeheader_code: e.target.value, })} />
+            </TooltipTrigger>
+
+            <TooltipContent>
+              <p>Enter Code</p>
+            </TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
       </div>
 
       <div className="space-y-2">
         <Label>Sub Code</Label>
-        <Input
-          placeholder="Enter Sub Code"
-          value={attributeSearchForm.attributedetails_code}
-          onChange={(e) => setAttributeSearchForm({ ...attributeSearchForm, attributedetails_code: e.target.value, })} />
+        <TooltipProvider>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Input
+                placeholder="Enter Sub Code"
+                value={attributeSearchForm.attributedetails_code}
+                onChange={(e) => setAttributeSearchForm({ ...attributeSearchForm, attributedetails_code: e.target.value, })} />
+            </TooltipTrigger>
+
+            <TooltipContent>
+              <p>Enter Sub Code</p>
+            </TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
       </div>
 
       <div className="space-y-2">
         <Label>Detail Name</Label>
-        <Input
-          placeholder="Enter Detail Name"
-          value={attributeSearchForm.attributedetails_name}
-          onChange={(e) => setAttributeSearchForm({ ...attributeSearchForm, attributedetails_name: e.target.value, })} />
+        <TooltipProvider>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Input
+                placeholder="Enter Detail Name"
+                value={attributeSearchForm.attributedetails_name}
+                onChange={(e) => setAttributeSearchForm({ ...attributeSearchForm, attributedetails_name: e.target.value, })} />
+            </TooltipTrigger>
+
+            <TooltipContent>
+              <p>Enter Detail Name</p>
+            </TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
       </div>
 
       <div className="space-y-2">
         <Label>Description</Label>
-        <Input
-          placeholder="Enter Description"
-          value={attributeSearchForm.descriptions}
-          onChange={(e) => setAttributeSearchForm({ ...attributeSearchForm, descriptions: e.target.value, })} />
+        <TooltipProvider>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Input
+                placeholder="Enter Description"
+                value={attributeSearchForm.descriptions}
+                onChange={(e) => setAttributeSearchForm({ ...attributeSearchForm, descriptions: e.target.value, })} />
+            </TooltipTrigger>
+
+            <TooltipContent>
+              <p>Enter Description</p>
+            </TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
       </div>
 
     </div>
@@ -3337,6 +3795,87 @@ const WorkoutProgramManagement = () => {
 
       case "attribute":
         handleAttributeSearch();
+        break;
+
+      default:
+        break;
+    }
+  };
+
+  const handleReset = () => {
+    switch (activeTab) {
+      case "company":
+        setCompanySearchForm({
+          company_no: "",
+          company_name: "",
+          city: "",
+          state: "",
+          pincode: "",
+          country: "",
+          gst_no: "",
+          status: "",
+        });
+        setCompanies([]);
+        break;
+
+      case "companyMapping":
+        setCompanyMappingSearchForm({
+          user_code: "",
+          company_no: "",
+          location_no: "",
+          status: "",
+        });
+        setCompanyMappings([]);
+        break;
+
+      case "location":
+        setLocationSearchForm({
+          location_no: "",
+          location_name: "",
+          city: "",
+          state: "",
+          pincode: "",
+          country: "",
+          status: "",
+        });
+        setLocations([]);
+        break;
+
+      case "role":
+        setRoleSearchForm({
+          role_id: "",
+          role_name: "",
+        });
+        setRoles([]);
+        break;
+
+      case "roleMapping":
+        setRoleMappingSearchForm({
+          user_code: "",
+          user_name: "",
+          role_id: "",
+          role_name: "",
+        });
+        setRoleMappings([]);
+        break;
+
+      case "roleRights":
+        setRoleRightsSearchForm({
+          role_id: "",
+          screen_type: "",
+          permission_type: "",
+        });
+        setRoleRights([]);
+        break;
+
+      case "attribute":
+        setAttributeSearchForm({
+          attributeheader_code: "",
+          attributedetails_code: "",
+          attributedetails_name: "",
+          descriptions: "",
+        });
+        setAttributes([]);
         break;
 
       default:
@@ -3384,22 +3923,42 @@ const WorkoutProgramManagement = () => {
             {activeTab === "attribute" && renderAttributeSearch()}
 
             <div className="flex justify-end gap-4 mt-6">
-              <Button
-                size="icon"
-                className="rounded-full"
-                onClick={handleSearch}
-              >
-                <Search className="h-5 w-5" />
-              </Button>
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Button
+                      size="icon"
+                      className="rounded-full"
+                      onClick={handleSearch}
+                    >
+                      <Search className="h-5 w-5" />
+                    </Button>
+                  </TooltipTrigger>
 
-              <Button
-                size="icon"
-                variant="secondary"
-                className="rounded-full"
-              // onClick={handleReset}
-              >
-                <RotateCcw className="h-5 w-5" />
-              </Button>
+                  <TooltipContent>
+                    <p>Handle Search</p>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Button
+                      size="icon"
+                      variant="secondary"
+                      className="rounded-full"
+                      onClick={handleReset}
+                    >
+                      <RotateCcw className="h-5 w-5" />
+                    </Button>
+                  </TooltipTrigger>
+
+                  <TooltipContent>
+                    <p>Handle Reset</p>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
             </div>
 
           </CardContent>
@@ -3660,7 +4219,7 @@ const WorkoutProgramManagement = () => {
           </TabsContent>
 
           {/* Role Tab */}
-          <TabsContent value="role">
+          {/* <TabsContent value="role">
             <Card>
               <CardHeader>
                 <CardTitle>Role</CardTitle>
@@ -3709,6 +4268,26 @@ const WorkoutProgramManagement = () => {
                     ))}
                   </TableBody>
                 </Table>
+              </CardContent>
+            </Card>
+          </TabsContent> */}
+
+          {/* Role Tab */}
+          <TabsContent value="role">
+            <Card>
+              <CardHeader>
+                <CardTitle>Role</CardTitle>
+                <CardDescription>
+                  Manage all roles and their details
+                </CardDescription>
+              </CardHeader>
+
+              <CardContent>
+                <AgGridTable
+                  rowData={roles}
+                  columnDefs={roleColumnDefs}
+                  height="300px"
+                />
               </CardContent>
             </Card>
           </TabsContent>
@@ -3964,228 +4543,423 @@ const WorkoutProgramManagement = () => {
 
                   <div className="space-y-2">
                     <Label htmlFor="name" className={submittedCompany && !companyForm.company_no ? "text-red-500" : ""}>Company Code*</Label>
-                    <Input
-                      id="name"
-                      value={companyForm.company_no}
-                      onChange={(e) => setCompanyForm({ ...companyForm, company_no: e.target.value })}
-                      placeholder="Enter company code (e.g., CMP001)"
-                    />
+                    <TooltipProvider>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <Input
+                            id="name"
+                            readOnly={!!editingCompany}
+                            value={companyForm.company_no}
+                            onChange={(e) => setCompanyForm({ ...companyForm, company_no: e.target.value })}
+                            placeholder="Enter company code (e.g., CMP001)"
+                          />
+                        </TooltipTrigger>
+
+                        <TooltipContent>
+                          <p>
+                            {editingCompany
+                              ? "Company Code cannot be changed while editing."
+                              : "Enter company code"}
+                          </p>
+                        </TooltipContent>
+                      </Tooltip>
+                    </TooltipProvider>
                   </div>
 
                   <div className="space-y-2">
                     <Label htmlFor="name" className={submittedCompany && !companyForm.company_name ? "text-red-500" : ""}>Company Name*</Label>
-                    <Input
-                      id="name"
-                      value={companyForm.company_name}
-                      onChange={(e) => setCompanyForm({ ...companyForm, company_name: e.target.value })}
-                      placeholder="Enter company name (e.g., ABC Fitness Pvt Ltd)"
-                    />
+                    <TooltipProvider>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <Input
+                            id="name"
+                            value={companyForm.company_name}
+                            onChange={(e) => setCompanyForm({ ...companyForm, company_name: e.target.value })}
+                            placeholder="Enter company name (e.g., ABC Fitness Pvt Ltd)"
+                          />
+                        </TooltipTrigger>
+
+                        <TooltipContent>
+                          <p>Enter company name</p>
+                        </TooltipContent>
+                      </Tooltip>
+                    </TooltipProvider>
                   </div>
 
                   <div className="space-y-2">
                     <Label htmlFor="name">Short Name</Label>
-                    <Input
-                      id="name"
-                      value={companyForm.short_name}
-                      onChange={(e) => setCompanyForm({ ...companyForm, short_name: e.target.value })}
-                      placeholder="Enter short name (e.g., ABC)"
-                    />
+                    <TooltipProvider>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <Input
+                            id="name"
+                            value={companyForm.short_name}
+                            onChange={(e) => setCompanyForm({ ...companyForm, short_name: e.target.value })}
+                            placeholder="Enter short name (e.g., ABC)"
+                          />
+                        </TooltipTrigger>
+
+                        <TooltipContent>
+                          <p>Enter short name</p>
+                        </TooltipContent>
+                      </Tooltip>
+                    </TooltipProvider>
                   </div>
 
                   <div className="space-y-2">
                     <Label htmlFor="name" className={submittedCompany && !companyForm.address1 ? "text-red-500" : ""}>Address 1*</Label>
-                    <Input
-                      id="name"
-                      value={companyForm.address1}
-                      onChange={(e) => setCompanyForm({ ...companyForm, address1: e.target.value })}
-                      placeholder="Enter address line 1"
-                    />
+                    <TooltipProvider>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <Input
+                            id="name"
+                            value={companyForm.address1}
+                            onChange={(e) => setCompanyForm({ ...companyForm, address1: e.target.value })}
+                            placeholder="Enter address line 1"
+                          />
+                        </TooltipTrigger>
+
+                        <TooltipContent>
+                          <p>Enter address line 1</p>
+                        </TooltipContent>
+                      </Tooltip>
+                    </TooltipProvider>
                   </div>
 
                   <div className="space-y-2">
                     <Label htmlFor="name" className={submittedCompany && !companyForm.address2 ? "text-red-500" : ""}>Address 2*</Label>
-                    <Input
-                      id="name"
-                      value={companyForm.address2}
-                      onChange={(e) => setCompanyForm({ ...companyForm, address2: e.target.value })}
-                      placeholder="Enter address line 2"
-                    />
+                    <TooltipProvider>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <Input
+                            id="name"
+                            value={companyForm.address2}
+                            onChange={(e) => setCompanyForm({ ...companyForm, address2: e.target.value })}
+                            placeholder="Enter address line 2"
+                          />
+                        </TooltipTrigger>
+
+                        <TooltipContent>
+                          <p>Enter address line 2</p>
+                        </TooltipContent>
+                      </Tooltip>
+                    </TooltipProvider>
                   </div>
 
                   <div className="space-y-2">
                     <Label htmlFor="name">Address 3</Label>
-                    <Input
-                      id="name"
-                      value={companyForm.address3}
-                      onChange={(e) => setCompanyForm({ ...companyForm, address3: e.target.value })}
-                      placeholder="Enter address line 3 (optional)"
-                    />
+                    <TooltipProvider>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <Input
+                            id="name"
+                            value={companyForm.address3}
+                            onChange={(e) => setCompanyForm({ ...companyForm, address3: e.target.value })}
+                            placeholder="Enter address line 3 (optional)"
+                          />
+                        </TooltipTrigger>
+
+                        <TooltipContent>
+                          <p>Enter address line 3</p>
+                        </TooltipContent>
+                      </Tooltip>
+                    </TooltipProvider>
                   </div>
 
                   <div className="space-y-2">
                     <Label htmlFor="city" className={submittedCompany && !companyForm.city ? "text-red-500" : ""}>City*</Label>
-                    <Select value={companyForm.city} onValueChange={(value) => setCompanyForm({ ...companyForm, city: value })}>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select City" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {cities.map((city: any) => (
-                          <SelectItem
-                            key={city.attributedetails_name}
-                            value={city.attributedetails_name}
-                          >
-                            {city.attributedetails_name}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
+                    <TooltipProvider>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <div>
+                            <Select value={companyForm.city} onValueChange={(value) => setCompanyForm({ ...companyForm, city: value })}>
+                              <SelectTrigger>
+                                <SelectValue placeholder="Select City" />
+                              </SelectTrigger>
+                              <SelectContent>
+                                {cities.map((city: any) => (
+                                  <SelectItem
+                                    key={city.attributedetails_name}
+                                    value={city.attributedetails_name}
+                                  >
+                                    {city.attributedetails_name}
+                                  </SelectItem>
+                                ))}
+                              </SelectContent>
+                            </Select>
+                          </div>
+                        </TooltipTrigger>
+
+                        <TooltipContent>
+                          <p>Select the city</p>
+                        </TooltipContent>
+                      </Tooltip>
+                    </TooltipProvider>
                   </div>
 
                   <div className="space-y-2">
                     <Label htmlFor="state" className={submittedCompany && !companyForm.state ? "text-red-500" : ""}>State*</Label>
-                    <Select value={companyForm.state} onValueChange={(value) => setCompanyForm({ ...companyForm, state: value })}>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select State" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {states.map((state: any) => (
-                          <SelectItem
-                            key={state.attributedetails_name}
-                            value={state.attributedetails_name}
-                          >
-                            {state.attributedetails_name}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
+                    <TooltipProvider>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <div>
+                            <Select value={companyForm.state} onValueChange={(value) => setCompanyForm({ ...companyForm, state: value })}>
+                              <SelectTrigger>
+                                <SelectValue placeholder="Select State" />
+                              </SelectTrigger>
+                              <SelectContent>
+                                {states.map((state: any) => (
+                                  <SelectItem
+                                    key={state.attributedetails_name}
+                                    value={state.attributedetails_name}
+                                  >
+                                    {state.attributedetails_name}
+                                  </SelectItem>
+                                ))}
+                              </SelectContent>
+                            </Select>
+                          </div>
+                        </TooltipTrigger>
+
+                        <TooltipContent>
+                          <p>Select the state</p>
+                        </TooltipContent>
+                      </Tooltip>
+                    </TooltipProvider>
                   </div>
 
                   <div className="space-y-2">
                     <Label htmlFor="name" className={submittedCompany && !companyForm.pincode ? "text-red-500" : ""}>Pin Code*</Label>
-                    <Input
-                      id="name"
-                      value={companyForm.pincode}
-                      onChange={(e) => setCompanyForm({ ...companyForm, pincode: e.target.value })}
-                      placeholder="Enter PIN code (e.g., 600001)"
-                    />
+                    <TooltipProvider>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <Input
+                            id="name"
+                            value={companyForm.pincode}
+                            onChange={(e) => setCompanyForm({ ...companyForm, pincode: e.target.value })}
+                            placeholder="Enter PIN code (e.g., 600001)"
+                          />
+                        </TooltipTrigger>
+
+                        <TooltipContent>
+                          <p>Enter GST No</p>
+                        </TooltipContent>
+                      </Tooltip>
+                    </TooltipProvider>
                   </div>
 
                   <div className="space-y-2">
                     <Label htmlFor="country" className={submittedCompany && !companyForm.country ? "text-red-500" : ""}>Country*</Label>
-                    <Select value={companyForm.country} onValueChange={(value) => setCompanyForm({ ...companyForm, country: value })}>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select Country" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {countries.map((country: any) => (
-                          <SelectItem
-                            key={country.attributedetails_name}
-                            value={country.attributedetails_name}
-                          >
-                            {country.attributedetails_name}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
+                    <TooltipProvider>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <div>
+                            <Select value={companyForm.country} onValueChange={(value) => setCompanyForm({ ...companyForm, country: value })}>
+                              <SelectTrigger>
+                                <SelectValue placeholder="Select Country" />
+                              </SelectTrigger>
+                              <SelectContent>
+                                {countries.map((country: any) => (
+                                  <SelectItem
+                                    key={country.attributedetails_name}
+                                    value={country.attributedetails_name}
+                                  >
+                                    {country.attributedetails_name}
+                                  </SelectItem>
+                                ))}
+                              </SelectContent>
+                            </Select>
+                          </div>
+                        </TooltipTrigger>
+
+                        <TooltipContent>
+                          <p>Select the country</p>
+                        </TooltipContent>
+                      </Tooltip>
+                    </TooltipProvider>
                   </div>
 
                   <div className="space-y-2">
                     <Label htmlFor="name" className={submittedCompany && !companyForm.email_id ? "text-red-500" : ""}>Email*</Label>
-                    <Input
-                      id="name"
-                      value={companyForm.email_id}
-                      onChange={(e) => setCompanyForm({ ...companyForm, email_id: e.target.value })}
-                      placeholder="Enter email address (e.g., info@company.com)"
-                    />
+                    <TooltipProvider>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <Input
+                            id="name"
+                            value={companyForm.email_id}
+                            onChange={(e) => setCompanyForm({ ...companyForm, email_id: e.target.value })}
+                            placeholder="Enter email address (e.g., info@company.com)"
+                          />
+                        </TooltipTrigger>
+
+                        <TooltipContent>
+                          <p>Enter email address</p>
+                        </TooltipContent>
+                      </Tooltip>
+                    </TooltipProvider>
                   </div>
 
                   <div className="space-y-2">
                     <Label htmlFor="status" className={submittedCompany && !companyForm.status ? "text-red-500" : ""}>Status*</Label>
-                    <Select value={companyForm.status} onValueChange={(value) => setCompanyForm({ ...companyForm, status: value })}>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select Status" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {status.map((status: any) => (
-                          <SelectItem
-                            key={status.attributedetails_name}
-                            value={status.attributedetails_name}
-                          >
-                            {status.attributedetails_name}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
+                    <TooltipProvider>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <div>
+                            <Select value={companyForm.status} onValueChange={(value) => setCompanyForm({ ...companyForm, status: value })}>
+                              <SelectTrigger>
+                                <SelectValue placeholder="Select Status" />
+                              </SelectTrigger>
+                              <SelectContent>
+                                {status.map((status: any) => (
+                                  <SelectItem
+                                    key={status.attributedetails_name}
+                                    value={status.attributedetails_name}
+                                  >
+                                    {status.attributedetails_name}
+                                  </SelectItem>
+                                ))}
+                              </SelectContent>
+                            </Select>
+                          </div>
+                        </TooltipTrigger>
+
+                        <TooltipContent>
+                          <p>Select the status</p>
+                        </TooltipContent>
+                      </Tooltip>
+                    </TooltipProvider>
                   </div>
 
                   <div className="space-y-2">
                     <Label htmlFor="name">Founded Date</Label>
-                    <Input
-                      id="name"
-                      type="date"
-                      value={companyForm.foundedDate}
-                      onChange={(e) => setCompanyForm({ ...companyForm, foundedDate: e.target.value })}
-                      placeholder="Select founded date"
-                    />
+                    <TooltipProvider>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <Input
+                            id="name"
+                            type="date"
+                            value={companyForm.foundedDate}
+                            onChange={(e) => setCompanyForm({ ...companyForm, foundedDate: e.target.value })}
+                            placeholder="Select founded date"
+                          />
+                        </TooltipTrigger>
+
+                        <TooltipContent>
+                          <p>Select founded date</p>
+                        </TooltipContent>
+                      </Tooltip>
+                    </TooltipProvider>
                   </div>
 
                   <div className="space-y-2">
                     <Label htmlFor="name">Website URL</Label>
-                    <Input
-                      id="name"
-                      value={companyForm.websiteURL}
-                      onChange={(e) => setCompanyForm({ ...companyForm, websiteURL: e.target.value })}
-                      placeholder="Enter website URL (e.g., https://www.company.com)"
-                    />
+                    <TooltipProvider>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <Input
+                            id="name"
+                            value={companyForm.websiteURL}
+                            onChange={(e) => setCompanyForm({ ...companyForm, websiteURL: e.target.value })}
+                            placeholder="Enter website URL (e.g., https://www.company.com)"
+                          />
+                        </TooltipTrigger>
+
+                        <TooltipContent>
+                          <p>Enter website URL</p>
+                        </TooltipContent>
+                      </Tooltip>
+                    </TooltipProvider>
                   </div>
 
                   <div className="space-y-2">
                     <Label htmlFor="name" className={submittedCompany && !companyForm.contact_no ? "text-red-500" : ""}>Contact No*</Label>
-                    <Input
-                      id="name"
-                      value={companyForm.contact_no}
-                      onChange={(e) => setCompanyForm({ ...companyForm, contact_no: e.target.value })}
-                      placeholder="Enter contact number (e.g., +91 9876543210)"
-                    />
+                    <TooltipProvider>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <Input
+                            id="name"
+                            value={companyForm.contact_no}
+                            onChange={(e) => setCompanyForm({ ...companyForm, contact_no: e.target.value })}
+                            placeholder="Enter contact number (e.g., +91 9876543210)"
+                          />
+                        </TooltipTrigger>
+
+                        <TooltipContent>
+                          <p>Enter contact number</p>
+                        </TooltipContent>
+                      </Tooltip>
+                    </TooltipProvider>
                   </div>
 
                   <div className="space-y-2">
                     <Label htmlFor="name">Annual Report URL</Label>
-                    <Input
-                      id="name"
-                      value={companyForm.annualReportURL}
-                      onChange={(e) => setCompanyForm({ ...companyForm, annualReportURL: e.target.value })}
-                      placeholder="Enter annual report URL"
-                    />
+                    <TooltipProvider>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <Input
+                            id="name"
+                            value={companyForm.annualReportURL}
+                            onChange={(e) => setCompanyForm({ ...companyForm, annualReportURL: e.target.value })}
+                            placeholder="Enter annual report URL"
+                          />
+                        </TooltipTrigger>
+
+                        <TooltipContent>
+                          <p>Enter annual report URL</p>
+                        </TooltipContent>
+                      </Tooltip>
+                    </TooltipProvider>
                   </div>
 
                   <div className="space-y-2">
                     <Label htmlFor="name">GST No</Label>
-                    <Input
-                      id="name"
-                      value={companyForm.company_gst_no}
-                      onChange={(e) => setCompanyForm({ ...companyForm, company_gst_no: e.target.value })}
-                      placeholder="Enter GST number (e.g., 33ABCDE1234F1Z5)"
-                    />
+                    <TooltipProvider>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <Input
+                            id="name"
+                            value={companyForm.company_gst_no}
+                            onChange={(e) => setCompanyForm({ ...companyForm, company_gst_no: e.target.value })}
+                            placeholder="Enter GST number (e.g., 33ABCDE1234F1Z5)"
+                          />
+                        </TooltipTrigger>
+
+                        <TooltipContent>
+                          <p>Enter GST number</p>
+                        </TooltipContent>
+                      </Tooltip>
+                    </TooltipProvider>
                   </div>
 
                   <div className="space-y-2">
                     <Label htmlFor="name" className={submittedCompany && !companyForm.location_no ? "text-red-500" : ""}>Location No*</Label>
-                    <Select value={companyForm.location_no} onValueChange={(value) => setCompanyForm({ ...companyForm, location_no: value })}>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select Location" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {location.map((location: any) => (
-                          <SelectItem
-                            key={location.location_no}
-                            value={location.location_no}
-                          >
-                            {location.location_no} - {location.location_name}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
+                    <TooltipProvider>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <div>
+                            <Select value={companyForm.location_no} onValueChange={(value) => setCompanyForm({ ...companyForm, location_no: value })}>
+                              <SelectTrigger>
+                                <SelectValue placeholder="Select Location" />
+                              </SelectTrigger>
+                              <SelectContent>
+                                {location.map((location: any) => (
+                                  <SelectItem
+                                    key={location.location_no}
+                                    value={location.location_no}
+                                  >
+                                    {location.location_no} - {location.location_name}
+                                  </SelectItem>
+                                ))}
+                              </SelectContent>
+                            </Select>
+                          </div>
+                        </TooltipTrigger>
+
+                        <TooltipContent>
+                          <p>Select the status</p>
+                        </TooltipContent>
+                      </Tooltip>
+                    </TooltipProvider>
                   </div>
 
                 </div>
@@ -4197,15 +4971,44 @@ const WorkoutProgramManagement = () => {
                 onImagesChange={setCompanyImages}
                 onFilesChange={handleCompanyFiles}
                 maxImages={2}
+                tooltips={["Upload Company Logo", "Upload Signature"]}
               />
 
             </div>
             <DialogFooter>
-              <Button variant="outline" onClick={() => {
-                setSubmittedCompany(false);
-                setIsCompanyDialogOpen(false);
-              }}>Cancel</Button>
-              <Button onClick={handleSaveCompany}>{editingCompany ? 'Update' : 'Create'} Company</Button>
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Button
+                      variant="outline"
+                      onClick={() => {
+                        setSubmittedCompany(false);
+                        setIsCompanyDialogOpen(false);
+                      }}
+                    >
+                      Cancel
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <p>Cancel without saving changes.</p>
+                  </TooltipContent>
+                </Tooltip>
+
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Button onClick={handleSaveCompany}>
+                      {editingCompany ? "Update" : "Create"} Company
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <p>
+                      {editingCompany
+                        ? "Update company details"
+                        : "Create a company"}
+                    </p>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
             </DialogFooter>
           </DialogContent>
         </Dialog>
@@ -4231,99 +5034,183 @@ const WorkoutProgramManagement = () => {
 
                   <div className="space-y-2">
                     <Label htmlFor="user" className={submittedCompanyMapping && !companyMappingForm.user_code ? "text-red-500" : ""}>User Code*</Label>
-                    <Select value={companyMappingForm.user_code} onValueChange={(value) => setCompanyMappingForm({ ...companyMappingForm, user_code: value })}>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select User Code" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {user.map((user: any) => (
-                          <SelectItem
-                            key={user.user_code}
-                            value={user.user_code}
-                          >
-                            {user.user_code} - {user.user_name}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
+                    <TooltipProvider>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <div>
+                            <Select value={companyMappingForm.user_code} onValueChange={(value) => setCompanyMappingForm({ ...companyMappingForm, user_code: value })}>
+                              <SelectTrigger>
+                                <SelectValue placeholder="Select User Code" />
+                              </SelectTrigger>
+                              <SelectContent>
+                                {user.map((user: any) => (
+                                  <SelectItem
+                                    key={user.user_code}
+                                    value={user.user_code}
+                                  >
+                                    {user.user_code} - {user.user_name}
+                                  </SelectItem>
+                                ))}
+                              </SelectContent>
+                            </Select>
+                          </div>
+                        </TooltipTrigger>
+
+                        <TooltipContent>
+                          <p>Select the user code</p>
+                        </TooltipContent>
+                      </Tooltip>
+                    </TooltipProvider>
                   </div>
 
                   <div className="space-y-2">
                     <Label htmlFor="company" className={submittedCompanyMapping && !companyMappingForm.company_no ? "text-red-500" : ""}>Company Code*</Label>
-                    <Select value={companyMappingForm.company_no} onValueChange={(value) => setCompanyMappingForm({ ...companyMappingForm, company_no: value })}>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select Company Code" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {company.map((company: any) => (
-                          <SelectItem
-                            key={company.company_no}
-                            value={company.company_no}
-                          >
-                            {company.company_no} - {company.company_name}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
+                    <TooltipProvider>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <div>
+                            <Select value={companyMappingForm.company_no} onValueChange={(value) => setCompanyMappingForm({ ...companyMappingForm, company_no: value })}>
+                              <SelectTrigger>
+                                <SelectValue placeholder="Select Company Code" />
+                              </SelectTrigger>
+                              <SelectContent>
+                                {company.map((company: any) => (
+                                  <SelectItem
+                                    key={company.company_no}
+                                    value={company.company_no}
+                                  >
+                                    {company.company_no} - {company.company_name}
+                                  </SelectItem>
+                                ))}
+                              </SelectContent>
+                            </Select>
+                          </div>
+                        </TooltipTrigger>
+
+                        <TooltipContent>
+                          <p>Select the company code</p>
+                        </TooltipContent>
+                      </Tooltip>
+                    </TooltipProvider>
                   </div>
 
                   <div className="space-y-2">
                     <Label htmlFor="location" className={submittedCompanyMapping && !companyMappingForm.location_no ? "text-red-500" : ""}>Location No*</Label>
-                    <Select value={companyMappingForm.location_no} onValueChange={(value) => setCompanyMappingForm({ ...companyMappingForm, location_no: value })}>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select Location No" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {location.map((location: any) => (
-                          <SelectItem
-                            key={location.location_no}
-                            value={location.location_no}
-                          >
-                            {location.location_no} - {location.location_name}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
+                    <TooltipProvider>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <div>
+                            <Select value={companyMappingForm.location_no} onValueChange={(value) => setCompanyMappingForm({ ...companyMappingForm, location_no: value })}>
+                              <SelectTrigger>
+                                <SelectValue placeholder="Select Location No" />
+                              </SelectTrigger>
+                              <SelectContent>
+                                {location.map((location: any) => (
+                                  <SelectItem
+                                    key={location.location_no}
+                                    value={location.location_no}
+                                  >
+                                    {location.location_no} - {location.location_name}
+                                  </SelectItem>
+                                ))}
+                              </SelectContent>
+                            </Select>
+                          </div>
+                        </TooltipTrigger>
+
+                        <TooltipContent>
+                          <p>Select the location no</p>
+                        </TooltipContent>
+                      </Tooltip>
+                    </TooltipProvider>
                   </div>
 
                   <div className="space-y-2">
                     <Label htmlFor="status" className={submittedCompanyMapping && !companyMappingForm.status ? "text-red-500" : ""}>Status*</Label>
-                    <Select value={companyMappingForm.status} onValueChange={(value) => setCompanyMappingForm({ ...companyMappingForm, status: value })}>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select Status" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {status.map((status: any) => (
-                          <SelectItem
-                            key={status.attributedetails_code}
-                            value={status.attributedetails_code}
-                          >
-                            {status.attributedetails_name}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
+                    <TooltipProvider>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <div>
+                            <Select value={companyMappingForm.status} onValueChange={(value) => setCompanyMappingForm({ ...companyMappingForm, status: value })}>
+                              <SelectTrigger>
+                                <SelectValue placeholder="Select Status" />
+                              </SelectTrigger>
+                              <SelectContent>
+                                {status.map((status: any) => (
+                                  <SelectItem
+                                    key={status.attributedetails_code}
+                                    value={status.attributedetails_code}
+                                  >
+                                    {status.attributedetails_name}
+                                  </SelectItem>
+                                ))}
+                              </SelectContent>
+                            </Select>
+                          </div>
+                        </TooltipTrigger>
+
+                        <TooltipContent>
+                          <p>Select the status</p>
+                        </TooltipContent>
+                      </Tooltip>
+                    </TooltipProvider>
                   </div>
 
                   <div className="space-y-2">
                     <Label htmlFor="name">Order No</Label>
-                    <Input
-                      id="name"
-                      value={companyMappingForm.order_no}
-                      onChange={(e) => setCompanyMappingForm({ ...companyMappingForm, order_no: e.target.value })}
-                      placeholder="e.g., Weight Loss Transformation"
-                    />
+                    <TooltipProvider>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <Input
+                            id="name"
+                            value={companyMappingForm.order_no}
+                            onChange={(e) => setCompanyMappingForm({ ...companyMappingForm, order_no: e.target.value })}
+                            placeholder="e.g., Weight Loss Transformation"
+                          />
+                        </TooltipTrigger>
+
+                        <TooltipContent>
+                          <p>Enter the order number</p>
+                        </TooltipContent>
+                      </Tooltip>
+                    </TooltipProvider>
                   </div>
+
 
                 </div>
               </div>
             </div>
             <DialogFooter>
-              <Button variant="outline" onClick={() => {
-                setSubmittedCompanyMapping(false);
-                setIsCompanyMappingDialogOpen(false);
-              }}>Cancel</Button>
-              <Button onClick={handleSaveCompanyMapping}>{editingCompanyMapping ? 'Update' : 'Create'} Company Mapping</Button>
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Button variant="outline" onClick={() => {
+                      setSubmittedCompanyMapping(false);
+                      setIsCompanyMappingDialogOpen(false);
+                    }}>Cancel</Button>
+                  </TooltipTrigger>
+
+                  <TooltipContent>
+                    <p>Cancel without saving changes.</p>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Button onClick={handleSaveCompanyMapping}>{editingCompanyMapping ? 'Update' : 'Create'} Company Mapping</Button>
+                  </TooltipTrigger>
+
+                  <TooltipContent>
+                    <p>
+                      {editingCompanyMapping
+                        ? "Update company mapping"
+                        : "Create a company mapping"}
+                    </p>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
             </DialogFooter>
           </DialogContent>
         </Dialog>
@@ -4349,178 +5236,347 @@ const WorkoutProgramManagement = () => {
 
                   <div className="space-y-2">
                     <Label htmlFor="name" className={submittedLocation && !locationForm.location_no ? "text-red-500" : ""}>Location No*</Label>
-                    <Input
-                      id="name"
-                      value={locationForm.location_no}
-                      onChange={(e) => setLocationForm({ ...locationForm, location_no: e.target.value })}
-                      placeholder="Enter location number (e.g., LOC001)"
-                    />
+                    <TooltipProvider>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <Input
+                            id="name"
+                            readOnly={!!editingLocation}
+                            value={locationForm.location_no}
+                            onChange={(e) => setLocationForm({ ...locationForm, location_no: e.target.value })}
+                            placeholder="Enter location number (e.g., LOC001)"
+                          />
+                        </TooltipTrigger>
+
+                        <TooltipContent>
+                          <p>
+                            {editingLocation
+                              ? "Location No cannot be changed while editing."
+                              : "Enter location number"}
+                          </p>
+                        </TooltipContent>
+                      </Tooltip>
+                    </TooltipProvider>
                   </div>
 
                   <div className="space-y-2">
                     <Label htmlFor="name" className={submittedLocation && !locationForm.location_name ? "text-red-500" : ""}>Location Name*</Label>
-                    <Input
-                      id="name"
-                      value={locationForm.location_name}
-                      onChange={(e) => setLocationForm({ ...locationForm, location_name: e.target.value })}
-                      placeholder="Enter location name (e.g., Chennai Branch)"
-                    />
+                    <TooltipProvider>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <Input
+                            id="name"
+                            value={locationForm.location_name}
+                            onChange={(e) => setLocationForm({ ...locationForm, location_name: e.target.value })}
+                            placeholder="Enter location name (e.g., Chennai Branch)"
+                          />
+                        </TooltipTrigger>
+
+                        <TooltipContent>
+                          <p>Enter location name</p>
+                        </TooltipContent>
+                      </Tooltip>
+                    </TooltipProvider>
                   </div>
 
                   <div className="space-y-2">
                     <Label htmlFor="name" className={submittedLocation && !locationForm.short_name ? "text-red-500" : ""}>Short Name*</Label>
-                    <Input
-                      id="name"
-                      value={locationForm.short_name}
-                      onChange={(e) => setLocationForm({ ...locationForm, short_name: e.target.value })}
-                      placeholder="Enter short name (e.g., CHN)"
-                    />
+                    <TooltipProvider>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <Input
+                            id="name"
+                            value={locationForm.short_name}
+                            onChange={(e) => setLocationForm({ ...locationForm, short_name: e.target.value })}
+                            placeholder="Enter short name (e.g., CHN)"
+                          />
+                        </TooltipTrigger>
+
+                        <TooltipContent>
+                          <p>Enter short name</p>
+                        </TooltipContent>
+                      </Tooltip>
+                    </TooltipProvider>
                   </div>
 
                   <div className="space-y-2">
                     <Label htmlFor="name" className={submittedLocation && !locationForm.address1 ? "text-red-500" : ""}>Address 1*</Label>
-                    <Input
-                      id="name"
-                      value={locationForm.address1}
-                      onChange={(e) => setLocationForm({ ...locationForm, address1: e.target.value })}
-                      placeholder="Enter address line 1"
-                    />
+                    <TooltipProvider>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <Input
+                            id="name"
+                            value={locationForm.address1}
+                            onChange={(e) => setLocationForm({ ...locationForm, address1: e.target.value })}
+                            placeholder="Enter address line 1"
+                          />
+                        </TooltipTrigger>
+
+                        <TooltipContent>
+                          <p>Enter address line 1</p>
+                        </TooltipContent>
+                      </Tooltip>
+                    </TooltipProvider>
                   </div>
 
                   <div className="space-y-2">
                     <Label htmlFor="name" className={submittedLocation && !locationForm.address2 ? "text-red-500" : ""}>Address 2*</Label>
-                    <Input
-                      id="name"
-                      value={locationForm.address2}
-                      onChange={(e) => setLocationForm({ ...locationForm, address2: e.target.value })}
-                      placeholder="Enter address line 2"
-                    />
-                  </div>
+                    <TooltipProvider>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <Input
+                            id="name"
+                            value={locationForm.address2}
+                            onChange={(e) => setLocationForm({ ...locationForm, address2: e.target.value })}
+                            placeholder="Enter address line 2"
+                          />
+                        </TooltipTrigger>
 
+                        <TooltipContent>
+                          <p>Enter address line 2</p>
+                        </TooltipContent>
+                      </Tooltip>
+                    </TooltipProvider>
+                  </div>
                   <div className="space-y-2">
                     <Label htmlFor="name">Address 3</Label>
-                    <Input
-                      id="name"
-                      value={locationForm.address3}
-                      onChange={(e) => setLocationForm({ ...locationForm, address3: e.target.value })}
-                      placeholder="Enter address line 3 (optional)"
-                    />
+                    <TooltipProvider>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <Input
+                            id="name"
+                            value={locationForm.address3}
+                            onChange={(e) => setLocationForm({ ...locationForm, address3: e.target.value })}
+                            placeholder="Enter address line 3 (optional)"
+                          />
+                        </TooltipTrigger>
+
+                        <TooltipContent>
+                          <p>Enter address line 3</p>
+                        </TooltipContent>
+                      </Tooltip>
+                    </TooltipProvider>
                   </div>
 
                   <div className="space-y-2">
                     <Label htmlFor="city" className={submittedLocation && !locationForm.city ? "text-red-500" : ""}>City*</Label>
-                    <Select value={locationForm.city} onValueChange={(value) => setLocationForm({ ...locationForm, city: value })}>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select City" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {cities.map((city: any) => (
-                          <SelectItem
-                            key={city.attributedetails_name}
-                            value={city.attributedetails_name}
-                          >
-                            {city.attributedetails_name}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
+                    <TooltipProvider>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <div>
+                            <Select value={locationForm.city} onValueChange={(value) => setLocationForm({ ...locationForm, city: value })}>
+                              <SelectTrigger>
+                                <SelectValue placeholder="Select City" />
+                              </SelectTrigger>
+                              <SelectContent>
+                                {cities.map((city: any) => (
+                                  <SelectItem
+                                    key={city.attributedetails_name}
+                                    value={city.attributedetails_name}
+                                  >
+                                    {city.attributedetails_name}
+                                  </SelectItem>
+                                ))}
+                              </SelectContent>
+                            </Select>
+                          </div>
+                        </TooltipTrigger>
+
+                        <TooltipContent>
+                          <p>Select the city</p>
+                        </TooltipContent>
+                      </Tooltip>
+                    </TooltipProvider>
                   </div>
 
                   <div className="space-y-2">
                     <Label htmlFor="state" className={submittedLocation && !locationForm.state ? "text-red-500" : ""}>State*</Label>
-                    <Select value={locationForm.state} onValueChange={(value) => setLocationForm({ ...locationForm, state: value })}>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select State" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {states.map((city: any) => (
-                          <SelectItem
-                            key={city.attributedetails_name}
-                            value={city.attributedetails_name}
-                          >
-                            {city.attributedetails_name}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
+                    <TooltipProvider>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <div>
+                            <Select value={locationForm.state} onValueChange={(value) => setLocationForm({ ...locationForm, state: value })}>
+                              <SelectTrigger>
+                                <SelectValue placeholder="Select State" />
+                              </SelectTrigger>
+                              <SelectContent>
+                                {states.map((city: any) => (
+                                  <SelectItem
+                                    key={city.attributedetails_name}
+                                    value={city.attributedetails_name}
+                                  >
+                                    {city.attributedetails_name}
+                                  </SelectItem>
+                                ))}
+                              </SelectContent>
+                            </Select>
+                          </div>
+                        </TooltipTrigger>
+
+                        <TooltipContent>
+                          <p>Select the state</p>
+                        </TooltipContent>
+                      </Tooltip>
+                    </TooltipProvider>
                   </div>
 
                   <div className="space-y-2">
                     <Label htmlFor="name" className={submittedLocation && !locationForm.pincode ? "text-red-500" : ""}>Pin Code*</Label>
-                    <Input
-                      id="name"
-                      value={locationForm.pincode}
-                      onChange={(e) => setLocationForm({ ...locationForm, pincode: e.target.value })}
-                      placeholder="Enter PIN code (e.g., 600001)"
-                    />
+                    <TooltipProvider>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <Input
+                            id="name"
+                            value={locationForm.pincode}
+                            onChange={(e) => setLocationForm({ ...locationForm, pincode: e.target.value })}
+                            placeholder="Enter PIN code (e.g., 600001)"
+                          />
+                        </TooltipTrigger>
+
+                        <TooltipContent>
+                          <p>Enter PIN code</p>
+                        </TooltipContent>
+                      </Tooltip>
+                    </TooltipProvider>
                   </div>
 
                   <div className="space-y-2">
                     <Label htmlFor="country" className={submittedLocation && !locationForm.country ? "text-red-500" : ""}>Country*</Label>
-                    <Select value={locationForm.country} onValueChange={(value) => setLocationForm({ ...locationForm, country: value })}>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select Country" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {countries.map((country: any) => (
-                          <SelectItem
-                            key={country.attributedetails_name}
-                            value={country.attributedetails_name}
-                          >
-                            {country.attributedetails_name}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
+                    <TooltipProvider>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <div>
+                            <Select value={locationForm.country} onValueChange={(value) => setLocationForm({ ...locationForm, country: value })}>
+                              <SelectTrigger>
+                                <SelectValue placeholder="Select Country" />
+                              </SelectTrigger>
+                              <SelectContent>
+                                {countries.map((country: any) => (
+                                  <SelectItem
+                                    key={country.attributedetails_name}
+                                    value={country.attributedetails_name}
+                                  >
+                                    {country.attributedetails_name}
+                                  </SelectItem>
+                                ))}
+                              </SelectContent>
+                            </Select>
+                          </div>
+                        </TooltipTrigger>
+
+                        <TooltipContent>
+                          <p>Select the country</p>
+                        </TooltipContent>
+                      </Tooltip>
+                    </TooltipProvider>
                   </div>
 
                   <div className="space-y-2">
                     <Label htmlFor="name" className={submittedLocation && !locationForm.email_id ? "text-red-500" : ""}>Email*</Label>
-                    <Input
-                      id="name"
-                      value={locationForm.email_id}
-                      onChange={(e) => setLocationForm({ ...locationForm, email_id: e.target.value })}
-                      placeholder="Enter email address (e.g., branch@example.com)"
-                    />
+                    <TooltipProvider>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <Input
+                            id="name"
+                            value={locationForm.email_id}
+                            onChange={(e) => setLocationForm({ ...locationForm, email_id: e.target.value })}
+                            placeholder="Enter email address (e.g., branch@example.com)"
+                          />
+                        </TooltipTrigger>
+
+                        <TooltipContent>
+                          <p>Enter email address</p>
+                        </TooltipContent>
+                      </Tooltip>
+                    </TooltipProvider>
                   </div>
 
                   <div className="space-y-2">
                     <Label htmlFor="status" className={submittedLocation && !locationForm.status ? "text-red-500" : ""}>Status*</Label>
-                    <Select value={locationForm.status} onValueChange={(value) => setLocationForm({ ...locationForm, status: value })}>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select Status" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {status.map((status: any) => (
-                          <SelectItem
-                            key={status.attributedetails_name}
-                            value={status.attributedetails_name}
-                          >
-                            {status.attributedetails_name}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
+                    <TooltipProvider>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <div>
+                            <Select value={locationForm.status} onValueChange={(value) => setLocationForm({ ...locationForm, status: value })}>
+                              <SelectTrigger>
+                                <SelectValue placeholder="Select Status" />
+                              </SelectTrigger>
+                              <SelectContent>
+                                {status.map((status: any) => (
+                                  <SelectItem
+                                    key={status.attributedetails_name}
+                                    value={status.attributedetails_name}
+                                  >
+                                    {status.attributedetails_name}
+                                  </SelectItem>
+                                ))}
+                              </SelectContent>
+                            </Select>
+                          </div>
+                        </TooltipTrigger>
+
+                        <TooltipContent>
+                          <p>Select the status</p>
+                        </TooltipContent>
+                      </Tooltip>
+                    </TooltipProvider>
                   </div>
 
                   <div className="space-y-2">
                     <Label htmlFor="name" className={submittedLocation && !locationForm.contact_no ? "text-red-500" : ""}>Contact No*</Label>
-                    <Input
-                      id="name"
-                      value={locationForm.contact_no}
-                      onChange={(e) => setLocationForm({ ...locationForm, contact_no: e.target.value.replace(/\D/g, ""), })}
-                      placeholder="Enter contact number (e.g., +91 9876543210)"
-                    />
+                    <TooltipProvider>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <Input
+                            id="name"
+                            value={locationForm.contact_no}
+                            onChange={(e) => setLocationForm({ ...locationForm, contact_no: e.target.value.replace(/\D/g, ""), })}
+                            placeholder="Enter contact number (e.g., +91 9876543210)"
+                          />
+                        </TooltipTrigger>
+
+                        <TooltipContent>
+                          <p>Enter contact number</p>
+                        </TooltipContent>
+                      </Tooltip>
+                    </TooltipProvider>
                   </div>
+
                 </div>
               </div>
             </div>
             <DialogFooter>
-              <Button variant="outline" onClick={() => {
-                setSubmittedLocation(false);
-                setIsLocationDialogOpen(false);
-              }}>Cancel</Button>
-              <Button onClick={handleSaveLocation}>{editingLocation ? 'Update' : 'Create'} Location</Button>
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Button variant="outline" onClick={() => {
+                      setSubmittedLocation(false);
+                      setIsLocationDialogOpen(false);
+                    }}>Cancel</Button>
+                  </TooltipTrigger>
+
+                  <TooltipContent>
+                    <p>Cancel without saving changes.</p>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Button onClick={handleSaveLocation}>{editingLocation ? 'Update' : 'Create'} Location</Button>
+                  </TooltipTrigger>
+
+                  <TooltipContent>
+                    <p>
+                      {editingCompany
+                        ? "Update location details"
+                        : "Create a location"}
+                    </p>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+
             </DialogFooter>
           </DialogContent>
         </Dialog>
@@ -4546,42 +5602,102 @@ const WorkoutProgramManagement = () => {
 
                   <div className="space-y-2">
                     <Label htmlFor="name" className={submittedRole && !roleForm.role_id ? "text-red-500" : ""}>Role ID*</Label>
-                    <Input
-                      id="name"
-                      value={roleForm.role_id}
-                      onChange={(e) => setRoleForm({ ...roleForm, role_id: e.target.value })}
-                      placeholder="e.g., Weight Loss Transformation"
-                    />
+                    <TooltipProvider>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <Input
+                            id="name"
+                            readOnly={!!editingRole}
+                            value={roleForm.role_id}
+                            onChange={(e) => setRoleForm({ ...roleForm, role_id: e.target.value })}
+                            placeholder="Enter the role id (e.g., ADMIN)"
+                          />
+                        </TooltipTrigger>
+
+                        <TooltipContent>
+                          <p>Enter the role id</p>
+                        </TooltipContent>
+                      </Tooltip>
+                    </TooltipProvider>
                   </div>
 
                   <div className="space-y-2">
                     <Label htmlFor="name" className={submittedRole && !roleForm.role_name ? "text-red-500" : ""}>Role Name*</Label>
-                    <Input
-                      id="name"
-                      value={roleForm.role_name}
-                      onChange={(e) => setRoleForm({ ...roleForm, role_name: e.target.value })}
-                      placeholder="e.g., Weight Loss Transformation"
-                    />
+                    <TooltipProvider>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <Input
+                            id="name"
+                            value={roleForm.role_name}
+                            onChange={(e) => setRoleForm({ ...roleForm, role_name: e.target.value })}
+                            placeholder="Enter the role name (e.g., Administrator)"
+                          />
+                        </TooltipTrigger>
+
+                        <TooltipContent>
+                          <p>Enter the role name</p>
+                        </TooltipContent>
+                      </Tooltip>
+                    </TooltipProvider>
                   </div>
+
                 </div>
+
                 <div className="space-y-2">
                   <Label htmlFor="name">Description</Label>
-                  <Textarea
-                    id="name"
-                    value={roleForm.description}
-                    onChange={(e) => setRoleForm({ ...roleForm, description: e.target.value })}
-                    placeholder="e.g., Weight Loss Transformation"
-                  />
+                  <TooltipProvider>
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <Textarea
+                          id="name"
+                          value={roleForm.description}
+                          onChange={(e) => setRoleForm({ ...roleForm, description: e.target.value })}
+                          placeholder="Enter a brief description of the role and its responsibilities"
+                        />
+                      </TooltipTrigger>
+
+                      <TooltipContent>
+                        <p>Enter the description of the role</p>
+                      </TooltipContent>
+                    </Tooltip>
+                  </TooltipProvider>
                 </div>
+
               </div>
             </div>
 
             <DialogFooter>
-              <Button variant="outline" onClick={() => {
-                setSubmittedRole(false);
-                setIsRoleDialogOpen(false);
-              }}>Cancel</Button>
-              <Button onClick={handleSaveRole}>{editingRole ? 'Update' : 'Create'} Role</Button>
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Button variant="outline" onClick={() => {
+                      setSubmittedRole(false);
+                      setIsRoleDialogOpen(false);
+                    }}>Cancel</Button>
+                  </TooltipTrigger>
+
+                  <TooltipContent>
+                    <p>Cancel without saving changes.</p>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Button onClick={handleSaveRole}>{editingRole ? 'Update' : 'Create'} Role</Button>
+                  </TooltipTrigger>
+
+                  <TooltipContent>
+                    <p>
+                      {editingCompany
+                        ? "Update the role"
+                        : "Create a role"}
+                    </p>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+
             </DialogFooter>
           </DialogContent>
         </Dialog>
@@ -4607,50 +5723,101 @@ const WorkoutProgramManagement = () => {
 
                   <div className="space-y-2">
                     <Label htmlFor="user" className={submittedRoleMapping && !roleMappingForm.user_code ? "text-red-500" : ""}>User Code*</Label>
-                    <Select value={roleMappingForm.user_code} onValueChange={(value) => setRoleMappingForm({ ...roleMappingForm, user_code: value })}>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select User Code" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {user.map((user: any) => (
-                          <SelectItem
-                            key={user.user_code}
-                            value={user.user_code}
-                          >
-                            {user.user_code} - {user.user_name}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
+                    <TooltipProvider>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <div>
+                            <Select value={roleMappingForm.user_code} onValueChange={(value) => setRoleMappingForm({ ...roleMappingForm, user_code: value })}>
+                              <SelectTrigger>
+                                <SelectValue placeholder="Select User Code" />
+                              </SelectTrigger>
+                              <SelectContent>
+                                {user.map((user: any) => (
+                                  <SelectItem
+                                    key={user.user_code}
+                                    value={user.user_code}
+                                  >
+                                    {user.user_code} - {user.user_name}
+                                  </SelectItem>
+                                ))}
+                              </SelectContent>
+                            </Select>
+                          </div>
+                        </TooltipTrigger>
+
+                        <TooltipContent>
+                          <p>Select the user code</p>
+                        </TooltipContent>
+                      </Tooltip>
+                    </TooltipProvider>
                   </div>
 
                   <div className="space-y-2">
                     <Label htmlFor="role" className={submittedRoleMapping && !roleMappingForm.role_id ? "text-red-500" : ""}>Role ID*</Label>
-                    <Select value={roleMappingForm.role_id} onValueChange={(value) => setRoleMappingForm({ ...roleMappingForm, role_id: value })}>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select Role ID" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {role.map((role: any) => (
-                          <SelectItem
-                            key={role.role_id}
-                            value={role.role_id}
-                          >
-                            {role.role_id} - {role.role_name}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
+                    <TooltipProvider>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <div>
+                            <Select value={roleMappingForm.role_id} onValueChange={(value) => setRoleMappingForm({ ...roleMappingForm, role_id: value })}>
+                              <SelectTrigger>
+                                <SelectValue placeholder="Select Role ID" />
+                              </SelectTrigger>
+                              <SelectContent>
+                                {role.map((role: any) => (
+                                  <SelectItem
+                                    key={role.role_id}
+                                    value={role.role_id}
+                                  >
+                                    {role.role_id} - {role.role_name}
+                                  </SelectItem>
+                                ))}
+                              </SelectContent>
+                            </Select>
+                          </div>
+                        </TooltipTrigger>
+
+                        <TooltipContent>
+                          <p>Select the role id</p>
+                        </TooltipContent>
+                      </Tooltip>
+                    </TooltipProvider>
                   </div>
+
                 </div>
               </div>
             </div>
             <DialogFooter>
-              <Button variant="outline" onClick={() => {
-                setSubmittedRoleMapping(false);
-                setIsRoleMappingDialogOpen(false)
-              }}>Cancel</Button>
-              <Button onClick={handleSaveRoleMapping}>{editingRoleMapping ? 'Update' : 'Create'} Role Mapping</Button>
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Button variant="outline" onClick={() => {
+                      setSubmittedRoleMapping(false);
+                      setIsRoleMappingDialogOpen(false)
+                    }}>Cancel</Button>
+                  </TooltipTrigger>
+
+                  <TooltipContent>
+                    <p>Cancel without saving changes.</p>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Button onClick={handleSaveRoleMapping}>{editingRoleMapping ? 'Update' : 'Create'} Role Mapping</Button>
+                  </TooltipTrigger>
+
+                  <TooltipContent>
+                    <p>
+                      {editingCompany
+                        ? "Update role mapping"
+                        : "Create a role mapping"}
+                    </p>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+
             </DialogFooter>
           </DialogContent>
         </Dialog>
@@ -4676,70 +5843,133 @@ const WorkoutProgramManagement = () => {
 
                   <div className="space-y-2">
                     <Label htmlFor="role" className={submittedRoleRights && !roleRightsForm.role_id ? "text-red-500" : ""}>Role ID*</Label>
-                    <Select value={roleRightsForm.role_id} onValueChange={(value) => setRoleRightsForm({ ...roleRightsForm, role_id: value })}>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select Role ID" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {roleRight.map((roleRight: any) => (
-                          <SelectItem
-                            key={roleRight.role_id}
-                            value={roleRight.role_id}
-                          >
-                            {roleRight.role_id} - {roleRight.role_name}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
+                    <TooltipProvider>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <div>
+                            <Select value={roleRightsForm.role_id} onValueChange={(value) => setRoleRightsForm({ ...roleRightsForm, role_id: value })}>
+                              <SelectTrigger>
+                                <SelectValue placeholder="Select Role ID" />
+                              </SelectTrigger>
+                              <SelectContent>
+                                {roleRight.map((roleRight: any) => (
+                                  <SelectItem
+                                    key={roleRight.role_id}
+                                    value={roleRight.role_id}
+                                  >
+                                    {roleRight.role_id} - {roleRight.role_name}
+                                  </SelectItem>
+                                ))}
+                              </SelectContent>
+                            </Select>
+                          </div>
+                        </TooltipTrigger>
+
+                        <TooltipContent>
+                          <p>Select the role id</p>
+                        </TooltipContent>
+                      </Tooltip>
+                    </TooltipProvider>
                   </div>
 
                   <div className="space-y-2">
                     <Label htmlFor="screen" className={submittedRoleRights && !roleRightsForm.screen_type ? "text-red-500" : ""}>Screen Type*</Label>
-                    <Select value={roleRightsForm.screen_type} onValueChange={(value) => setRoleRightsForm({ ...roleRightsForm, screen_type: value })}>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select Screen Type" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {screen.map((screen: any) => (
-                          <SelectItem
-                            key={screen.attributedetails_code}
-                            value={screen.attributedetails_code}
-                          >
-                            {screen.attributedetails_name}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
+                    <TooltipProvider>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <div>
+                            <Select value={roleRightsForm.screen_type} onValueChange={(value) => setRoleRightsForm({ ...roleRightsForm, screen_type: value })}>
+                              <SelectTrigger>
+                                <SelectValue placeholder="Select Screen Type" />
+                              </SelectTrigger>
+                              <SelectContent>
+                                {screen.map((screen: any) => (
+                                  <SelectItem
+                                    key={screen.attributedetails_code}
+                                    value={screen.attributedetails_code}
+                                  >
+                                    {screen.attributedetails_name}
+                                  </SelectItem>
+                                ))}
+                              </SelectContent>
+                            </Select>
+                          </div>
+                        </TooltipTrigger>
+
+                        <TooltipContent>
+                          <p>Select the screen type</p>
+                        </TooltipContent>
+                      </Tooltip>
+                    </TooltipProvider>
                   </div>
 
                   <div className="space-y-2">
                     <Label htmlFor="permission" className={submittedRoleRights && !roleRightsForm.permission_type ? "text-red-500" : ""}>Permission Type*</Label>
-                    <Select value={roleRightsForm.permission_type} onValueChange={(value) => setRoleRightsForm({ ...roleRightsForm, permission_type: value })}>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select Permission Type" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {permission.map((permission: any) => (
-                          <SelectItem
-                            key={permission.attributedetails_name}
-                            value={permission.attributedetails_name}
-                          >
-                            {permission.attributedetails_name}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
+                    <TooltipProvider>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <div>
+                            <Select value={roleRightsForm.permission_type} onValueChange={(value) => setRoleRightsForm({ ...roleRightsForm, permission_type: value })}>
+                              <SelectTrigger>
+                                <SelectValue placeholder="Select Permission Type" />
+                              </SelectTrigger>
+                              <SelectContent>
+                                {permission.map((permission: any) => (
+                                  <SelectItem
+                                    key={permission.attributedetails_name}
+                                    value={permission.attributedetails_name}
+                                  >
+                                    {permission.attributedetails_name}
+                                  </SelectItem>
+                                ))}
+                              </SelectContent>
+                            </Select>
+                          </div>
+                        </TooltipTrigger>
+
+                        <TooltipContent>
+                          <p>Select the permission type</p>
+                        </TooltipContent>
+                      </Tooltip>
+                    </TooltipProvider>
                   </div>
+
                 </div>
               </div>
 
             </div>
             <DialogFooter>
-              <Button variant="outline" onClick={() => {
-                setSubmittedRoleRights(false);
-                setIsRoleRightsDialogOpen(false);
-              }}>Cancel</Button>
-              <Button onClick={handleSaveRoleRight}>{editingRoleRight ? 'Update' : 'Create'} Role Rights</Button>
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Button variant="outline" onClick={() => {
+                      setSubmittedRoleRights(false);
+                      setIsRoleRightsDialogOpen(false);
+                    }}>Cancel</Button>
+                  </TooltipTrigger>
+
+                  <TooltipContent>
+                    <p>Cancel without saving changes.</p>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Button onClick={handleSaveRoleRight}>{editingRoleRight ? 'Update' : 'Create'} Role Rights</Button>
+                  </TooltipTrigger>
+
+                  <TooltipContent>
+                    <p>
+                      {editingCompany
+                        ? "Update role rights"
+                        : "Create a role rights"}
+                    </p>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+
             </DialogFooter>
           </DialogContent>
         </Dialog>
@@ -4985,69 +6215,157 @@ const WorkoutProgramManagement = () => {
                   <div className="space-y-2">
                     <Label htmlFor="attributeheader_code" className={submittedAttributeDet && !attributeForm.attributeheader_code ? "text-red-500" : ""}>Code*</Label>
                     <div className="flex gap-2">
-                      <Select
-                        value={attributeForm.attributeheader_code}
-                        onValueChange={(value) => setAttributeForm({ ...attributeForm, attributeheader_code: value, })}
-                      >
-                        <SelectTrigger className="flex-1">
-                          <SelectValue placeholder="Select Code" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {attributehdr.map((attributeheader: any) => (
-                            <SelectItem
-                              key={attributeheader.attributeheader_code}
-                              value={attributeheader.attributeheader_code}
-                            >
-                              {attributeheader.attributeheader_code} - {attributeheader.attributeheader_name}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                      <Button type="button" variant="outline" onClick={handleAddAttributeHdr}>
-                        <Plus className="h-4 w-4" />
-                      </Button>
+                      <TooltipProvider>
+                        <Tooltip>
+                          <TooltipTrigger asChild>
+                            <div className="flex-1">
+                              <Select
+                                value={attributeForm.attributeheader_code}
+                                onValueChange={(value) => setAttributeForm({ ...attributeForm, attributeheader_code: value, })}
+                                disabled={!!editingAttribute}
+                              >
+                                <SelectTrigger className="flex-1">
+                                  <SelectValue placeholder="Select Code" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                  {attributehdr.map((attributeheader: any) => (
+                                    <SelectItem
+                                      key={attributeheader.attributeheader_code}
+                                      value={attributeheader.attributeheader_code}
+                                    >
+                                      {attributeheader.attributeheader_code} - {attributeheader.attributeheader_name}
+                                    </SelectItem>
+                                  ))}
+                                </SelectContent>
+                              </Select>
+                            </div>
+                          </TooltipTrigger>
+
+                          <TooltipContent>
+                            <p>
+                              {editingAttribute
+                                ? "Attribute Header Code cannot be changed while editing."
+                                : "Select the attribute header code."}
+                            </p>
+                          </TooltipContent>
+                        </Tooltip>
+                      </TooltipProvider>
+
+                      {!editingAttribute && (
+                        <TooltipProvider>
+                          <Tooltip>
+                            <TooltipTrigger asChild>
+                              <Button type="button" variant="outline" onClick={handleAddAttributeHdr}>
+                                <Plus className="h-4 w-4" />
+                              </Button>
+                            </TooltipTrigger>
+
+                            <TooltipContent>
+                              <p>Add Attribute Header</p>
+                            </TooltipContent>
+                          </Tooltip>
+                        </TooltipProvider>
+                      )}
                     </div>
                   </div>
 
                   <div className="space-y-2">
                     <Label htmlFor="SubCode" className={submittedAttributeDet && !attributeForm.attributedetails_code ? "text-red-500" : ""}>Sub Code*</Label>
-                    <Input
-                      id="SubCode"
-                      value={attributeForm.attributedetails_code}
-                      onChange={(e) => setAttributeForm({ ...attributeForm, attributedetails_code: e.target.value })}
-                      placeholder="e.g., SubCode"
-                    />
+                    <TooltipProvider>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <Input
+                            id="SubCode"
+                            value={attributeForm.attributedetails_code}
+                            onChange={(e) => setAttributeForm({ ...attributeForm, attributedetails_code: e.target.value })}
+                            placeholder="Enter the sub code (e.g., ACTIVE)"
+                          />
+                        </TooltipTrigger>
+
+                        <TooltipContent>
+                          <p>Enter the sub code</p>
+                        </TooltipContent>
+                      </Tooltip>
+                    </TooltipProvider>
                   </div>
 
                   <div className="space-y-2">
                     <Label htmlFor="DetailsName" className={submittedAttributeDet && !attributeForm.attributedetails_name ? "text-red-500" : ""}>Details Name*</Label>
-                    <Input
-                      id="DetailsName"
-                      value={attributeForm.attributedetails_name}
-                      onChange={(e) => setAttributeForm({ ...attributeForm, attributedetails_name: e.target.value })}
-                      placeholder="e.g., Details Name"
-                    />
+                    <TooltipProvider>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <Input
+                            id="DetailsName"
+                            value={attributeForm.attributedetails_name}
+                            onChange={(e) => setAttributeForm({ ...attributeForm, attributedetails_name: e.target.value })}
+                            placeholder="Enter the details name (e.g., Active)"
+                          />
+                        </TooltipTrigger>
+
+                        <TooltipContent>
+                          <p>Enter the details name</p>
+                        </TooltipContent>
+                      </Tooltip>
+                    </TooltipProvider>
                   </div>
+
                 </div>
 
                 <div className="space-y-2">
                   <Label htmlFor="description">Description</Label>
-                  <Textarea
-                    id="description"
-                    value={attributeForm.descriptions}
-                    onChange={(e) => setAttributeForm({ ...attributeForm, descriptions: e.target.value })}
-                    placeholder="Description..."
-                  />
+                  <TooltipProvider>
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <Textarea
+                          id="description"
+                          value={attributeForm.descriptions}
+                          onChange={(e) => setAttributeForm({ ...attributeForm, descriptions: e.target.value })}
+                          placeholder="Enter the description"
+                        />
+                      </TooltipTrigger>
+
+                      <TooltipContent>
+                        <p>Enter the description</p>
+                      </TooltipContent>
+                    </Tooltip>
+                  </TooltipProvider>
                 </div>
 
               </div>
             </div>
             <DialogFooter>
-              <Button variant="outline" onClick={() => {
-                setSubmittedAttributeDet(false);
-                setIsAttributeDialogOpen(false);
-              }}>Cancel</Button>
-              <Button onClick={handleSaveAttribute}>{editingAttribute ? 'Update' : 'Create'} Attribute Detail</Button>
+
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Button variant="outline" onClick={() => {
+                      setSubmittedAttributeDet(false);
+                      setIsAttributeDialogOpen(false);
+                    }}>Cancel</Button>
+                  </TooltipTrigger>
+
+                  <TooltipContent>
+                    <p>Cancel without saving changes.</p>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Button onClick={handleSaveAttribute}>{editingAttribute ? 'Update' : 'Create'} Attribute Detail</Button>
+                  </TooltipTrigger>
+
+                  <TooltipContent>
+                    <p>
+                      {editingCompany
+                        ? "Update attribute detail"
+                        : "Create a attribute detail"}
+                    </p>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+
             </DialogFooter>
           </DialogContent>
         </Dialog>
@@ -5069,50 +6387,105 @@ const WorkoutProgramManagement = () => {
 
               <div className="space-y-2">
                 <Label htmlFor="code" className={submittedAttributeHdr && !attributeHdrForm.attributeheader_code ? "text-red-500" : ""}>Code*</Label>
-                <Input
-                  id="Code"
-                  value={attributeHdrForm.attributeheader_code}
-                  onChange={(e) => setAttributeHdrForm({ ...attributeHdrForm, attributeheader_code: e.target.value, })}
-                  placeholder="Enter attribute code (e.g., ACCOUNT_TYPE)"
-                />
+                <TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Input
+                        id="Code"
+                        value={attributeHdrForm.attributeheader_code}
+                        onChange={(e) => setAttributeHdrForm({ ...attributeHdrForm, attributeheader_code: e.target.value, })}
+                        placeholder="Enter attribute code (e.g., ACCOUNT_TYPE)"
+                      />
+                    </TooltipTrigger>
+
+                    <TooltipContent>
+                      <p>Enter attribute code</p>
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
               </div>
 
               <div className="space-y-2">
                 <Label htmlFor="code" className={submittedAttributeHdr && !attributeHdrForm.attributeheader_name ? "text-red-500" : ""}>Name*</Label>
-                <Input
-                  id="Name"
-                  value={attributeHdrForm.attributeheader_name}
-                  onChange={(e) => setAttributeHdrForm({ ...attributeHdrForm, attributeheader_name: e.target.value, })}
-                  placeholder="Enter attribute name (e.g., Account Type)"
-                />
+                <TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Input
+                        id="Name"
+                        value={attributeHdrForm.attributeheader_name}
+                        onChange={(e) => setAttributeHdrForm({ ...attributeHdrForm, attributeheader_name: e.target.value, })}
+                        placeholder="Enter attribute name (e.g., Account Type)"
+                      />
+                    </TooltipTrigger>
+
+                    <TooltipContent>
+                      <p>Enter attribute name</p>
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
               </div>
 
               <div className="space-y-2">
                 <Label htmlFor="code" className={submittedAttributeHdr && !attributeHdrForm.status ? "text-red-500" : ""}>Status*</Label>
-                <Select value={attributeHdrForm.status} onValueChange={(value) => setAttributeHdrForm({ ...attributeHdrForm, status: value, })}>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select Status" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {status.map((status: any) => (
-                      <SelectItem
-                        key={status.attributedetails_code}
-                        value={status.attributedetails_code}
-                      >
-                        {status.attributedetails_name}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
+                <TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <div>
+                        <Select value={attributeHdrForm.status} onValueChange={(value) => setAttributeHdrForm({ ...attributeHdrForm, status: value, })}>
+                          <SelectTrigger>
+                            <SelectValue placeholder="Select Status" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {status.map((status: any) => (
+                              <SelectItem
+                                key={status.attributedetails_code}
+                                value={status.attributedetails_code}
+                              >
+                                {status.attributedetails_name}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      </div>
+                    </TooltipTrigger>
+
+                    <TooltipContent>
+                      <p>Select the status</p>
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
               </div>
+
             </div>
 
             <DialogFooter>
-              <Button variant="outline" onClick={() => {
-                setSubmittedAttributeHdr(false);
-                setIsAttributeHdrDialogOpen(false);
-              }}>Cancel</Button>
-              <Button onClick={handleCreateAttributeHdr}>Save</Button>
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Button variant="outline" onClick={() => {
+                      setSubmittedAttributeHdr(false);
+                      setIsAttributeHdrDialogOpen(false);
+                    }}>Cancel</Button>
+                  </TooltipTrigger>
+
+                  <TooltipContent>
+                    <p>Cancel without saving changes.</p>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Button onClick={handleCreateAttributeHdr}>Create Attribute Header</Button>
+                  </TooltipTrigger>
+
+                  <TooltipContent>
+                    <p>Create a Attribute header</p>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+
             </DialogFooter>
           </DialogContent>
         </Dialog>
