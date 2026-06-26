@@ -3299,18 +3299,18 @@ const WorkoutProgramManagement = () => {
       </div>
 
       <div className="space-y-2">
-        <Label>GST No</Label>
+        <Label>Identification No</Label>
         <TooltipProvider>
           <Tooltip>
             <TooltipTrigger asChild>
               <Input
-                placeholder="Enter GST No"
+                placeholder="Enter Identification No"
                 value={companySearchForm.gst_no}
                 onChange={(e) => setCompanySearchForm({ ...companySearchForm, gst_no: e.target.value, })} />
             </TooltipTrigger>
 
             <TooltipContent>
-              <p>Enter GST No</p>
+              <p>Enter Identification No</p>
             </TooltipContent>
           </Tooltip>
         </TooltipProvider>
@@ -4206,7 +4206,7 @@ const WorkoutProgramManagement = () => {
                       <TableHead>Contact No</TableHead>
                       <TableHead>Annual Report URL</TableHead>
                       <TableHead>Location No</TableHead>
-                      <TableHead>GST No</TableHead>
+                      <TableHead>Identification No</TableHead>
                       <TableHead className="text-right">Actions</TableHead>
                     </TableRow>
                   </TableHeader>
@@ -4224,7 +4224,12 @@ const WorkoutProgramManagement = () => {
                         <TableCell>{company.pincode}</TableCell>
                         <TableCell>{company.country}</TableCell>
                         <TableCell>{company.email_id}</TableCell>
-                        <TableCell>{company.status}</TableCell>
+                        {/* <TableCell>{company.status}</TableCell> */}
+                        <TableCell>
+                          <Badge variant={company.status === "Active" ? "default" : "secondary"}>
+                            {company.status}
+                          </Badge>
+                        </TableCell>
                         <TableCell>{company.foundedDate}</TableCell>
                         <TableCell>{company.websiteURL}</TableCell>
                         <TableCell>{company.contact_no}</TableCell>
@@ -4284,7 +4289,12 @@ const WorkoutProgramManagement = () => {
                         <TableCell>{mapping.user_code}</TableCell>
                         <TableCell>{mapping.company_no}</TableCell>
                         <TableCell>{mapping.location_no}</TableCell>
-                        <TableCell>{mapping.status}</TableCell>
+                        {/* <TableCell>{mapping.status}</TableCell> */}
+                        <TableCell>
+                          <Badge variant={mapping.status === "Active" ? "default" : "secondary"}>
+                            {mapping.status}
+                          </Badge>
+                        </TableCell>
                         <TableCell>{mapping.order_no}</TableCell>
 
                         <TableCell className="text-right">
@@ -4357,7 +4367,12 @@ const WorkoutProgramManagement = () => {
                         <TableCell>{location.pincode}</TableCell>
                         <TableCell>{location.country}</TableCell>
                         <TableCell>{location.email_id}</TableCell>
-                        <TableCell>{location.status}</TableCell>
+                        {/* <TableCell>{location.status}</TableCell> */}
+                        <TableCell>
+                          <Badge variant={location.status === "Active" ? "default" : "secondary"}>
+                            {location.status}
+                          </Badge>
+                        </TableCell>                        
                         <TableCell>{location.contact_no}</TableCell>
 
                         <TableCell className="text-right">
@@ -4599,7 +4614,12 @@ const WorkoutProgramManagement = () => {
                         <TableCell>{user.user_name}</TableCell>
                         <TableCell>{user.first_name}</TableCell>
                         <TableCell>{user.last_name}</TableCell>
-                        <TableCell>{user.user_status}</TableCell>
+                        {/* <TableCell>{user.user_status}</TableCell> */}
+                        <TableCell>
+                          <Badge variant={user.user_status === "Active" ? "default" : "secondary"}>
+                            {user.user_status}
+                          </Badge>
+                        </TableCell>
                         <TableCell>{user.dob}</TableCell>
                         <TableCell>{user.gender}</TableCell>
 
@@ -4721,6 +4741,7 @@ const WorkoutProgramManagement = () => {
                             id="name"
                             readOnly={!!editingCompany}
                             value={companyForm.company_no}
+                            maxLength={18}
                             onChange={(e) => setCompanyForm({ ...companyForm, company_no: e.target.value })}
                             placeholder="Enter company code (e.g., CMP001)"
                           />
@@ -4906,14 +4927,15 @@ const WorkoutProgramManagement = () => {
                         <TooltipTrigger asChild>
                           <Input
                             id="name"
+                            maxLength={10}
                             value={companyForm.pincode}
                             onChange={(e) => setCompanyForm({ ...companyForm, pincode: e.target.value })}
-                            placeholder="Enter PIN code (e.g., 600001)"
+                            placeholder="Enter Pin code (e.g., 600001)"
                           />
                         </TooltipTrigger>
 
                         <TooltipContent>
-                          <p>Enter GST No</p>
+                          <p>Enter Identification No</p>
                         </TooltipContent>
                       </Tooltip>
                     </TooltipProvider>
@@ -5083,7 +5105,7 @@ const WorkoutProgramManagement = () => {
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="name">GST No</Label>
+                    <Label htmlFor="name">Identification No</Label>
                     <TooltipProvider>
                       <Tooltip>
                         <TooltipTrigger asChild>
@@ -5091,7 +5113,7 @@ const WorkoutProgramManagement = () => {
                             id="name"
                             value={companyForm.company_gst_no}
                             onChange={(e) => setCompanyForm({ ...companyForm, company_gst_no: e.target.value })}
-                            placeholder="Enter GST number (e.g., 33ABCDE1234F1Z5)"
+                            placeholder="Enter Identification number (e.g., 33ABCDE1234F1Z5)"
                           />
                         </TooltipTrigger>
 
@@ -5600,7 +5622,7 @@ const WorkoutProgramManagement = () => {
                             id="name"
                             value={locationForm.pincode}
                             onChange={(e) => setLocationForm({ ...locationForm, pincode: e.target.value })}
-                            placeholder="Enter PIN code (e.g., 600001)"
+                            placeholder="Enter Pin code (e.g., 600001)"
                           />
                         </TooltipTrigger>
 
