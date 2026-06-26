@@ -4887,7 +4887,7 @@ const [numberSeriesForm, setNumberSeriesForm] = useState({
                         <TableCell>{company.pincode}</TableCell>
                         <TableCell>{company.country}</TableCell>
                         <TableCell>{company.email_id}</TableCell>
-                        {/* <TableCell>{company.status}</TableCell> */}
+                        {/* <TableCell>{company.status}</TableCell> 
                         <TableCell>
                           <Badge variant={company.status === "Active" ? "default" : "secondary"}>
                             {company.status}
@@ -4972,7 +4972,7 @@ const [numberSeriesForm, setNumberSeriesForm] = useState({
                         <TableCell>{mapping.user_code}</TableCell>
                         <TableCell>{mapping.company_no}</TableCell>
                         <TableCell>{mapping.location_no}</TableCell>
-                        {/* <TableCell>{mapping.status}</TableCell> */}
+                        {/* <TableCell>{mapping.status}</TableCell> 
                         <TableCell>
                           <Badge variant={mapping.status === "Active" ? "default" : "secondary"}>
                             {mapping.status}
@@ -5070,7 +5070,7 @@ const [numberSeriesForm, setNumberSeriesForm] = useState({
                         <TableCell>{location.pincode}</TableCell>
                         <TableCell>{location.country}</TableCell>
                         <TableCell>{location.email_id}</TableCell>
-                        {/* <TableCell>{location.status}</TableCell> */}
+                        {/* <TableCell>{location.status}</TableCell> 
                         <TableCell>
                           <Badge variant={location.status === "Active" ? "default" : "secondary"}>
                             {location.status}
