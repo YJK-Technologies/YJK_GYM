@@ -2603,6 +2603,226 @@ const addattrihdrData = async (req, res) => {
   }
 };
 // Code ended by Dinesh Gokul 23-06-2026
+
+//code by Ramya 26/06/2026
+const getAllNumberseries = async (req, res) => {
+  try {
+    await connection.connectToDatabase();
+    const result = await sql.query(`EXEC sp_numberseries 'A','','','','',0,0,0,'','','','','','',null,null,null,null,null,null,null,null,''`);
+
+    res.json(result.recordset);
+  } catch (err) {
+    console.error("Error", err);
+    res.status(500).json({ message: err.message || 'Internal Server Error' });
+  }
+};
+
+const addNumberseries = async (req, res) => {
+  const {
+    company_code,
+    Screen_Type,
+    Start_Year,
+    End_Year,
+    Start_No,
+    Running_No,
+    End_No,
+    comtext,
+    number_prefix,
+    Status,
+    bill_format,
+    created_by,
+    modified_by,
+    tempstr1,
+    tempstr2,
+    tempstr3,
+    tempstr4,
+    datetime1,
+    datetime2,
+    datetime3,
+    datetime4,
+  } = req.body;
+  let pool;
+  try {
+    pool = await sql.connect(dbConfig);
+    const result = await pool
+      .request()
+      .input("mode", sql.NVarChar, "I") // Insert mode
+      .input("company_code", sql.NVarChar, company_code)
+      .input("Screen_Type", sql.NVarChar, Screen_Type)
+      .input("Start_Year", sql.Date, Start_Year)
+      .input("End_Year", sql.Date, End_Year)
+      .input("Start_No", sql.Int, Start_No)
+      .input("Running_No", sql.Int, Running_No)
+      .input("End_No", sql.Int, End_No)
+      .input("comtext", sql.NVarChar, comtext)
+      .input("number_prefix", sql.NVarChar, number_prefix)
+      .input("Status", sql.NVarChar, Status)
+      .input("bill_format", sql.NVarChar, bill_format)
+      .input("created_by", sql.NVarChar, created_by)
+      .input("modified_by", sql.NVarChar, modified_by)
+      .input("tempstr1", sql.NVarChar, tempstr1)
+      .input("tempstr2", sql.NVarChar, tempstr2)
+      .input("tempstr3", sql.NVarChar, tempstr3)
+      .input("tempstr4", sql.NVarChar, tempstr4)
+      .input("datetime1", sql.NVarChar, datetime1)
+      .input("datetime2", sql.NVarChar, datetime2)
+      .input("datetime3", sql.NVarChar, datetime3)
+      .input("datetime4", sql.NVarChar, datetime4)
+      .query(`EXEC sp_numberseries @mode,@company_code,@Screen_Type,@Start_Year,@End_Year,@Start_No,@Running_No,@End_No,@comtext,@number_prefix,@Status,@bill_format,
+      @created_by,@modified_by, @tempstr1,@tempstr2,@tempstr3,@tempstr4,@datetime1,@datetime2,@datetime3,@datetime4,''`);
+
+    res.status(200).json("Edited data saved successfully");
+  }  catch (err) {
+    console.error("Error", err);
+    res.status(500).json({ message: err.message || 'Internal Server Error' });
+  }
+};
+
+const getnumberseriessearchdata = async (req, res) => {
+  const { company_code, Screen_Type } = req.body; // Extract Screen_Type from req.body
+
+  try {
+    // Connect to the database
+    const pool = await connection.connectToDatabase();
+
+    // Execute the query
+    const result = await pool
+      .request()
+      .input("mode", sql.NVarChar, "SC")
+      .input("company_code", sql.NVarChar, company_code)
+      .input("Screen_Type", sql.NVarChar, Screen_Type) // Correct parameter name
+      .query(`EXEC sp_numberseries @mode,@company_code,@Screen_Type,'','',0,0,0,'','','','','','',
+      null,null,null,null,null,null,null,null,''`);
+
+    // Send response
+    if (result.recordset.length > 0) {
+      res.status(200).json(result.recordset); // 200 OK if data is found
+    } else {
+      res.status(404).json("Data not found"); // 404 Not Found if no data is found
+    }
+  } catch (err) {
+    console.error("Error", err);
+    res.status(500).json({ message: err.message || 'Internal Server Error' });
+  }
+};
+
+const saveEditedNumberseriesData = async (req, res) => {
+  const editedData = req.body.editedData;
+
+  if (!editedData || !editedData.length) {
+    res.status(400).json("Invalid or empty editedData array.");
+    return;
+  }
+
+  try {
+    const pool = await connection.connectToDatabase();
+
+    for (const updatedRow of editedData) {
+      await pool
+        .request()
+        .input("mode", sql.NVarChar, "U")
+        .input("company_code", updatedRow.company_code)
+        .input("Screen_Type", updatedRow.Screen_Type)
+        .input("Start_Year", updatedRow.Start_Year)
+        .input("End_Year", updatedRow.End_Year)
+        .input("Start_No", updatedRow.Start_No)
+        .input("Running_No", updatedRow.Running_No)
+        .input("End_No", updatedRow.End_No)
+        .input("comtext", updatedRow.comtext)
+        .input("number_prefix", updatedRow.number_prefix)
+        .input("Status", updatedRow.Status)
+        .input("bill_format", updatedRow.bill_format)
+        .input("created_by", updatedRow.created_by)
+        .input("modified_by", sql.NVarChar, req.headers['modified-by'])
+        .input("tempstr1", updatedRow.tempstr1)
+        .input("tempstr2", updatedRow.tempstr2)
+        .input("tempstr3", updatedRow.tempstr3)
+        .input("tempstr4", updatedRow.tempstr4)
+        .input("datetime1", updatedRow.datetime1)
+        .input("datetime2", updatedRow.datetime2)
+        .input("datetime3", updatedRow.datetime3)
+        .input("datetime4", updatedRow.datetime4)
+        .query(`EXEC sp_numberseries @mode, @company_code,@Screen_Type, @Start_Year, @End_Year, @Start_No, @Running_No, @End_No,@comtext,@number_prefix,@Status,@bill_format,
+        @created_by,@modified_by,@tempstr1, @tempstr2, @tempstr3, @tempstr4,@datetime1, @datetime2, @datetime3, @datetime4,''`);
+    }
+
+    res.status(200).json("Edited data saved successfully");
+  } catch (err) {
+    console.error("Error", err);
+    res.status(500).json({ message: err.message || 'Internal Server Error' });
+  }
+};
+const numberseriesdeleteData = async (req, res) => {
+  const Screen_TypesToDelete = req.body.Screen_TypesToDelete;
+
+  if (!Screen_TypesToDelete || !Screen_TypesToDelete.length) {
+    res.status(400).json("Invalid or empty company_nos array.");
+    return;
+  }
+
+  try {
+    const pool = await connection.connectToDatabase();
+
+    for (const updatedRow of Screen_TypesToDelete) {
+      try {
+        await pool.request()
+          .input("Screen_Type", updatedRow.Screen_Type)
+          .input("Start_Year", updatedRow.Start_Year)
+          .input("End_Year", updatedRow.End_Year)
+          .input("modified_by", sql.NVarChar, req.headers['modified-by'])
+          .input("company_code", sql.NVarChar, req.headers['company_code'])
+          .query(`EXEC sp_numberseries 'D',@company_code,@Screen_Type,@Start_Year,@End_Year,0,0,0,'','','','','',@modified_by, null,null,null,null,null,null,null,null,''`);
+      } catch (err) {
+        if (err.number === 50000) {
+          // Foreign key constraint violation
+          res.status(400).json("The number series cannot be deleted due to a link with another record");
+          return;
+        } else {
+          throw err; // Rethrow other SQL errors
+        }
+      }
+    }
+
+    res.status(200).json("Number series deleted successfully");
+  } catch (err) {
+    console.error("Error", err);
+    res.status(500).json({ message: err.message || 'Internal Server Error' });
+  }
+};
+
+const NumberSeriesUpdate = async (req, res) => {
+  const { company_code, Screen_Type, Start_Year, End_Year, Start_No, Running_No, End_No, text, number_prefix, Status, created_by, modified_by, bill_format } = req.body;
+
+  let pool;
+  try {
+    pool = await connection.connectToDatabase();
+
+    await pool
+      .request()
+      .input("mode", sql.NVarChar, "U")
+      .input("company_code", sql.NVarChar, company_code)
+      .input("Screen_Type", sql.NVarChar, Screen_Type)
+      .input("Start_Year", sql.NVarChar, Start_Year)
+      .input("End_Year", sql.NVarChar, End_Year)
+      .input("Start_No", sql.Int, Start_No)
+      .input("Running_No", sql.Int, Running_No)
+      .input("End_No", sql.Int, End_No)
+      .input("text", sql.NVarChar, text)
+      .input("number_prefix", sql.NVarChar, number_prefix)
+      .input("Status", sql.NVarChar, Status)
+      .input("bill_format", sql.NVarChar, bill_format)
+      .input("created_by", sql.NVarChar, created_by)
+      .input("modified_by", sql.NVarChar, modified_by)
+      .query(`EXEC sp_numberseries @mode, @company_code,@Screen_Type, @Start_Year, @End_Year, @Start_No, @Running_No,@End_No,@text,@number_prefix,
+      @Status,@bill_format,@created_by,@modified_by,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,''`);
+
+    res.status(200).json("Edited data saved successfully");
+  } catch (err) {
+    console.error("Error", err);
+    res.status(500).json({ message: err.message || 'Internal Server Error' });
+  }
+};
+
 module.exports = {
 getCompanyno,
 getsearchdata,
@@ -2685,7 +2905,8 @@ getScreens,
 getPermissions,
 getLoginorout,
 getGender,
-addattrihdrData
+addattrihdrData,
+getAllNumberseries
 
 
 
