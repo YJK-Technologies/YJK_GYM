@@ -2983,6 +2983,300 @@ const [numberSeriesForm, setNumberSeriesForm] = useState({
     }
   };
 
+  // NumberSeries CRUD Functions  
+  const handleNumberSeries = () => {
+    setEditingNumberSeries(null);
+    setNumberSeriesForm({
+    company_code: "YJK",
+    Screen_Type: "",
+    Start_Year: "",
+    End_Year: "",
+    Start_No: "",
+    Running_No: "",
+    End_No: "",
+    text: "",
+    number_prefix: "",
+    status: "Active",
+    bill_format: "",
+    created_by: "admin",
+    modified_by: "admin",
+    });
+
+    setIsNumberSeriesDialogOpen(true);
+  };
+   const validateNumberSeries = () => {
+    if (
+      !numberSeriesForm.Screen_Type ||
+      !numberSeriesForm.Start_Year ||
+      !numberSeriesForm.End_Year ||
+      !numberSeriesForm.Start_No ||
+      !numberSeriesForm.Running_No ||
+      !numberSeriesForm.End_No ||
+      !numberSeriesForm.text ||
+      !numberSeriesForm.number_prefix ||
+      !numberSeriesForm.status ||
+      !numberSeriesForm.bill_format 
+    ) {
+      toast({
+        title: "Required Fields",
+        description: "Please fill all required fields.",
+        variant: "destructive",
+      });
+      return false;
+    }
+
+    return true;
+  };
+  const handleCreateNumberSeries = async () => {
+    setSubmittedNumberSeries(true);
+
+    if (!validateNumberSeries()) return;
+
+    try {
+      const response = await fetch(`${BASE_URL}/addCompanyMappingData`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(companyMappingForm),
+        }
+      );
+
+      const data = await response.json();
+
+      if (response.ok) {
+        toast({
+          title: "Success",
+          description: data.message || "Number Series created successfully.",
+        });
+
+        handleNumberSeriesSearch();
+        setIsNumberSeriesDialogOpen(false);
+        setSubmittedNumberSeries(false);
+      } else {
+        toast({
+          title: "Error",
+          description: data.message || "Failed to create Number Series.",
+          variant: "destructive",
+        });
+      }
+    } catch (err: any) {
+      console.error(err);
+
+      toast({
+        title: "Server Error",
+        description: err.message || "Something went wrong.",
+        variant: "destructive",
+      });
+    }
+  };
+    const handleUpdateNumberSeries = async () => {
+    setSubmittedNumberSeries(true);
+
+    if (!validateNumberSeries()) return;
+
+    try {
+      const formData = new FormData();
+
+      Object.keys(numberSeriesForm).forEach((key) => {
+        formData.append(key, numberSeriesForm[key as keyof typeof numberSeriesForm] ?? "");
+      });
+
+      companyImages.forEach((img, index) => {
+        if (!img) return;
+
+        const base64 = img.split(",")[1];
+        const byteCharacters = atob(base64);
+
+        const byteNumbers = Array.from(byteCharacters, (char) =>
+          char.charCodeAt(0)
+        );
+
+        const byteArray = new Uint8Array(byteNumbers);
+
+        const blob = new Blob([byteArray], {
+          type: "image/png",
+        });
+
+        if (index === 0) {
+          formData.append("company_logo", blob, "company_logo.png");
+        }
+
+        if (index === 1) {
+          formData.append(
+            "authorisedSignatur",
+            blob,
+            "authorisedSignatur.png"
+          );
+        }
+      });
+
+      const response = await fetch(`${BASE_URL}/NumberSeriesUpdate`,
+        {
+          method: "POST",
+          body: formData,
+        }
+      );
+
+      const data = await response.json();
+
+      if (response.ok) {
+        toast({
+          title: "Success",
+          description: data.message || "NumberSeries updated successfully.",
+        });
+
+        handleNumberSeriesSearch();
+        setEditingNumberSeries(null);
+        setIsNumberSeriesDialogOpen(false);
+        setSubmittedNumberSeries(false);
+      } else {
+        toast({
+          title: "Error",
+          description: data.message || "Failed to update company.",
+          variant: "destructive",
+        });
+      }
+    } catch (error: any) {
+      console.error(error);
+
+      toast({
+        title: "Server Error",
+        description: error.message || "Something went wrong.",
+        variant: "destructive",
+      });
+    }
+  };
+    const handleDeleteNumberSeries = async (keyfiels: string) => {
+    const confirmed = window.confirm(
+      "Are you sure you want to delete this NumberSeries? This action cannot be undone."
+    );
+
+    if (!confirmed) return;
+
+    try {
+      const response = await fetch(`${BASE_URL}/NumberSeriesdeleteData`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "modified-by": "admin",
+          },
+          body: JSON.stringify({
+            keyfiels: [keyfiels],
+          }),
+        }
+      );
+
+      const data = await response.json();
+
+      if (response.ok) {
+        toast({
+          title: "Success",
+          description:
+            data.message || "Number Series deleted successfully.",
+        });
+
+        handleNumberSeriesSearch();
+      } else {
+        toast({
+          title: "Error",
+          description:
+            data.message || "Failed to delete Number Series.",
+          variant: "destructive",
+        });
+      }
+    } catch (err: any) {
+      console.error(err);
+
+      toast({
+        title: "Server Error",
+        description: err.message || "Something went wrong.",
+        variant: "destructive",
+      });
+    }
+  };
+  const handleSaveNumberSeries = async () => {
+    if (editingNumberSeries) {
+      await handleUpdateNumberSeries();
+    } else {
+      await handleCreateNumberSeries();
+    }
+  };
+  const handleNumberSeriesSearch = async () => {
+    try {
+      const response = await fetch(`${BASE_URL}/NumberSeriessearchdata`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            company_code: "YJK",
+            user_code: companyMappingSearchForm.user_code,
+            company_no: companyMappingSearchForm.company_no,
+            location_no: companyMappingSearchForm.location_no,
+            status: companyMappingSearchForm.status,
+          }),
+        }
+      );
+
+      const data = await response.json();
+
+      if (response.ok) {
+        setCompanyMappings(data);
+      } else if (response.status === 404) {
+        setCompanies([]);
+
+        toast({
+          title: "Data Not Found",
+          description: data?.message || "No matching companies found.",
+          variant: "destructive",
+        });
+      } else {
+        setCompanies([]);
+
+        toast({
+          title: "Search Failed",
+          description: data?.message || "Something went wrong while searching.",
+          variant: "destructive",
+        });
+      }
+    } catch (error: any) {
+      console.error("Search Error:", error);
+
+      setCompanies([]);
+
+      toast({
+        title: "Server Error",
+        description:
+          error?.message ||
+          "Unable to connect to the server. Please try again later.",
+        variant: "destructive",
+      });
+    }
+  };  
+  const handleEditNumberSeries = (mapping: any) => {
+    setEditingNumberSeries(mapping);
+
+    setCompanyMappingForm({
+      company_code: "YJK",
+      user_code: mapping.user_code,
+      company_no: mapping.company_no,
+      location_no: mapping.location_no,
+      status: mapping.status,
+      order_no: mapping.order_no,
+      keyfiels: mapping.keyfiels,
+      created_by: mapping.created_by,
+      modified_by: mapping.modified_by,
+    });
+
+    setIsNumberSeriesDialogOpen(true);
+  };
+
+
+
   //TAB BUTTON LABELS
   const addLabels = {
     company: "Company",
@@ -3023,6 +3317,9 @@ const [numberSeriesForm, setNumberSeriesForm] = useState({
       case "attribute":
         handleAddAttribute();
         break;
+      case "NumberSeries":
+        handleNumberSeries();
+        break;        
       default:
         break;
     }
@@ -3773,6 +4070,7 @@ const [numberSeriesForm, setNumberSeriesForm] = useState({
 
     </div>
   );
+  
 
   const handleSearch = () => {
     switch (activeTab) {
@@ -4552,9 +4850,7 @@ const [numberSeriesForm, setNumberSeriesForm] = useState({
                       <TableHead>text</TableHead>
                       <TableHead>status</TableHead>
                       <TableHead>bill_format</TableHead>
-                      <TableHead>created_by</TableHead>
-                      <TableHead>modified_by</TableHead>
-                      <TableHead className="text-right">Actions</TableHead>
+                          <TableHead className="text-right">Actions</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
@@ -4571,8 +4867,7 @@ const [numberSeriesForm, setNumberSeriesForm] = useState({
                         <TableCell>{NumberSeries.text}</TableCell>
                         <TableCell>{NumberSeries.status}</TableCell>
                         <TableCell>{NumberSeries.bill_format}</TableCell>
-                        <TableCell>{NumberSeries.created_by}</TableCell>
-                        <TableCell>{NumberSeries.modified_by}</TableCell>
+
                         <TableCell className="text-right">
                           <div className="flex justify-end gap-2">
                             <Button
@@ -6475,7 +6770,7 @@ const [numberSeriesForm, setNumberSeriesForm] = useState({
               <div className="space-y-2">
                 <Label htmlFor="code" className={submittedAttributeHdr && !attributeHdrForm.attributeheader_code ? "text-red-500" : ""}>Code*</Label>
                 <TooltipProvider>
-                  <Tooltip>
+                  <Tooltip>- 
                     <TooltipTrigger asChild>
                       <Input
                         id="Code"
@@ -6592,38 +6887,38 @@ const [numberSeriesForm, setNumberSeriesForm] = useState({
             <div className="grid gap-4 py-4">
 
               <div className="space-y-2">
-                <Label htmlFor="code" className={submittedAttributeHdr && !attributeHdrForm.attributeheader_code ? "text-red-500" : ""}>Code*</Label>
+                <Label htmlFor="code" className={submittedNumberSeries && !numberSeriesForm.Screen_Type ? "text-red-500" : ""}>Code*</Label>
                 <Input
                   id="Code"
-                  value={attributeHdrForm.attributeheader_code}
-                  onChange={(e) => setAttributeHdrForm({ ...attributeHdrForm, attributeheader_code: e.target.value, })}
-                  placeholder="Enter attribute code (e.g., ACCOUNT_TYPE)"
+                  value={numberSeriesForm.Screen_Type}
+                  onChange={(e) => setNumberSeriesForm({ ...numberSeriesForm, Screen_Type: e.target.value, })}
+                  placeholder="Enter Screen_Type (e.g., ACCOUNT_TYPE)"
                 />
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="code" className={submittedAttributeHdr && !attributeHdrForm.attributeheader_name ? "text-red-500" : ""}>Name*</Label>
+                <Label htmlFor="code" className={submittedNumberSeries && !numberSeriesForm.Screen_Type ? "text-red-500" : ""}>Name*</Label>
                 <Input
                   id="Name"
-                  value={attributeHdrForm.attributeheader_name}
-                  onChange={(e) => setAttributeHdrForm({ ...attributeHdrForm, attributeheader_name: e.target.value, })}
-                  placeholder="Enter attribute name (e.g., Account Type)"
+                  value={numberSeriesForm.Start_Year}
+                  onChange={(e) => setNumberSeriesForm({ ...numberSeriesForm, Start_Year: e.target.value, })}
+                  placeholder="Enter Start_Year (e.g., Account Type)"
                 />
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="code" className={submittedAttributeHdr && !attributeHdrForm.status ? "text-red-500" : ""}>Status*</Label>
-                <Select value={attributeHdrForm.status} onValueChange={(value) => setAttributeHdrForm({ ...attributeHdrForm, status: value, })}>
+                <Label htmlFor="code" className={submittedNumberSeries && !numberSeriesForm.status ? "text-red-500" : ""}>Status*</Label>
+                <Select value={numberSeriesForm.status} onValueChange={(value) => setNumberSeriesForm({ ...numberSeriesForm, status: value, })}>
                   <SelectTrigger>
                     <SelectValue placeholder="Select Status" />
                   </SelectTrigger>
                   <SelectContent>
                     {status.map((status: any) => (
                       <SelectItem
-                        key={status.attributedetails_code}
-                        value={status.attributedetails_code}
+                        key={status.Screen_Type}
+                        value={status.Screen_Type}
                       >
-                        {status.attributedetails_name}
+                        {status.Screen_Type}
                       </SelectItem>
                     ))}
                   </SelectContent>
