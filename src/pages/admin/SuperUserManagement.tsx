@@ -5564,7 +5564,7 @@ const [numberSeriesForm, setNumberSeriesForm] = useState({
                         <TableCell>{user.user_name}</TableCell>
                         <TableCell>{user.first_name}</TableCell>
                         <TableCell>{user.last_name}</TableCell>
-                        {/* <TableCell>{user.user_status}</TableCell> */}
+                        {/* <TableCell>{user.user_status}</TableCell> 
                         <TableCell>
                           <Badge variant={user.user_status === "Active" ? "default" : "secondary"}>
                             {user.user_status}
