@@ -970,6 +970,58 @@ const WorkoutProgramManagement = () => {
     permission_type: "",
   });
 
+  //Role Mapping Ag Grid
+  const RoleRightsColumnDefs = [
+    {
+      headerName: "Role ID",
+      field: "role_id",
+      minWidth: 150,
+      cellStyle: { fontWeight: 600 },
+    },
+    {
+      headerName: "Screen Type",
+      field: "screen_type",
+      minWidth: 150,
+    },
+    {
+      headerName: "Permission Type",
+      field: "permission_type",
+      minWidth: 150,
+    },
+    {
+  headerName: "Actions",
+  width: 120,
+  minWidth: 120,
+  maxWidth: 120,
+  sortable: false,
+  filter: false,
+  cellStyle: {
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  cellRenderer: (params: any) => (
+    <div className="flex gap-2">
+      <Button
+        variant="ghost"
+        size="sm"
+        onClick={() => handleEditRoleRight(params.data)}
+      >
+        <Edit className="h-4 w-4" />
+      </Button>
+
+      <Button
+        variant="ghost"
+        size="sm"
+        onClick={() => handleDeleteRoleRight(params.data.keyfield)}
+      >
+        <Trash2 className="h-4 w-4 text-red-500" />
+      </Button>
+    </div>
+  ),
+}
+  ];
+
   
 
   //User Dialog States
@@ -1035,6 +1087,83 @@ const WorkoutProgramManagement = () => {
     gender: "",
   });
 
+  //User Ag Grid
+  const UserColumnDefs = [
+    {
+      headerName: "User Code",
+      field: "user_code",
+      minWidth: 150,
+      cellStyle: { fontWeight: 600 },
+    },
+    {
+      headerName: "User Name",
+      field: "user_name",
+      minWidth: 150,
+    },
+    {
+      headerName: "First Name",
+      field: "first_name",
+      minWidth: 150,
+    },
+    {
+      headerName: "Last Name",
+      field: "last_name",
+      minWidth: 150,
+    },
+    {
+      headerName: "User Status",
+      field: "user_status",
+      minWidth: 150,
+    },
+    {
+      headerName: "DOB",
+      field: "dob",
+      minWidth: 150,
+    },
+    {
+      headerName: "Role ID",
+      field: "role_id",
+      minWidth: 150,
+    },
+    {
+      headerName: "Gender",
+      field: "gender",
+      minWidth: 150,
+    },
+    {
+  headerName: "Actions",
+  width: 120,
+  minWidth: 120,
+  maxWidth: 120,
+  sortable: false,
+  filter: false,
+  cellStyle: {
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  cellRenderer: (params: any) => (
+    <div className="flex gap-2">
+      <Button
+        variant="ghost"
+        size="sm"
+        onClick={() => handleEditUser(params.data)}
+      >
+        <Edit className="h-4 w-4" />
+      </Button>
+
+      <Button
+        variant="ghost"
+        size="sm"
+        onClick={() => handleDeleteUser(params.data.user_code)}
+      >
+        <Trash2 className="h-4 w-4 text-red-500" />
+      </Button>
+    </div>
+  ),
+}
+  ];
+
   //Attribute Detail Dialog States
   const [submittedAttributeDet, setSubmittedAttributeDet] = useState(false);
   const [attributes, setAttributes] = useState([]);
@@ -1057,6 +1186,63 @@ const WorkoutProgramManagement = () => {
     attributedetails_name: "",
     descriptions: "",
   });
+
+  //User Ag Grid
+  const AttributeColumnDefs = [
+    {
+      headerName: "Code",
+      field: "attributeheader_code",
+      minWidth: 150,
+      cellStyle: { fontWeight: 600 },
+    },
+    {
+      headerName: "Sub Code",
+      field: "attributedetails_code",
+      minWidth: 150,
+    },
+    {
+      headerName: "Details Name",
+      field: "attributedetails_name",
+      minWidth: 150,
+    },
+    {
+      headerName: "Description",
+      field: "descriptions",
+      minWidth: 150,
+    },
+    {
+  headerName: "Actions",
+  width: 120,
+  minWidth: 120,
+  maxWidth: 120,
+  sortable: false,
+  filter: false,
+  cellStyle: {
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  cellRenderer: (params: any) => (
+    <div className="flex gap-2">
+      <Button
+        variant="ghost"
+        size="sm"
+        onClick={() => handleEditAttribute(params.data)}
+      >
+        <Edit className="h-4 w-4" />
+      </Button>
+
+      <Button
+        variant="ghost"
+        size="sm"
+        onClick={() => handleDeleteAttribute(params.data.attributeheader_code,params.data.attributedetails_code)}
+      >
+        <Trash2 className="h-4 w-4 text-red-500" />
+      </Button>
+    </div>
+  ),
+}
+  ];
 
   //Attribute Header Dialog States
   const [submittedAttributeHdr, setSubmittedAttributeHdr] = useState(false);
@@ -3176,7 +3362,7 @@ const [numberSeriesForm, setNumberSeriesForm] = useState({
   const handleAddAttribute = () => {
     setEditingAttribute(null);
     setAttributeForm({
-      company_code: "",
+      company_code: "YJK",
       attributeheader_code: "",
       attributedetails_code: "",
       attributedetails_name: "",
@@ -4925,7 +5111,7 @@ const [numberSeriesForm, setNumberSeriesForm] = useState({
           {/* Company Tab */}
           <TabsContent value="company">
             <Card>
-              <CardHeader>
+              <CardHeader className="text-left items-start">
                 <CardTitle>Company</CardTitle>
                 <CardDescription>
                   Manage all companies and their details
@@ -5002,7 +5188,7 @@ const [numberSeriesForm, setNumberSeriesForm] = useState({
           {/* Company Mapping Tab */}
           <TabsContent value="companyMapping">
             <Card>
-              <CardHeader>
+              <CardHeader className="text-left items-start">
                 <CardTitle>Company Mapping</CardTitle>
                 <CardDescription>
                   Manage all mapping companies and their details
@@ -5095,7 +5281,7 @@ const [numberSeriesForm, setNumberSeriesForm] = useState({
           {/* Location Tab */}
           <TabsContent value="location">
             <Card>
-              <CardHeader>
+              <CardHeader className="text-left items-start">
                 <CardTitle>Location</CardTitle>
                 <CardDescription>
                   Manage all mapping locations and their details
@@ -5169,7 +5355,7 @@ const [numberSeriesForm, setNumberSeriesForm] = useState({
           {/* Role Tab */}
           <TabsContent value="role">
             <Card>
-              <CardHeader>
+              <CardHeader className="text-left items-start">
                 <CardTitle>Role</CardTitle>
                 <CardDescription>
                   Manage all roles and their details
@@ -5244,10 +5430,10 @@ const [numberSeriesForm, setNumberSeriesForm] = useState({
           {/* Location Tab */}
           <TabsContent value="roleMapping">
             <Card>
-              <CardHeader>
+              <CardHeader className="text-left items-start">
                 <CardTitle>Role Mapping</CardTitle>
                 <CardDescription>
-                  Manage all mapping role mappings and their details
+                  Manage all role mappings and their details
                 </CardDescription>
               </CardHeader>
 
@@ -5263,7 +5449,7 @@ const [numberSeriesForm, setNumberSeriesForm] = useState({
 
 
           {/* Role Rights Tab */}
-          <TabsContent value="roleRights">
+          {/* <TabsContent value="roleRights">
             <Card>
               <CardHeader>
                 <CardTitle>Role Rights</CardTitle>
@@ -5313,10 +5499,30 @@ const [numberSeriesForm, setNumberSeriesForm] = useState({
                 </Table>
               </CardContent>
             </Card>
+          </TabsContent> */}
+
+          {/* Role Rights Tab */}
+          <TabsContent value="roleRights">
+            <Card>
+              <CardHeader className="text-left items-start">
+                <CardTitle>Role Rights</CardTitle>
+                <CardDescription>
+                  Manage all role rights and their details
+                </CardDescription>
+              </CardHeader>
+
+              <CardContent>
+                <AgGridTable
+                  rowData={roleRights}
+                  columnDefs={RoleRightsColumnDefs}
+                  height="300px"
+                />
+              </CardContent>
+            </Card>
           </TabsContent>
 
           {/* User Tab */}
-          <TabsContent value="user">
+          {/* <TabsContent value="user">
             <Card>
               <CardHeader>
                 <CardTitle>User</CardTitle>
@@ -5372,10 +5578,30 @@ const [numberSeriesForm, setNumberSeriesForm] = useState({
                 </Table>
               </CardContent>
             </Card>
+          </TabsContent> */}
+
+          {/* User Tab */}
+          <TabsContent value="user">
+            <Card>
+              <CardHeader className="text-left items-start">
+                <CardTitle>User</CardTitle>
+                <CardDescription>
+                  Manage all users and their details
+                </CardDescription>
+              </CardHeader>
+
+              <CardContent>
+                <AgGridTable
+                  rowData={users}
+                  columnDefs={UserColumnDefs}
+                  height="300px"
+                />
+              </CardContent>
+            </Card>
           </TabsContent>
 
           {/* Attribute Tab */}
-          <TabsContent value="attribute">
+          {/* <TabsContent value="attribute">
             <Card>
               <CardHeader>
                 <CardTitle>Attribute</CardTitle>
@@ -5431,11 +5657,32 @@ const [numberSeriesForm, setNumberSeriesForm] = useState({
                 </Table>
               </CardContent>
             </Card>
+          </TabsContent> */}
+
+          {/* Attribute Tab */}
+          <TabsContent value="attribute">
+            <Card>
+              <CardHeader className="text-left items-start">
+                <CardTitle>Attribute</CardTitle>
+                <CardDescription>
+                  Manage all attributes and their details
+                </CardDescription>
+              </CardHeader>
+
+              <CardContent>
+                <AgGridTable
+                  rowData={attributes}
+                  columnDefs={AttributeColumnDefs}
+                  height="300px"
+                />
+              </CardContent>
+            </Card>
           </TabsContent>
+
           {/* NumberSeries Tab */}
           <TabsContent value="NumberSeries">
             <Card>
-              <CardHeader>
+              <CardHeader className="text-left items-start">
                 <CardTitle>NumberSeries</CardTitle>
                 <CardDescription>Manage all NumberSeries and their details</CardDescription>
               </CardHeader>
@@ -6978,7 +7225,7 @@ const [numberSeriesForm, setNumberSeriesForm] = useState({
                       id="UserCode"
                       value={userForm.user_code}
                       onChange={(e) => setUserForm({ ...userForm, user_code: e.target.value })}
-                      placeholder="e.g., Last Name"
+                      placeholder="e.g., User Code"
                     />
                   </div>
 
@@ -7042,7 +7289,7 @@ const [numberSeriesForm, setNumberSeriesForm] = useState({
                     </Select>
                   </div>
 
-                  <div className="space-y-2">
+                  {/* <div className="space-y-2">
                     <Label htmlFor="Log">Log in/out</Label>
                     <Select value={userForm.log_in_out} onValueChange={(value) => setUserForm({ ...userForm, log_in_out: value })}>
                       <SelectTrigger>
@@ -7059,7 +7306,7 @@ const [numberSeriesForm, setNumberSeriesForm] = useState({
                         ))}
                       </SelectContent>
                     </Select>
-                  </div>
+                  </div> */}
 
                   <div className="space-y-2">
                     {/* <Label htmlFor="RoleID">Role ID*</Label> */}
@@ -7236,6 +7483,7 @@ const [numberSeriesForm, setNumberSeriesForm] = useState({
                             id="SubCode"
                             value={attributeForm.attributedetails_code}
                             onChange={(e) => setAttributeForm({ ...attributeForm, attributedetails_code: e.target.value })}
+                            disabled={!!editingAttribute}
                             placeholder="Enter the sub code (e.g., ACTIVE)"
                           />
                         </TooltipTrigger>
