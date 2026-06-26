@@ -5,6 +5,8 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Upload, X, Image } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+
 
 interface ImageUploadProps {
   images: (string | null)[];
@@ -13,9 +15,10 @@ interface ImageUploadProps {
   label?: string;
 
   onFilesChange?: (files: (File | null)[]) => void;
+  tooltips?: string[];
 }
 
-const ImageUpload = ({ images, onImagesChange, maxImages = 3, label = "Project Images", onFilesChange }: ImageUploadProps) => {
+const ImageUpload = ({ images, onImagesChange, maxImages = 3, label = "Project Images", onFilesChange, tooltips = ["Upload Image"] }: ImageUploadProps) => {
   const [uploading, setUploading] = useState<number | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const { toast } = useToast();
@@ -116,31 +119,41 @@ const ImageUpload = ({ images, onImagesChange, maxImages = 3, label = "Project I
                 </Button>
               </div>
             ) : (
-              <div className="w-full h-32 border-2 border-dashed border-gray-300 rounded-lg flex flex-col items-center justify-center hover:border-gray-400 transition-colors">
-                <Input
-                  ref={fileInputRef}
-                  type="file"
-                  accept="image/*"
-                  onChange={(e) => handleFileSelect(e, index)}
-                  className="hidden"
-                  id={`image-upload-${index}`}
-                />
-                <Label
-                  htmlFor={`image-upload-${index}`}
-                  className="flex flex-col items-center justify-center cursor-pointer w-full h-full"
-                >
-                  {uploading === index ? (
-                    <div className="animate-spin">
-                      <Upload className="h-6 w-6 text-gray-400" />
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <div className="w-full h-32 border-2 border-dashed border-gray-300 rounded-lg flex flex-col items-center justify-center hover:border-gray-400 transition-colors">
+                      <Input
+                        ref={fileInputRef}
+                        type="file"
+                        accept="image/*"
+                        onChange={(e) => handleFileSelect(e, index)}
+                        className="hidden"
+                        id={`image-upload-${index}`}
+                      />
+                      <Label
+                        htmlFor={`image-upload-${index}`}
+                        className="flex flex-col items-center justify-center cursor-pointer w-full h-full"
+                      >
+                        {uploading === index ? (
+                          <div className="animate-spin">
+                            <Upload className="h-6 w-6 text-gray-400" />
+                          </div>
+                        ) : (
+                          <>
+                            <Image className="h-6 w-6 text-gray-400 mb-2" />
+                            <span className="text-sm text-gray-500">Upload Image</span>
+                          </>
+                        )}
+                      </Label>
                     </div>
-                  ) : (
-                    <>
-                      <Image className="h-6 w-6 text-gray-400 mb-2" />
-                      <span className="text-sm text-gray-500">Upload Image</span>
-                    </>
-                  )}
-                </Label>
-              </div>
+                  </TooltipTrigger>
+
+                  <TooltipContent>
+                    <p>{tooltips[index] || "Upload Image"}</p>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
             )}
           </div>
         ))}

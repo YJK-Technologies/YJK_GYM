@@ -40,3 +40,47 @@
 .read-the-docs {
   color: #888;
 }
+
+.ag-theme-quartz {
+  --ag-font-size: 14px;
+  --ag-font-family: inherit;
+
+  --ag-background-color: #ffffff;
+
+  --ag-header-background-color: #ffffff;
+  --ag-header-foreground-color: #6b7280;
+
+  --ag-row-border-color: #e5e7eb;
+  --ag-border-color: #e5e7eb;
+
+  --ag-cell-horizontal-padding: 16px;
+
+  --ag-odd-row-background-color: #ffffff;
+  --ag-row-hover-color: rgba(0, 0, 0, 0.03);
+
+  --ag-header-column-separator-display: none;
+  --ag-header-column-resize-handle-display: none;
+}
+
+.ag-theme-quartz .ag-header {
+  border-bottom: 1px solid #e5e7eb;
+  font-weight: 500;
+}
+
+.ag-theme-quartz .ag-row {
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.ag-theme-quartz .ag-cell {
+  display: flex;
+  align-items: center;
+  border: none;
+}
+
+.ag-theme-quartz .ag-header-cell {
+  border: none;
+}
+
+.ag-theme-quartz .ag-root-wrapper {
+  border: none;
+}
