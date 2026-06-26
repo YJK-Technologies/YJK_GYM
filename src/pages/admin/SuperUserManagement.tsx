@@ -645,12 +645,45 @@ const WorkoutProgramManagement = () => {
     created_by: "admin",
     modified_by: "admin",
   });
-  const [images, setImages] = useState<(string | null)[]>([null, null]);
-  const [userImages, setUserImages] = useState<(File | null)[]>([]);
+  const [userImages, setUserImages] = useState<(string | null)[]>([null, null]);
 
-  const handleUserFiles = (file: (File | null)[]) => {
-    setUserImages(file);
+  const handleUserFiles = async (files: (File | null)[]) => {
+    const convertedImages = await Promise.all(
+      files.map((file, index) => {
+        return new Promise<string | null>((resolve) => {
+          // Keep existing image if no new file is selected
+          if (!file) {
+            resolve(userImages[index] ?? null);
+            return;
+          }
+
+          const reader = new FileReader();
+
+          reader.onload = (e) => {
+            resolve(e.target?.result as string);
+          };
+
+          reader.onerror = () => resolve(null);
+
+          reader.readAsDataURL(file);
+        });
+      })
+    );
+
+    setUserImages(convertedImages);
   };
+
+  //users Search States
+  const [usersSearchForm, setusersSearchForm] = useState({
+    company_code: "YJK",
+    user_code: "",
+    user_name: "",
+    first_name: "",
+    last_name: "",
+    user_status: "",
+    dob: "",
+    gender: "",
+  });
 
   //Attribute Detail Dialog States
   const [submittedAttributeDet, setSubmittedAttributeDet] = useState(false);
@@ -2334,7 +2367,7 @@ const WorkoutProgramManagement = () => {
   const handleAddUser = () => {
     setEditingUser(null);
     setUserForm({
-      company_code: "YJKT",
+      company_code: "YJK",
       user_code: "",
       user_name: "",
       first_name: "",
@@ -2351,7 +2384,7 @@ const WorkoutProgramManagement = () => {
       created_by: "admin",
       modified_by: "admin",
     });
-    setImages([]);
+    setUserImages([null]);
     setIsUserDialogOpen(true);
   };
 
@@ -2399,13 +2432,51 @@ const WorkoutProgramManagement = () => {
     try {
       const formData = new FormData();
 
+      // Object.entries(userForm).forEach(([key, value]) => {
+      //   formData.append(key, value as string);
+      // });
       Object.entries(userForm).forEach(([key, value]) => {
-        formData.append(key, value as string);
+        if (key === "super_admin") {
+          formData.append("super_admin", value ? "Yes" : "No");
+        } else {
+          formData.append(key, String(value ?? ""));
+        }
       });
 
-      if (userImages?.length > 0 && userImages[0]) {
-        formData.append("user_img", userImages[0]);
-      }
+      // if (userImages?.length > 0 && userImages[0]) {
+      //   formData.append("user_img", userImages[0]);
+      // }
+
+      userImages.forEach((img, index) => {
+        if (!img) return;
+
+        // Extract mime type from base64 string
+        const mimeType = img.match(/data:(.*?);base64/)?.[1] || "image/png";
+
+        const base64 = img.split(",")[1];
+        const byteCharacters = atob(base64);
+
+        const byteNumbers = Array.from(byteCharacters, (char) =>
+          char.charCodeAt(0)
+        );
+
+        const byteArray = new Uint8Array(byteNumbers);
+
+        const blob = new Blob([byteArray], {
+          type: mimeType,
+        });
+
+        // Generate extension based on mime type
+        const extension = mimeType.split("/")[1] || "png";
+
+        if (index === 0) {
+          formData.append(
+            "user_img",
+            blob,
+            `user_img.${extension}`
+          );
+        }
+      });
 
       const response = await fetch(`${BASE_URL}/useradd`, {
         method: "POST",
@@ -2423,7 +2494,7 @@ const WorkoutProgramManagement = () => {
         setIsUserDialogOpen(false);
         setSubmittedUser(false);
 
-        // fetchUsers();
+        handleUserSearch();
       } else {
         toast({
           title: "Error",
@@ -2484,16 +2555,54 @@ const WorkoutProgramManagement = () => {
     try {
       const formData = new FormData();
 
+      // Object.entries(userForm).forEach(([key, value]) => {
+      //   formData.append(key, value as string);
+      // });
       Object.entries(userForm).forEach(([key, value]) => {
-        formData.append(key, value as string);
+        if (key === "super_admin") {
+          formData.append("super_admin", value ? "Yes" : "No");
+        } else {
+          formData.append(key, String(value ?? ""));
+        }
       });
 
-      if (userImages.length > 0) {
-        formData.append("user_images", userImages[0]);
-      }
+      // if (userImages.length > 0) {
+      //   formData.append("user_images", userImages[0]);
+      // }
+
+      userImages.forEach((img, index) => {
+        if (!img) return;
+
+        // Extract mime type from base64 string
+        const mimeType = img.match(/data:(.*?);base64/)?.[1] || "image/png";
+
+        const base64 = img.split(",")[1];
+        const byteCharacters = atob(base64);
+
+        const byteNumbers = Array.from(byteCharacters, (char) =>
+          char.charCodeAt(0)
+        );
+
+        const byteArray = new Uint8Array(byteNumbers);
+
+        const blob = new Blob([byteArray], {
+          type: mimeType,
+        });
+
+        // Generate extension based on mime type
+        const extension = mimeType.split("/")[1] || "png";
+
+        if (index === 0) {
+          formData.append(
+            "user_images",
+            blob,
+            `user_images.${extension}`
+          );
+        }
+      });
 
       const response = await fetch(`${BASE_URL}/UserUpdates`, {
-        method: "PUT",
+        method: "POST",
         body: formData,
       });
 
@@ -2509,7 +2618,7 @@ const WorkoutProgramManagement = () => {
         setIsUserDialogOpen(false);
         setSubmittedUser(false);
 
-        // fetchUsers();
+        handleUserSearch();
       } else {
         toast({
           title: "Error",
@@ -2570,11 +2679,11 @@ const WorkoutProgramManagement = () => {
 
     try {
       const response = await fetch(`${BASE_URL}/userdelete`, {
-        method: "DELETE",
+        method: "POST",
         headers: {
           "Content-Type": "application/json",
           "modified-by": "admin",
-          "company_code": "COMP001",
+          "company_code": "YJK",
         },
         body: JSON.stringify({
           user_codes: [user_code],
@@ -2589,7 +2698,7 @@ const WorkoutProgramManagement = () => {
           description: data.message || "User deleted successfully.",
         });
 
-        // fetchUsers();
+        handleUserSearch();
       } else {
         toast({
           title: "Error",
@@ -2616,6 +2725,61 @@ const WorkoutProgramManagement = () => {
     }
   };
 
+  const handleUserSearch = async () => {
+    try {
+      const response = await fetch(`${BASE_URL}/usersearchcriteria`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          company_code: "YJK",
+          user_code: usersSearchForm.user_code,
+          user_name: usersSearchForm.user_name,
+          first_name: usersSearchForm.first_name,
+          last_name: usersSearchForm.last_name,
+          user_status: usersSearchForm.user_status,
+          dob: usersSearchForm.dob,
+          gender: usersSearchForm.gender,
+        }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        setUsers(data);
+      } else if (response.status === 404) {
+        setUsers([]);
+
+        toast({
+          title: "Data Not Found",
+          description: data?.message || "No matching attributes found.",
+          variant: "destructive",
+        });
+      } else {
+        setUsers([]);
+
+        toast({
+          title: "Search Failed",
+          description: data?.message || "Something went wrong while searching.",
+          variant: "destructive",
+        });
+      }
+    } catch (error: any) {
+      console.error("Search Error:", error);
+
+      setUsers([]);
+
+      toast({
+        title: "Server Error",
+        description:
+          error?.message ||
+          "Unable to connect to the server. Please try again later.",
+        variant: "destructive",
+      });
+    }
+  };
+
   const handleEditUser = (user: any) => {
     setEditingUser(user);
 
@@ -2638,7 +2802,14 @@ const WorkoutProgramManagement = () => {
       modified_by: user.modified_by,
     });
 
-    // setImages([]);
+    const userLogo =
+      user.user_images?.data &&
+        Array.isArray(user.user_images.data)
+        ? bufferToBase64(user.user_images.data)
+        : null;
+
+    setUserImages([userLogo]);
+
     setIsUserDialogOpen(true);
   };
 
@@ -2844,7 +3015,7 @@ const WorkoutProgramManagement = () => {
       if (response.ok) {
         setAttributes(data);
       } else if (response.status === 404) {
-        setCompanies([]);
+        setAttributes([]);
 
         toast({
           title: "Data Not Found",
@@ -2852,7 +3023,7 @@ const WorkoutProgramManagement = () => {
           variant: "destructive",
         });
       } else {
-        setCompanies([]);
+        setAttributes([]);
 
         toast({
           title: "Search Failed",
@@ -2863,7 +3034,7 @@ const WorkoutProgramManagement = () => {
     } catch (error: any) {
       console.error("Search Error:", error);
 
-      setCompanies([]);
+      setAttributes([]);
 
       toast({
         title: "Server Error",
@@ -3600,90 +3771,90 @@ const WorkoutProgramManagement = () => {
     </div>
   );
 
-  // const renderUserSearch = () => (
-  //   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+  const renderUserSearch = () => (
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
 
-  //     <div className="space-y-2">
-  //       <Label>User Code</Label>
-  //       <Input
-  //         placeholder="Enter User Code"
-  //         value={companyMappingSearchForm.user_code}
-  //         onChange={(e) => setCompanyMappingSearchForm({ ...companyMappingSearchForm, user_code: e.target.value, })} />
-  //     </div>
+      <div className="space-y-2">
+        <Label>User Code</Label>
+        <Input
+          placeholder="Enter User Code"
+          value={usersSearchForm.user_code}
+          onChange={(e) => setusersSearchForm({ ...usersSearchForm, user_code: e.target.value, })} />
+      </div>
 
-  //     <div className="space-y-2">
-  //       <Label>User Name</Label>
-  //       <Input
-  //         placeholder="Enter User Name"
-  //         value={companyMappingSearchForm.user_code}
-  //         onChange={(e) => setCompanyMappingSearchForm({ ...companyMappingSearchForm, user_code: e.target.value, })} />
-  //     </div>
+      <div className="space-y-2">
+        <Label>User Name</Label>
+        <Input
+          placeholder="Enter User Name"
+          value={usersSearchForm.user_name}
+          onChange={(e) => setusersSearchForm({ ...usersSearchForm, user_name: e.target.value, })} />
+      </div>
 
-  //     <div className="space-y-2">
-  //       <Label>First Name</Label>
-  //       <Input
-  //         placeholder="Enter First Name"
-  //         value={companyMappingSearchForm.user_code}
-  //         onChange={(e) => setCompanyMappingSearchForm({ ...companyMappingSearchForm, user_code: e.target.value, })} />
-  //     </div>
+      <div className="space-y-2">
+        <Label>First Name</Label>
+        <Input
+          placeholder="Enter First Name"
+          value={usersSearchForm.first_name}
+          onChange={(e) => setusersSearchForm({ ...usersSearchForm, first_name: e.target.value, })} />
+      </div>
 
-  //     <div className="space-y-2">
-  //       <Label>Last Name</Label>
-  //       <Input
-  //         placeholder="Enter Last Name"
-  //         value={companyMappingSearchForm.user_code}
-  //         onChange={(e) => setCompanyMappingSearchForm({ ...companyMappingSearchForm, user_code: e.target.value, })} />
-  //     </div>
+      <div className="space-y-2">
+        <Label>Last Name</Label>
+        <Input
+          placeholder="Enter Last Name"
+          value={usersSearchForm.last_name}
+          onChange={(e) => setusersSearchForm({ ...usersSearchForm, last_name: e.target.value, })} />
+      </div>
 
-  //     <div className="space-y-2">
-  //       <Label>User Status</Label>
-  //       <Select value={companyMappingSearchForm.status} onValueChange={(value) => setCompanyMappingSearchForm({ ...companyMappingSearchForm, status: value, })}>
-  //         <SelectTrigger>
-  //           <SelectValue placeholder="Select User Status" />
-  //         </SelectTrigger>
-  //         <SelectContent>
-  //           {status.map((item: any) => (
-  //             <SelectItem
-  //               key={item.attributedetails_code}
-  //               value={item.attributedetails_code}
-  //             >
-  //               {item.attributedetails_name}
-  //             </SelectItem>
-  //           ))}
-  //         </SelectContent>
-  //       </Select>
-  //     </div>
+      <div className="space-y-2">
+        <Label>User Status</Label>
+        <Select value={usersSearchForm.user_status} onValueChange={(value) => setusersSearchForm({ ...usersSearchForm, user_status: value, })}>
+          <SelectTrigger>
+            <SelectValue placeholder="Select User Status" />
+          </SelectTrigger>
+          <SelectContent>
+            {status.map((item: any) => (
+              <SelectItem
+                key={item.attributedetails_code}
+                value={item.attributedetails_code}
+              >
+                {item.attributedetails_name}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+      </div>
 
-  //     <div className="space-y-2">
-  //       <Label>DOB</Label>
-  //       <Input
-  //         type='date'
-  //         placeholder="Enter DOB"
-  //         value={companyMappingSearchForm.user_code}
-  //         onChange={(e) => setCompanyMappingSearchForm({ ...companyMappingSearchForm, user_code: e.target.value, })} />
-  //     </div>
+      <div className="space-y-2">
+        <Label>DOB</Label>
+        <Input
+          type='date'
+          placeholder="Enter DOB"
+          value={usersSearchForm.dob}
+          onChange={(e) => setusersSearchForm({ ...usersSearchForm, dob: e.target.value, })} />
+      </div>
 
-  //     <div className="space-y-2">
-  //       <Label>Gender</Label>
-  //       <Select value={companyMappingSearchForm.status} onValueChange={(value) => setCompanyMappingSearchForm({ ...companyMappingSearchForm, status: value, })}>
-  //         <SelectTrigger>
-  //           <SelectValue placeholder="Select Gender" />
-  //         </SelectTrigger>
-  //         <SelectContent>
-  //           {gender.map((gender: any) => (
-  //             <SelectItem
-  //               key={gender.attributedetails_code}
-  //               value={gender.attributedetails_code}
-  //             >
-  //               {gender.attributedetails_name}
-  //             </SelectItem>
-  //           ))}
-  //         </SelectContent>
-  //       </Select>
-  //     </div>
+      <div className="space-y-2">
+        <Label>Gender</Label>
+        <Select value={usersSearchForm.gender} onValueChange={(value) => setusersSearchForm({ ...usersSearchForm, gender: value, })}>
+          <SelectTrigger>
+            <SelectValue placeholder="Select Gender" />
+          </SelectTrigger>
+          <SelectContent>
+            {gender.map((gender: any) => (
+              <SelectItem
+                key={gender.attributedetails_code}
+                value={gender.attributedetails_code}
+              >
+                {gender.attributedetails_name}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+      </div>
 
-  //   </div>
-  // );
+    </div>
+  );
 
   const renderAttributeSearch = () => (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
@@ -3790,7 +3961,7 @@ const WorkoutProgramManagement = () => {
         break;
 
       case "user":
-        // handleUserSearch();
+        handleUserSearch();
         break;
 
       case "attribute":
@@ -3918,7 +4089,7 @@ const WorkoutProgramManagement = () => {
 
             {activeTab === "roleRights" && renderRoleRightsSearch()}
 
-            {/* {activeTab === "user" && renderUserSearch()} */}
+            {activeTab === "user" && renderUserSearch()}
 
             {activeTab === "attribute" && renderAttributeSearch()}
 
@@ -5988,34 +6159,7 @@ const WorkoutProgramManagement = () => {
                 <h4 className="font-medium text-sm text-gray-700">User Details</h4>
                 <div className="grid grid-cols-2 gap-4">
 
-                  {/* <div className="space-y-2"> */}
-                  {/* <Label htmlFor="UserCode">User Code*</Label> */}
-                  {/* <Label htmlFor="city" className={submittedUser && !userForm.user_code ? "text-red-500" : ""}>User Code*</Label> */}
-                  {/* <Select value={userForm.user_code} onValueChange={(value) => setUserForm({ ...userForm, user_code: value })}> */}
-                  {/* <SelectTrigger>
-                        <SelectValue placeholder="Select User Code" />
-                      </SelectTrigger> */}
-                  {/* <SelectContent> */}
-                  {/* {userCodeNameDrop.map((item: any) => (
-                          <SelectItem
-                            key={item.user_code}
-                            value={item.user_code}
-                          >
-                            {item.user_code} - {item.user_name}
-                          </SelectItem>
-                        ))} */}
-                  {/* <SelectItem value="User1">User 1</SelectItem>
-                        <SelectItem value="User2">User 2</SelectItem>
-                        <SelectItem value="User3">User 3</SelectItem>
-                        <SelectItem value="User4">User 4</SelectItem>
-                        <SelectItem value="User5">User 5</SelectItem>
-                        <SelectItem value="User6">User 6</SelectItem> */}
-                  {/* </SelectContent> */}
-                  {/* </Select> */}
-                  {/* </div> */}
-
                   <div className="space-y-2">
-                    {/* <Label htmlFor="LastName">Last Name*</Label> */}
                     <Label htmlFor="name" className={submittedUser && !userForm.user_code ? "text-red-500" : ""}>User Code*</Label>
                     <Input
                       id="UserCode"
@@ -6139,6 +6283,7 @@ const WorkoutProgramManagement = () => {
                     <Label htmlFor="name" className={submittedUser && !userForm.dob ? "text-red-500" : ""}>DOB*</Label>
                     <Input
                       id="DOB"
+                      type='date'
                       value={userForm.dob}
                       onChange={(e) => setUserForm({ ...userForm, dob: e.target.value })}
                       placeholder="e.g., DOB"
@@ -6176,8 +6321,8 @@ const WorkoutProgramManagement = () => {
 
               <ImageUpload
                 label="User Image"
-                images={images}
-                onImagesChange={setImages}
+                images={userImages}
+                onImagesChange={setUserImages}
                 onFilesChange={handleUserFiles}
                 maxImages={1}
               />
