@@ -422,6 +422,133 @@ const WorkoutProgramManagement = () => {
     status: "",
   });
 
+  //Company Ag Grid
+  const CompanyColumnDefs = [
+    {
+      headerName: "Company No",
+      field: "company_no",
+      minWidth: 150,
+      cellStyle: { fontWeight: 600 },
+    },
+    {
+      headerName: "Name",
+      field: "company_name",
+      minWidth: 150,
+    },
+    {
+      headerName: "Short Name",
+      field: "short_name",
+      minWidth: 150,
+    },
+    {
+      headerName: "Address 1",
+      field: "address1",
+      minWidth: 150,
+    },
+    {
+      headerName: "Address 2",
+      field: "address2",
+      minWidth: 150,
+    },
+    {
+      headerName: "Address 3",
+      field: "address3",
+      minWidth: 150,
+    },
+    {
+      headerName: "City",
+      field: "city",
+      minWidth: 150,
+    },
+    {
+      headerName: "State",
+      field: "state",
+      minWidth: 150,
+    },
+    {
+      headerName: "Pin Code",
+      field: "pincode",
+      minWidth: 150,
+    },
+    {
+      headerName: "Country",
+      field: "country",
+      minWidth: 150,
+    },
+    {
+      headerName: "Email",
+      field: "email_id",
+      minWidth: 150,
+    },
+    {
+      headerName: "Status",
+      field: "status",
+      minWidth: 150,
+    },
+    {
+      headerName: "Founded Date",
+      field: "foundedDate",
+      minWidth: 150,
+    },
+    {
+      headerName: "Website URL",
+      field: "websiteURL",
+      minWidth: 150,
+    },
+    {
+      headerName: "Contact No",
+      field: "contact_no",
+      minWidth: 150,
+    },
+    {
+      headerName: "Annual Report URL",
+      field: "annualReportURL",
+      minWidth: 150,
+    },
+    {
+      headerName: "Location No",
+      field: "location_no",
+      minWidth: 150,
+    },
+    {
+      headerName: "GST No",
+      field: "company_gst_no",
+      minWidth: 150,
+    },
+    {
+  headerName: "Actions",
+  width: 120,
+  minWidth: 120,
+  maxWidth: 120,
+  sortable: false,
+  filter: false,
+  cellStyle: {
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  cellRenderer: (params: any) => (
+    <div className="flex gap-2">
+      <Button
+        variant="ghost"
+        size="sm"
+        onClick={() => handleEditCompany(params.data)}
+      >
+        <Edit className="h-4 w-4" />
+      </Button>
+
+      <Button
+        variant="ghost"
+        size="sm"
+        onClick={() => handleDeleteCompany(params.data.company_no)}
+      >
+        <Trash2 className="h-4 w-4 text-red-500" />
+      </Button>
+    </div>
+  ),
+}
+  ];
+
   // Preview images for ImageUpload component
   const [companyImages, setCompanyImages] = useState<(string | null)[]>([
     null,
@@ -479,6 +606,68 @@ const WorkoutProgramManagement = () => {
     status: "",
   });
 
+  //Company Ag Grid
+  const CompanyMappingColumnDefs = [
+    {
+      headerName: "User Code",
+      field: "user_code",
+      minWidth: 150,
+      cellStyle: { fontWeight: 600 },
+    },
+    {
+      headerName: "Company Code",
+      field: "company_no",
+      minWidth: 150,
+    },
+    {
+      headerName: "Location No",
+      field: "location_no",
+      minWidth: 150,
+    },
+    {
+      headerName: "Status",
+      field: "status",
+      minWidth: 150,
+    },
+    {
+      headerName: "Order No",
+      field: "order_no",
+      minWidth: 150,
+    },
+    {
+  headerName: "Actions",
+  width: 120,
+  minWidth: 120,
+  maxWidth: 120,
+  sortable: false,
+  filter: false,
+  cellStyle: {
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  cellRenderer: (params: any) => (
+    <div className="flex gap-2">
+      <Button
+        variant="ghost"
+        size="sm"
+        onClick={() => handleEditCompanyMapping(params.data)}
+      >
+        <Edit className="h-4 w-4" />
+      </Button>
+
+      <Button
+        variant="ghost"
+        size="sm"
+        onClick={() => handleDeleteCompanyMapping(params.data.keyfiels)}
+      >
+        <Trash2 className="h-4 w-4 text-red-500" />
+      </Button>
+    </div>
+  ),
+}
+  ];
+
   //Location Dialog States
   const [submittedLocation, setSubmittedLocation] = useState(false);
   const [locations, setLocations] = useState([]);
@@ -512,6 +701,108 @@ const WorkoutProgramManagement = () => {
     country: "",
     status: "",
   });
+
+  //Company Ag Grid
+  const LocationColumnDefs = [
+    {
+      headerName: "Location No",
+      field: "location_no",
+      minWidth: 150,
+      cellStyle: { fontWeight: 600 },
+    },
+    {
+      headerName: "Location Name",
+      field: "location_name",
+      minWidth: 150,
+    },
+    {
+      headerName: "Short Name",
+      field: "short_name",
+      minWidth: 150,
+    },
+    {
+      headerName: "Address 1",
+      field: "address1",
+      minWidth: 150,
+    },
+    {
+      headerName: "Address 2",
+      field: "address2",
+      minWidth: 150,
+    },
+    {
+      headerName: "Address 3",
+      field: "address3",
+      minWidth: 150,
+    },
+    {
+      headerName: "City",
+      field: "city",
+      minWidth: 150,
+    },
+    {
+      headerName: "State",
+      field: "state",
+      minWidth: 150,
+    },
+    {
+      headerName: "Pin Code",
+      field: "pincode",
+      minWidth: 150,
+    },
+    {
+      headerName: "Country",
+      field: "country",
+      minWidth: 150,
+    },
+    {
+      headerName: "Email",
+      field: "email_id",
+      minWidth: 150,
+    },
+    {
+      headerName: "Status",
+      field: "status",
+      minWidth: 150,
+    },
+    {
+      headerName: "Contact No",
+      field: "contact_no",
+      minWidth: 150,
+    },
+    {
+  headerName: "Actions",
+  width: 120,
+  minWidth: 120,
+  maxWidth: 120,
+  sortable: false,
+  filter: false,
+  cellStyle: {
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  cellRenderer: (params: any) => (
+    <div className="flex gap-2">
+      <Button
+        variant="ghost"
+        size="sm"
+        onClick={() => handleEditLocation(params.data)}
+      >
+        <Edit className="h-4 w-4" />
+      </Button>
+
+      <Button
+        variant="ghost"
+        size="sm"
+        onClick={() => handleDeleteLocation(params.data.location_no)}
+      >
+        <Trash2 className="h-4 w-4 text-red-500" />
+      </Button>
+    </div>
+  ),
+}
+  ];
 
   //Role Dialog States
   const [submittedRole, setSubmittedRole] = useState(false);
@@ -600,6 +891,63 @@ const WorkoutProgramManagement = () => {
     role_name: "",
   });
 
+  //Role Mapping Ag Grid
+  const RoleMappingColumnDefs = [
+    {
+      headerName: "User Code",
+      field: "user_code",
+      minWidth: 150,
+      cellStyle: { fontWeight: 600 },
+    },
+    {
+      headerName: "User Name",
+      field: "user_name",
+      minWidth: 150,
+    },
+    {
+      headerName: "Role ID",
+      field: "role_id",
+      minWidth: 150,
+    },
+    {
+      headerName: "Role Name",
+      field: "role_name",
+      minWidth: 150,
+    },
+    {
+  headerName: "Actions",
+  width: 120,
+  minWidth: 120,
+  maxWidth: 120,
+  sortable: false,
+  filter: false,
+  cellStyle: {
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  cellRenderer: (params: any) => (
+    <div className="flex gap-2">
+      <Button
+        variant="ghost"
+        size="sm"
+        onClick={() => handleEditRoleMapping(params.data)}
+      >
+        <Edit className="h-4 w-4" />
+      </Button>
+
+      <Button
+        variant="ghost"
+        size="sm"
+        onClick={() => handleDeleteRoleMapping(params.data.keyfield)}
+      >
+        <Trash2 className="h-4 w-4 text-red-500" />
+      </Button>
+    </div>
+  ),
+}
+  ];
+
   //Role Rights Dialog States
   const [submittedRoleRights, setSubmittedRoleRights] = useState(false);
   const [roleRights, setRoleRights] = useState([]);
@@ -621,6 +969,8 @@ const WorkoutProgramManagement = () => {
     screen_type: "",
     permission_type: "",
   });
+
+  
 
   //User Dialog States
   const [submittedUser, setSubmittedUser] = useState(false);
@@ -4492,7 +4842,7 @@ const [numberSeriesForm, setNumberSeriesForm] = useState({
           </div>
 
           {/* Company Tab */}
-          <TabsContent value="company">
+          {/* <TabsContent value="company">
             <Card>
               <CardHeader>
                 <CardTitle>Company</CardTitle>
@@ -4570,10 +4920,30 @@ const [numberSeriesForm, setNumberSeriesForm] = useState({
                 </Table>
               </CardContent>
             </Card>
+          </TabsContent> */}
+
+          {/* Company Tab */}
+          <TabsContent value="company">
+            <Card>
+              <CardHeader>
+                <CardTitle>Company</CardTitle>
+                <CardDescription>
+                  Manage all companies and their details
+                </CardDescription>
+              </CardHeader>
+
+              <CardContent>
+                <AgGridTable
+                  rowData={companies}
+                  columnDefs={CompanyColumnDefs}
+                  height="300px"
+                />
+              </CardContent>
+            </Card>
           </TabsContent>
 
           {/* Company Mapping Tab */}
-          <TabsContent value="companyMapping">
+          {/* <TabsContent value="companyMapping">
             <Card>
               <CardHeader>
                 <CardTitle>Company Mapping</CardTitle>
@@ -4627,10 +4997,30 @@ const [numberSeriesForm, setNumberSeriesForm] = useState({
                 </Table>
               </CardContent>
             </Card>
+          </TabsContent> */}
+
+          {/* Company Mapping Tab */}
+          <TabsContent value="companyMapping">
+            <Card>
+              <CardHeader>
+                <CardTitle>Company Mapping</CardTitle>
+                <CardDescription>
+                  Manage all mapping companies and their details
+                </CardDescription>
+              </CardHeader>
+
+              <CardContent>
+                <AgGridTable
+                  rowData={companyMappings}
+                  columnDefs={CompanyMappingColumnDefs}
+                  height="300px"
+                />
+              </CardContent>
+            </Card>
           </TabsContent>
 
           {/* Location Tab */}
-          <TabsContent value="location">
+          {/* <TabsContent value="location">
             <Card>
               <CardHeader>
                 <CardTitle>Location</CardTitle>
@@ -4698,6 +5088,26 @@ const [numberSeriesForm, setNumberSeriesForm] = useState({
                     ))}
                   </TableBody>
                 </Table>
+              </CardContent>
+            </Card>
+          </TabsContent> */}
+
+          {/* Location Tab */}
+          <TabsContent value="location">
+            <Card>
+              <CardHeader>
+                <CardTitle>Location</CardTitle>
+                <CardDescription>
+                  Manage all mapping locations and their details
+                </CardDescription>
+              </CardHeader>
+
+              <CardContent>
+                <AgGridTable
+                  rowData={locations}
+                  columnDefs={LocationColumnDefs}
+                  height="300px"
+                />
               </CardContent>
             </Card>
           </TabsContent>
@@ -4777,7 +5187,7 @@ const [numberSeriesForm, setNumberSeriesForm] = useState({
           </TabsContent>
 
           {/* Role Mapping Tab */}
-          <TabsContent value="roleMapping">
+          {/* <TabsContent value="roleMapping">
             <Card>
               <CardHeader>
                 <CardTitle>Role Mapping</CardTitle>
@@ -4829,7 +5239,28 @@ const [numberSeriesForm, setNumberSeriesForm] = useState({
                 </Table>
               </CardContent>
             </Card>
+          </TabsContent> */}
+
+          {/* Location Tab */}
+          <TabsContent value="roleMapping">
+            <Card>
+              <CardHeader>
+                <CardTitle>Role Mapping</CardTitle>
+                <CardDescription>
+                  Manage all mapping role mappings and their details
+                </CardDescription>
+              </CardHeader>
+
+              <CardContent>
+                <AgGridTable
+                  rowData={roleMappings}
+                  columnDefs={RoleMappingColumnDefs}
+                  height="300px"
+                />
+              </CardContent>
+            </Card>
           </TabsContent>
+
 
           {/* Role Rights Tab */}
           <TabsContent value="roleRights">
