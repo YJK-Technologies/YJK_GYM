@@ -715,7 +715,16 @@ const WorkoutProgramManagement = () => {
     company_code: "YJK", attributeheader_code: "", attributeheader_name: "", status: "Active", created_by: "admin", modified_by: "admin", tempstr1: "", tempstr2: "",
     tempstr3: "", tempstr4: "", datetime1: "", datetime2: "", datetime3: "", datetime4: "",
   });
-
+  
+  //Nunmber Series 
+const [submittedNumberSeries, setSubmittedNumberSeries] = useState(false);
+const [isNumberSeriesDialogOpen, setIsNumberSeriesDialogOpen] = useState(false);
+const [editingNumberSeries, setEditingNumberSeries] = useState<any>(null);
+const [numberSeries, setNumberSeries] = useState([]);
+const [numberSeriesForm, setNumberSeriesForm] = useState({
+    company_code: "YJK",Screen_Type: "",Start_Year: "",End_Year:"",Start_No: "",Running_No: "",
+    End_No: "" ,text: "" ,number_prefix: "" ,status: "Active",
+    bill_format: "",created_by: "admin", modified_by: "admin" });
 
   //Company CRUD Functions
   const handleAddCompany = () => {
@@ -3145,6 +3154,300 @@ const WorkoutProgramManagement = () => {
     }
   };
 
+  // NumberSeries CRUD Functions  
+  const handleNumberSeries = () => {
+    setEditingNumberSeries(null);
+    setNumberSeriesForm({
+    company_code: "YJK",
+    Screen_Type: "",
+    Start_Year: "",
+    End_Year: "",
+    Start_No: "",
+    Running_No: "",
+    End_No: "",
+    text: "",
+    number_prefix: "",
+    status: "Active",
+    bill_format: "",
+    created_by: "admin",
+    modified_by: "admin",
+    });
+
+    setIsNumberSeriesDialogOpen(true);
+  };
+   const validateNumberSeries = () => {
+    if (
+      !numberSeriesForm.Screen_Type ||
+      !numberSeriesForm.Start_Year ||
+      !numberSeriesForm.End_Year ||
+      !numberSeriesForm.Start_No ||
+      !numberSeriesForm.Running_No ||
+      !numberSeriesForm.End_No ||
+      !numberSeriesForm.text ||
+      !numberSeriesForm.number_prefix ||
+      !numberSeriesForm.status ||
+      !numberSeriesForm.bill_format 
+    ) {
+      toast({
+        title: "Required Fields",
+        description: "Please fill all required fields.",
+        variant: "destructive",
+      });
+      return false;
+    }
+
+    return true;
+  };
+  const handleCreateNumberSeries = async () => {
+    setSubmittedNumberSeries(true);
+
+    if (!validateNumberSeries()) return;
+
+    try {
+      const response = await fetch(`${BASE_URL}/addCompanyMappingData`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(companyMappingForm),
+        }
+      );
+
+      const data = await response.json();
+
+      if (response.ok) {
+        toast({
+          title: "Success",
+          description: data.message || "Number Series created successfully.",
+        });
+
+        handleNumberSeriesSearch();
+        setIsNumberSeriesDialogOpen(false);
+        setSubmittedNumberSeries(false);
+      } else {
+        toast({
+          title: "Error",
+          description: data.message || "Failed to create Number Series.",
+          variant: "destructive",
+        });
+      }
+    } catch (err: any) {
+      console.error(err);
+
+      toast({
+        title: "Server Error",
+        description: err.message || "Something went wrong.",
+        variant: "destructive",
+      });
+    }
+  };
+    const handleUpdateNumberSeries = async () => {
+    setSubmittedNumberSeries(true);
+
+    if (!validateNumberSeries()) return;
+
+    try {
+      const formData = new FormData();
+
+      Object.keys(numberSeriesForm).forEach((key) => {
+        formData.append(key, numberSeriesForm[key as keyof typeof numberSeriesForm] ?? "");
+      });
+
+      companyImages.forEach((img, index) => {
+        if (!img) return;
+
+        const base64 = img.split(",")[1];
+        const byteCharacters = atob(base64);
+
+        const byteNumbers = Array.from(byteCharacters, (char) =>
+          char.charCodeAt(0)
+        );
+
+        const byteArray = new Uint8Array(byteNumbers);
+
+        const blob = new Blob([byteArray], {
+          type: "image/png",
+        });
+
+        if (index === 0) {
+          formData.append("company_logo", blob, "company_logo.png");
+        }
+
+        if (index === 1) {
+          formData.append(
+            "authorisedSignatur",
+            blob,
+            "authorisedSignatur.png"
+          );
+        }
+      });
+
+      const response = await fetch(`${BASE_URL}/NumberSeriesUpdate`,
+        {
+          method: "POST",
+          body: formData,
+        }
+      );
+
+      const data = await response.json();
+
+      if (response.ok) {
+        toast({
+          title: "Success",
+          description: data.message || "NumberSeries updated successfully.",
+        });
+
+        handleNumberSeriesSearch();
+        setEditingNumberSeries(null);
+        setIsNumberSeriesDialogOpen(false);
+        setSubmittedNumberSeries(false);
+      } else {
+        toast({
+          title: "Error",
+          description: data.message || "Failed to update company.",
+          variant: "destructive",
+        });
+      }
+    } catch (error: any) {
+      console.error(error);
+
+      toast({
+        title: "Server Error",
+        description: error.message || "Something went wrong.",
+        variant: "destructive",
+      });
+    }
+  };
+    const handleDeleteNumberSeries = async (keyfiels: string) => {
+    const confirmed = window.confirm(
+      "Are you sure you want to delete this NumberSeries? This action cannot be undone."
+    );
+
+    if (!confirmed) return;
+
+    try {
+      const response = await fetch(`${BASE_URL}/NumberSeriesdeleteData`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "modified-by": "admin",
+          },
+          body: JSON.stringify({
+            keyfiels: [keyfiels],
+          }),
+        }
+      );
+
+      const data = await response.json();
+
+      if (response.ok) {
+        toast({
+          title: "Success",
+          description:
+            data.message || "Number Series deleted successfully.",
+        });
+
+        handleNumberSeriesSearch();
+      } else {
+        toast({
+          title: "Error",
+          description:
+            data.message || "Failed to delete Number Series.",
+          variant: "destructive",
+        });
+      }
+    } catch (err: any) {
+      console.error(err);
+
+      toast({
+        title: "Server Error",
+        description: err.message || "Something went wrong.",
+        variant: "destructive",
+      });
+    }
+  };
+  const handleSaveNumberSeries = async () => {
+    if (editingNumberSeries) {
+      await handleUpdateNumberSeries();
+    } else {
+      await handleCreateNumberSeries();
+    }
+  };
+  const handleNumberSeriesSearch = async () => {
+    try {
+      const response = await fetch(`${BASE_URL}/NumberSeriessearchdata`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            company_code: "YJK",
+            user_code: companyMappingSearchForm.user_code,
+            company_no: companyMappingSearchForm.company_no,
+            location_no: companyMappingSearchForm.location_no,
+            status: companyMappingSearchForm.status,
+          }),
+        }
+      );
+
+      const data = await response.json();
+
+      if (response.ok) {
+        setCompanyMappings(data);
+      } else if (response.status === 404) {
+        setCompanies([]);
+
+        toast({
+          title: "Data Not Found",
+          description: data?.message || "No matching companies found.",
+          variant: "destructive",
+        });
+      } else {
+        setCompanies([]);
+
+        toast({
+          title: "Search Failed",
+          description: data?.message || "Something went wrong while searching.",
+          variant: "destructive",
+        });
+      }
+    } catch (error: any) {
+      console.error("Search Error:", error);
+
+      setCompanies([]);
+
+      toast({
+        title: "Server Error",
+        description:
+          error?.message ||
+          "Unable to connect to the server. Please try again later.",
+        variant: "destructive",
+      });
+    }
+  };  
+  const handleEditNumberSeries = (mapping: any) => {
+    setEditingNumberSeries(mapping);
+
+    setCompanyMappingForm({
+      company_code: "YJK",
+      user_code: mapping.user_code,
+      company_no: mapping.company_no,
+      location_no: mapping.location_no,
+      status: mapping.status,
+      order_no: mapping.order_no,
+      keyfiels: mapping.keyfiels,
+      created_by: mapping.created_by,
+      modified_by: mapping.modified_by,
+    });
+
+    setIsNumberSeriesDialogOpen(true);
+  };
+
+
+
   //TAB BUTTON LABELS
   const addLabels = {
     company: "Company",
@@ -3155,6 +3458,8 @@ const WorkoutProgramManagement = () => {
     roleRights: "Role Rights",
     user: "User",
     attribute: "Attribute",
+    NumberSeries:"NumberSeries",
+    
   };
 
   const handleAdd = () => {
@@ -3183,6 +3488,9 @@ const WorkoutProgramManagement = () => {
       case "attribute":
         handleAddAttribute();
         break;
+      case "NumberSeries":
+        handleNumberSeries();
+        break;        
       default:
         break;
     }
@@ -3933,6 +4241,7 @@ const WorkoutProgramManagement = () => {
 
     </div>
   );
+  
 
   const handleSearch = () => {
     switch (activeTab) {
@@ -4135,7 +4444,7 @@ const WorkoutProgramManagement = () => {
           </CardContent>
         </Card>
 
-        {/* Tabs for companies and Packages */}
+        {/*  companies and Packages */}
         <Tabs value={activeTab} onValueChange={setActiveTab}>
           <div className="flex justify-between items-center mb-4">
             <TabsList>
@@ -4170,6 +4479,10 @@ const WorkoutProgramManagement = () => {
               <TabsTrigger value="attribute" className="flex items-center gap-2">
                 <Package className="h-4 w-4" />
                 Attribute
+              </TabsTrigger>
+              <TabsTrigger value="NumberSeries" className="flex items-center gap-2">
+                <Package className="h-4 w-4" />
+                Number Series
               </TabsTrigger>
             </TabsList>
             <Button onClick={handleAdd}>
@@ -4688,6 +5001,75 @@ const WorkoutProgramManagement = () => {
               </CardContent>
             </Card>
           </TabsContent>
+          {/* NumberSeries Tab */}
+          <TabsContent value="NumberSeries">
+            <Card>
+              <CardHeader>
+                <CardTitle>NumberSeries</CardTitle>
+                <CardDescription>Manage all NumberSeries and their details</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>Screen_Type</TableHead>
+                      <TableHead>Start_Year</TableHead>
+                      <TableHead>End_Year</TableHead>
+                      <TableHead>Start_No</TableHead>
+                      <TableHead>Running_No</TableHead>
+                      <TableHead>End_No</TableHead>
+                      <TableHead>text</TableHead>
+                      <TableHead>status</TableHead>
+                      <TableHead>bill_format</TableHead>
+                          <TableHead className="text-right">Actions</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {numberSeries.map((NumberSeries: any) => (
+                      <TableRow
+                        key={`${NumberSeries.attributeheader_code}-${NumberSeries.attributedetails_code}`}
+                      >
+                        <TableCell>{NumberSeries.Screen_Type}</TableCell>
+                        <TableCell>{NumberSeries.Start_Year}</TableCell>
+                        <TableCell>{NumberSeries.End_Year}</TableCell>
+                        <TableCell>{NumberSeries.Start_No}</TableCell>
+                        <TableCell>{NumberSeries.Running_No}</TableCell>
+                        <TableCell>{NumberSeries.End_No}</TableCell>
+                        <TableCell>{NumberSeries.text}</TableCell>
+                        <TableCell>{NumberSeries.status}</TableCell>
+                        <TableCell>{NumberSeries.bill_format}</TableCell>
+
+                        <TableCell className="text-right">
+                          <div className="flex justify-end gap-2">
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              onClick={() => handleEditAttribute(NumberSeries)}
+                            >
+                              <Edit className="h-4 w-4" />
+                            </Button>
+
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              // onClick={() =>
+                              //   handleDeleteAttribute(
+                              //     attribute.attributeheader_code,
+                              //     attribute.attributedetails_code
+                              //   )
+                              // }
+                            >
+                              <Trash2 className="h-4 w-4 text-red-500" />
+                            </Button>
+                          </div>
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </CardContent>
+            </Card>
+          </TabsContent>          
 
         </Tabs>
 
@@ -6533,7 +6915,7 @@ const WorkoutProgramManagement = () => {
               <div className="space-y-2">
                 <Label htmlFor="code" className={submittedAttributeHdr && !attributeHdrForm.attributeheader_code ? "text-red-500" : ""}>Code*</Label>
                 <TooltipProvider>
-                  <Tooltip>
+                  <Tooltip>- 
                     <TooltipTrigger asChild>
                       <Input
                         id="Code"
@@ -6631,6 +7013,70 @@ const WorkoutProgramManagement = () => {
                 </Tooltip>
               </TooltipProvider>
 
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
+       {/* Add Numberseries Header Dialog  Or Popup*/}
+        <Dialog open={isNumberSeriesDialogOpen} onOpenChange={(open) => {
+          if (!open) {
+            setSubmittedNumberSeries(false);
+          }
+          setIsNumberSeriesDialogOpen(open);
+        }}>
+          <DialogContent className="max-w-md">
+            <DialogHeader>
+              <DialogTitle>Add NumberSeries Hdr</DialogTitle>
+              <DialogDescription>Create a new NumberSeries Header</DialogDescription>
+            </DialogHeader>
+
+            <div className="grid gap-4 py-4">
+
+              <div className="space-y-2">
+                <Label htmlFor="code" className={submittedNumberSeries && !numberSeriesForm.Screen_Type ? "text-red-500" : ""}>Code*</Label>
+                <Input
+                  id="Code"
+                  value={numberSeriesForm.Screen_Type}
+                  onChange={(e) => setNumberSeriesForm({ ...numberSeriesForm, Screen_Type: e.target.value, })}
+                  placeholder="Enter Screen_Type (e.g., ACCOUNT_TYPE)"
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="code" className={submittedNumberSeries && !numberSeriesForm.Screen_Type ? "text-red-500" : ""}>Name*</Label>
+                <Input
+                  id="Name"
+                  value={numberSeriesForm.Start_Year}
+                  onChange={(e) => setNumberSeriesForm({ ...numberSeriesForm, Start_Year: e.target.value, })}
+                  placeholder="Enter Start_Year (e.g., Account Type)"
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="code" className={submittedNumberSeries && !numberSeriesForm.status ? "text-red-500" : ""}>Status*</Label>
+                <Select value={numberSeriesForm.status} onValueChange={(value) => setNumberSeriesForm({ ...numberSeriesForm, status: value, })}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select Status" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {status.map((status: any) => (
+                      <SelectItem
+                        key={status.Screen_Type}
+                        value={status.Screen_Type}
+                      >
+                        {status.Screen_Type}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+
+            <DialogFooter>
+              <Button variant="outline" onClick={() => {
+                setSubmittedNumberSeries(false);
+                setIsNumberSeriesDialogOpen(false);
+              }}>Cancel</Button>
+              <Button >Save</Button>
             </DialogFooter>
           </DialogContent>
         </Dialog>
