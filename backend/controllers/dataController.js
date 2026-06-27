@@ -2822,6 +2822,23 @@ const NumberSeriesUpdate = async (req, res) => {
     res.status(500).json({ message: err.message || 'Internal Server Error' });
   }
 };
+const getNumberseries = async (req, res) => {
+  const { company_code } = req.body;
+  try {
+    const pool = await connection.connectToDatabase();
+    const result = await pool
+      .request()
+      .input("company_code", sql.NVarChar, company_code)
+      .query(
+        `EXEC sp_numberseries 'F','','','','',0,0,0,'','','','','','',null,null,null,null,null,null,null,null,''`,
+      );
+
+    res.json(result.recordset);
+  } catch (err) {
+    console.error("Error", err);
+    res.status(500).json({ message: err.message || "Internal Server Error" });
+  }
+};
 
 module.exports = {
 getCompanyno,
@@ -2829,7 +2846,7 @@ getsearchdata,
 addData,
 saveEditedData,
 deleteData,
-CompanyUpdate,
+CompanyUpdate,  
 UpdateCompanyImage,
 getCompanyData,
 getAllCompanyMappingData,
@@ -2906,7 +2923,8 @@ getPermissions,
 getLoginorout,
 getGender,
 addattrihdrData,
-getAllNumberseries
+getAllNumberseries,
+getNumberseries
 
 
 

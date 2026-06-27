@@ -101,7 +101,7 @@ router.post("/getUCN",dataController.getUCN)
 router.post("/getUserData",dataController.getUserData)
 router.post("/city", dataController.getCity)
 router.post("/state", dataController.getState)
-router.post("/country", dataController.getCountry)
+router.post("/country", dataController.getCountry)    
 router.post("/status", dataController.getStatus)
 router.post("/Screens",dataController.getScreens)
 router.post("/Permissions",dataController.getPermissions)
@@ -109,6 +109,7 @@ router.post("/Loginorout", dataController.getLoginorout)
 router.post("/gender", dataController.getGender)
 router.post("/addattriData",dataController.addattrihdrData)
 router.get("/Numberseries",dataController.getAllNumberseries)
+router.get("/getAllNumberseries",dataController.getAllNumberseries)
 
 
 module.exports = router;
