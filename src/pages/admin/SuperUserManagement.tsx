@@ -463,6 +463,133 @@ const WorkoutProgramManagement = () => {
     status: "",
   });
 
+  //Company Ag Grid
+  const CompanyColumnDefs = [
+    {
+      headerName: "Company No",
+      field: "company_no",
+      minWidth: 150,
+      cellStyle: { fontWeight: 600 },
+    },
+    {
+      headerName: "Name",
+      field: "company_name",
+      minWidth: 150,
+    },
+    {
+      headerName: "Short Name",
+      field: "short_name",
+      minWidth: 150,
+    },
+    {
+      headerName: "Address 1",
+      field: "address1",
+      minWidth: 150,
+    },
+    {
+      headerName: "Address 2",
+      field: "address2",
+      minWidth: 150,
+    },
+    {
+      headerName: "Address 3",
+      field: "address3",
+      minWidth: 150,
+    },
+    {
+      headerName: "City",
+      field: "city",
+      minWidth: 150,
+    },
+    {
+      headerName: "State",
+      field: "state",
+      minWidth: 150,
+    },
+    {
+      headerName: "Pin Code",
+      field: "pincode",
+      minWidth: 150,
+    },
+    {
+      headerName: "Country",
+      field: "country",
+      minWidth: 150,
+    },
+    {
+      headerName: "Email",
+      field: "email_id",
+      minWidth: 150,
+    },
+    {
+      headerName: "Status",
+      field: "status",
+      minWidth: 150,
+    },
+    {
+      headerName: "Founded Date",
+      field: "foundedDate",
+      minWidth: 150,
+    },
+    {
+      headerName: "Website URL",
+      field: "websiteURL",
+      minWidth: 150,
+    },
+    {
+      headerName: "Contact No",
+      field: "contact_no",
+      minWidth: 150,
+    },
+    {
+      headerName: "Annual Report URL",
+      field: "annualReportURL",
+      minWidth: 150,
+    },
+    {
+      headerName: "Location No",
+      field: "location_no",
+      minWidth: 150,
+    },
+    {
+      headerName: "GST No",
+      field: "company_gst_no",
+      minWidth: 150,
+    },
+    {
+  headerName: "Actions",
+  width: 120,
+  minWidth: 120,
+  maxWidth: 120,
+  sortable: false,
+  filter: false,
+  cellStyle: {
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  cellRenderer: (params: any) => (
+    <div className="flex gap-2">
+      <Button
+        variant="ghost"
+        size="sm"
+        onClick={() => handleEditCompany(params.data)}
+      >
+        <Edit className="h-4 w-4" />
+      </Button>
+
+      <Button
+        variant="ghost"
+        size="sm"
+        onClick={() => handleDeleteCompany(params.data.company_no)}
+      >
+        <Trash2 className="h-4 w-4 text-red-500" />
+      </Button>
+    </div>
+  ),
+}
+  ];
+
   // Preview images for ImageUpload component
   const [companyImages, setCompanyImages] = useState<(string | null)[]>([
     null,
@@ -520,6 +647,68 @@ const WorkoutProgramManagement = () => {
     status: "",
   });
 
+  //Company Ag Grid
+  const CompanyMappingColumnDefs = [
+    {
+      headerName: "User Code",
+      field: "user_code",
+      minWidth: 150,
+      cellStyle: { fontWeight: 600 },
+    },
+    {
+      headerName: "Company Code",
+      field: "company_no",
+      minWidth: 150,
+    },
+    {
+      headerName: "Location No",
+      field: "location_no",
+      minWidth: 150,
+    },
+    {
+      headerName: "Status",
+      field: "status",
+      minWidth: 150,
+    },
+    {
+      headerName: "Order No",
+      field: "order_no",
+      minWidth: 150,
+    },
+    {
+  headerName: "Actions",
+  width: 120,
+  minWidth: 120,
+  maxWidth: 120,
+  sortable: false,
+  filter: false,
+  cellStyle: {
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  cellRenderer: (params: any) => (
+    <div className="flex gap-2">
+      <Button
+        variant="ghost"
+        size="sm"
+        onClick={() => handleEditCompanyMapping(params.data)}
+      >
+        <Edit className="h-4 w-4" />
+      </Button>
+
+      <Button
+        variant="ghost"
+        size="sm"
+        onClick={() => handleDeleteCompanyMapping(params.data.keyfiels)}
+      >
+        <Trash2 className="h-4 w-4 text-red-500" />
+      </Button>
+    </div>
+  ),
+}
+  ];
+
   //Location Dialog States
   const [submittedLocation, setSubmittedLocation] = useState(false);
   const [locations, setLocations] = useState([]);
@@ -553,6 +742,108 @@ const WorkoutProgramManagement = () => {
     country: "",
     status: "",
   });
+
+  //Company Ag Grid
+  const LocationColumnDefs = [
+    {
+      headerName: "Location No",
+      field: "location_no",
+      minWidth: 150,
+      cellStyle: { fontWeight: 600 },
+    },
+    {
+      headerName: "Location Name",
+      field: "location_name",
+      minWidth: 150,
+    },
+    {
+      headerName: "Short Name",
+      field: "short_name",
+      minWidth: 150,
+    },
+    {
+      headerName: "Address 1",
+      field: "address1",
+      minWidth: 150,
+    },
+    {
+      headerName: "Address 2",
+      field: "address2",
+      minWidth: 150,
+    },
+    {
+      headerName: "Address 3",
+      field: "address3",
+      minWidth: 150,
+    },
+    {
+      headerName: "City",
+      field: "city",
+      minWidth: 150,
+    },
+    {
+      headerName: "State",
+      field: "state",
+      minWidth: 150,
+    },
+    {
+      headerName: "Pin Code",
+      field: "pincode",
+      minWidth: 150,
+    },
+    {
+      headerName: "Country",
+      field: "country",
+      minWidth: 150,
+    },
+    {
+      headerName: "Email",
+      field: "email_id",
+      minWidth: 150,
+    },
+    {
+      headerName: "Status",
+      field: "status",
+      minWidth: 150,
+    },
+    {
+      headerName: "Contact No",
+      field: "contact_no",
+      minWidth: 150,
+    },
+    {
+  headerName: "Actions",
+  width: 120,
+  minWidth: 120,
+  maxWidth: 120,
+  sortable: false,
+  filter: false,
+  cellStyle: {
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  cellRenderer: (params: any) => (
+    <div className="flex gap-2">
+      <Button
+        variant="ghost"
+        size="sm"
+        onClick={() => handleEditLocation(params.data)}
+      >
+        <Edit className="h-4 w-4" />
+      </Button>
+
+      <Button
+        variant="ghost"
+        size="sm"
+        onClick={() => handleDeleteLocation(params.data.location_no)}
+      >
+        <Trash2 className="h-4 w-4 text-red-500" />
+      </Button>
+    </div>
+  ),
+}
+  ];
 
   //Role Dialog States
   const [submittedRole, setSubmittedRole] = useState(false);
@@ -641,6 +932,63 @@ const WorkoutProgramManagement = () => {
     role_name: "",
   });
 
+  //Role Mapping Ag Grid
+  const RoleMappingColumnDefs = [
+    {
+      headerName: "User Code",
+      field: "user_code",
+      minWidth: 150,
+      cellStyle: { fontWeight: 600 },
+    },
+    {
+      headerName: "User Name",
+      field: "user_name",
+      minWidth: 150,
+    },
+    {
+      headerName: "Role ID",
+      field: "role_id",
+      minWidth: 150,
+    },
+    {
+      headerName: "Role Name",
+      field: "role_name",
+      minWidth: 150,
+    },
+    {
+  headerName: "Actions",
+  width: 120,
+  minWidth: 120,
+  maxWidth: 120,
+  sortable: false,
+  filter: false,
+  cellStyle: {
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  cellRenderer: (params: any) => (
+    <div className="flex gap-2">
+      <Button
+        variant="ghost"
+        size="sm"
+        onClick={() => handleEditRoleMapping(params.data)}
+      >
+        <Edit className="h-4 w-4" />
+      </Button>
+
+      <Button
+        variant="ghost"
+        size="sm"
+        onClick={() => handleDeleteRoleMapping(params.data.keyfield)}
+      >
+        <Trash2 className="h-4 w-4 text-red-500" />
+      </Button>
+    </div>
+  ),
+}
+  ];
+
   //Role Rights Dialog States
   const [submittedRoleRights, setSubmittedRoleRights] = useState(false);
   const [roleRights, setRoleRights] = useState([]);
@@ -662,6 +1010,60 @@ const WorkoutProgramManagement = () => {
     screen_type: "",
     permission_type: "",
   });
+
+  //Role Mapping Ag Grid
+  const RoleRightsColumnDefs = [
+    {
+      headerName: "Role ID",
+      field: "role_id",
+      minWidth: 150,
+      cellStyle: { fontWeight: 600 },
+    },
+    {
+      headerName: "Screen Type",
+      field: "screen_type",
+      minWidth: 150,
+    },
+    {
+      headerName: "Permission Type",
+      field: "permission_type",
+      minWidth: 150,
+    },
+    {
+  headerName: "Actions",
+  width: 120,
+  minWidth: 120,
+  maxWidth: 120,
+  sortable: false,
+  filter: false,
+  cellStyle: {
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  cellRenderer: (params: any) => (
+    <div className="flex gap-2">
+      <Button
+        variant="ghost"
+        size="sm"
+        onClick={() => handleEditRoleRight(params.data)}
+      >
+        <Edit className="h-4 w-4" />
+      </Button>
+
+      <Button
+        variant="ghost"
+        size="sm"
+        onClick={() => handleDeleteRoleRight(params.data.keyfield)}
+      >
+        <Trash2 className="h-4 w-4 text-red-500" />
+      </Button>
+    </div>
+  ),
+}
+  ];
+
+  
 
   //User Dialog States
   const [submittedUser, setSubmittedUser] = useState(false);
@@ -726,6 +1128,83 @@ const WorkoutProgramManagement = () => {
     gender: "",
   });
 
+  //User Ag Grid
+  const UserColumnDefs = [
+    {
+      headerName: "User Code",
+      field: "user_code",
+      minWidth: 150,
+      cellStyle: { fontWeight: 600 },
+    },
+    {
+      headerName: "User Name",
+      field: "user_name",
+      minWidth: 150,
+    },
+    {
+      headerName: "First Name",
+      field: "first_name",
+      minWidth: 150,
+    },
+    {
+      headerName: "Last Name",
+      field: "last_name",
+      minWidth: 150,
+    },
+    {
+      headerName: "User Status",
+      field: "user_status",
+      minWidth: 150,
+    },
+    {
+      headerName: "DOB",
+      field: "dob",
+      minWidth: 150,
+    },
+    {
+      headerName: "Role ID",
+      field: "role_id",
+      minWidth: 150,
+    },
+    {
+      headerName: "Gender",
+      field: "gender",
+      minWidth: 150,
+    },
+    {
+  headerName: "Actions",
+  width: 120,
+  minWidth: 120,
+  maxWidth: 120,
+  sortable: false,
+  filter: false,
+  cellStyle: {
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  cellRenderer: (params: any) => (
+    <div className="flex gap-2">
+      <Button
+        variant="ghost"
+        size="sm"
+        onClick={() => handleEditUser(params.data)}
+      >
+        <Edit className="h-4 w-4" />
+      </Button>
+
+      <Button
+        variant="ghost"
+        size="sm"
+        onClick={() => handleDeleteUser(params.data.user_code)}
+      >
+        <Trash2 className="h-4 w-4 text-red-500" />
+      </Button>
+    </div>
+  ),
+}
+  ];
+
   //Attribute Detail Dialog States
   const [submittedAttributeDet, setSubmittedAttributeDet] = useState(false);
   const [attributes, setAttributes] = useState([]);
@@ -748,6 +1227,63 @@ const WorkoutProgramManagement = () => {
     attributedetails_name: "",
     descriptions: "",
   });
+
+  //User Ag Grid
+  const AttributeColumnDefs = [
+    {
+      headerName: "Code",
+      field: "attributeheader_code",
+      minWidth: 150,
+      cellStyle: { fontWeight: 600 },
+    },
+    {
+      headerName: "Sub Code",
+      field: "attributedetails_code",
+      minWidth: 150,
+    },
+    {
+      headerName: "Details Name",
+      field: "attributedetails_name",
+      minWidth: 150,
+    },
+    {
+      headerName: "Description",
+      field: "descriptions",
+      minWidth: 150,
+    },
+    {
+  headerName: "Actions",
+  width: 120,
+  minWidth: 120,
+  maxWidth: 120,
+  sortable: false,
+  filter: false,
+  cellStyle: {
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  cellRenderer: (params: any) => (
+    <div className="flex gap-2">
+      <Button
+        variant="ghost"
+        size="sm"
+        onClick={() => handleEditAttribute(params.data)}
+      >
+        <Edit className="h-4 w-4" />
+      </Button>
+
+      <Button
+        variant="ghost"
+        size="sm"
+        onClick={() => handleDeleteAttribute(params.data.attributeheader_code,params.data.attributedetails_code)}
+      >
+        <Trash2 className="h-4 w-4 text-red-500" />
+      </Button>
+    </div>
+  ),
+}
+  ];
 
   //Attribute Header Dialog States
   const [submittedAttributeHdr, setSubmittedAttributeHdr] = useState(false);
@@ -2867,7 +3403,7 @@ const [numberSeriesForm, setNumberSeriesForm] = useState({
   const handleAddAttribute = () => {
     setEditingAttribute(null);
     setAttributeForm({
-      company_code: "",
+      company_code: "YJK",
       attributeheader_code: "",
       attributedetails_code: "",
       attributedetails_name: "",
@@ -3648,18 +4184,18 @@ const [numberSeriesForm, setNumberSeriesForm] = useState({
       </div>
 
       <div className="space-y-2">
-        <Label>GST No</Label>
+        <Label>Identification No</Label>
         <TooltipProvider>
           <Tooltip>
             <TooltipTrigger asChild>
               <Input
-                placeholder="Enter GST No"
+                placeholder="Enter Identification No"
                 value={companySearchForm.gst_no}
                 onChange={(e) => setCompanySearchForm({ ...companySearchForm, gst_no: e.target.value, })} />
             </TooltipTrigger>
 
             <TooltipContent>
-              <p>Enter GST No</p>
+              <p>Enter Identification No</p>
             </TooltipContent>
           </Tooltip>
         </TooltipProvider>
@@ -4533,7 +5069,7 @@ const [numberSeriesForm, setNumberSeriesForm] = useState({
           </div>
 
           {/* Company Tab */}
-          <TabsContent value="company">
+          {/* <TabsContent value="company">
             <Card>
               <CardHeader>
                 <CardTitle>Company</CardTitle>
@@ -4560,7 +5096,7 @@ const [numberSeriesForm, setNumberSeriesForm] = useState({
                       <TableHead>Contact No</TableHead>
                       <TableHead>Annual Report URL</TableHead>
                       <TableHead>Location No</TableHead>
-                      <TableHead>GST No</TableHead>
+                      <TableHead>Identification No</TableHead>
                       <TableHead className="text-right">Actions</TableHead>
                     </TableRow>
                   </TableHeader>
@@ -4578,7 +5114,12 @@ const [numberSeriesForm, setNumberSeriesForm] = useState({
                         <TableCell>{company.pincode}</TableCell>
                         <TableCell>{company.country}</TableCell>
                         <TableCell>{company.email_id}</TableCell>
-                        <TableCell>{company.status}</TableCell>
+                        {/* <TableCell>{company.status}</TableCell> 
+                        <TableCell>
+                          <Badge variant={company.status === "Active" ? "default" : "secondary"}>
+                            {company.status}
+                          </Badge>
+                        </TableCell>
                         <TableCell>{company.foundedDate}</TableCell>
                         <TableCell>{company.websiteURL}</TableCell>
                         <TableCell>{company.contact_no}</TableCell>
@@ -4611,10 +5152,30 @@ const [numberSeriesForm, setNumberSeriesForm] = useState({
                 </Table>
               </CardContent>
             </Card>
+          </TabsContent> */}
+
+          {/* Company Tab */}
+          <TabsContent value="company">
+            <Card>
+              <CardHeader className="text-left items-start">
+                <CardTitle>Company</CardTitle>
+                <CardDescription>
+                  Manage all companies and their details
+                </CardDescription>
+              </CardHeader>
+
+              <CardContent>
+                <AgGridTable
+                  rowData={companies}
+                  columnDefs={CompanyColumnDefs}
+                  height="300px"
+                />
+              </CardContent>
+            </Card>
           </TabsContent>
 
           {/* Company Mapping Tab */}
-          <TabsContent value="companyMapping">
+          {/* <TabsContent value="companyMapping">
             <Card>
               <CardHeader>
                 <CardTitle>Company Mapping</CardTitle>
@@ -4638,7 +5199,12 @@ const [numberSeriesForm, setNumberSeriesForm] = useState({
                         <TableCell>{mapping.user_code}</TableCell>
                         <TableCell>{mapping.company_no}</TableCell>
                         <TableCell>{mapping.location_no}</TableCell>
-                        <TableCell>{mapping.status}</TableCell>
+                        {/* <TableCell>{mapping.status}</TableCell> 
+                        <TableCell>
+                          <Badge variant={mapping.status === "Active" ? "default" : "secondary"}>
+                            {mapping.status}
+                          </Badge>
+                        </TableCell>
                         <TableCell>{mapping.order_no}</TableCell>
 
                         <TableCell className="text-right">
@@ -4668,10 +5234,30 @@ const [numberSeriesForm, setNumberSeriesForm] = useState({
                 </Table>
               </CardContent>
             </Card>
+          </TabsContent> */}
+
+          {/* Company Mapping Tab */}
+          <TabsContent value="companyMapping">
+            <Card>
+              <CardHeader className="text-left items-start">
+                <CardTitle>Company Mapping</CardTitle>
+                <CardDescription>
+                  Manage all mapping companies and their details
+                </CardDescription>
+              </CardHeader>
+
+              <CardContent>
+                <AgGridTable
+                  rowData={companyMappings}
+                  columnDefs={CompanyMappingColumnDefs}
+                  height="300px"
+                />
+              </CardContent>
+            </Card>
           </TabsContent>
 
           {/* Location Tab */}
-          <TabsContent value="location">
+          {/* <TabsContent value="location">
             <Card>
               <CardHeader>
                 <CardTitle>Location</CardTitle>
@@ -4711,7 +5297,12 @@ const [numberSeriesForm, setNumberSeriesForm] = useState({
                         <TableCell>{location.pincode}</TableCell>
                         <TableCell>{location.country}</TableCell>
                         <TableCell>{location.email_id}</TableCell>
-                        <TableCell>{location.status}</TableCell>
+                        {/* <TableCell>{location.status}</TableCell> 
+                        <TableCell>
+                          <Badge variant={location.status === "Active" ? "default" : "secondary"}>
+                            {location.status}
+                          </Badge>
+                        </TableCell>                        
                         <TableCell>{location.contact_no}</TableCell>
 
                         <TableCell className="text-right">
@@ -4739,6 +5330,26 @@ const [numberSeriesForm, setNumberSeriesForm] = useState({
                     ))}
                   </TableBody>
                 </Table>
+              </CardContent>
+            </Card>
+          </TabsContent> */}
+
+          {/* Location Tab */}
+          <TabsContent value="location">
+            <Card>
+              <CardHeader className="text-left items-start">
+                <CardTitle>Location</CardTitle>
+                <CardDescription>
+                  Manage all mapping locations and their details
+                </CardDescription>
+              </CardHeader>
+
+              <CardContent>
+                <AgGridTable
+                  rowData={locations}
+                  columnDefs={LocationColumnDefs}
+                  height="300px"
+                />
               </CardContent>
             </Card>
           </TabsContent>
@@ -4800,7 +5411,7 @@ const [numberSeriesForm, setNumberSeriesForm] = useState({
           {/* Role Tab */}
           <TabsContent value="role">
             <Card>
-              <CardHeader>
+              <CardHeader className="text-left items-start">
                 <CardTitle>Role</CardTitle>
                 <CardDescription>
                   Manage all roles and their details
@@ -4818,7 +5429,7 @@ const [numberSeriesForm, setNumberSeriesForm] = useState({
           </TabsContent>
 
           {/* Role Mapping Tab */}
-          <TabsContent value="roleMapping">
+          {/* <TabsContent value="roleMapping">
             <Card>
               <CardHeader>
                 <CardTitle>Role Mapping</CardTitle>
@@ -4870,10 +5481,31 @@ const [numberSeriesForm, setNumberSeriesForm] = useState({
                 </Table>
               </CardContent>
             </Card>
+          </TabsContent> */}
+
+          {/* Location Tab */}
+          <TabsContent value="roleMapping">
+            <Card>
+              <CardHeader className="text-left items-start">
+                <CardTitle>Role Mapping</CardTitle>
+                <CardDescription>
+                  Manage all role mappings and their details
+                </CardDescription>
+              </CardHeader>
+
+              <CardContent>
+                <AgGridTable
+                  rowData={roleMappings}
+                  columnDefs={RoleMappingColumnDefs}
+                  height="300px"
+                />
+              </CardContent>
+            </Card>
           </TabsContent>
 
+
           {/* Role Rights Tab */}
-          <TabsContent value="roleRights">
+          {/* <TabsContent value="roleRights">
             <Card>
               <CardHeader>
                 <CardTitle>Role Rights</CardTitle>
@@ -4923,10 +5555,30 @@ const [numberSeriesForm, setNumberSeriesForm] = useState({
                 </Table>
               </CardContent>
             </Card>
+          </TabsContent> */}
+
+          {/* Role Rights Tab */}
+          <TabsContent value="roleRights">
+            <Card>
+              <CardHeader className="text-left items-start">
+                <CardTitle>Role Rights</CardTitle>
+                <CardDescription>
+                  Manage all role rights and their details
+                </CardDescription>
+              </CardHeader>
+
+              <CardContent>
+                <AgGridTable
+                  rowData={roleRights}
+                  columnDefs={RoleRightsColumnDefs}
+                  height="300px"
+                />
+              </CardContent>
+            </Card>
           </TabsContent>
 
           {/* User Tab */}
-          <TabsContent value="user">
+          {/* <TabsContent value="user">
             <Card>
               <CardHeader>
                 <CardTitle>User</CardTitle>
@@ -4953,7 +5605,12 @@ const [numberSeriesForm, setNumberSeriesForm] = useState({
                         <TableCell>{user.user_name}</TableCell>
                         <TableCell>{user.first_name}</TableCell>
                         <TableCell>{user.last_name}</TableCell>
-                        <TableCell>{user.user_status}</TableCell>
+                        {/* <TableCell>{user.user_status}</TableCell> 
+                        <TableCell>
+                          <Badge variant={user.user_status === "Active" ? "default" : "secondary"}>
+                            {user.user_status}
+                          </Badge>
+                        </TableCell>
                         <TableCell>{user.dob}</TableCell>
                         <TableCell>{user.gender}</TableCell>
 
@@ -4982,10 +5639,30 @@ const [numberSeriesForm, setNumberSeriesForm] = useState({
                 </Table>
               </CardContent>
             </Card>
+          </TabsContent> */}
+
+          {/* User Tab */}
+          <TabsContent value="user">
+            <Card>
+              <CardHeader className="text-left items-start">
+                <CardTitle>User</CardTitle>
+                <CardDescription>
+                  Manage all users and their details
+                </CardDescription>
+              </CardHeader>
+
+              <CardContent>
+                <AgGridTable
+                  rowData={users}
+                  columnDefs={UserColumnDefs}
+                  height="300px"
+                />
+              </CardContent>
+            </Card>
           </TabsContent>
 
           {/* Attribute Tab */}
-          <TabsContent value="attribute">
+          {/* <TabsContent value="attribute">
             <Card>
               <CardHeader>
                 <CardTitle>Attribute</CardTitle>
@@ -5041,11 +5718,32 @@ const [numberSeriesForm, setNumberSeriesForm] = useState({
                 </Table>
               </CardContent>
             </Card>
+          </TabsContent> */}
+
+          {/* Attribute Tab */}
+          <TabsContent value="attribute">
+            <Card>
+              <CardHeader className="text-left items-start">
+                <CardTitle>Attribute</CardTitle>
+                <CardDescription>
+                  Manage all attributes and their details
+                </CardDescription>
+              </CardHeader>
+
+              <CardContent>
+                <AgGridTable
+                  rowData={attributes}
+                  columnDefs={AttributeColumnDefs}
+                  height="300px"
+                />
+              </CardContent>
+            </Card>
           </TabsContent>
+
           {/* NumberSeries Tab */}
           <TabsContent value="NumberSeries">
             <Card>
-              <CardHeader>
+              <CardHeader className="text-left items-start">
                 <CardTitle>NumberSeries</CardTitle>
                 <CardDescription>Manage all NumberSeries and their details</CardDescription>
               </CardHeader>
@@ -5144,6 +5842,7 @@ const [numberSeriesForm, setNumberSeriesForm] = useState({
                             id="name"
                             readOnly={!!editingCompany}
                             value={companyForm.company_no}
+                            maxLength={18}
                             onChange={(e) => setCompanyForm({ ...companyForm, company_no: e.target.value })}
                             placeholder="Enter company code (e.g., CMP001)"
                           />
@@ -5329,14 +6028,15 @@ const [numberSeriesForm, setNumberSeriesForm] = useState({
                         <TooltipTrigger asChild>
                           <Input
                             id="name"
+                            maxLength={10}
                             value={companyForm.pincode}
                             onChange={(e) => setCompanyForm({ ...companyForm, pincode: e.target.value })}
-                            placeholder="Enter PIN code (e.g., 600001)"
+                            placeholder="Enter Pin code (e.g., 600001)"
                           />
                         </TooltipTrigger>
 
                         <TooltipContent>
-                          <p>Enter GST No</p>
+                          <p>Enter Identification No</p>
                         </TooltipContent>
                       </Tooltip>
                     </TooltipProvider>
@@ -5506,7 +6206,7 @@ const [numberSeriesForm, setNumberSeriesForm] = useState({
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="name">GST No</Label>
+                    <Label htmlFor="name">Identification No</Label>
                     <TooltipProvider>
                       <Tooltip>
                         <TooltipTrigger asChild>
@@ -5514,7 +6214,7 @@ const [numberSeriesForm, setNumberSeriesForm] = useState({
                             id="name"
                             value={companyForm.company_gst_no}
                             onChange={(e) => setCompanyForm({ ...companyForm, company_gst_no: e.target.value })}
-                            placeholder="Enter GST number (e.g., 33ABCDE1234F1Z5)"
+                            placeholder="Enter Identification number (e.g., 33ABCDE1234F1Z5)"
                           />
                         </TooltipTrigger>
 
@@ -6023,7 +6723,7 @@ const [numberSeriesForm, setNumberSeriesForm] = useState({
                             id="name"
                             value={locationForm.pincode}
                             onChange={(e) => setLocationForm({ ...locationForm, pincode: e.target.value })}
-                            placeholder="Enter PIN code (e.g., 600001)"
+                            placeholder="Enter Pin code (e.g., 600001)"
                           />
                         </TooltipTrigger>
 
@@ -6588,7 +7288,7 @@ const [numberSeriesForm, setNumberSeriesForm] = useState({
                       id="UserCode"
                       value={userForm.user_code}
                       onChange={(e) => setUserForm({ ...userForm, user_code: e.target.value })}
-                      placeholder="e.g., Last Name"
+                      placeholder="e.g., User Code"
                     />
                   </div>
 
@@ -6652,7 +7352,7 @@ const [numberSeriesForm, setNumberSeriesForm] = useState({
                     </Select>
                   </div>
 
-                  <div className="space-y-2">
+                  {/* <div className="space-y-2">
                     <Label htmlFor="Log">Log in/out</Label>
                     <Select value={userForm.log_in_out} onValueChange={(value) => setUserForm({ ...userForm, log_in_out: value })}>
                       <SelectTrigger>
@@ -6669,7 +7369,7 @@ const [numberSeriesForm, setNumberSeriesForm] = useState({
                         ))}
                       </SelectContent>
                     </Select>
-                  </div>
+                  </div> */}
 
                   <div className="space-y-2">
                     {/* <Label htmlFor="RoleID">Role ID*</Label> */}
@@ -6846,6 +7546,7 @@ const [numberSeriesForm, setNumberSeriesForm] = useState({
                             id="SubCode"
                             value={attributeForm.attributedetails_code}
                             onChange={(e) => setAttributeForm({ ...attributeForm, attributedetails_code: e.target.value })}
+                            disabled={!!editingAttribute}
                             placeholder="Enter the sub code (e.g., ACTIVE)"
                           />
                         </TooltipTrigger>
