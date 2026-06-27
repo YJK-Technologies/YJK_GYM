@@ -2678,33 +2678,7 @@ const addNumberseries = async (req, res) => {
   }
 };
 
-const getnumberseriessearchdata = async (req, res) => {
-  const { company_code, Screen_Type } = req.body; // Extract Screen_Type from req.body
 
-  try {
-    // Connect to the database
-    const pool = await connection.connectToDatabase();
-
-    // Execute the query
-    const result = await pool
-      .request()
-      .input("mode", sql.NVarChar, "SC")
-      .input("company_code", sql.NVarChar, company_code)
-      .input("Screen_Type", sql.NVarChar, Screen_Type) // Correct parameter name
-      .query(`EXEC sp_numberseries @mode,@company_code,@Screen_Type,'','',0,0,0,'','','','','','',
-      null,null,null,null,null,null,null,null,''`);
-
-    // Send response
-    if (result.recordset.length > 0) {
-      res.status(200).json(result.recordset); // 200 OK if data is found
-    } else {
-      res.status(404).json("Data not found"); // 404 Not Found if no data is found
-    }
-  } catch (err) {
-    console.error("Error", err);
-    res.status(500).json({ message: err.message || 'Internal Server Error' });
-  }
-};
 
 const saveEditedNumberseriesData = async (req, res) => {
   const editedData = req.body.editedData;
@@ -2840,6 +2814,92 @@ const getNumberseries = async (req, res) => {
   }
 };
 
+const getscreentype = async (req, res) => {
+  const { company_code } = req.body;
+  try {
+    const pool = await connection.connectToDatabase();
+    const result = await pool
+      .request()
+      .input("company_code", sql.NVarChar, company_code)
+      .query(
+        "EXEC sp_attribute_Info 'F',@company_code,'Sc type', '','','','','',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL",
+      );
+
+    res.json(result.recordset);
+  } catch (err) {
+    console.error("Error", err);
+    res.status(500).json({ message: err.message || "Internal Server Error" });
+  }
+};
+
+
+
+//Code Added by Ramya on 27-06-2026
+const getBillFormat = async (req, res) => {
+  const { company_code } = req.body;
+  try {
+    const pool = await connection.connectToDatabase();
+    const result = await pool
+      .request()
+      .input("company_code", sql.NVarChar, company_code)
+      .query(
+        "EXEC sp_attribute_Info 'F',@company_code,'Bill Format','','', '' ,'','', NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL"
+      );
+
+    res.json(result.recordset);
+  } catch (err) {
+    console.error("Error", err);
+    res.status(500).json({ message: err.message || 'Internal Server Error' });
+  }
+};
+
+const getboolean = async (req, res) => {
+  const { company_code } = req.body;
+  try {
+    const pool = await connection.connectToDatabase();
+    const result = await pool
+      .request()
+      .input("company_code", sql.NVarChar, company_code)
+      .query(
+        "EXEC sp_attribute_Info 'F',@company_code,'boolean','','', '' ,'','', NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL",
+      );
+
+    res.json(result.recordset);
+  } catch (err) {
+    console.error("Error", err);
+    res.status(500).json({ message: err.message || "Internal Server Error" });
+  }
+};
+
+const getnumberseriessearchdata = async (req, res) => {
+  const { company_code, Screen_Type } = req.body; // Extract Screen_Type from req.body
+
+  try {
+    // Connect to the database
+    const pool = await connection.connectToDatabase();
+
+    // Execute the query
+    const result = await pool
+      .request()
+      .input("mode", sql.NVarChar, "SC")
+      .input("company_code", sql.NVarChar, company_code)
+      .input("Screen_Type", sql.NVarChar, Screen_Type) // Correct parameter name
+      .query(`EXEC sp_numberseries @mode,@company_code,@Screen_Type,'','',0,0,0,'','','','','','',
+                         null,null,null,null,null,null,null,null,''`);
+
+    // Send response
+    if (result.recordset.length > 0) {
+      res.status(200).json(result.recordset); // 200 OK if data is found
+    } else {
+      res.status(404).json("Data not found"); // 404 Not Found if no data is found
+    }
+  } catch (err) {
+    console.error("Error", err);
+    res.status(500).json({ message: err.message || "Internal Server Error" });
+  }
+};
+//Code Ended by Ramya on 27-06-2026
+
 module.exports = {
 getCompanyno,
 getsearchdata,
@@ -2924,7 +2984,12 @@ getLoginorout,
 getGender,
 addattrihdrData,
 getAllNumberseries,
-getNumberseries
+getNumberseries,
+getscreentype,
+getBillFormat,
+getboolean,
+getnumberseriessearchdata
+
 
 
 

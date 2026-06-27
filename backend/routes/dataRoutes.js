@@ -110,6 +110,10 @@ router.post("/gender", dataController.getGender)
 router.post("/addattriData",dataController.addattrihdrData)
 router.get("/Numberseries",dataController.getAllNumberseries)
 router.get("/getAllNumberseries",dataController.getAllNumberseries)
+router.post("/screentype",dataController.getscreentype)
+router.post("/getBillFormat",dataController.getBillFormat)
+router.post("/getboolean", dataController.getboolean)
+router.post("/numberseriessearchdata",dataController.getnumberseriessearchdata)
 
 
 module.exports = router;

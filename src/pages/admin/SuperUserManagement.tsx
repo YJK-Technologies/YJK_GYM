@@ -51,9 +51,9 @@ const WorkoutProgramManagement = () => {
   const [RunningNo, setRunning_No] = useState<any[]>([]);
   const [EndNo, setEndNo] = useState<any[]>([]);
   const [Text, setText] = useState<any[]>([]);
-  const [NumberPrefix, seNumberPrefix] = useState<any[]>([]);
-  const [BillFormat, seBillFormat] = useState<any[]>([]);
-  
+  const [NumberPrefix, setNumberPrefix] = useState<any[]>([]);
+  const [BillFormat, setBillFormat] = useState<any[]>([]);
+ 
 
 
   const fetchCities = async () => {
@@ -372,11 +372,11 @@ const WorkoutProgramManagement = () => {
     }
   };
 
-  //Number series
-    const fetchNumberSeries = async () => {
+  //Number series Detail Screen 
+    const fetchScreenType = async () => {
     try {
-      const response = await fetch(`${BASE_URL}/roleid`, {
-        method: "POST",
+      const response = await fetch(`${BASE_URL}/screentype`, {
+        method: "post",
         headers: {
           "Content-Type": "application/json",
         },
@@ -398,6 +398,58 @@ const WorkoutProgramManagement = () => {
     }
   };
 
+    const fetchNumberPrefix = async () => {
+    try {
+      const response = await fetch(`${BASE_URL}/getboolean`, {
+        method: "post",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          company_code: "YJK",
+        }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        setNumberPrefix(data);
+      } else {
+        console.error("Failed to fetch NumberPrefix");
+      }
+
+    } catch (error) {
+      console.error("Error fetching ScreenType:", error);
+    }
+  }; 
+
+    const fetchBillFormat = async () => {
+    try {
+      const response = await fetch(`${BASE_URL}/getBillFormat`, {
+        method: "post",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          company_code: "YJK",
+        }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        setBillFormat(data);
+      } else {
+        console.error("Failed to fetch BillFormat");
+      }
+
+    } catch (error) {
+      console.error("Error fetching BillFormat:", error);
+    }
+  };   
+  
+  
+
   useEffect(() => {
     const loadData = async () => {
       await Promise.all([
@@ -415,7 +467,9 @@ const WorkoutProgramManagement = () => {
         fetchLogInLogOut(),
         fetchGender(),
         fetchAttributeHdr(),
-        fetchNumberSeries(),
+        fetchScreenType(),
+        fetchNumberPrefix(),
+        fetchBillFormat()
 
       ]);
     };
@@ -1293,7 +1347,7 @@ const WorkoutProgramManagement = () => {
     tempstr3: "", tempstr4: "", datetime1: "", datetime2: "", datetime3: "", datetime4: "",
   });
   
-  //Nunmber Series 
+  //Nunmber Dialog States
 const [submittedNumberSeries, setSubmittedNumberSeries] = useState(false);
 const [isNumberSeriesDialogOpen, setIsNumberSeriesDialogOpen] = useState(false);
 const [editingNumberSeries, setEditingNumberSeries] = useState<any>(null);
@@ -1302,6 +1356,11 @@ const [numberSeriesForm, setNumberSeriesForm] = useState({
     company_code: "YJK",Screen_Type: "",Start_Year: "",End_Year:"",Start_No: "",Running_No: "",
     End_No: "" ,Text: "" ,Number_Prefix: "" ,Status: "Active",
     Bill_Format: "",created_by: "admin", modified_by: "admin" });
+
+  //Company Search States
+  const [numberSeriesSearchForm, setnumberSeriesSearchForm] = useState({
+    Screen_Type: ""
+  });
 
   //Company CRUD Functions
   const handleAddCompany = () => {
@@ -4023,6 +4082,57 @@ const [numberSeriesForm, setNumberSeriesForm] = useState({
     setIsNumberSeriesDialogOpen(true);
   };
 
+    const handleSearchNumberSeries = async (searchParams = null) => {
+
+          try {
+      const response = await fetch(`${BASE_URL}/numberseriessearchdata`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          company_code: "MBT",
+          Screen_Type: numberSeriesSearchForm.Screen_Type,
+
+        }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        setNumberSeries(data);
+      } else if (response.status === 404) {
+        setNumberSeries([]);
+
+        toast({
+          title: "Data Not Found",
+          description: data?.message || "No matching Number Series found.",
+          variant: "destructive",
+        });
+      } else {
+        setNumberSeries([]);
+
+        toast({
+          title: "Search Failed",
+          description: data?.message || "Something went wrong while searching.",
+          variant: "destructive",
+        });
+      }
+    } catch (error: any) {
+      console.error("Search Error:", error);
+
+      setNumberSeries([]);
+
+      toast({
+        title: "Server Error",
+        description:
+          error?.message ||
+          "Unable to connect to the server. Please try again later.",
+        variant: "destructive",
+      });
+    }
+  };
+
 
 
   //TAB BUTTON LABELS
@@ -4818,6 +4928,43 @@ const [numberSeriesForm, setNumberSeriesForm] = useState({
 
     </div>
   );
+
+  const renderNumberSeriesSearch = () => (
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+
+      <div className="space-y-2">
+                    <Label htmlFor="ScreenType" className={submittedNumberSeries && !numberSeriesSearchForm.Screen_Type ? "text-red-500" : ""}>Screen Type*</Label>
+                    <TooltipProvider>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <div>
+                            <Select value={numberSeriesSearchForm.Screen_Type} onValueChange={(value) => setnumberSeriesSearchForm({ ...numberSeriesSearchForm, Screen_Type: value })}>
+                              <SelectTrigger>
+                                <SelectValue placeholder="Select Screen Type" />
+                              </SelectTrigger>
+                              <SelectContent>
+                                {ScreenType.map((Screen_Type: any) => (
+                                  <SelectItem
+                                    key={Screen_Type.attributedetails_name}
+                                    value={Screen_Type.attributedetails_name}
+                                  >
+                                    {Screen_Type.attributedetails_name} 
+                                  </SelectItem>
+                                ))}
+                              </SelectContent>
+                            </Select>
+                          </div> 
+                        </TooltipTrigger>
+
+                        <TooltipContent>
+                          <p>Select the Screen Type</p>
+                        </TooltipContent>
+                      </Tooltip>
+                    </TooltipProvider>
+                  </div>
+
+    </div>
+  );
   
 
   const handleSearch = () => {
@@ -4852,6 +4999,10 @@ const [numberSeriesForm, setNumberSeriesForm] = useState({
 
       case "attribute":
         handleAttributeSearch();
+        break;
+
+      case "NumberSeries":
+        handleSearchNumberSeries();
         break;
 
       default:
@@ -4978,6 +5129,8 @@ const [numberSeriesForm, setNumberSeriesForm] = useState({
             {activeTab === "user" && renderUserSearch()}
 
             {activeTab === "attribute" && renderAttributeSearch()}
+
+            {activeTab === "NumberSeries" && renderNumberSeriesSearch()}
 
             <div className="flex justify-end gap-4 mt-6">
               <TooltipProvider>
@@ -7791,15 +7944,15 @@ const [numberSeriesForm, setNumberSeriesForm] = useState({
                               <SelectContent>
                                 {ScreenType.map((Screen_Type: any) => (
                                   <SelectItem
-                                    key={Screen_Type.Screen_Type}
-                                    value={Screen_Type.Screen_Type}
+                                    key={Screen_Type.attributedetails_name}
+                                    value={Screen_Type.attributedetails_name}
                                   >
-                                    {Screen_Type.Screen_Type} - {Screen_Type.Screen_Type}
+                                    {Screen_Type.attributedetails_name} 
                                   </SelectItem>
                                 ))}
                               </SelectContent>
                             </Select>
-                          </div>
+                          </div> 
                         </TooltipTrigger>
 
                         <TooltipContent>
@@ -7860,7 +8013,7 @@ const [numberSeriesForm, setNumberSeriesForm] = useState({
                             id="Start No"
                             value={numberSeriesForm.Start_No}
                             onChange={(e) => setNumberSeriesForm({ ...numberSeriesForm, Start_No: e.target.value })}
-                            placeholder="Select Start No"
+                            placeholder="Enter Start No"
                           />
                         </TooltipTrigger>
 
@@ -7880,7 +8033,7 @@ const [numberSeriesForm, setNumberSeriesForm] = useState({
                             id="Running No"
                             value={numberSeriesForm.Running_No}
                             onChange={(e) => setNumberSeriesForm({ ...numberSeriesForm, Running_No: e.target.value })}
-                            placeholder="Select Running No"
+                            placeholder="Enter Running No"
                           />
                         </TooltipTrigger>
 
@@ -7892,7 +8045,7 @@ const [numberSeriesForm, setNumberSeriesForm] = useState({
                   </div>
 
                    <div className="space-y-2">
-                    <Label htmlFor="EndNo">End No</Label>
+                     <Label htmlFor="End No" className={submittedNumberSeries && !numberSeriesForm.End_No ? "text-red-500" : ""}>End No*</Label>
                     <TooltipProvider>
                       <Tooltip>
                         <TooltipTrigger asChild>
@@ -7900,7 +8053,7 @@ const [numberSeriesForm, setNumberSeriesForm] = useState({
                             id="End No"
                             value={numberSeriesForm.End_No}
                             onChange={(e) => setNumberSeriesForm({ ...numberSeriesForm, End_No: e.target.value })}
-                            placeholder="Select End No"
+                            placeholder="Enter End No"
                           />
                         </TooltipTrigger>
 
@@ -7916,23 +8069,13 @@ const [numberSeriesForm, setNumberSeriesForm] = useState({
                     <TooltipProvider>
                       <Tooltip>
                         <TooltipTrigger asChild>
-                          <div>
-                            <Select value={numberSeriesForm.Text} onValueChange={(value) => setNumberSeriesForm({ ...numberSeriesForm, Text: value })}>
-                              <SelectTrigger>
-                                <SelectValue placeholder=" Text" />
-                              </SelectTrigger>
-                              <SelectContent>
-                                {Text.map((Text: any) => (
-                                  <SelectItem
-                                    key={Text.Text}
-                                    value={Text.Text}
-                                  >
-                                    {Text.Text} - {Text.Text}
-                                  </SelectItem>
-                                ))}
-                              </SelectContent>
-                            </Select>
-                          </div>
+                          <Input
+                            id="Text"
+                            value={numberSeriesForm.Text}
+                            onChange={(e) => setNumberSeriesForm({ ...numberSeriesForm, Text: e.target.value })}
+                            placeholder="Enter Text"
+                          />                          
+
                         </TooltipTrigger>
 
                         <TooltipContent>
@@ -7955,10 +8098,10 @@ const [numberSeriesForm, setNumberSeriesForm] = useState({
                               <SelectContent>
                                 {NumberPrefix.map((Number_Prefix: any) => (
                                   <SelectItem
-                                    key={Number_Prefix.Number_Prefix}
-                                    value={Number_Prefix.Number_Prefix}
+                                    key={Number_Prefix.attributedetails_name}
+                                    value={Number_Prefix.attributedetails_name}
                                   >
-                                    {Number_Prefix.Number_Prefix} - {Number_Prefix.Number_Prefix}
+                                    {Number_Prefix.attributedetails_name} 
                                   </SelectItem>
                                 ))}
                               </SelectContent>
@@ -7986,10 +8129,10 @@ const [numberSeriesForm, setNumberSeriesForm] = useState({
                               <SelectContent>
                                 {BillFormat.map((Bill_Format: any) => (
                                   <SelectItem
-                                    key={Bill_Format.Bill_Format}
-                                    value={Bill_Format.Bill_Format}
+                                    key={Bill_Format.attributedetails_name}
+                                    value={Bill_Format.attributedetails_name}
                                   >
-                                    {Bill_Format.Bill_Format} - {Bill_Format.Bill_Format}
+                                    {Bill_Format.attributedetails_name} - 
                                   </SelectItem>
                                 ))}
                               </SelectContent>
@@ -8005,12 +8148,12 @@ const [numberSeriesForm, setNumberSeriesForm] = useState({
                   </div> 
 
                   <div className="space-y-2">
-                    <Label htmlFor="status" className={submittedCompanyMapping && !companyMappingForm.status ? "text-red-500" : ""}>Status*</Label>
+                    <Label htmlFor="Status" className={submittedNumberSeries && !numberSeriesForm.Status ? "text-red-500" : ""}>Status*</Label>
                     <TooltipProvider>
                       <Tooltip>
                         <TooltipTrigger asChild>
                           <div>
-                            <Select value={companyMappingForm.status} onValueChange={(value) => setCompanyMappingForm({ ...companyMappingForm, status: value })}>
+                            <Select value={numberSeriesForm.Status} onValueChange={(value) => setNumberSeriesForm({ ...numberSeriesForm, Status: value })}>
                               <SelectTrigger>
                                 <SelectValue placeholder="Select Status" />
                               </SelectTrigger>
