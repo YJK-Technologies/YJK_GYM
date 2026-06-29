@@ -12,11 +12,12 @@ import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, D
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useNavigate } from 'react-router-dom';
 import { useToast } from '@/hooks/use-toast';
-import { ArrowLeft, Plus, Search, RotateCcw, Dumbbell, Package, Edit, Trash2 } from 'lucide-react';
+import { ArrowLeft, Plus, Search, RotateCcw, Dumbbell, Package, Edit, Trash2, Eye, EyeOff, } from 'lucide-react';
 import ImageUpload from "../ImageUpload";
 import { BASE_URL } from '../ApiConfig';
 import AgGridTable from "@/components/ui/ag-grid-table";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+
 
 const WorkoutProgramManagement = () => {
   const navigate = useNavigate();
@@ -39,6 +40,7 @@ const WorkoutProgramManagement = () => {
   //User Screen
   const [logInLogOut, setLogInLogOut] = useState<any[]>([]);
   const [gender, setGender] = useState<any[]>([]);
+  const [showPassword, setShowPassword] = useState(false);
 
   //Attribute Detail Screen
   const [attributehdr, setAttributeHdr] = useState<any[]>([]);
@@ -3094,40 +3096,6 @@ const [numberSeriesForm, setNumberSeriesForm] = useState({
     }
   };
 
-  // const handleUpdateUser = async () => {
-  //   setSubmittedUser(true);
-
-  //   if (!validateUser()) return;
-  //   try {
-  //     const formData = new FormData();
-
-  //     Object.entries(userForm).forEach(([key, value]) => {
-  //       formData.append(key, value as string);
-  //     });
-
-  //     if (userImages.length > 0) {
-  //       formData.append("user_images", userImages[0]);
-  //     }
-
-  //     const response = await fetch(`${BASE_URL}/UserUpdates`, {
-  //       method: "PUT",
-  //       body: formData,
-  //     });
-
-  //     const data = await response.json();
-
-  //     if (response.ok) {
-  //       alert(data);
-  //       setEditingUser(null);
-  //       setIsUserDialogOpen(false);
-  //       setSubmittedUser(false);
-  //       // fetchUsers();
-  //     }
-  //   } catch (err) {
-  //     console.error(err);
-  //   }
-  // };
-
   const handleUpdateUser = async () => {
     setSubmittedUser(true);
 
@@ -3217,39 +3185,6 @@ const [numberSeriesForm, setNumberSeriesForm] = useState({
       });
     }
   };
-
-  // const handleDeleteUser = async (user_code: string) => {
-  //   const confirmDelete = window.confirm(
-  //     "Are you sure you want to delete this company?"
-  //   );
-
-  //   if (!confirmDelete) return;
-
-  //   try {
-  //     const response = await fetch(`${BASE_URL}/userdelete`, {
-  //       method: "DELETE",
-  //       headers: {
-  //         "Content-Type": "application/json",
-  //         "modified-by": "admin",
-  //         "company_code": "COMP001",
-  //       },
-  //       body: JSON.stringify({
-  //         user_codes: [user_code],
-  //       }),
-  //     });
-
-  //     const data = await response.json();
-
-  //     if (response.ok) {
-  //       alert(data);
-  //       // fetchUsers();
-  //     } else {
-  //       alert(data.message || data);
-  //     }
-  //   } catch (err) {
-  //     console.error(err);
-  //   }
-  // };
 
   const handleDeleteUser = async (user_code: string) => {
     const confirmDelete = window.confirm(
@@ -3363,6 +3298,7 @@ const [numberSeriesForm, setNumberSeriesForm] = useState({
 
   const handleEditUser = (user: any) => {
     setEditingUser(user);
+    console.log(user);
 
     setUserForm({
       company_code: user.company_code,
@@ -3378,7 +3314,7 @@ const [numberSeriesForm, setNumberSeriesForm] = useState({
       dob: user.dob,
       gender: user.gender,
       role_id: user.role_id,
-      super_admin: user.super_admin,
+      super_admin: user.super_admin === "Yes",
       created_by: user.created_by,
       modified_by: user.modified_by,
     });
@@ -4658,42 +4594,116 @@ const [numberSeriesForm, setNumberSeriesForm] = useState({
 
       <div className="space-y-2">
         <Label>User Code</Label>
-        <Input
-          placeholder="Enter User Code"
-          value={usersSearchForm.user_code}
-          onChange={(e) => setusersSearchForm({ ...usersSearchForm, user_code: e.target.value, })} />
+
+        <TooltipProvider>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Input
+                placeholder="Enter User Code"
+                value={usersSearchForm.user_code}
+                onChange={(e) =>
+                  setusersSearchForm({
+                    ...usersSearchForm,
+                    user_code: e.target.value,
+                  })
+                }
+              />
+            </TooltipTrigger>
+              
+            <TooltipContent>
+              <p>Enter User Code</p>
+            </TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
       </div>
 
       <div className="space-y-2">
         <Label>User Name</Label>
-        <Input
-          placeholder="Enter User Name"
-          value={usersSearchForm.user_name}
-          onChange={(e) => setusersSearchForm({ ...usersSearchForm, user_name: e.target.value, })} />
+
+        <TooltipProvider>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Input
+                placeholder="Enter User Name"
+                value={usersSearchForm.user_name}
+                onChange={(e) =>
+                  setusersSearchForm({
+                    ...usersSearchForm,
+                    user_name: e.target.value,
+                  })
+                }
+              />
+            </TooltipTrigger>
+              
+            <TooltipContent>
+              <p>Enter User Name</p>
+            </TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
       </div>
 
       <div className="space-y-2">
         <Label>First Name</Label>
+        <TooltipProvider>
+          <Tooltip>
+            <TooltipTrigger asChild>
         <Input
           placeholder="Enter First Name"
           value={usersSearchForm.first_name}
           onChange={(e) => setusersSearchForm({ ...usersSearchForm, first_name: e.target.value, })} />
+          </TooltipTrigger>
+              
+            <TooltipContent>
+              <p>Enter First Name</p>
+            </TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
       </div>
 
       <div className="space-y-2">
         <Label>Last Name</Label>
+        <TooltipProvider>
+          <Tooltip>
+            <TooltipTrigger asChild>
         <Input
           placeholder="Enter Last Name"
           value={usersSearchForm.last_name}
           onChange={(e) => setusersSearchForm({ ...usersSearchForm, last_name: e.target.value, })} />
+          </TooltipTrigger>
+              
+            <TooltipContent>
+              <p>Enter Last Name</p>
+            </TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
       </div>
 
       <div className="space-y-2">
         <Label>User Status</Label>
-        <Select value={usersSearchForm.user_status} onValueChange={(value) => setusersSearchForm({ ...usersSearchForm, user_status: value, })}>
-          <SelectTrigger>
-            <SelectValue placeholder="Select User Status" />
-          </SelectTrigger>
+                    
+        <Select
+          value={usersSearchForm.user_status}
+          onValueChange={(value) =>
+            setusersSearchForm({
+              ...usersSearchForm,
+              user_status: value,
+            })
+          }
+        >
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <SelectTrigger>
+                  <SelectValue placeholder="Select User Status" />
+                </SelectTrigger>
+              </TooltipTrigger>
+        
+              <TooltipContent>
+                <p>Select User Status</p>
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
+        
           <SelectContent>
             {status.map((item: any) => (
               <SelectItem
@@ -4709,31 +4719,61 @@ const [numberSeriesForm, setNumberSeriesForm] = useState({
 
       <div className="space-y-2">
         <Label>DOB</Label>
+        <TooltipProvider>
+          <Tooltip>
+            <TooltipTrigger asChild>
         <Input
           type='date'
           placeholder="Enter DOB"
           value={usersSearchForm.dob}
           onChange={(e) => setusersSearchForm({ ...usersSearchForm, dob: e.target.value, })} />
+          </TooltipTrigger>
+
+            <TooltipContent>
+              <p>Select DOB</p>
+            </TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
       </div>
 
       <div className="space-y-2">
-        <Label>Gender</Label>
-        <Select value={usersSearchForm.gender} onValueChange={(value) => setusersSearchForm({ ...usersSearchForm, gender: value, })}>
+  <Label>Gender</Label>
+
+  <Select
+    value={usersSearchForm.gender}
+    onValueChange={(value) =>
+      setusersSearchForm({
+        ...usersSearchForm,
+        gender: value,
+      })
+    }
+  >
+    <TooltipProvider>
+      <Tooltip>
+        <TooltipTrigger asChild>
           <SelectTrigger>
             <SelectValue placeholder="Select Gender" />
           </SelectTrigger>
-          <SelectContent>
-            {gender.map((gender: any) => (
-              <SelectItem
-                key={gender.attributedetails_code}
-                value={gender.attributedetails_code}
-              >
-                {gender.attributedetails_name}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
-      </div>
+        </TooltipTrigger>
+
+        <TooltipContent>
+          <p>Select Gender</p>
+        </TooltipContent>
+      </Tooltip>
+    </TooltipProvider>
+
+    <SelectContent>
+      {gender.map((gender: any) => (
+        <SelectItem
+          key={gender.attributedetails_code}
+          value={gender.attributedetails_code}
+        >
+          {gender.attributedetails_name}
+        </SelectItem>
+      ))}
+    </SelectContent>
+  </Select>
+</div>
 
     </div>
   );
@@ -4922,6 +4962,20 @@ const [numberSeriesForm, setNumberSeriesForm] = useState({
         setRoleRights([]);
         break;
 
+      case "user":
+        setusersSearchForm({
+          company_code: "",
+          user_code: "",
+          user_name: "",
+          first_name: "",
+          last_name: "",
+          user_status: "",
+          dob: "",
+          gender: "",
+        });
+        setUsers([]);
+        break;
+
       case "attribute":
         setAttributeSearchForm({
           attributeheader_code: "",
@@ -5080,92 +5134,6 @@ const [numberSeriesForm, setNumberSeriesForm] = useState({
           </div>
 
           {/* Company Tab */}
-          {/* <TabsContent value="company">
-            <Card>
-              <CardHeader>
-                <CardTitle>Company</CardTitle>
-                <CardDescription>Manage all companies and their details</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead>Company No</TableHead>
-                      <TableHead>Name</TableHead>
-                      <TableHead>Short Name</TableHead>
-                      <TableHead>Address 1</TableHead>
-                      <TableHead>Address 2</TableHead>
-                      <TableHead>Address 3</TableHead>
-                      <TableHead>City</TableHead>
-                      <TableHead>State</TableHead>
-                      <TableHead>Pin Code</TableHead>
-                      <TableHead>Country</TableHead>
-                      <TableHead>Email</TableHead>
-                      <TableHead>Status</TableHead>
-                      <TableHead>Founded Date</TableHead>
-                      <TableHead>Website URL</TableHead>
-                      <TableHead>Contact No</TableHead>
-                      <TableHead>Annual Report URL</TableHead>
-                      <TableHead>Location No</TableHead>
-                      <TableHead>Identification No</TableHead>
-                      <TableHead className="text-right">Actions</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {companies.map((company) => (
-                      <TableRow key={company.company_no}>
-                        <TableCell>{company.company_no}</TableCell>
-                        <TableCell>{company.company_name}</TableCell>
-                        <TableCell>{company.short_name}</TableCell>
-                        <TableCell>{company.address1}</TableCell>
-                        <TableCell>{company.address2}</TableCell>
-                        <TableCell>{company.address3}</TableCell>
-                        <TableCell>{company.city}</TableCell>
-                        <TableCell>{company.state}</TableCell>
-                        <TableCell>{company.pincode}</TableCell>
-                        <TableCell>{company.country}</TableCell>
-                        <TableCell>{company.email_id}</TableCell>
-                        {/* <TableCell>{company.status}</TableCell> 
-                        <TableCell>
-                          <Badge variant={company.status === "Active" ? "default" : "secondary"}>
-                            {company.status}
-                          </Badge>
-                        </TableCell>
-                        <TableCell>{company.foundedDate}</TableCell>
-                        <TableCell>{company.websiteURL}</TableCell>
-                        <TableCell>{company.contact_no}</TableCell>
-                        <TableCell>{company.annualReportURL}</TableCell>
-                        <TableCell>{company.location_no}</TableCell>
-                        <TableCell>{company.company_gst_no}</TableCell>
-
-                        <TableCell className="text-right">
-                          <div className="flex gap-2 justify-end">
-                            <Button
-                              variant="ghost"
-                              size="sm"
-                              onClick={() => handleEditCompany(company)}
-                            >
-                              <Edit className="h-4 w-4" />
-                            </Button>
-
-                            <Button
-                              variant="ghost"
-                              size="sm"
-                              onClick={() => handleDeleteCompany(company.company_no)}
-                            >
-                              <Trash2 className="h-4 w-4 text-red-500" />
-                            </Button>
-                          </div>
-                        </TableCell>
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-              </CardContent>
-            </Card>
-          </TabsContent> */}
-
-          {/* Company Tab */}
           <TabsContent value="company">
             <Card>
               <CardHeader className="text-left items-start">
@@ -5188,68 +5156,6 @@ const [numberSeriesForm, setNumberSeriesForm] = useState({
           </TabsContent>
 
           {/* Company Mapping Tab */}
-          {/* <TabsContent value="companyMapping">
-            <Card>
-              <CardHeader>
-                <CardTitle>Company Mapping</CardTitle>
-                <CardDescription>Manage all mapping companies and their details</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead>User Code</TableHead>
-                      <TableHead>Company Code</TableHead>
-                      <TableHead>Location No</TableHead>
-                      <TableHead>Status</TableHead>
-                      <TableHead>Order No</TableHead>
-                      <TableHead className="text-right">Actions</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {companyMappings.map((mapping: any) => (
-                      <TableRow key={mapping.keyfiels}>
-                        <TableCell>{mapping.user_code}</TableCell>
-                        <TableCell>{mapping.company_no}</TableCell>
-                        <TableCell>{mapping.location_no}</TableCell>
-                        {/* <TableCell>{mapping.status}</TableCell> 
-                        <TableCell>
-                          <Badge variant={mapping.status === "Active" ? "default" : "secondary"}>
-                            {mapping.status}
-                          </Badge>
-                        </TableCell>
-                        <TableCell>{mapping.order_no}</TableCell>
-
-                        <TableCell className="text-right">
-                          <div className="flex justify-end gap-2">
-                            <Button
-                              variant="ghost"
-                              size="sm"
-                              onClick={() => handleEditCompanyMapping(mapping)}
-                            >
-                              <Edit className="h-4 w-4" />
-                            </Button>
-
-                            <Button
-                              variant="ghost"
-                              size="sm"
-                              onClick={() =>
-                                handleDeleteCompanyMapping(mapping.keyfiels)
-                              }
-                            >
-                              <Trash2 className="h-4 w-4 text-red-500" />
-                            </Button>
-                          </div>
-                        </TableCell>
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-              </CardContent>
-            </Card>
-          </TabsContent> */}
-
-          {/* Company Mapping Tab */}
           <TabsContent value="companyMapping">
             <Card>
               <CardHeader className="text-left items-start">
@@ -5270,85 +5176,6 @@ const [numberSeriesForm, setNumberSeriesForm] = useState({
               </CardContent>
             </Card>
           </TabsContent>
-
-          {/* Location Tab */}
-          {/* <TabsContent value="location">
-            <Card>
-              <CardHeader>
-                <CardTitle>Location</CardTitle>
-                <CardDescription>Manage all locations and their details</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead>Location No</TableHead>
-                      <TableHead>Location Name</TableHead>
-                      <TableHead>Short Name</TableHead>
-                      <TableHead>Address 1</TableHead>
-                      <TableHead>Address 2</TableHead>
-                      <TableHead>Address 3</TableHead>
-                      <TableHead>City</TableHead>
-                      <TableHead>State</TableHead>
-                      <TableHead>Pin Code</TableHead>
-                      <TableHead>Country</TableHead>
-                      <TableHead>Email</TableHead>
-                      <TableHead>Status</TableHead>
-                      <TableHead>Contact No</TableHead>
-                      <TableHead className="text-right">Actions</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {locations.map((location) => (
-                      <TableRow key={location.location_no}>
-                        <TableCell>{location.location_no}</TableCell>
-                        <TableCell>{location.location_name}</TableCell>
-                        <TableCell>{location.short_name}</TableCell>
-                        <TableCell>{location.address1}</TableCell>
-                        <TableCell>{location.address2}</TableCell>
-                        <TableCell>{location.address3}</TableCell>
-                        <TableCell>{location.city}</TableCell>
-                        <TableCell>{location.state}</TableCell>
-                        <TableCell>{location.pincode}</TableCell>
-                        <TableCell>{location.country}</TableCell>
-                        <TableCell>{location.email_id}</TableCell>
-                        {/* <TableCell>{location.status}</TableCell> 
-                        <TableCell>
-                          <Badge variant={location.status === "Active" ? "default" : "secondary"}>
-                            {location.status}
-                          </Badge>
-                        </TableCell>                        
-                        <TableCell>{location.contact_no}</TableCell>
-
-                        <TableCell className="text-right">
-                          <div className="flex gap-2 justify-end">
-                            <Button
-                              variant="ghost"
-                              size="sm"
-                              onClick={() => handleEditLocation(location)}
-                            >
-                              <Edit className="h-4 w-4" />
-                            </Button>
-
-                            <Button
-                              variant="ghost"
-                              size="sm"
-                              onClick={() =>
-                                handleDeleteLocation(location.location_no)
-                              }
-                            >
-                              <Trash2 className="h-4 w-4 text-red-500" />
-                            </Button>
-                          </div>
-                        </TableCell>
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-              </CardContent>
-            </Card>
-          </TabsContent> */}
-
           {/* Location Tab */}
           <TabsContent value="location">
             <Card>
@@ -5372,60 +5199,6 @@ const [numberSeriesForm, setNumberSeriesForm] = useState({
           </TabsContent>
 
           {/* Role Tab */}
-          {/* <TabsContent value="role">
-            <Card>
-              <CardHeader>
-                <CardTitle>Role</CardTitle>
-                <CardDescription>
-                  Manage all roles and their details
-                </CardDescription>
-              </CardHeader>
-
-              <CardContent>
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead>Role ID</TableHead>
-                      <TableHead>Role Name</TableHead>
-                      <TableHead>Description</TableHead>
-                      <TableHead className="text-right">Actions</TableHead>
-                    </TableRow>
-                  </TableHeader>
-
-                  <TableBody>
-                    {roles.map((role: any) => (
-                      <TableRow key={role.role_id}>
-                        <TableCell className="font-medium">{role.role_id}</TableCell>
-                        <TableCell>{role.role_name}</TableCell>
-                        <TableCell>{role.description}</TableCell>
-                        <TableCell className="text-right">
-                          <div className="flex justify-end gap-2">
-                            <Button
-                              variant="ghost"
-                              size="sm"
-                              onClick={() => handleEditRole(role)}
-                            >
-                              <Edit className="h-4 w-4" />
-                            </Button>
-
-                            <Button
-                              variant="ghost"
-                              size="sm"
-                              onClick={() => handleDeleteRole(role.role_id)}
-                            >
-                              <Trash2 className="h-4 w-4 text-red-500" />
-                            </Button>
-                          </div>
-                        </TableCell>
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-              </CardContent>
-            </Card>
-          </TabsContent> */}
-
-          {/* Role Tab */}
           <TabsContent value="role">
             <Card>
               <CardHeader className="text-left items-start">
@@ -5446,61 +5219,6 @@ const [numberSeriesForm, setNumberSeriesForm] = useState({
               </CardContent>
             </Card>
           </TabsContent>
-
-          {/* Role Mapping Tab */}
-          {/* <TabsContent value="roleMapping">
-            <Card>
-              <CardHeader>
-                <CardTitle>Role Mapping</CardTitle>
-                <CardDescription>Manage all mapping roles and their details</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead>User Code</TableHead>
-                      <TableHead>User Name</TableHead>
-                      <TableHead>Role ID</TableHead>
-                      <TableHead>Role Name</TableHead>
-                      <TableHead className="text-right">Actions</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {roleMappings.map((item: any) => (
-                      <TableRow key={item.keyfield}>
-                        <TableCell>{item.user_code}</TableCell>
-                        <TableCell>{item.user_name}</TableCell>
-                        <TableCell>{item.role_id}</TableCell>
-                        <TableCell>{item.role_name}</TableCell>
-
-                        <TableCell className="text-right">
-                          <div className="flex justify-end gap-2">
-                            <Button
-                              variant="ghost"
-                              size="sm"
-                              onClick={() => handleEditRoleMapping(item)}
-                            >
-                              <Edit className="h-4 w-4" />
-                            </Button>
-
-                            <Button
-                              variant="ghost"
-                              size="sm"
-                              onClick={() =>
-                                handleDeleteRoleMapping(item.keyfield)
-                              }
-                            >
-                              <Trash2 className="h-4 w-4 text-red-500" />
-                            </Button>
-                          </div>
-                        </TableCell>
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-              </CardContent>
-            </Card>
-          </TabsContent> */}
 
           {/* Location Tab */}
           <TabsContent value="roleMapping">
@@ -5526,59 +5244,6 @@ const [numberSeriesForm, setNumberSeriesForm] = useState({
 
 
           {/* Role Rights Tab */}
-          {/* <TabsContent value="roleRights">
-            <Card>
-              <CardHeader>
-                <CardTitle>Role Rights</CardTitle>
-                <CardDescription>Manage all role and their rights detail</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead>Role ID</TableHead>
-                      <TableHead>Screen Type</TableHead>
-                      <TableHead>Permission Type</TableHead>
-                      <TableHead className="text-right">Actions</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {roleRights.map((item: any) => (
-                      <TableRow key={item.keyfield}>
-                        <TableCell>{item.role_id}</TableCell>
-                        <TableCell>{item.screen_type}</TableCell>
-                        <TableCell>{item.permission_type}</TableCell>
-
-                        <TableCell className="text-right">
-                          <div className="flex justify-end gap-2">
-                            <Button
-                              variant="ghost"
-                              size="sm"
-                              onClick={() => handleEditRoleRight(item)}
-                            >
-                              <Edit className="h-4 w-4" />
-                            </Button>
-
-                            <Button
-                              variant="ghost"
-                              size="sm"
-                              onClick={() =>
-                                handleDeleteRoleRight(item.keyfield)
-                              }
-                            >
-                              <Trash2 className="h-4 w-4 text-red-500" />
-                            </Button>
-                          </div>
-                        </TableCell>
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-              </CardContent>
-            </Card>
-          </TabsContent> */}
-
-          {/* Role Rights Tab */}
           <TabsContent value="roleRights">
             <Card>
               <CardHeader className="text-left items-start">
@@ -5601,70 +5266,6 @@ const [numberSeriesForm, setNumberSeriesForm] = useState({
           </TabsContent>
 
           {/* User Tab */}
-          {/* <TabsContent value="user">
-            <Card>
-              <CardHeader>
-                <CardTitle>User</CardTitle>
-                <CardDescription>Manage all User and their details</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead>User Code</TableHead>
-                      <TableHead>User Name</TableHead>
-                      <TableHead>First Name</TableHead>
-                      <TableHead>Last Name</TableHead>
-                      <TableHead>User Status</TableHead>
-                      <TableHead>DOB</TableHead>
-                      <TableHead>Gender</TableHead>
-                      <TableHead className="text-right">Actions</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {users.map((user: any) => (
-                      <TableRow key={user.user_code}>
-                        <TableCell>{user.user_code}</TableCell>
-                        <TableCell>{user.user_name}</TableCell>
-                        <TableCell>{user.first_name}</TableCell>
-                        <TableCell>{user.last_name}</TableCell>
-                        {/* <TableCell>{user.user_status}</TableCell> 
-                        <TableCell>
-                          <Badge variant={user.user_status === "Active" ? "default" : "secondary"}>
-                            {user.user_status}
-                          </Badge>
-                        </TableCell>
-                        <TableCell>{user.dob}</TableCell>
-                        <TableCell>{user.gender}</TableCell>
-
-                        <TableCell className="text-right">
-                          <div className="flex justify-end gap-2">
-                            <Button
-                              variant="ghost"
-                              size="sm"
-                              onClick={() => handleEditUser(user)}
-                            >
-                              <Edit className="h-4 w-4" />
-                            </Button>
-
-                            <Button
-                              variant="ghost"
-                              size="sm"
-                              onClick={() => handleDeleteUser(user.user_code)}
-                            >
-                              <Trash2 className="h-4 w-4 text-red-500" />
-                            </Button>
-                          </div>
-                        </TableCell>
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-              </CardContent>
-            </Card>
-          </TabsContent> */}
-
-          {/* User Tab */}
           <TabsContent value="user">
             <Card>
               <CardHeader className="text-left items-start">
@@ -5685,65 +5286,6 @@ const [numberSeriesForm, setNumberSeriesForm] = useState({
               </CardContent>
             </Card>
           </TabsContent>
-
-          {/* Attribute Tab */}
-          {/* <TabsContent value="attribute">
-            <Card>
-              <CardHeader>
-                <CardTitle>Attribute</CardTitle>
-                <CardDescription>Manage all Attribute and their details</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead>Code</TableHead>
-                      <TableHead>Sub Code</TableHead>
-                      <TableHead>Details Name</TableHead>
-                      <TableHead>Description</TableHead>
-                      <TableHead className="text-right">Actions</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {attributes.map((attribute: any) => (
-                      <TableRow
-                        key={`${attribute.attributeheader_code}-${attribute.attributedetails_code}`}
-                      >
-                        <TableCell>{attribute.attributeheader_code}</TableCell>
-                        <TableCell>{attribute.attributedetails_code}</TableCell>
-                        <TableCell>{attribute.attributedetails_name}</TableCell>
-                        <TableCell>{attribute.descriptions}</TableCell>
-                        <TableCell className="text-right">
-                          <div className="flex justify-end gap-2">
-                            <Button
-                              variant="ghost"
-                              size="sm"
-                              onClick={() => handleEditAttribute(attribute)}
-                            >
-                              <Edit className="h-4 w-4" />
-                            </Button>
-
-                            <Button
-                              variant="ghost"
-                              size="sm"
-                              onClick={() =>
-                                handleDeleteAttribute(
-                                  attribute.attributeheader_code,
-                                  attribute.attributedetails_code
-                                )
-                              }
-                            >
-                              <Trash2 className="h-4 w-4 text-red-500" />
-                            </Button>
-                          </div>
-                        </TableCell>
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-              </CardContent>
-            </Card>
-          </TabsContent> */}
 
           {/* Attribute Tab */}
           <TabsContent value="attribute">
@@ -7320,61 +6862,149 @@ const [numberSeriesForm, setNumberSeriesForm] = useState({
 
                   <div className="space-y-2">
                     <Label htmlFor="name" className={submittedUser && !userForm.user_code ? "text-red-500" : ""}>User Code*</Label>
+                    <TooltipProvider>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
                     <Input
                       id="UserCode"
+                      readOnly={!!editingUser}
                       value={userForm.user_code}
                       onChange={(e) => setUserForm({ ...userForm, user_code: e.target.value })}
                       placeholder="e.g., User Code"
                     />
+                    </TooltipTrigger>
+
+                        <TooltipContent>
+                          <p>Enter User Code</p>
+                        </TooltipContent>
+                      </Tooltip>
+                    </TooltipProvider>
                   </div>
 
                   <div className="space-y-2">
                     {/* <Label htmlFor="name">User Name*</Label> */}
                     <Label htmlFor="name" className={submittedUser && !userForm.user_name ? "text-red-500" : ""}>User Name*</Label>
+                    <TooltipProvider>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
                     <Input
                       id="UserName"
                       value={userForm.user_name}
                       onChange={(e) => setUserForm({ ...userForm, user_name: e.target.value })}
                       placeholder="e.g., User Name"
                     />
+                    </TooltipTrigger>
+
+                        <TooltipContent>
+                          <p>Enter User Name</p>
+                        </TooltipContent>
+                      </Tooltip>
+                    </TooltipProvider>
                   </div>
+
                   <div className="space-y-2">
                     {/* <Label htmlFor="FirstName">First Name*</Label> */}
                     <Label htmlFor="name" className={submittedUser && !userForm.first_name ? "text-red-500" : ""}>First Name*</Label>
+                    <TooltipProvider>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
                     <Input
                       id="FirstName"
                       value={userForm.first_name}
                       onChange={(e) => setUserForm({ ...userForm, first_name: e.target.value })}
                       placeholder="e.g., First Name"
                     />
+                    </TooltipTrigger>
+
+                        <TooltipContent>
+                          <p>Enter First Name</p>
+                        </TooltipContent>
+                      </Tooltip>
+                    </TooltipProvider>
                   </div>
+
                   <div className="space-y-2">
                     {/* <Label htmlFor="LastName">Last Name*</Label> */}
                     <Label htmlFor="name" className={submittedUser && !userForm.last_name ? "text-red-500" : ""}>Last Name*</Label>
+                    <TooltipProvider>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
                     <Input
                       id="LastName"
                       value={userForm.last_name}
                       onChange={(e) => setUserForm({ ...userForm, last_name: e.target.value })}
                       placeholder="e.g., Last Name"
                     />
+                    </TooltipTrigger>
+
+                        <TooltipContent>
+                          <p>Enter Last Name</p>
+                        </TooltipContent>
+                      </Tooltip>
+                    </TooltipProvider>
                   </div>
+
                   <div className="space-y-2">
                     {/* <Label htmlFor="name">Password*</Label> */}
                     <Label htmlFor="name" className={submittedUser && !userForm.user_password ? "text-red-500" : ""}>Password*</Label>
-                    <Input
-                      id="Password"
-                      value={userForm.user_password}
-                      onChange={(e) => setUserForm({ ...userForm, user_password: e.target.value })}
-                      placeholder="e.g., Password"
-                    />
+                    <TooltipProvider>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                    <div className="relative">
+                      <Input
+                        id="Password"
+                        type={showPassword ? "text" : "password"}
+                        value={userForm.user_password}
+                        onChange={(e) =>
+                          setUserForm({
+                            ...userForm,
+                            user_password: e.target.value,
+                          })
+                        }
+                        placeholder="e.g., Password"
+                        className="pr-10"
+                      />
+
+                      <button
+                        type="button"
+                        onClick={() => setShowPassword(!showPassword)}
+                        className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700"
+                      >
+                        {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                      </button>
+                    </div>
+                    </TooltipTrigger>
+
+                        <TooltipContent>
+                          <p>Enter Password</p>
+                        </TooltipContent>
+                      </Tooltip>
+                    </TooltipProvider>
                   </div>
+
                   <div className="space-y-2">
                     {/* <Label htmlFor="UserCode">Status*</Label> */}
                     <Label htmlFor="name" className={submittedUser && !userForm.user_status ? "text-red-500" : ""}>Status*</Label>
-                    <Select value={userForm.user_status} onValueChange={(value) => setUserForm({ ...userForm, user_status: value })}>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select Status" />
-                      </SelectTrigger>
+                    <Select
+                      value={userForm.user_status}
+                      onValueChange={(value) =>
+                        setUserForm({ ...userForm, user_status: value })
+                      }
+                    >
+                      <TooltipProvider>
+                        <Tooltip>
+                          <TooltipTrigger asChild>
+                            <SelectTrigger>
+                              <SelectValue placeholder="Select Status" />
+                            </SelectTrigger>
+                          </TooltipTrigger>
+                    
+                          <TooltipContent>
+                            <p>Select the status</p>
+                          </TooltipContent>
+                        </Tooltip>
+                      </TooltipProvider>
+                    
                       <SelectContent>
                         {status.map((status: any) => (
                           <SelectItem
@@ -7388,32 +7018,34 @@ const [numberSeriesForm, setNumberSeriesForm] = useState({
                     </Select>
                   </div>
 
-                  {/* <div className="space-y-2">
-                    <Label htmlFor="Log">Log in/out</Label>
-                    <Select value={userForm.log_in_out} onValueChange={(value) => setUserForm({ ...userForm, log_in_out: value })}>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select Log in Or out" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {logInLogOut.map((status: any) => (
-                          <SelectItem
-                            key={status.attributedetails_code}
-                            value={status.attributedetails_code}
-                          >
-                            {status.attributedetails_name}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  </div> */}
-
                   <div className="space-y-2">
-                    {/* <Label htmlFor="RoleID">Role ID*</Label> */}
-                    <Label htmlFor="name" className={submittedUser && !userForm.role_id ? "text-red-500" : ""}>Role ID*</Label>
-                    <Select value={userForm.role_id} onValueChange={(value) => setUserForm({ ...userForm, role_id: value })}>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select Role ID" />
-                      </SelectTrigger>
+                    <Label
+                      htmlFor="name"
+                      className={submittedUser && !userForm.role_id ? "text-red-500" : ""}
+                    >
+                      Role ID*
+                    </Label>
+
+                    <Select
+                      value={userForm.role_id}
+                      onValueChange={(value) =>
+                        setUserForm({ ...userForm, role_id: value })
+                      }
+                    >
+                      <TooltipProvider>
+                        <Tooltip>
+                          <TooltipTrigger asChild>
+                            <SelectTrigger>
+                              <SelectValue placeholder="Select Role ID" />
+                            </SelectTrigger>
+                          </TooltipTrigger>
+                    
+                          <TooltipContent>
+                            <p>Select Role ID</p>
+                          </TooltipContent>
+                        </Tooltip>
+                      </TooltipProvider>
+                    
                       <SelectContent>
                         {role.map((role: any) => (
                           <SelectItem
@@ -7430,16 +7062,30 @@ const [numberSeriesForm, setNumberSeriesForm] = useState({
                   <div className="space-y-2">
                     {/* <Label htmlFor="Email">Email*</Label> */}
                     <Label htmlFor="name" className={submittedUser && !userForm.email_id ? "text-red-500" : ""}>Email*</Label>
+                    <TooltipProvider>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
                     <Input
                       id="Email"
                       value={userForm.email_id}
                       onChange={(e) => setUserForm({ ...userForm, email_id: e.target.value })}
                       placeholder="e.g., Email"
                     />
+                    </TooltipTrigger>
+
+                        <TooltipContent>
+                          <p>Enter Email</p>
+                        </TooltipContent>
+                      </Tooltip>
+                    </TooltipProvider>
                   </div>
+
                   <div className="space-y-2">
                     {/* <Label htmlFor="DOB">DOB*</Label> */}
                     <Label htmlFor="name" className={submittedUser && !userForm.dob ? "text-red-500" : ""}>DOB*</Label>
+                    <TooltipProvider>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
                     <Input
                       id="DOB"
                       type='date'
@@ -7447,30 +7093,56 @@ const [numberSeriesForm, setNumberSeriesForm] = useState({
                       onChange={(e) => setUserForm({ ...userForm, dob: e.target.value })}
                       placeholder="e.g., DOB"
                     />
+                    </TooltipTrigger>
+
+                        <TooltipContent>
+                          <p>Select DOB</p>
+                        </TooltipContent>
+                      </Tooltip>
+                    </TooltipProvider>
                   </div>
+
                   <div className="space-y-2">
                     <Label htmlFor="Gender">Gender</Label>
-                    <Select value={userForm.gender} onValueChange={(value) => setUserForm({ ...userForm, gender: value })}>
-                      <SelectTrigger>
-                        <SelectValue placeholder="SelectGender" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {gender.map((status: any) => (
-                          <SelectItem
-                            key={status.attributedetails_code}
-                            value={status.attributedetails_code}
-                          >
-                            {status.attributedetails_name}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  </div>
+
+                  <Select
+                    value={userForm.gender}
+                    onValueChange={(value) =>
+                      setUserForm({ ...userForm, gender: value })
+                    }
+                  >
+                    <TooltipProvider>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <SelectTrigger>
+                            <SelectValue placeholder="Select Gender" />
+                          </SelectTrigger>
+                          </TooltipTrigger>
+
+                        <TooltipContent>
+                          <p>Select Gender</p>
+                        </TooltipContent>
+                      </Tooltip>
+                      </TooltipProvider>
+
+                    <SelectContent>
+                      {gender.map((status: any) => (
+                        <SelectItem
+                          key={status.attributedetails_code}
+                          value={status.attributedetails_code}
+                        >
+                          {status.attributedetails_name}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
 
                   <div className="space-x-2">
                     <Switch
                       id="isActive"
                       checked={userForm.super_admin}
+                      disabled={!["sa", "super admin"].includes(userForm.role_id?.toLowerCase())}
                       onCheckedChange={(checked) => setUserForm({ ...userForm, super_admin: checked })}
                     />
                     <Label htmlFor="isActive">Super Admin</Label>
