@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -9,6 +9,10 @@ import { Textarea } from '@/components/ui/textarea';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { useNavigate } from 'react-router-dom';
 import { ArrowLeft, Plus, Edit, Trash2, GraduationCap, Mail, Phone, Clock, Award, Users } from 'lucide-react';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { BASE_URL } from '../ApiConfig';
+import { useToast } from '@/hooks/use-toast';
 
 interface Trainer {
   id: string;
@@ -28,6 +32,189 @@ interface Trainer {
 const FacultyManagement = () => {
   const navigate = useNavigate();
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
+
+  const { toast } = useToast();
+
+//Trainer Dialog States
+const [gender, setGender] = useState<any[]>([]);
+
+const [submittedTrainer, setSubmittedTrainer] = useState(false);
+const [Trainers, setTrainers] = useState([]);
+const [editingTrainer, setEditingTrainer] = useState<any>(null);
+const [isTrainerDialogOpen, setIsTrainerDialogOpen] = useState(false);
+const [TrainerForm, setTrainerForm] = useState({
+    company_code: "",
+    user_code: "",
+    user_name: "",
+    first_name: "",
+    last_name: "",
+    user_password: "",
+    user_status: "Active",
+    log_in_out: "",
+    user_type: "",
+    email_id: "",
+    dob: "",
+    gender: "",
+    role_id: "",
+    super_admin: false,
+    created_by: "admin",
+    modified_by: "admin",
+  });
+
+  // Trainer
+  const handleTrainerFiles = async (files: (File | null)[]) => {
+      const convertedImages = await Promise.all(
+        files.map((file, index) => {
+          return new Promise<string | null>((resolve) => {
+            // Keep existing image if no new file is selected
+            
+  
+            const reader = new FileReader();
+  
+            reader.onload = (e) => {
+              resolve(e.target?.result as string);
+            };
+  
+            reader.onerror = () => resolve(null);
+  
+            reader.readAsDataURL(file);
+          });
+        })
+      );
+    };
+  
+    //Trainers Search States
+    const [TrainersSearchForm, setTrainersSearchForm] = useState({
+      company_code: "YJK",
+      user_code: "",
+      user_name: "",
+      first_name: "",
+      last_name: "",
+      user_status: "",
+      dob: "",
+      gender: "",
+    });
+  
+    //Trainer Ag Grid
+    const TrainerColumnDefs = [
+      {
+        headerName: "User Code",
+        field: "user_code",
+        minWidth: 150,
+        cellStyle: { fontWeight: 600 },
+      },
+      {
+        headerName: "User Name",
+        field: "user_name",
+        minWidth: 150,
+      },
+      {
+        headerName: "First Name",
+        field: "first_name",
+        minWidth: 150,
+      },
+      {
+        headerName: "Last Name",
+        field: "last_name",
+        minWidth: 150,
+      },
+      {
+        headerName: "User Status",
+        field: "user_status",
+        minWidth: 150,
+        cellRenderer: (params: any) => {
+          const status = params.value?.toString().toLowerCase();
+        
+          return (
+            <Badge variant={status === "active" ? "default" : "secondary"}>
+              {params.value}
+            </Badge>
+          );
+        },
+      },
+      {
+        headerName: "DOB",
+        field: "dob",
+        minWidth: 150,
+      },
+      {
+        headerName: "Role ID",
+        field: "role_id",
+        minWidth: 150,
+      },
+      {
+        headerName: "Gender",
+        field: "gender",
+        minWidth: 150,
+      },
+      {
+    headerName: "Actions",
+    width: 120,
+    minWidth: 120,
+    maxWidth: 120,
+    sortable: false,
+    filter: false,
+    cellStyle: {
+      display: "flex",
+      justifyContent: "center",
+      alignItems: "center",
+    },
+    cellRenderer: (params: any) => (
+      <div className="flex gap-2">
+        <Button
+          variant="ghost"
+          size="sm"
+          onClick={() => handleEditTrainer(params.data)}
+        >
+          <Edit className="h-4 w-4" />
+        </Button>
+  
+        <Button
+          variant="ghost"
+          size="sm"
+          onClick={() => handleDeleteTrainer(params.data.user_code)}
+        >
+          <Trash2 className="h-4 w-4 text-red-500" />
+        </Button>
+      </div>
+    ),
+  }
+    ];
+  
+  // Gender DropDown
+  const fetchGender = async () => {
+      try {
+        const response = await fetch(`${BASE_URL}/gender`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            company_code: "YJK",
+          }),
+        });
+  
+        const data = await response.json();
+  
+        if (response.ok) {
+          setGender(data);
+        } else {
+          console.error("Failed to fetch status");
+        }
+      } catch (error) {
+        console.error("Error fetching status:", error);
+      }
+    };
+
+  useEffect(() => {
+      const loadData = async () => {
+        await Promise.all([
+          fetchGender(),
+        ]);
+      };
+  
+      loadData();
+    }, []);
   
   // Sample trainers data
   const [trainers] = useState<Trainer[]>([
@@ -89,6 +276,311 @@ const FacultyManagement = () => {
     }
   ]);
 
+  //Trainer CRUD Functions
+  const handleAddTrainer = () => {
+      setEditingTrainer(null);
+      setTrainerForm({
+        company_code: "YJK",
+        user_code: "",
+        user_name: "",
+        first_name: "",
+        last_name: "",
+        user_password: "",
+        user_status: "Active",
+        log_in_out: "",
+        user_type: "",
+        email_id: "",
+        dob: "",
+        gender: "",
+        role_id: "",
+        super_admin: false,
+        created_by: "admin",
+        modified_by: "admin",
+      });
+      setIsTrainerDialogOpen(true);
+    };
+  
+    const validateTrainer = () => {
+      if (
+        !TrainerForm.company_code ||
+        !TrainerForm.user_code ||
+        !TrainerForm.user_name ||
+        !TrainerForm.first_name ||
+        !TrainerForm.last_name ||
+        !TrainerForm.user_password ||
+        !TrainerForm.user_status ||
+        !TrainerForm.email_id ||
+        !TrainerForm.dob ||
+        !TrainerForm.role_id
+      ) {
+        toast({
+          title: "Required Fields",
+          description: "Please fill all required fields.",
+          variant: "destructive",
+        });
+        return false;
+      }
+  
+      // Email validation
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  
+      if (!emailRegex.test(TrainerForm.email_id)) {
+        toast({
+          title: "Invalid Email",
+          description: "Please enter a valid email address.",
+          variant: "destructive",
+        });
+        return false;
+      }
+  
+      return true;
+    };
+  
+    const handleCreateTrainer = async () => {
+      setSubmittedTrainer(true);
+  
+      if (!validateTrainer()) return;
+  
+      try {
+        const formData = new FormData();
+  
+        // Object.entries(TrainerForm).forEach(([key, value]) => {
+        //   formData.append(key, value as string);
+        // });
+        Object.entries(TrainerForm).forEach(([key, value]) => {
+          if (key === "super_admin") {
+            formData.append("super_admin", value ? "Yes" : "No");
+          } else {
+            formData.append(key, String(value ?? ""));
+          }
+        });
+  
+        const response = await fetch(`${BASE_URL}/useradd`, {
+          method: "POST",
+          body: formData,
+        });
+  
+        const data = await response.json();
+  
+        if (response.ok) {
+          toast({
+            title: "Success",
+            description: data.message || "Trainer created successfully.",
+          });
+  
+          setIsTrainerDialogOpen(false);
+          setSubmittedTrainer(false);
+  
+          handleTrainerSearch();
+        } else {
+          toast({
+            title: "Error",
+            description: data.message || "Failed to create Trainer.",
+            variant: "destructive",
+          });
+        }
+      } catch (err) {
+        console.error(err);
+  
+        toast({
+          title: "Error",
+          description: "Something went wrong. Please try again.",
+          variant: "destructive",
+        });
+      }
+    };
+  
+    const handleUpdateTrainer = async () => {
+      setSubmittedTrainer(true);
+  
+      if (!validateTrainer()) return;
+  
+      try {
+        const formData = new FormData();
+  
+        // Object.entries(TrainerForm).forEach(([key, value]) => {
+        //   formData.append(key, value as string);
+        // });
+        Object.entries(TrainerForm).forEach(([key, value]) => {
+          if (key === "super_admin") {
+            formData.append("super_admin", value ? "Yes" : "No");
+          } else {
+            formData.append(key, String(value ?? ""));
+          }
+        });
+
+        const response = await fetch(`${BASE_URL}/UserUpdates`, {
+          method: "POST",
+          body: formData,
+        });
+  
+        const data = await response.json();
+  
+        if (response.ok) {
+          toast({
+            title: "Success",
+            description: data.message || "Trainer updated successfully.",
+          });
+  
+          setEditingTrainer(null);
+          setIsTrainerDialogOpen(false);
+          setSubmittedTrainer(false);
+  
+          handleTrainerSearch();
+        } else {
+          toast({
+            title: "Error",
+            description: data.message || "Failed to update Trainer.",
+            variant: "destructive",
+          });
+        }
+      } catch (err: any) {
+        console.error(err);
+  
+        toast({
+          title: "Server Error",
+          description: err.message || "Something went wrong.",
+          variant: "destructive",
+        });
+      }
+    };
+    
+    const handleDeleteTrainer = async (user_code: string) => {
+      const confirmDelete = window.confirm(
+        "Are you sure you want to delete this Trainer?"
+      );
+  
+      if (!confirmDelete) return;
+  
+      try {
+        const response = await fetch(`${BASE_URL}/userdelete`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "modified-by": "admin",
+            "company_code": "YJK",
+          },
+          body: JSON.stringify({
+            user_codes: [user_code],
+          }),
+        });
+  
+        const data = await response.json();
+  
+        if (response.ok) {
+          toast({
+            title: "Success",
+            description: data.message || "Trainer deleted successfully.",
+          });
+  
+          handleTrainerSearch();
+        } else {
+          toast({
+            title: "Error",
+            description: data.message || "Failed to delete Trainer.",
+            variant: "destructive",
+          });
+        }
+      } catch (err: any) {
+        console.error(err);
+  
+        toast({
+          title: "Server Error",
+          description: err.message || "Something went wrong.",
+          variant: "destructive",
+        });
+      }
+    };
+  
+    const handleSaveTrainer = async () => {
+      if (editingTrainer) {
+        await handleUpdateTrainer();
+      } else {
+        await handleCreateTrainer();
+      }
+    };
+  
+    const handleTrainerSearch = async () => {
+      try {
+        const response = await fetch(`${BASE_URL}/usersearchcriteria`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            company_code: "YJK",
+            user_code: TrainersSearchForm.user_code,
+            user_name: TrainersSearchForm.user_name,
+            first_name: TrainersSearchForm.first_name,
+            last_name: TrainersSearchForm.last_name,
+            user_status: TrainersSearchForm.user_status,
+            dob: TrainersSearchForm.dob,
+            gender: TrainersSearchForm.gender,
+          }),
+        });
+  
+        const data = await response.json();
+  
+        if (response.ok) {
+          setTrainers(data);
+        } else if (response.status === 404) {
+          setTrainers([]);
+  
+          toast({
+            title: "Data Not Found",
+            description: data?.message || "No matching attributes found.",
+            variant: "destructive",
+          });
+        } else {
+          setTrainers([]);
+  
+          toast({
+            title: "Search Failed",
+            description: data?.message || "Something went wrong while searching.",
+            variant: "destructive",
+          });
+        }
+      } catch (error: any) {
+        console.error("Search Error:", error);
+  
+        setTrainers([]);
+  
+        toast({
+          title: "Server Error",
+          description:
+            error?.message ||
+            "Unable to connect to the server. Please try again later.",
+          variant: "destructive",
+        });
+      }
+    };
+  
+    const handleEditTrainer = (Trainer: any) => {
+      setEditingTrainer(Trainer);
+      console.log(Trainer);
+  
+      setTrainerForm({
+        company_code: Trainer.company_code,
+        user_code: Trainer.user_code,
+        user_name: Trainer.user_name,
+        first_name: Trainer.first_name,
+        last_name: Trainer.last_name,
+        user_password: Trainer.user_password,
+        user_status: Trainer.user_status,
+        log_in_out: Trainer.log_in_out,
+        user_type: Trainer.user_type,
+        email_id: Trainer.email_id,
+        dob: Trainer.dob,
+        gender: Trainer.gender,
+        role_id: Trainer.role_id,
+        super_admin: Trainer.super_admin === "Yes",
+        created_by: Trainer.created_by,
+        modified_by: Trainer.modified_by,
+      });
+  
+      setIsTrainerDialogOpen(true);
+    };
+
   return (
     <div className="min-h-screen bg-gray-50">
       <header className="bg-white shadow-sm border-b">
@@ -117,17 +609,63 @@ const FacultyManagement = () => {
                       Enter the details for the new personal trainer.
                     </DialogDescription>
                   </DialogHeader>
+
                   <div className="grid gap-4 py-4">
                     <div className="grid grid-cols-2 gap-4">
+
                       <div className="space-y-2">
                         <Label htmlFor="name">Full Name</Label>
                         <Input id="name" placeholder="Enter full name" />
                       </div>
+
                       <div className="space-y-2">
                         <Label htmlFor="email">Email</Label>
                         <Input id="email" type="email" placeholder="trainer@ruw.edu.bh" />
                       </div>
+
+                      {/* Newly Added Field */}
+                      <div className="space-y-2">
+                        <Label htmlFor="email">Date of Birth</Label>
+                        <Input id="email" type="date" placeholder="trainer@ruw.edu.bh" />
+                      </div>
+
+                      {/* Newly Added Field */}
+                      <div className="space-y-2">
+                        <Label htmlFor="email">Gender</Label>
+                        <Select
+                          value={TrainerForm.gender}
+                          onValueChange={(value) =>
+                            setTrainerForm({ ...TrainerForm, gender: value })
+                          }
+                        >
+                          <TooltipProvider>
+                            <Tooltip>
+                              <TooltipTrigger asChild>
+                                <SelectTrigger>
+                                  <SelectValue placeholder="Select Gender" />
+                                </SelectTrigger>
+                                </TooltipTrigger>
+                        
+                              <TooltipContent>
+                                <p>Select Gender</p>
+                              </TooltipContent>
+                            </Tooltip>
+                            </TooltipProvider>
+                        
+                          <SelectContent>
+                            {gender.map((status: any) => (
+                              <SelectItem
+                                key={status.attributedetails_code}
+                                value={status.attributedetails_code}
+                              >
+                                {status.attributedetails_name}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      </div>
                     </div>
+
                     <div className="grid grid-cols-2 gap-4">
                       <div className="space-y-2">
                         <Label htmlFor="phone">Phone</Label>
