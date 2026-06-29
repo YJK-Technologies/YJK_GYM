@@ -576,10 +576,19 @@ const WorkoutProgramManagement = () => {
       minWidth: 150,
     },
     {
-      headerName: "Status",
-      field: "status",
-      minWidth: 150,
-    },
+  headerName: "Status",
+  field: "status",
+  minWidth: 150,
+  cellRenderer: (params: any) => {
+    const status = params.value?.toString().toLowerCase();
+
+    return (
+      <Badge variant={status === "active" ? "default" : "secondary"}>
+        {params.value}
+      </Badge>
+    );
+  },
+},
     {
       headerName: "Founded Date",
       field: "foundedDate",
@@ -606,7 +615,7 @@ const WorkoutProgramManagement = () => {
       minWidth: 150,
     },
     {
-      headerName: "GST No",
+      headerName: "Identification No",
       field: "company_gst_no",
       minWidth: 150,
     },
@@ -723,6 +732,15 @@ const WorkoutProgramManagement = () => {
       headerName: "Status",
       field: "status",
       minWidth: 150,
+      cellRenderer: (params: any) => {
+        const status = params.value?.toString().toLowerCase();
+      
+        return (
+          <Badge variant={status === "active" ? "default" : "secondary"}>
+            {params.value}
+          </Badge>
+        );
+      },
     },
     {
       headerName: "Order No",
@@ -859,6 +877,15 @@ const WorkoutProgramManagement = () => {
       headerName: "Status",
       field: "status",
       minWidth: 150,
+      cellRenderer: (params: any) => {
+        const status = params.value?.toString().toLowerCase();
+      
+        return (
+          <Badge variant={status === "active" ? "default" : "secondary"}>
+            {params.value}
+          </Badge>
+        );
+      },
     },
     {
       headerName: "Contact No",
@@ -1209,6 +1236,15 @@ const WorkoutProgramManagement = () => {
       headerName: "User Status",
       field: "user_status",
       minWidth: 150,
+      cellRenderer: (params: any) => {
+        const status = params.value?.toString().toLowerCase();
+      
+        return (
+          <Badge variant={status === "active" ? "default" : "secondary"}>
+            {params.value}
+          </Badge>
+        );
+      },
     },
     {
       headerName: "DOB",
@@ -4264,8 +4300,10 @@ const [numberSeriesForm, setNumberSeriesForm] = useState({
             <TooltipTrigger asChild>
               <Input
                 placeholder="Enter Pin Code"
+                maxLength={10}
                 value={companySearchForm.pincode}
-                onChange={(e) => setCompanySearchForm({ ...companySearchForm, pincode: e.target.value, })} />
+                inputMode="numeric"
+                onChange={(e) => setCompanySearchForm({ ...companySearchForm, pincode: e.target.value.replace(/\D/g, ""), })} />
             </TooltipTrigger>
 
             <TooltipContent>
@@ -5146,7 +5184,7 @@ const [numberSeriesForm, setNumberSeriesForm] = useState({
                   </TooltipTrigger>
 
                   <TooltipContent>
-                    <p>Handle Search</p>
+                    <p>Search</p>
                   </TooltipContent>
                 </Tooltip>
               </TooltipProvider>
@@ -5165,7 +5203,7 @@ const [numberSeriesForm, setNumberSeriesForm] = useState({
                   </TooltipTrigger>
 
                   <TooltipContent>
-                    <p>Handle Reset</p>
+                    <p>Reload</p>
                   </TooltipContent>
                 </Tooltip>
               </TooltipProvider>
@@ -5215,10 +5253,24 @@ const [numberSeriesForm, setNumberSeriesForm] = useState({
                 Number Series
               </TabsTrigger>
             </TabsList>
-            <Button onClick={handleAdd}>
+            {/* <Button onClick={handleAdd}>
               <Plus className="h-4 w-4 mr-2" />
               Add {addLabels[activeTab]}
-            </Button>
+            </Button> */}
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button onClick={handleAdd}>
+                    <Plus className="h-4 w-4 mr-2" />
+                    Add {addLabels[activeTab]}
+                  </Button>
+                </TooltipTrigger>
+
+                <TooltipContent>
+                  <p>Add {addLabels[activeTab]}</p>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
           </div>
 
           {/* Company Tab */}
@@ -5321,6 +5373,8 @@ const [numberSeriesForm, setNumberSeriesForm] = useState({
                 <AgGridTable
                   rowData={companies}
                   columnDefs={CompanyColumnDefs}
+                  pagination={true}
+                  paginationPageSize={10}
                   height="300px"
                 />
               </CardContent>
@@ -5403,6 +5457,8 @@ const [numberSeriesForm, setNumberSeriesForm] = useState({
                 <AgGridTable
                   rowData={companyMappings}
                   columnDefs={CompanyMappingColumnDefs}
+                  pagination={true}
+                  paginationPageSize={10}
                   height="300px"
                 />
               </CardContent>
@@ -5501,6 +5557,8 @@ const [numberSeriesForm, setNumberSeriesForm] = useState({
                 <AgGridTable
                   rowData={locations}
                   columnDefs={LocationColumnDefs}
+                  pagination={true}
+                  paginationPageSize={10}
                   height="300px"
                 />
               </CardContent>
@@ -5575,6 +5633,8 @@ const [numberSeriesForm, setNumberSeriesForm] = useState({
                 <AgGridTable
                   rowData={roles}
                   columnDefs={roleColumnDefs}
+                  pagination={true}
+                  paginationPageSize={10}
                   height="300px"
                 />
               </CardContent>
@@ -5650,6 +5710,8 @@ const [numberSeriesForm, setNumberSeriesForm] = useState({
                 <AgGridTable
                   rowData={roleMappings}
                   columnDefs={RoleMappingColumnDefs}
+                  pagination={true}
+                  paginationPageSize={10}
                   height="300px"
                 />
               </CardContent>
@@ -5724,6 +5786,8 @@ const [numberSeriesForm, setNumberSeriesForm] = useState({
                 <AgGridTable
                   rowData={roleRights}
                   columnDefs={RoleRightsColumnDefs}
+                  pagination={true}
+                  paginationPageSize={10}
                   height="300px"
                 />
               </CardContent>
@@ -5808,6 +5872,8 @@ const [numberSeriesForm, setNumberSeriesForm] = useState({
                 <AgGridTable
                   rowData={users}
                   columnDefs={UserColumnDefs}
+                  pagination={true}
+                  paginationPageSize={10}
                   height="300px"
                 />
               </CardContent>
@@ -5887,6 +5953,8 @@ const [numberSeriesForm, setNumberSeriesForm] = useState({
                 <AgGridTable
                   rowData={attributes}
                   columnDefs={AttributeColumnDefs}
+                  pagination={true}
+                  paginationPageSize={10}
                   height="300px"
                 />
               </CardContent>
@@ -6182,14 +6250,20 @@ const [numberSeriesForm, setNumberSeriesForm] = useState({
                           <Input
                             id="name"
                             maxLength={10}
+                            inputMode="numeric"
                             value={companyForm.pincode}
-                            onChange={(e) => setCompanyForm({ ...companyForm, pincode: e.target.value })}
-                            placeholder="Enter Pin code (e.g., 600001)"
+                            onChange={(e) =>
+                              setCompanyForm({
+                                ...companyForm,
+                                pincode: e.target.value.replace(/\D/g, ""),
+                              })
+                            }
+                            placeholder="Enter Pin Code (e.g., 600001)"
                           />
                         </TooltipTrigger>
 
                         <TooltipContent>
-                          <p>Enter Identification No</p>
+                          <p>Enter Pin Code</p>
                         </TooltipContent>
                       </Tooltip>
                     </TooltipProvider>
@@ -6326,7 +6400,9 @@ const [numberSeriesForm, setNumberSeriesForm] = useState({
                           <Input
                             id="name"
                             value={companyForm.contact_no}
-                            onChange={(e) => setCompanyForm({ ...companyForm, contact_no: e.target.value })}
+                            maxLength={100}
+                            inputMode="numeric"
+                            onChange={(e) => setCompanyForm({ ...companyForm, contact_no: e.target.value.replace(/\D/g, ""), })}
                             placeholder="Enter contact number (e.g., +91 9876543210)"
                           />
                         </TooltipTrigger>
@@ -6977,6 +7053,7 @@ const [numberSeriesForm, setNumberSeriesForm] = useState({
                           <Input
                             id="name"
                             value={locationForm.contact_no}
+                            maxLength={100}
                             onChange={(e) => setLocationForm({ ...locationForm, contact_no: e.target.value.replace(/\D/g, ""), })}
                             placeholder="Enter contact number (e.g., +91 9876543210)"
                           />
