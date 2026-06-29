@@ -1373,15 +1373,47 @@ const WorkoutProgramManagement = () => {
   });
 
   //Nunmber Series 
+  
   const [submittedNumberSeries, setSubmittedNumberSeries] = useState(false);
   const [isNumberSeriesDialogOpen, setIsNumberSeriesDialogOpen] = useState(false);
   const [editingNumberSeries, setEditingNumberSeries] = useState<any>(null);
   const [numberSeries, setNumberSeries] = useState([]);
-  const [numberSeriesForm, setNumberSeriesForm] = useState({
-    company_code: "YJK", Screen_Type: "", Start_Year: "", End_Year: "", Start_No: "", Running_No: "",
-    End_No: "", text: "", number_prefix: "0", Status: "Active",
-    bill_format: "", created_by: "admin", modified_by: "admin"
-  });
+const [numberSeriesForm, setNumberSeriesForm] = useState({
+  company_code: "YJK",
+  Screen_Type: "",
+  Start_Year: "",
+  End_Year: "",
+  Start_No: "",
+  Running_No: "",
+  End_No: "",
+  text: "",
+  number_prefix: "0",
+  Status: "Active",
+  bill_format: "",
+  created_by: "admin",
+  modified_by: "admin",
+});
+
+useEffect(() => {
+  const today = new Date();
+  const financialYear =
+    today.getMonth() >= 3
+      ? today.getFullYear()
+      : today.getFullYear() - 1;
+
+  setNumberSeriesForm((prev) => ({
+    ...prev,
+    Start_Year: `${financialYear}-04-01`,
+    End_Year: `${financialYear + 1}-03-31`,
+  }));
+}, []);
+
+console.log(numberSeriesForm)
+
+  const currentYear = new Date().getFullYear();
+
+  const fyStart = `${currentYear}-04-01`;
+  const fyEnd = `${currentYear + 1}-03-31`;
 
   //Number Series Search States
   const [numberSeriesSearchForm, setnumberSeriesSearchForm] = useState({
@@ -3994,7 +4026,7 @@ const WorkoutProgramManagement = () => {
     try {
 
       const response = await fetch(`${BASE_URL}/NumberSeriesUpdate`,
-       {
+        {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -4995,7 +5027,6 @@ const WorkoutProgramManagement = () => {
     </div>
   );
 
-
   const handleSearch = () => {
     switch (activeTab) {
       case "company":
@@ -5113,6 +5144,13 @@ const WorkoutProgramManagement = () => {
           descriptions: "",
         });
         setAttributes([]);
+        break;
+
+      case "NumberSeries":
+        setnumberSeriesSearchForm({
+          Screen_Type: ""
+        });
+        setNumberSeries([]);
         break;
 
       default:
@@ -6260,12 +6298,7 @@ const WorkoutProgramManagement = () => {
                             maxLength={10}
                             inputMode="numeric"
                             value={companyForm.pincode}
-                            onChange={(e) =>
-                              setCompanyForm({
-                                ...companyForm,
-                                pincode: e.target.value.replace(/\D/g, ""),
-                              })
-                            }
+                            onChange={(e) => setCompanyForm({ ...companyForm, pincode: e.target.value.replace(/\D/g, ""), })}
                             placeholder="Enter Pin Code (e.g., 600001)"
                           />
                         </TooltipTrigger>
@@ -7148,7 +7181,7 @@ const WorkoutProgramManagement = () => {
                             id="name"
                             readOnly={!!editingRole}
                             value={roleForm.role_id}
-                            onChange={(e) => setRoleForm({ ...roleForm, role_id: e.target.value })}
+                            onChange={(e) => setRoleForm({ ...roleForm, role_id: e.target.value.replace(/[^a-zA-Z0-9_-]/g, ""), })}
                             placeholder="Enter the role id (e.g., ADMIN)"
                           />
                         </TooltipTrigger>
@@ -7168,7 +7201,7 @@ const WorkoutProgramManagement = () => {
                           <Input
                             id="name"
                             value={roleForm.role_name}
-                            onChange={(e) => setRoleForm({ ...roleForm, role_name: e.target.value })}
+                            onChange={(e) => setRoleForm({ ...roleForm, role_name: e.target.value.replace(/[^a-zA-Z0-9_-]/g, ""), })}
                             placeholder="Enter the role name (e.g., Administrator)"
                           />
                         </TooltipTrigger>
@@ -8062,6 +8095,8 @@ const WorkoutProgramManagement = () => {
                           <Input
                             id="StartYear"
                             type="date"
+                            min={fyStart}
+                            max={fyEnd}
                             value={numberSeriesForm.Start_Year}
                             onChange={(e) => setNumberSeriesForm({ ...numberSeriesForm, Start_Year: e.target.value })}
                             placeholder="Select Start Year"
@@ -8083,6 +8118,8 @@ const WorkoutProgramManagement = () => {
                           <Input
                             id="EndYear"
                             type="date"
+                            min={fyStart}
+                            max={fyEnd}
                             value={numberSeriesForm.End_Year}
                             onChange={(e) => setNumberSeriesForm({ ...numberSeriesForm, End_Year: e.target.value })}
                             placeholder="Select End Year"
@@ -8224,7 +8261,7 @@ const WorkoutProgramManagement = () => {
                                     key={bill_format.attributedetails_name}
                                     value={bill_format.attributedetails_name}
                                   >
-                                    {bill_format.attributedetails_name} 
+                                    {bill_format.attributedetails_name}
                                   </SelectItem>
                                 ))}
                               </SelectContent>
