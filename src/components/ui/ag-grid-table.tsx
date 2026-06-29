@@ -5,12 +5,24 @@ import {
   ColDef,
   GridReadyEvent,
   GridOptions,
+  ModuleRegistry,
+  AllCommunityModule,
 } from "ag-grid-community";
 
 import "ag-grid-community/styles/ag-grid.css";
 import "ag-grid-community/styles/ag-theme-quartz.css";
 import '../../App.css';
 
+ModuleRegistry.registerModules([AllCommunityModule]);
+
+// interface AgGridTableProps {
+//   rowData: any[];
+//   columnDefs: ColDef[];
+//   loading?: boolean;
+//   height?: string;
+//   gridOptions?: GridOptions;
+//   onGridReady?: (params: GridReadyEvent) => void;
+// }
 interface AgGridTableProps {
   rowData: any[];
   columnDefs: ColDef[];
@@ -18,8 +30,20 @@ interface AgGridTableProps {
   height?: string;
   gridOptions?: GridOptions;
   onGridReady?: (params: GridReadyEvent) => void;
+
+  // Add these two props
+  pagination?: boolean;
+  paginationPageSize?: number;
 }
 
+// export default function AgGridTable({
+//   rowData,
+//   columnDefs,
+//   loading = false,
+//   height = "450px",
+//   gridOptions,
+//   onGridReady,
+// }: AgGridTableProps) {
 export default function AgGridTable({
   rowData,
   columnDefs,
@@ -27,6 +51,8 @@ export default function AgGridTable({
   height = "450px",
   gridOptions,
   onGridReady,
+  pagination = false,
+  paginationPageSize = 10,
 }: AgGridTableProps) {
   return (
     <div
@@ -41,8 +67,8 @@ export default function AgGridTable({
         suppressCellFocus
         headerHeight={48}
         rowHeight={60}
-        pagination={true}
-        paginationAutoPageSize={true}
+        pagination={pagination}
+paginationPageSize={paginationPageSize}
         defaultColDef={{
           sortable: true,
           filter: false,
