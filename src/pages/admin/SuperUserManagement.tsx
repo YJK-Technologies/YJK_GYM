@@ -1388,10 +1388,10 @@ const [submittedNumberSeries, setSubmittedNumberSeries] = useState(false);
 const [isNumberSeriesDialogOpen, setIsNumberSeriesDialogOpen] = useState(false);
 const [editingNumberSeries, setEditingNumberSeries] = useState<any>(null);
 const [numberSeries, setNumberSeries] = useState([]);
-const [numberSeriesForm, setNumberSeriesForm] = useState({
+const [ numberSeriesForm, setNumberSeriesForm] = useState({
     company_code: "YJK",Screen_Type: "",Start_Year: "",End_Year:"",Start_No: "",Running_No: "",
-    End_No: "" ,Text: "" ,Number_Prefix: "" ,Status: "Active",
-    Bill_Format: "",created_by: "admin", modified_by: "admin" });
+    End_No: "" ,text: "" ,number_prefix: "" ,Status: "Active",
+    bill_format: "",created_by: "admin", modified_by: "admin" });
 
   //Company Search States
   const [numberSeriesSearchForm, setnumberSeriesSearchForm] = useState({
@@ -3837,10 +3837,10 @@ const [numberSeriesForm, setNumberSeriesForm] = useState({
     Start_No: "",
     Running_No: "",
     End_No: "",
-    Text: "",
-    Number_Prefix: "",
+    text: "",
+    number_prefix: "",
     Status: "Active",
-    Bill_Format: "",
+    bill_format: "",
     created_by: "admin",
     modified_by: "admin",
     });
@@ -3855,10 +3855,10 @@ const [numberSeriesForm, setNumberSeriesForm] = useState({
       !numberSeriesForm.Start_No ||
       !numberSeriesForm.Running_No ||
       !numberSeriesForm.End_No ||
-      !numberSeriesForm.Text ||
-      !numberSeriesForm.Number_Prefix ||
+      !numberSeriesForm.text ||
+      !numberSeriesForm.number_prefix ||
       !numberSeriesForm.Status ||
-      !numberSeriesForm.Bill_Format 
+      !numberSeriesForm.bill_format 
     ) {
       toast({
         title: "Required Fields",
@@ -8142,33 +8142,33 @@ const [numberSeriesForm, setNumberSeriesForm] = useState({
                   </div>                 
  
                   <div className="space-y-2">
-                    <Label htmlFor="Text" className={submittedNumberSeries && !numberSeriesForm.Text ? "text-red-500" : ""}>Text*</Label>
+                    <Label htmlFor="Text" className={submittedNumberSeries && !numberSeriesForm.text ? "text-red-500" : ""}>text*</Label>
                     <TooltipProvider>
                       <Tooltip>
                         <TooltipTrigger asChild>
                           <Input
-                            id="Text"
-                            value={numberSeriesForm.Text}
-                            onChange={(e) => setNumberSeriesForm({ ...numberSeriesForm, Text: e.target.value })}
-                            placeholder="Enter Text"
+                            id="text"
+                            value={numberSeriesForm.text}
+                            onChange={(e) => setNumberSeriesForm({ ...numberSeriesForm, text: e.target.value })}
+                            placeholder="Enter text"
                           />                          
 
                         </TooltipTrigger>
 
                         <TooltipContent>
-                          <p>Text</p>
+                          <p>text</p>
                         </TooltipContent>
                       </Tooltip>
                     </TooltipProvider>
                   </div> 
 
                   <div className="space-y-2">
-                    <Label htmlFor="NumberPrefix" className={submittedNumberSeries && !numberSeriesForm.Number_Prefix ? "text-red-500" : ""}>Number Prefix*</Label>
+                    <Label htmlFor="Number Prefix" className={submittedNumberSeries && !numberSeriesForm.number_prefix ? "text-red-500" : ""}>Number Prefix*</Label>
                     <TooltipProvider>
                       <Tooltip>
                         <TooltipTrigger asChild>
                           <div>
-                            <Select value={numberSeriesForm.Number_Prefix} onValueChange={(value) => setNumberSeriesForm({ ...numberSeriesForm, Number_Prefix: value })}>
+                            <Select value={numberSeriesForm.number_prefix} onValueChange={(value) => setNumberSeriesForm({ ...numberSeriesForm, number_prefix: value })}>
                               <SelectTrigger>
                                 <SelectValue placeholder="Select Number Prefix" />
                               </SelectTrigger>
@@ -8194,22 +8194,22 @@ const [numberSeriesForm, setNumberSeriesForm] = useState({
                   </div>                   
 
                   <div className="space-y-2">
-                    <Label htmlFor="BillFormat" className={submittedNumberSeries && !numberSeriesForm.Bill_Format ? "text-red-500" : ""}>Bill Format*</Label>
+                    <Label htmlFor="Bill Format" className={submittedNumberSeries && !numberSeriesForm.bill_format ? "text-red-500" : ""}>Bill Format*</Label>
                     <TooltipProvider>
                       <Tooltip>
                         <TooltipTrigger asChild>
                           <div>
-                            <Select value={numberSeriesForm.Bill_Format} onValueChange={(value) => setNumberSeriesForm({ ...numberSeriesForm, Bill_Format: value })}>
+                            <Select value={numberSeriesForm.bill_format} onValueChange={(value) => setNumberSeriesForm({ ...numberSeriesForm, bill_format: value })}>
                               <SelectTrigger>
                                 <SelectValue placeholder="Select Bill Format" />
                               </SelectTrigger>
                               <SelectContent>
-                                {BillFormat.map((Bill_Format: any) => (
+                                {BillFormat.map((bill_format: any) => (
                                   <SelectItem
-                                    key={Bill_Format.attributedetails_name}
-                                    value={Bill_Format.attributedetails_name}
+                                    key={bill_format.attributedetails_name}
+                                    value={bill_format.attributedetails_name}
                                   >
-                                    {Bill_Format.attributedetails_name} - 
+                                    {bill_format.attributedetails_name} - 
                                   </SelectItem>
                                 ))}
                                 {BillFormat.map((status: any) => (
@@ -8226,7 +8226,7 @@ const [numberSeriesForm, setNumberSeriesForm] = useState({
                         </TooltipTrigger>
 
                         <TooltipContent>
-                          <p>Select the Bill_Format</p>
+                          <p>Select the Bill Format</p>
                         </TooltipContent>
                       </Tooltip>
                     </TooltipProvider>
