@@ -117,6 +117,12 @@ router.post("/numberseriessearchdata",dataController.getnumberseriessearchdata)
 router.post("/addNumberseries",dataController.addNumberseries)
 router.post("/NumberSeriesUpdate",dataController.NumberSeriesUpdate)
 router.post("/NumberSeriesdeleteData",dataController.numberseriesdeleteData)
+router.post("/GYM_TrainerInsert",dataController.GYM_TrainerInsert)
+router.post("/GYM_TrainerUpdate",dataController.GYM_TrainerUpdate)
+router.post("/GYM_TrainerDelete",dataController.GYM_TrainerDelete)
+router.post("/GYM_TrainerLoopInsert",dataController.GYM_TrainerLoopInsert)
+router.post("/GYM_TrainerLoopUpdate",dataController.GYM_TrainerLoopUpdate)
+router.post("/GYM_TrainerLoopDelete",dataController.GYM_TrainerLoopDelete)
 
 
 
