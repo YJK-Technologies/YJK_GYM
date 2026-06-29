@@ -3791,7 +3791,7 @@ const [numberSeriesForm, setNumberSeriesForm] = useState({
   };
 
   // NumberSeries CRUD Functions  
-  const handleNumberSeries = () => {
+  const handleAddNumberSeries = () => {
     setEditingNumberSeries(null);
     setNumberSeriesForm({
     company_code: "YJK",
@@ -3840,13 +3840,13 @@ const [numberSeriesForm, setNumberSeriesForm] = useState({
     if (!validateNumberSeries()) return;
 
     try {
-      const response = await fetch(`${BASE_URL}/addCompanyMappingData`,
+      const response = await fetch(`${BASE_URL}/addNumberseries`,
         {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
           },
-          body: JSON.stringify(companyMappingForm),
+          body: JSON.stringify(numberSeriesForm),
         }
       );
 
@@ -4091,7 +4091,7 @@ const [numberSeriesForm, setNumberSeriesForm] = useState({
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          company_code: "MBT",
+          company_code: "YJK",
           Screen_Type: numberSeriesSearchForm.Screen_Type,
 
         }),
@@ -4176,7 +4176,7 @@ const [numberSeriesForm, setNumberSeriesForm] = useState({
         handleAddAttribute();
         break;
       case "NumberSeries":
-        handleNumberSeries();
+      handleAddNumberSeries();
         break;        
       default:
         break;
@@ -8135,6 +8135,14 @@ const [numberSeriesForm, setNumberSeriesForm] = useState({
                                     {Bill_Format.attributedetails_name} - 
                                   </SelectItem>
                                 ))}
+                                {BillFormat.map((status: any) => (
+                          <SelectItem
+                            key={status.attributedetails_code}
+                            value={status.attributedetails_code}
+                          >
+                            {status.attributedetails_name}
+                          </SelectItem>
+                        ))}
                               </SelectContent>
                             </Select>
                           </div>
@@ -8200,7 +8208,7 @@ const [numberSeriesForm, setNumberSeriesForm] = useState({
               <TooltipProvider>
                 <Tooltip>
                   <TooltipTrigger asChild>
-                    <Button onClick={handleSaveCompanyMapping}>{editingNumberSeries ? 'Update' : 'Create'} Nunmber Series</Button>
+                    <Button onClick={handleSaveNumberSeries}>{editingNumberSeries ? 'Update' : 'Create'} Nunmber Series</Button>
                   </TooltipTrigger>
 
                   <TooltipContent>

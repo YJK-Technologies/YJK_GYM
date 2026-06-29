@@ -2988,10 +2988,8 @@ getNumberseries,
 getscreentype,
 getBillFormat,
 getboolean,
-getnumberseriessearchdata
-
-
-
+getnumberseriessearchdata,
+addNumberseries
 
 
 };

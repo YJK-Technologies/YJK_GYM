@@ -114,6 +114,7 @@ router.post("/screentype",dataController.getscreentype)
 router.post("/getBillFormat",dataController.getBillFormat)
 router.post("/getboolean", dataController.getboolean)
 router.post("/numberseriessearchdata",dataController.getnumberseriessearchdata)
+router.post("/addNumberseries",dataController.addNumberseries)
 
 
 module.exports = router;
