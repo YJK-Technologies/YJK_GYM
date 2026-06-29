@@ -12,11 +12,13 @@ import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, D
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useNavigate } from 'react-router-dom';
 import { useToast } from '@/hooks/use-toast';
-import { ArrowLeft, Plus, Search, RotateCcw, Dumbbell, Package, Edit, Trash2 } from 'lucide-react';
+import { ArrowLeft, Plus, Search, RotateCcw, Dumbbell, Package, Edit, Trash2, Eye, EyeOff, } from 'lucide-react';
 import ImageUpload from "../ImageUpload";
 import { BASE_URL } from '../ApiConfig';
 import AgGridTable from "@/components/ui/ag-grid-table";
+import '../../index.css';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+
 
 const WorkoutProgramManagement = () => {
   const navigate = useNavigate();
@@ -39,9 +41,15 @@ const WorkoutProgramManagement = () => {
   //User Screen
   const [logInLogOut, setLogInLogOut] = useState<any[]>([]);
   const [gender, setGender] = useState<any[]>([]);
+  const [showPassword, setShowPassword] = useState(false);
 
   //Attribute Detail Screen
   const [attributehdr, setAttributeHdr] = useState<any[]>([]);
+
+  //Numberseries screen 
+  const [ScreenType, setScreenType] = useState<any[]>([]);
+  const [NumberPrefix, setNumberPrefix] = useState<any[]>([]);
+  const [BillFormat, setBillFormat] = useState<any[]>([]);
 
   const fetchCities = async () => {
     try {
@@ -359,6 +367,82 @@ const WorkoutProgramManagement = () => {
     }
   };
 
+  //Number series Detail Screen 
+  const fetchScreenType = async () => {
+    try {
+      const response = await fetch(`${BASE_URL}/screentype`, {
+        method: "post",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          company_code: "YJK",
+        }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        setScreenType(data);
+      } else {
+        console.error("Failed to fetch ScreenType");
+      }
+
+    } catch (error) {
+      console.error("Error fetching ScreenType:", error);
+    }
+  };
+
+  const fetchNumberPrefix = async () => {
+    try {
+      const response = await fetch(`${BASE_URL}/getboolean`, {
+        method: "post",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          company_code: "YJK",
+        }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        setNumberPrefix(data);
+      } else {
+        console.error("Failed to fetch NumberPrefix");
+      }
+
+    } catch (error) {
+      console.error("Error fetching ScreenType:", error);
+    }
+  };
+
+  const fetchBillFormat = async () => {
+    try {
+      const response = await fetch(`${BASE_URL}/getBillFormat`, {
+        method: "post",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          company_code: "YJK",
+        }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        setBillFormat(data);
+      } else {
+        console.error("Failed to fetch BillFormat");
+      }
+
+    } catch (error) {
+      console.error("Error fetching BillFormat:", error);
+    }
+  };
+
   useEffect(() => {
     const loadData = async () => {
       await Promise.all([
@@ -376,6 +460,9 @@ const WorkoutProgramManagement = () => {
         fetchLogInLogOut(),
         fetchGender(),
         fetchAttributeHdr(),
+        fetchScreenType(),
+        fetchNumberPrefix(),
+        fetchBillFormat()
       ]);
     };
 
@@ -481,19 +568,19 @@ const WorkoutProgramManagement = () => {
       minWidth: 150,
     },
     {
-  headerName: "Status",
-  field: "status",
-  minWidth: 150,
-  cellRenderer: (params: any) => {
-    const status = params.value?.toString().toLowerCase();
+      headerName: "Status",
+      field: "status",
+      minWidth: 150,
+      cellRenderer: (params: any) => {
+        const status = params.value?.toString().toLowerCase();
 
-    return (
-      <Badge variant={status === "active" ? "default" : "secondary"}>
-        {params.value}
-      </Badge>
-    );
-  },
-},
+        return (
+          <Badge variant={status === "active" ? "default" : "secondary"}>
+            {params.value}
+          </Badge>
+        );
+      },
+    },
     {
       headerName: "Founded Date",
       field: "foundedDate",
@@ -525,37 +612,37 @@ const WorkoutProgramManagement = () => {
       minWidth: 150,
     },
     {
-  headerName: "Actions",
-  width: 120,
-  minWidth: 120,
-  maxWidth: 120,
-  sortable: false,
-  filter: false,
-  cellStyle: {
-    display: "flex",
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  cellRenderer: (params: any) => (
-    <div className="flex gap-2">
-      <Button
-        variant="ghost"
-        size="sm"
-        onClick={() => handleEditCompany(params.data)}
-      >
-        <Edit className="h-4 w-4" />
-      </Button>
+      headerName: "Actions",
+      width: 120,
+      minWidth: 120,
+      maxWidth: 120,
+      sortable: false,
+      filter: false,
+      cellStyle: {
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+      },
+      cellRenderer: (params: any) => (
+        <div className="flex gap-2">
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => handleEditCompany(params.data)}
+          >
+            <Edit className="h-4 w-4" />
+          </Button>
 
-      <Button
-        variant="ghost"
-        size="sm"
-        onClick={() => handleDeleteCompany(params.data.company_no)}
-      >
-        <Trash2 className="h-4 w-4 text-red-500" />
-      </Button>
-    </div>
-  ),
-}
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => handleDeleteCompany(params.data.company_no)}
+          >
+            <Trash2 className="h-4 w-4 text-red-500" />
+          </Button>
+        </div>
+      ),
+    }
   ];
 
   // Preview images for ImageUpload component
@@ -639,7 +726,7 @@ const WorkoutProgramManagement = () => {
       minWidth: 150,
       cellRenderer: (params: any) => {
         const status = params.value?.toString().toLowerCase();
-      
+
         return (
           <Badge variant={status === "active" ? "default" : "secondary"}>
             {params.value}
@@ -653,37 +740,37 @@ const WorkoutProgramManagement = () => {
       minWidth: 150,
     },
     {
-  headerName: "Actions",
-  width: 120,
-  minWidth: 120,
-  maxWidth: 120,
-  sortable: false,
-  filter: false,
-  cellStyle: {
-    display: "flex",
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  cellRenderer: (params: any) => (
-    <div className="flex gap-2">
-      <Button
-        variant="ghost"
-        size="sm"
-        onClick={() => handleEditCompanyMapping(params.data)}
-      >
-        <Edit className="h-4 w-4" />
-      </Button>
+      headerName: "Actions",
+      width: 120,
+      minWidth: 120,
+      maxWidth: 120,
+      sortable: false,
+      filter: false,
+      cellStyle: {
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+      },
+      cellRenderer: (params: any) => (
+        <div className="flex gap-2">
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => handleEditCompanyMapping(params.data)}
+          >
+            <Edit className="h-4 w-4" />
+          </Button>
 
-      <Button
-        variant="ghost"
-        size="sm"
-        onClick={() => handleDeleteCompanyMapping(params.data.keyfiels)}
-      >
-        <Trash2 className="h-4 w-4 text-red-500" />
-      </Button>
-    </div>
-  ),
-}
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => handleDeleteCompanyMapping(params.data.keyfiels)}
+          >
+            <Trash2 className="h-4 w-4 text-red-500" />
+          </Button>
+        </div>
+      ),
+    }
   ];
 
   //Location Dialog States
@@ -720,7 +807,7 @@ const WorkoutProgramManagement = () => {
     status: "",
   });
 
-  //Company Ag Grid
+  //Location Ag Grid
   const LocationColumnDefs = [
     {
       headerName: "Location No",
@@ -784,7 +871,7 @@ const WorkoutProgramManagement = () => {
       minWidth: 150,
       cellRenderer: (params: any) => {
         const status = params.value?.toString().toLowerCase();
-      
+
         return (
           <Badge variant={status === "active" ? "default" : "secondary"}>
             {params.value}
@@ -798,37 +885,37 @@ const WorkoutProgramManagement = () => {
       minWidth: 150,
     },
     {
-  headerName: "Actions",
-  width: 120,
-  minWidth: 120,
-  maxWidth: 120,
-  sortable: false,
-  filter: false,
-  cellStyle: {
-    display: "flex",
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  cellRenderer: (params: any) => (
-    <div className="flex gap-2">
-      <Button
-        variant="ghost"
-        size="sm"
-        onClick={() => handleEditLocation(params.data)}
-      >
-        <Edit className="h-4 w-4" />
-      </Button>
+      headerName: "Actions",
+      width: 120,
+      minWidth: 120,
+      maxWidth: 120,
+      sortable: false,
+      filter: false,
+      cellStyle: {
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+      },
+      cellRenderer: (params: any) => (
+        <div className="flex gap-2">
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => handleEditLocation(params.data)}
+          >
+            <Edit className="h-4 w-4" />
+          </Button>
 
-      <Button
-        variant="ghost"
-        size="sm"
-        onClick={() => handleDeleteLocation(params.data.location_no)}
-      >
-        <Trash2 className="h-4 w-4 text-red-500" />
-      </Button>
-    </div>
-  ),
-}
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => handleDeleteLocation(params.data.location_no)}
+          >
+            <Trash2 className="h-4 w-4 text-red-500" />
+          </Button>
+        </div>
+      ),
+    }
   ];
 
   //Role Dialog States
@@ -942,37 +1029,37 @@ const WorkoutProgramManagement = () => {
       minWidth: 150,
     },
     {
-  headerName: "Actions",
-  width: 120,
-  minWidth: 120,
-  maxWidth: 120,
-  sortable: false,
-  filter: false,
-  cellStyle: {
-    display: "flex",
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  cellRenderer: (params: any) => (
-    <div className="flex gap-2">
-      <Button
-        variant="ghost"
-        size="sm"
-        onClick={() => handleEditRoleMapping(params.data)}
-      >
-        <Edit className="h-4 w-4" />
-      </Button>
+      headerName: "Actions",
+      width: 120,
+      minWidth: 120,
+      maxWidth: 120,
+      sortable: false,
+      filter: false,
+      cellStyle: {
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+      },
+      cellRenderer: (params: any) => (
+        <div className="flex gap-2">
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => handleEditRoleMapping(params.data)}
+          >
+            <Edit className="h-4 w-4" />
+          </Button>
 
-      <Button
-        variant="ghost"
-        size="sm"
-        onClick={() => handleDeleteRoleMapping(params.data.keyfield)}
-      >
-        <Trash2 className="h-4 w-4 text-red-500" />
-      </Button>
-    </div>
-  ),
-}
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => handleDeleteRoleMapping(params.data.keyfield)}
+          >
+            <Trash2 className="h-4 w-4 text-red-500" />
+          </Button>
+        </div>
+      ),
+    }
   ];
 
   //Role Rights Dialog States
@@ -997,7 +1084,7 @@ const WorkoutProgramManagement = () => {
     permission_type: "",
   });
 
-  //Role Mapping Ag Grid
+  //Role Rights Ag Grid
   const RoleRightsColumnDefs = [
     {
       headerName: "Role ID",
@@ -1016,40 +1103,38 @@ const WorkoutProgramManagement = () => {
       minWidth: 150,
     },
     {
-  headerName: "Actions",
-  width: 120,
-  minWidth: 120,
-  maxWidth: 120,
-  sortable: false,
-  filter: false,
-  cellStyle: {
-    display: "flex",
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  cellRenderer: (params: any) => (
-    <div className="flex gap-2">
-      <Button
-        variant="ghost"
-        size="sm"
-        onClick={() => handleEditRoleRight(params.data)}
-      >
-        <Edit className="h-4 w-4" />
-      </Button>
+      headerName: "Actions",
+      width: 120,
+      minWidth: 120,
+      maxWidth: 120,
+      sortable: false,
+      filter: false,
+      cellStyle: {
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+      },
+      cellRenderer: (params: any) => (
+        <div className="flex gap-2">
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => handleEditRoleRight(params.data)}
+          >
+            <Edit className="h-4 w-4" />
+          </Button>
 
-      <Button
-        variant="ghost"
-        size="sm"
-        onClick={() => handleDeleteRoleRight(params.data.keyfield)}
-      >
-        <Trash2 className="h-4 w-4 text-red-500" />
-      </Button>
-    </div>
-  ),
-}
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => handleDeleteRoleRight(params.data.keyfield)}
+          >
+            <Trash2 className="h-4 w-4 text-red-500" />
+          </Button>
+        </div>
+      ),
+    }
   ];
-
-  
 
   //User Dialog States
   const [submittedUser, setSubmittedUser] = useState(false);
@@ -1074,6 +1159,7 @@ const WorkoutProgramManagement = () => {
     created_by: "admin",
     modified_by: "admin",
   });
+
   const [userImages, setUserImages] = useState<(string | null)[]>([null, null]);
 
   const handleUserFiles = async (files: (File | null)[]) => {
@@ -1143,7 +1229,7 @@ const WorkoutProgramManagement = () => {
       minWidth: 150,
       cellRenderer: (params: any) => {
         const status = params.value?.toString().toLowerCase();
-      
+
         return (
           <Badge variant={status === "active" ? "default" : "secondary"}>
             {params.value}
@@ -1167,37 +1253,37 @@ const WorkoutProgramManagement = () => {
       minWidth: 150,
     },
     {
-  headerName: "Actions",
-  width: 120,
-  minWidth: 120,
-  maxWidth: 120,
-  sortable: false,
-  filter: false,
-  cellStyle: {
-    display: "flex",
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  cellRenderer: (params: any) => (
-    <div className="flex gap-2">
-      <Button
-        variant="ghost"
-        size="sm"
-        onClick={() => handleEditUser(params.data)}
-      >
-        <Edit className="h-4 w-4" />
-      </Button>
+      headerName: "Actions",
+      width: 120,
+      minWidth: 120,
+      maxWidth: 120,
+      sortable: false,
+      filter: false,
+      cellStyle: {
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+      },
+      cellRenderer: (params: any) => (
+        <div className="flex gap-2">
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => handleEditUser(params.data)}
+          >
+            <Edit className="h-4 w-4" />
+          </Button>
 
-      <Button
-        variant="ghost"
-        size="sm"
-        onClick={() => handleDeleteUser(params.data.user_code)}
-      >
-        <Trash2 className="h-4 w-4 text-red-500" />
-      </Button>
-    </div>
-  ),
-}
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => handleDeleteUser(params.data.user_code)}
+          >
+            <Trash2 className="h-4 w-4 text-red-500" />
+          </Button>
+        </div>
+      ),
+    }
   ];
 
   //Attribute Detail Dialog States
@@ -1223,7 +1309,7 @@ const WorkoutProgramManagement = () => {
     descriptions: "",
   });
 
-  //User Ag Grid
+  //Attribute Ag Grid
   const AttributeColumnDefs = [
     {
       headerName: "Code",
@@ -1247,37 +1333,37 @@ const WorkoutProgramManagement = () => {
       minWidth: 150,
     },
     {
-  headerName: "Actions",
-  width: 120,
-  minWidth: 120,
-  maxWidth: 120,
-  sortable: false,
-  filter: false,
-  cellStyle: {
-    display: "flex",
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  cellRenderer: (params: any) => (
-    <div className="flex gap-2">
-      <Button
-        variant="ghost"
-        size="sm"
-        onClick={() => handleEditAttribute(params.data)}
-      >
-        <Edit className="h-4 w-4" />
-      </Button>
+      headerName: "Actions",
+      width: 120,
+      minWidth: 120,
+      maxWidth: 120,
+      sortable: false,
+      filter: false,
+      cellStyle: {
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+      },
+      cellRenderer: (params: any) => (
+        <div className="flex gap-2">
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => handleEditAttribute(params.data)}
+          >
+            <Edit className="h-4 w-4" />
+          </Button>
 
-      <Button
-        variant="ghost"
-        size="sm"
-        onClick={() => handleDeleteAttribute(params.data.attributeheader_code,params.data.attributedetails_code)}
-      >
-        <Trash2 className="h-4 w-4 text-red-500" />
-      </Button>
-    </div>
-  ),
-}
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => handleDeleteAttribute(params.data.attributeheader_code, params.data.attributedetails_code)}
+          >
+            <Trash2 className="h-4 w-4 text-red-500" />
+          </Button>
+        </div>
+      ),
+    }
   ];
 
   //Attribute Header Dialog States
@@ -1287,16 +1373,136 @@ const WorkoutProgramManagement = () => {
     company_code: "YJK", attributeheader_code: "", attributeheader_name: "", status: "Active", created_by: "admin", modified_by: "admin", tempstr1: "", tempstr2: "",
     tempstr3: "", tempstr4: "", datetime1: "", datetime2: "", datetime3: "", datetime4: "",
   });
-  
+
   //Nunmber Series 
-const [submittedNumberSeries, setSubmittedNumberSeries] = useState(false);
-const [isNumberSeriesDialogOpen, setIsNumberSeriesDialogOpen] = useState(false);
-const [editingNumberSeries, setEditingNumberSeries] = useState<any>(null);
-const [numberSeries, setNumberSeries] = useState([]);
+  
+  const [submittedNumberSeries, setSubmittedNumberSeries] = useState(false);
+  const [isNumberSeriesDialogOpen, setIsNumberSeriesDialogOpen] = useState(false);
+  const [editingNumberSeries, setEditingNumberSeries] = useState<any>(null);
+  const [numberSeries, setNumberSeries] = useState([]);
 const [numberSeriesForm, setNumberSeriesForm] = useState({
-    company_code: "YJK",Screen_Type: "",Start_Year: "",End_Year:"",Start_No: "",Running_No: "",
-    End_No: "" ,text: "" ,number_prefix: "" ,status: "Active",
-    bill_format: "",created_by: "admin", modified_by: "admin" });
+  company_code: "YJK",
+  Screen_Type: "",
+  Start_Year: "",
+  End_Year: "",
+  Start_No: "",
+  Running_No: "",
+  End_No: "",
+  text: "",
+  number_prefix: "0",
+  Status: "Active",
+  bill_format: "",
+  created_by: "admin",
+  modified_by: "admin",
+});
+
+useEffect(() => {
+  const today = new Date();
+  const financialYear =
+    today.getMonth() >= 3
+      ? today.getFullYear()
+      : today.getFullYear() - 1;
+
+  setNumberSeriesForm((prev) => ({
+    ...prev,
+    Start_Year: `${financialYear}-04-01`,
+    End_Year: `${financialYear + 1}-03-31`,
+  }));
+}, []);
+
+console.log(numberSeriesForm)
+
+  const currentYear = new Date().getFullYear();
+
+  const fyStart = `${currentYear}-04-01`;
+  const fyEnd = `${currentYear + 1}-03-31`;
+
+  //Number Series Search States
+  const [numberSeriesSearchForm, setnumberSeriesSearchForm] = useState({
+    Screen_Type: ""
+  });
+
+  //Number Series Ag Grid
+  const NumberSeriesColumnDefs = [
+    {
+      headerName: "Screen Type",
+      field: "Screen_Type",
+      minWidth: 150,
+      cellStyle: { fontWeight: 600 },
+    },
+    {
+      headerName: "Start Year",
+      field: "Start_Year",
+      minWidth: 150,
+    },
+    {
+      headerName: "End Year",
+      field: "End_Year",
+      minWidth: 150,
+    },
+    {
+      headerName: "Start No",
+      field: "Start_No",
+      minWidth: 150,
+    },
+    {
+      headerName: "Running No",
+      field: "Running_No",
+      minWidth: 150,
+    },
+    {
+      headerName: "End No",
+      field: "End_No",
+      minWidth: 150,
+    },
+    {
+      headerName: "Text",
+      field: "text",
+      minWidth: 150,
+    },
+    {
+      headerName: "Status",
+      field: "Status",
+      minWidth: 150,
+    },
+    {
+      headerName: "Bill Format",
+      field: "bill_format",
+      minWidth: 150,
+    },
+    {
+      headerName: "Actions",
+      width: 120,
+      minWidth: 120,
+      maxWidth: 120,
+      sortable: false,
+      filter: false,
+      cellStyle: {
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+      },
+      cellRenderer: (params: any) => (
+        <div className="flex gap-2">
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => handleEditNumberSeries(params.data)}
+          >
+            <Edit className="h-4 w-4" />
+          </Button>
+
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => handleDeleteNumberSeries(params.data)}
+          >
+            <Trash2 className="h-4 w-4 text-red-500" />
+          </Button>
+        </div>
+      ),
+    }
+  ];
 
   //Company CRUD Functions
   const handleAddCompany = () => {
@@ -3094,40 +3300,6 @@ const [numberSeriesForm, setNumberSeriesForm] = useState({
     }
   };
 
-  // const handleUpdateUser = async () => {
-  //   setSubmittedUser(true);
-
-  //   if (!validateUser()) return;
-  //   try {
-  //     const formData = new FormData();
-
-  //     Object.entries(userForm).forEach(([key, value]) => {
-  //       formData.append(key, value as string);
-  //     });
-
-  //     if (userImages.length > 0) {
-  //       formData.append("user_images", userImages[0]);
-  //     }
-
-  //     const response = await fetch(`${BASE_URL}/UserUpdates`, {
-  //       method: "PUT",
-  //       body: formData,
-  //     });
-
-  //     const data = await response.json();
-
-  //     if (response.ok) {
-  //       alert(data);
-  //       setEditingUser(null);
-  //       setIsUserDialogOpen(false);
-  //       setSubmittedUser(false);
-  //       // fetchUsers();
-  //     }
-  //   } catch (err) {
-  //     console.error(err);
-  //   }
-  // };
-
   const handleUpdateUser = async () => {
     setSubmittedUser(true);
 
@@ -3217,39 +3389,6 @@ const [numberSeriesForm, setNumberSeriesForm] = useState({
       });
     }
   };
-
-  // const handleDeleteUser = async (user_code: string) => {
-  //   const confirmDelete = window.confirm(
-  //     "Are you sure you want to delete this company?"
-  //   );
-
-  //   if (!confirmDelete) return;
-
-  //   try {
-  //     const response = await fetch(`${BASE_URL}/userdelete`, {
-  //       method: "DELETE",
-  //       headers: {
-  //         "Content-Type": "application/json",
-  //         "modified-by": "admin",
-  //         "company_code": "COMP001",
-  //       },
-  //       body: JSON.stringify({
-  //         user_codes: [user_code],
-  //       }),
-  //     });
-
-  //     const data = await response.json();
-
-  //     if (response.ok) {
-  //       alert(data);
-  //       // fetchUsers();
-  //     } else {
-  //       alert(data.message || data);
-  //     }
-  //   } catch (err) {
-  //     console.error(err);
-  //   }
-  // };
 
   const handleDeleteUser = async (user_code: string) => {
     const confirmDelete = window.confirm(
@@ -3363,6 +3502,7 @@ const [numberSeriesForm, setNumberSeriesForm] = useState({
 
   const handleEditUser = (user: any) => {
     setEditingUser(user);
+    console.log(user);
 
     setUserForm({
       company_code: user.company_code,
@@ -3378,7 +3518,7 @@ const [numberSeriesForm, setNumberSeriesForm] = useState({
       dob: user.dob,
       gender: user.gender,
       role_id: user.role_id,
-      super_admin: user.super_admin,
+      super_admin: user.super_admin === "Yes",
       created_by: user.created_by,
       modified_by: user.modified_by,
     });
@@ -3727,27 +3867,27 @@ const [numberSeriesForm, setNumberSeriesForm] = useState({
   };
 
   // NumberSeries CRUD Functions  
-  const handleNumberSeries = () => {
+  const handleAddNumberSeries = () => {
     setEditingNumberSeries(null);
     setNumberSeriesForm({
-    company_code: "YJK",
-    Screen_Type: "",
-    Start_Year: "",
-    End_Year: "",
-    Start_No: "",
-    Running_No: "",
-    End_No: "",
-    text: "",
-    number_prefix: "",
-    status: "Active",
-    bill_format: "",
-    created_by: "admin",
-    modified_by: "admin",
+      company_code: "YJK",
+      Screen_Type: "",
+      Start_Year: "",
+      End_Year: "",
+      Start_No: "",
+      Running_No: "",
+      End_No: "",
+      text: "",
+      number_prefix: "",
+      Status: "Active",
+      bill_format: "",
+      created_by: "admin",
+      modified_by: "admin",
     });
 
     setIsNumberSeriesDialogOpen(true);
   };
-   const validateNumberSeries = () => {
+  const validateNumberSeries = () => {
     if (
       !numberSeriesForm.Screen_Type ||
       !numberSeriesForm.Start_Year ||
@@ -3757,8 +3897,8 @@ const [numberSeriesForm, setNumberSeriesForm] = useState({
       !numberSeriesForm.End_No ||
       !numberSeriesForm.text ||
       !numberSeriesForm.number_prefix ||
-      !numberSeriesForm.status ||
-      !numberSeriesForm.bill_format 
+      !numberSeriesForm.Status ||
+      !numberSeriesForm.bill_format
     ) {
       toast({
         title: "Required Fields",
@@ -3776,13 +3916,13 @@ const [numberSeriesForm, setNumberSeriesForm] = useState({
     if (!validateNumberSeries()) return;
 
     try {
-      const response = await fetch(`${BASE_URL}/addCompanyMappingData`,
+      const response = await fetch(`${BASE_URL}/addNumberseries`,
         {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
           },
-          body: JSON.stringify(companyMappingForm),
+          body: JSON.stringify(numberSeriesForm),
         }
       );
 
@@ -3794,7 +3934,7 @@ const [numberSeriesForm, setNumberSeriesForm] = useState({
           description: data.message || "Number Series created successfully.",
         });
 
-        handleNumberSeriesSearch();
+        handleSearchNumberSeries();
         setIsNumberSeriesDialogOpen(false);
         setSubmittedNumberSeries(false);
       } else {
@@ -3814,51 +3954,20 @@ const [numberSeriesForm, setNumberSeriesForm] = useState({
       });
     }
   };
-    const handleUpdateNumberSeries = async () => {
+  const handleUpdateNumberSeries = async () => {
     setSubmittedNumberSeries(true);
 
     if (!validateNumberSeries()) return;
 
     try {
-      const formData = new FormData();
-
-      Object.keys(numberSeriesForm).forEach((key) => {
-        formData.append(key, numberSeriesForm[key as keyof typeof numberSeriesForm] ?? "");
-      });
-
-      companyImages.forEach((img, index) => {
-        if (!img) return;
-
-        const base64 = img.split(",")[1];
-        const byteCharacters = atob(base64);
-
-        const byteNumbers = Array.from(byteCharacters, (char) =>
-          char.charCodeAt(0)
-        );
-
-        const byteArray = new Uint8Array(byteNumbers);
-
-        const blob = new Blob([byteArray], {
-          type: "image/png",
-        });
-
-        if (index === 0) {
-          formData.append("company_logo", blob, "company_logo.png");
-        }
-
-        if (index === 1) {
-          formData.append(
-            "authorisedSignatur",
-            blob,
-            "authorisedSignatur.png"
-          );
-        }
-      });
 
       const response = await fetch(`${BASE_URL}/NumberSeriesUpdate`,
         {
           method: "POST",
-          body: formData,
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(numberSeriesForm),
         }
       );
 
@@ -3870,7 +3979,7 @@ const [numberSeriesForm, setNumberSeriesForm] = useState({
           description: data.message || "NumberSeries updated successfully.",
         });
 
-        handleNumberSeriesSearch();
+        handleSearchNumberSeries();
         setEditingNumberSeries(null);
         setIsNumberSeriesDialogOpen(false);
         setSubmittedNumberSeries(false);
@@ -3891,51 +4000,52 @@ const [numberSeriesForm, setNumberSeriesForm] = useState({
       });
     }
   };
-    const handleDeleteNumberSeries = async (keyfiels: string) => {
+  const handleDeleteNumberSeries = async (row: any) => {
     const confirmed = window.confirm(
-      "Are you sure you want to delete this NumberSeries? This action cannot be undone."
+      "Are you sure you want to delete this Number Series?"
     );
 
     if (!confirmed) return;
 
     try {
-      const response = await fetch(`${BASE_URL}/NumberSeriesdeleteData`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            "modified-by": "admin",
-          },
-          body: JSON.stringify({
-            keyfiels: [keyfiels],
-          }),
-        }
-      );
+      const response = await fetch(`${BASE_URL}/NumberSeriesdeleteData`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "modified-by": "admin",
+          "company_code": "YJK", // if required
+        },
+        body: JSON.stringify({
+          Screen_TypesToDelete: [
+            {
+              Screen_Type: row.Screen_Type,
+              Start_Year: row.Start_Year,
+              End_Year: row.End_Year,
+            },
+          ],
+        }),
+      });
 
       const data = await response.json();
 
       if (response.ok) {
         toast({
           title: "Success",
-          description:
-            data.message || "Number Series deleted successfully.",
+          description: data.message,
         });
 
-        handleNumberSeriesSearch();
+        handleSearchNumberSeries();
       } else {
         toast({
           title: "Error",
-          description:
-            data.message || "Failed to delete Number Series.",
+          description: data.message,
           variant: "destructive",
         });
       }
     } catch (err: any) {
-      console.error(err);
-
       toast({
         title: "Server Error",
-        description: err.message || "Something went wrong.",
+        description: err.message,
         variant: "destructive",
       });
     }
@@ -3947,38 +4057,57 @@ const [numberSeriesForm, setNumberSeriesForm] = useState({
       await handleCreateNumberSeries();
     }
   };
-  const handleNumberSeriesSearch = async () => {
+
+  const handleEditNumberSeries = (mapping: any) => {
+    setEditingNumberSeries(mapping);
+
+    setNumberSeriesForm({
+      company_code: "YJK",
+      Screen_Type: mapping.Screen_Type,
+      Start_Year: mapping.Start_Year,
+      End_Year: mapping.End_Year,
+      Start_No: mapping.Start_No,
+      Running_No: mapping.Running_No || "0",
+      End_No: mapping.End_No,
+      text: mapping.text,
+      number_prefix: mapping.number_prefix,
+      Status: mapping.Status,
+      bill_format: mapping.bill_format,
+      created_by: "admin",
+      modified_by: "admin",
+    });
+
+    setIsNumberSeriesDialogOpen(true);
+  };
+
+  const handleSearchNumberSeries = async () => {
+
     try {
-      const response = await fetch(`${BASE_URL}/NumberSeriessearchdata`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            company_code: "YJK",
-            user_code: companyMappingSearchForm.user_code,
-            company_no: companyMappingSearchForm.company_no,
-            location_no: companyMappingSearchForm.location_no,
-            status: companyMappingSearchForm.status,
-          }),
-        }
-      );
+      const response = await fetch(`${BASE_URL}/numberseriessearchdata`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          company_code: "YJK",
+          Screen_Type: numberSeriesSearchForm.Screen_Type,
+        }),
+      });
 
       const data = await response.json();
 
       if (response.ok) {
-        setCompanyMappings(data);
+        setNumberSeries(data);
       } else if (response.status === 404) {
-        setCompanies([]);
+        setNumberSeries([]);
 
         toast({
           title: "Data Not Found",
-          description: data?.message || "No matching companies found.",
+          description: data?.message || "No matching Number Series found.",
           variant: "destructive",
         });
       } else {
-        setCompanies([]);
+        setNumberSeries([]);
 
         toast({
           title: "Search Failed",
@@ -3989,7 +4118,7 @@ const [numberSeriesForm, setNumberSeriesForm] = useState({
     } catch (error: any) {
       console.error("Search Error:", error);
 
-      setCompanies([]);
+      setNumberSeries([]);
 
       toast({
         title: "Server Error",
@@ -3999,26 +4128,7 @@ const [numberSeriesForm, setNumberSeriesForm] = useState({
         variant: "destructive",
       });
     }
-  };  
-  const handleEditNumberSeries = (mapping: any) => {
-    setEditingNumberSeries(mapping);
-
-    setCompanyMappingForm({
-      company_code: "YJK",
-      user_code: mapping.user_code,
-      company_no: mapping.company_no,
-      location_no: mapping.location_no,
-      status: mapping.status,
-      order_no: mapping.order_no,
-      keyfiels: mapping.keyfiels,
-      created_by: mapping.created_by,
-      modified_by: mapping.modified_by,
-    });
-
-    setIsNumberSeriesDialogOpen(true);
   };
-
-
 
   //TAB BUTTON LABELS
   const addLabels = {
@@ -4030,8 +4140,8 @@ const [numberSeriesForm, setNumberSeriesForm] = useState({
     roleRights: "Role Rights",
     user: "User",
     attribute: "Attribute",
-    NumberSeries:"NumberSeries",
-    
+    NumberSeries: "NumberSeries",
+
   };
 
   const handleAdd = () => {
@@ -4061,8 +4171,8 @@ const [numberSeriesForm, setNumberSeriesForm] = useState({
         handleAddAttribute();
         break;
       case "NumberSeries":
-        handleNumberSeries();
-        break;        
+        handleAddNumberSeries();
+        break;
       default:
         break;
     }
@@ -4658,42 +4768,116 @@ const [numberSeriesForm, setNumberSeriesForm] = useState({
 
       <div className="space-y-2">
         <Label>User Code</Label>
-        <Input
-          placeholder="Enter User Code"
-          value={usersSearchForm.user_code}
-          onChange={(e) => setusersSearchForm({ ...usersSearchForm, user_code: e.target.value, })} />
+
+        <TooltipProvider>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Input
+                placeholder="Enter User Code"
+                value={usersSearchForm.user_code}
+                onChange={(e) =>
+                  setusersSearchForm({
+                    ...usersSearchForm,
+                    user_code: e.target.value,
+                  })
+                }
+              />
+            </TooltipTrigger>
+              
+            <TooltipContent>
+              <p>Enter User Code</p>
+            </TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
       </div>
 
       <div className="space-y-2">
         <Label>User Name</Label>
-        <Input
-          placeholder="Enter User Name"
-          value={usersSearchForm.user_name}
-          onChange={(e) => setusersSearchForm({ ...usersSearchForm, user_name: e.target.value, })} />
+
+        <TooltipProvider>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Input
+                placeholder="Enter User Name"
+                value={usersSearchForm.user_name}
+                onChange={(e) =>
+                  setusersSearchForm({
+                    ...usersSearchForm,
+                    user_name: e.target.value,
+                  })
+                }
+              />
+            </TooltipTrigger>
+              
+            <TooltipContent>
+              <p>Enter User Name</p>
+            </TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
       </div>
 
       <div className="space-y-2">
         <Label>First Name</Label>
+        <TooltipProvider>
+          <Tooltip>
+            <TooltipTrigger asChild>
         <Input
           placeholder="Enter First Name"
           value={usersSearchForm.first_name}
           onChange={(e) => setusersSearchForm({ ...usersSearchForm, first_name: e.target.value, })} />
+          </TooltipTrigger>
+              
+            <TooltipContent>
+              <p>Enter First Name</p>
+            </TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
       </div>
 
       <div className="space-y-2">
         <Label>Last Name</Label>
+        <TooltipProvider>
+          <Tooltip>
+            <TooltipTrigger asChild>
         <Input
           placeholder="Enter Last Name"
           value={usersSearchForm.last_name}
           onChange={(e) => setusersSearchForm({ ...usersSearchForm, last_name: e.target.value, })} />
+          </TooltipTrigger>
+              
+            <TooltipContent>
+              <p>Enter Last Name</p>
+            </TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
       </div>
 
       <div className="space-y-2">
         <Label>User Status</Label>
-        <Select value={usersSearchForm.user_status} onValueChange={(value) => setusersSearchForm({ ...usersSearchForm, user_status: value, })}>
-          <SelectTrigger>
-            <SelectValue placeholder="Select User Status" />
-          </SelectTrigger>
+                    
+        <Select
+          value={usersSearchForm.user_status}
+          onValueChange={(value) =>
+            setusersSearchForm({
+              ...usersSearchForm,
+              user_status: value,
+            })
+          }
+        >
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <SelectTrigger>
+                  <SelectValue placeholder="Select User Status" />
+                </SelectTrigger>
+              </TooltipTrigger>
+        
+              <TooltipContent>
+                <p>Select User Status</p>
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
+        
           <SelectContent>
             {status.map((item: any) => (
               <SelectItem
@@ -4709,31 +4893,61 @@ const [numberSeriesForm, setNumberSeriesForm] = useState({
 
       <div className="space-y-2">
         <Label>DOB</Label>
+        <TooltipProvider>
+          <Tooltip>
+            <TooltipTrigger asChild>
         <Input
           type='date'
           placeholder="Enter DOB"
           value={usersSearchForm.dob}
           onChange={(e) => setusersSearchForm({ ...usersSearchForm, dob: e.target.value, })} />
+          </TooltipTrigger>
+
+            <TooltipContent>
+              <p>Select DOB</p>
+            </TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
       </div>
 
       <div className="space-y-2">
-        <Label>Gender</Label>
-        <Select value={usersSearchForm.gender} onValueChange={(value) => setusersSearchForm({ ...usersSearchForm, gender: value, })}>
+  <Label>Gender</Label>
+
+  <Select
+    value={usersSearchForm.gender}
+    onValueChange={(value) =>
+      setusersSearchForm({
+        ...usersSearchForm,
+        gender: value,
+      })
+    }
+  >
+    <TooltipProvider>
+      <Tooltip>
+        <TooltipTrigger asChild>
           <SelectTrigger>
             <SelectValue placeholder="Select Gender" />
           </SelectTrigger>
-          <SelectContent>
-            {gender.map((gender: any) => (
-              <SelectItem
-                key={gender.attributedetails_code}
-                value={gender.attributedetails_code}
-              >
-                {gender.attributedetails_name}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
-      </div>
+        </TooltipTrigger>
+
+        <TooltipContent>
+          <p>Select Gender</p>
+        </TooltipContent>
+      </Tooltip>
+    </TooltipProvider>
+
+    <SelectContent>
+      {gender.map((gender: any) => (
+        <SelectItem
+          key={gender.attributedetails_code}
+          value={gender.attributedetails_code}
+        >
+          {gender.attributedetails_name}
+        </SelectItem>
+      ))}
+    </SelectContent>
+  </Select>
+</div>
 
     </div>
   );
@@ -4815,7 +5029,43 @@ const [numberSeriesForm, setNumberSeriesForm] = useState({
 
     </div>
   );
-  
+
+  const renderNumberSeriesSearch = () => (
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+
+      <div className="space-y-2">
+        <Label htmlFor="ScreenType" className={submittedNumberSeries && !numberSeriesSearchForm.Screen_Type ? "text-red-500" : ""}>Screen Type*</Label>
+        <TooltipProvider>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <div>
+                <Select value={numberSeriesSearchForm.Screen_Type} onValueChange={(value) => setnumberSeriesSearchForm({ ...numberSeriesSearchForm, Screen_Type: value })}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select Screen Type" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {ScreenType.map((Screen_Type: any) => (
+                      <SelectItem
+                        key={Screen_Type.attributedetails_name}
+                        value={Screen_Type.attributedetails_name}
+                      >
+                        {Screen_Type.attributedetails_name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+            </TooltipTrigger>
+
+            <TooltipContent>
+              <p>Select the Screen Type</p>
+            </TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
+      </div>
+
+    </div>
+  );
 
   const handleSearch = () => {
     switch (activeTab) {
@@ -4849,6 +5099,10 @@ const [numberSeriesForm, setNumberSeriesForm] = useState({
 
       case "attribute":
         handleAttributeSearch();
+        break;
+
+      case "NumberSeries":
+        handleSearchNumberSeries();
         break;
 
       default:
@@ -4922,6 +5176,20 @@ const [numberSeriesForm, setNumberSeriesForm] = useState({
         setRoleRights([]);
         break;
 
+      case "user":
+        setusersSearchForm({
+          company_code: "",
+          user_code: "",
+          user_name: "",
+          first_name: "",
+          last_name: "",
+          user_status: "",
+          dob: "",
+          gender: "",
+        });
+        setUsers([]);
+        break;
+
       case "attribute":
         setAttributeSearchForm({
           attributeheader_code: "",
@@ -4930,6 +5198,13 @@ const [numberSeriesForm, setNumberSeriesForm] = useState({
           descriptions: "",
         });
         setAttributes([]);
+        break;
+
+      case "NumberSeries":
+        setnumberSeriesSearchForm({
+          Screen_Type: ""
+        });
+        setNumberSeries([]);
         break;
 
       default:
@@ -4976,6 +5251,8 @@ const [numberSeriesForm, setNumberSeriesForm] = useState({
 
             {activeTab === "attribute" && renderAttributeSearch()}
 
+            {activeTab === "NumberSeries" && renderNumberSeriesSearch()}
+
             <div className="flex justify-end gap-4 mt-6">
               <TooltipProvider>
                 <Tooltip>
@@ -5020,150 +5297,65 @@ const [numberSeriesForm, setNumberSeriesForm] = useState({
 
         {/*  companies and Packages */}
         <Tabs value={activeTab} onValueChange={setActiveTab}>
-          <div className="flex justify-between items-center mb-4">
-            <TabsList>
-              <TabsTrigger value="company" className="flex items-center gap-2">
-                <Dumbbell className="h-4 w-4" />
-                Company
-              </TabsTrigger>
-              <TabsTrigger value="companyMapping" className="flex items-center gap-2">
-                <Package className="h-4 w-4" />
-                Company Mapping
-              </TabsTrigger>
-              <TabsTrigger value="location" className="flex items-center gap-2">
-                <Package className="h-4 w-4" />
-                Location
-              </TabsTrigger>
-              <TabsTrigger value="role" className="flex items-center gap-2">
-                <Package className="h-4 w-4" />
-                Role
-              </TabsTrigger>
-              <TabsTrigger value="roleMapping" className="flex items-center gap-2">
-                <Package className="h-4 w-4" />
-                Role Mapping
-              </TabsTrigger>
-              <TabsTrigger value="roleRights" className="flex items-center gap-2">
-                <Package className="h-4 w-4" />
-                Role Rights
-              </TabsTrigger>
-              <TabsTrigger value="user" className="flex items-center gap-2">
-                <Package className="h-4 w-4" />
-                User
-              </TabsTrigger>
-              <TabsTrigger value="attribute" className="flex items-center gap-2">
-                <Package className="h-4 w-4" />
-                Attribute
-              </TabsTrigger>
-              <TabsTrigger value="NumberSeries" className="flex items-center gap-2">
-                <Package className="h-4 w-4" />
-                Number Series
-              </TabsTrigger>
-            </TabsList>
-            {/* <Button onClick={handleAdd}>
-              <Plus className="h-4 w-4 mr-2" />
-              Add {addLabels[activeTab]}
-            </Button> */}
-            <TooltipProvider>
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <Button onClick={handleAdd}>
-                    <Plus className="h-4 w-4 mr-2" />
-                    Add {addLabels[activeTab]}
-                  </Button>
-                </TooltipTrigger>
+          <div className="flex flex-wrap items-center justify-between gap-4 mb-4 w-full">
+            <div className="overflow-x-auto min-w-0 max-w-full custom-scrollbar pb-2">
+              <TabsList className="inline-flex h-10 items-center justify-center rounded-md bg-muted p-1 text-muted-foreground w-max">
+                <TabsTrigger value="company" className="flex items-center gap-2">
+                  <Dumbbell className="h-4 w-4" />
+                  Company
+                </TabsTrigger>
+                <TabsTrigger value="companyMapping" className="flex items-center gap-2">
+                  <Package className="h-4 w-4" />
+                  Company Mapping
+                </TabsTrigger>
+                <TabsTrigger value="location" className="flex items-center gap-2">
+                  <Package className="h-4 w-4" />
+                  Location
+                </TabsTrigger>
+                <TabsTrigger value="role" className="flex items-center gap-2">
+                  <Package className="h-4 w-4" />
+                  Role
+                </TabsTrigger>
+                <TabsTrigger value="roleMapping" className="flex items-center gap-2">
+                  <Package className="h-4 w-4" />
+                  Role Mapping
+                </TabsTrigger>
+                <TabsTrigger value="roleRights" className="flex items-center gap-2">
+                  <Package className="h-4 w-4" />
+                  Role Rights
+                </TabsTrigger>
+                <TabsTrigger value="user" className="flex items-center gap-2">
+                  <Package className="h-4 w-4" />
+                  User
+                </TabsTrigger>
+                <TabsTrigger value="attribute" className="flex items-center gap-2">
+                  <Package className="h-4 w-4" />
+                  Attribute
+                </TabsTrigger>
+                <TabsTrigger value="NumberSeries" className="flex items-center gap-2">
+                  <Package className="h-4 w-4" />
+                  Number Series
+                </TabsTrigger>
+              </TabsList>
+            </div>
 
-                <TooltipContent>
-                  <p>Add {addLabels[activeTab]}</p>
-                </TooltipContent>
-              </Tooltip>
-            </TooltipProvider>
+            <div className="flex-shrink-0 sm:ml-auto">
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Button onClick={handleAdd}>
+                      <Plus className="h-4 w-4 mr-2" />
+                      Add {addLabels[activeTab]}
+                    </Button>
+                  </TooltipTrigger>
+
+                  <TooltipContent>
+                    <p>Add {addLabels[activeTab]}</p>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+            </div>
           </div>
-
-          {/* Company Tab */}
-          {/* <TabsContent value="company">
-            <Card>
-              <CardHeader>
-                <CardTitle>Company</CardTitle>
-                <CardDescription>Manage all companies and their details</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead>Company No</TableHead>
-                      <TableHead>Name</TableHead>
-                      <TableHead>Short Name</TableHead>
-                      <TableHead>Address 1</TableHead>
-                      <TableHead>Address 2</TableHead>
-                      <TableHead>Address 3</TableHead>
-                      <TableHead>City</TableHead>
-                      <TableHead>State</TableHead>
-                      <TableHead>Pin Code</TableHead>
-                      <TableHead>Country</TableHead>
-                      <TableHead>Email</TableHead>
-                      <TableHead>Status</TableHead>
-                      <TableHead>Founded Date</TableHead>
-                      <TableHead>Website URL</TableHead>
-                      <TableHead>Contact No</TableHead>
-                      <TableHead>Annual Report URL</TableHead>
-                      <TableHead>Location No</TableHead>
-                      <TableHead>Identification No</TableHead>
-                      <TableHead className="text-right">Actions</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {companies.map((company) => (
-                      <TableRow key={company.company_no}>
-                        <TableCell>{company.company_no}</TableCell>
-                        <TableCell>{company.company_name}</TableCell>
-                        <TableCell>{company.short_name}</TableCell>
-                        <TableCell>{company.address1}</TableCell>
-                        <TableCell>{company.address2}</TableCell>
-                        <TableCell>{company.address3}</TableCell>
-                        <TableCell>{company.city}</TableCell>
-                        <TableCell>{company.state}</TableCell>
-                        <TableCell>{company.pincode}</TableCell>
-                        <TableCell>{company.country}</TableCell>
-                        <TableCell>{company.email_id}</TableCell>
-                        {/* <TableCell>{company.status}</TableCell> 
-                        <TableCell>
-                          <Badge variant={company.status === "Active" ? "default" : "secondary"}>
-                            {company.status}
-                          </Badge>
-                        </TableCell>
-                        <TableCell>{company.foundedDate}</TableCell>
-                        <TableCell>{company.websiteURL}</TableCell>
-                        <TableCell>{company.contact_no}</TableCell>
-                        <TableCell>{company.annualReportURL}</TableCell>
-                        <TableCell>{company.location_no}</TableCell>
-                        <TableCell>{company.company_gst_no}</TableCell>
-
-                        <TableCell className="text-right">
-                          <div className="flex gap-2 justify-end">
-                            <Button
-                              variant="ghost"
-                              size="sm"
-                              onClick={() => handleEditCompany(company)}
-                            >
-                              <Edit className="h-4 w-4" />
-                            </Button>
-
-                            <Button
-                              variant="ghost"
-                              size="sm"
-                              onClick={() => handleDeleteCompany(company.company_no)}
-                            >
-                              <Trash2 className="h-4 w-4 text-red-500" />
-                            </Button>
-                          </div>
-                        </TableCell>
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-              </CardContent>
-            </Card>
-          </TabsContent> */}
 
           {/* Company Tab */}
           <TabsContent value="company">
@@ -5188,68 +5380,6 @@ const [numberSeriesForm, setNumberSeriesForm] = useState({
           </TabsContent>
 
           {/* Company Mapping Tab */}
-          {/* <TabsContent value="companyMapping">
-            <Card>
-              <CardHeader>
-                <CardTitle>Company Mapping</CardTitle>
-                <CardDescription>Manage all mapping companies and their details</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead>User Code</TableHead>
-                      <TableHead>Company Code</TableHead>
-                      <TableHead>Location No</TableHead>
-                      <TableHead>Status</TableHead>
-                      <TableHead>Order No</TableHead>
-                      <TableHead className="text-right">Actions</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {companyMappings.map((mapping: any) => (
-                      <TableRow key={mapping.keyfiels}>
-                        <TableCell>{mapping.user_code}</TableCell>
-                        <TableCell>{mapping.company_no}</TableCell>
-                        <TableCell>{mapping.location_no}</TableCell>
-                        {/* <TableCell>{mapping.status}</TableCell> 
-                        <TableCell>
-                          <Badge variant={mapping.status === "Active" ? "default" : "secondary"}>
-                            {mapping.status}
-                          </Badge>
-                        </TableCell>
-                        <TableCell>{mapping.order_no}</TableCell>
-
-                        <TableCell className="text-right">
-                          <div className="flex justify-end gap-2">
-                            <Button
-                              variant="ghost"
-                              size="sm"
-                              onClick={() => handleEditCompanyMapping(mapping)}
-                            >
-                              <Edit className="h-4 w-4" />
-                            </Button>
-
-                            <Button
-                              variant="ghost"
-                              size="sm"
-                              onClick={() =>
-                                handleDeleteCompanyMapping(mapping.keyfiels)
-                              }
-                            >
-                              <Trash2 className="h-4 w-4 text-red-500" />
-                            </Button>
-                          </div>
-                        </TableCell>
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-              </CardContent>
-            </Card>
-          </TabsContent> */}
-
-          {/* Company Mapping Tab */}
           <TabsContent value="companyMapping">
             <Card>
               <CardHeader className="text-left items-start">
@@ -5270,85 +5400,6 @@ const [numberSeriesForm, setNumberSeriesForm] = useState({
               </CardContent>
             </Card>
           </TabsContent>
-
-          {/* Location Tab */}
-          {/* <TabsContent value="location">
-            <Card>
-              <CardHeader>
-                <CardTitle>Location</CardTitle>
-                <CardDescription>Manage all locations and their details</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead>Location No</TableHead>
-                      <TableHead>Location Name</TableHead>
-                      <TableHead>Short Name</TableHead>
-                      <TableHead>Address 1</TableHead>
-                      <TableHead>Address 2</TableHead>
-                      <TableHead>Address 3</TableHead>
-                      <TableHead>City</TableHead>
-                      <TableHead>State</TableHead>
-                      <TableHead>Pin Code</TableHead>
-                      <TableHead>Country</TableHead>
-                      <TableHead>Email</TableHead>
-                      <TableHead>Status</TableHead>
-                      <TableHead>Contact No</TableHead>
-                      <TableHead className="text-right">Actions</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {locations.map((location) => (
-                      <TableRow key={location.location_no}>
-                        <TableCell>{location.location_no}</TableCell>
-                        <TableCell>{location.location_name}</TableCell>
-                        <TableCell>{location.short_name}</TableCell>
-                        <TableCell>{location.address1}</TableCell>
-                        <TableCell>{location.address2}</TableCell>
-                        <TableCell>{location.address3}</TableCell>
-                        <TableCell>{location.city}</TableCell>
-                        <TableCell>{location.state}</TableCell>
-                        <TableCell>{location.pincode}</TableCell>
-                        <TableCell>{location.country}</TableCell>
-                        <TableCell>{location.email_id}</TableCell>
-                        {/* <TableCell>{location.status}</TableCell> 
-                        <TableCell>
-                          <Badge variant={location.status === "Active" ? "default" : "secondary"}>
-                            {location.status}
-                          </Badge>
-                        </TableCell>                        
-                        <TableCell>{location.contact_no}</TableCell>
-
-                        <TableCell className="text-right">
-                          <div className="flex gap-2 justify-end">
-                            <Button
-                              variant="ghost"
-                              size="sm"
-                              onClick={() => handleEditLocation(location)}
-                            >
-                              <Edit className="h-4 w-4" />
-                            </Button>
-
-                            <Button
-                              variant="ghost"
-                              size="sm"
-                              onClick={() =>
-                                handleDeleteLocation(location.location_no)
-                              }
-                            >
-                              <Trash2 className="h-4 w-4 text-red-500" />
-                            </Button>
-                          </div>
-                        </TableCell>
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-              </CardContent>
-            </Card>
-          </TabsContent> */}
-
           {/* Location Tab */}
           <TabsContent value="location">
             <Card>
@@ -5372,60 +5423,6 @@ const [numberSeriesForm, setNumberSeriesForm] = useState({
           </TabsContent>
 
           {/* Role Tab */}
-          {/* <TabsContent value="role">
-            <Card>
-              <CardHeader>
-                <CardTitle>Role</CardTitle>
-                <CardDescription>
-                  Manage all roles and their details
-                </CardDescription>
-              </CardHeader>
-
-              <CardContent>
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead>Role ID</TableHead>
-                      <TableHead>Role Name</TableHead>
-                      <TableHead>Description</TableHead>
-                      <TableHead className="text-right">Actions</TableHead>
-                    </TableRow>
-                  </TableHeader>
-
-                  <TableBody>
-                    {roles.map((role: any) => (
-                      <TableRow key={role.role_id}>
-                        <TableCell className="font-medium">{role.role_id}</TableCell>
-                        <TableCell>{role.role_name}</TableCell>
-                        <TableCell>{role.description}</TableCell>
-                        <TableCell className="text-right">
-                          <div className="flex justify-end gap-2">
-                            <Button
-                              variant="ghost"
-                              size="sm"
-                              onClick={() => handleEditRole(role)}
-                            >
-                              <Edit className="h-4 w-4" />
-                            </Button>
-
-                            <Button
-                              variant="ghost"
-                              size="sm"
-                              onClick={() => handleDeleteRole(role.role_id)}
-                            >
-                              <Trash2 className="h-4 w-4 text-red-500" />
-                            </Button>
-                          </div>
-                        </TableCell>
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-              </CardContent>
-            </Card>
-          </TabsContent> */}
-
-          {/* Role Tab */}
           <TabsContent value="role">
             <Card>
               <CardHeader className="text-left items-start">
@@ -5446,61 +5443,6 @@ const [numberSeriesForm, setNumberSeriesForm] = useState({
               </CardContent>
             </Card>
           </TabsContent>
-
-          {/* Role Mapping Tab */}
-          {/* <TabsContent value="roleMapping">
-            <Card>
-              <CardHeader>
-                <CardTitle>Role Mapping</CardTitle>
-                <CardDescription>Manage all mapping roles and their details</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead>User Code</TableHead>
-                      <TableHead>User Name</TableHead>
-                      <TableHead>Role ID</TableHead>
-                      <TableHead>Role Name</TableHead>
-                      <TableHead className="text-right">Actions</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {roleMappings.map((item: any) => (
-                      <TableRow key={item.keyfield}>
-                        <TableCell>{item.user_code}</TableCell>
-                        <TableCell>{item.user_name}</TableCell>
-                        <TableCell>{item.role_id}</TableCell>
-                        <TableCell>{item.role_name}</TableCell>
-
-                        <TableCell className="text-right">
-                          <div className="flex justify-end gap-2">
-                            <Button
-                              variant="ghost"
-                              size="sm"
-                              onClick={() => handleEditRoleMapping(item)}
-                            >
-                              <Edit className="h-4 w-4" />
-                            </Button>
-
-                            <Button
-                              variant="ghost"
-                              size="sm"
-                              onClick={() =>
-                                handleDeleteRoleMapping(item.keyfield)
-                              }
-                            >
-                              <Trash2 className="h-4 w-4 text-red-500" />
-                            </Button>
-                          </div>
-                        </TableCell>
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-              </CardContent>
-            </Card>
-          </TabsContent> */}
 
           {/* Location Tab */}
           <TabsContent value="roleMapping">
@@ -5526,59 +5468,6 @@ const [numberSeriesForm, setNumberSeriesForm] = useState({
 
 
           {/* Role Rights Tab */}
-          {/* <TabsContent value="roleRights">
-            <Card>
-              <CardHeader>
-                <CardTitle>Role Rights</CardTitle>
-                <CardDescription>Manage all role and their rights detail</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead>Role ID</TableHead>
-                      <TableHead>Screen Type</TableHead>
-                      <TableHead>Permission Type</TableHead>
-                      <TableHead className="text-right">Actions</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {roleRights.map((item: any) => (
-                      <TableRow key={item.keyfield}>
-                        <TableCell>{item.role_id}</TableCell>
-                        <TableCell>{item.screen_type}</TableCell>
-                        <TableCell>{item.permission_type}</TableCell>
-
-                        <TableCell className="text-right">
-                          <div className="flex justify-end gap-2">
-                            <Button
-                              variant="ghost"
-                              size="sm"
-                              onClick={() => handleEditRoleRight(item)}
-                            >
-                              <Edit className="h-4 w-4" />
-                            </Button>
-
-                            <Button
-                              variant="ghost"
-                              size="sm"
-                              onClick={() =>
-                                handleDeleteRoleRight(item.keyfield)
-                              }
-                            >
-                              <Trash2 className="h-4 w-4 text-red-500" />
-                            </Button>
-                          </div>
-                        </TableCell>
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-              </CardContent>
-            </Card>
-          </TabsContent> */}
-
-          {/* Role Rights Tab */}
           <TabsContent value="roleRights">
             <Card>
               <CardHeader className="text-left items-start">
@@ -5599,70 +5488,6 @@ const [numberSeriesForm, setNumberSeriesForm] = useState({
               </CardContent>
             </Card>
           </TabsContent>
-
-          {/* User Tab */}
-          {/* <TabsContent value="user">
-            <Card>
-              <CardHeader>
-                <CardTitle>User</CardTitle>
-                <CardDescription>Manage all User and their details</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead>User Code</TableHead>
-                      <TableHead>User Name</TableHead>
-                      <TableHead>First Name</TableHead>
-                      <TableHead>Last Name</TableHead>
-                      <TableHead>User Status</TableHead>
-                      <TableHead>DOB</TableHead>
-                      <TableHead>Gender</TableHead>
-                      <TableHead className="text-right">Actions</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {users.map((user: any) => (
-                      <TableRow key={user.user_code}>
-                        <TableCell>{user.user_code}</TableCell>
-                        <TableCell>{user.user_name}</TableCell>
-                        <TableCell>{user.first_name}</TableCell>
-                        <TableCell>{user.last_name}</TableCell>
-                        {/* <TableCell>{user.user_status}</TableCell> 
-                        <TableCell>
-                          <Badge variant={user.user_status === "Active" ? "default" : "secondary"}>
-                            {user.user_status}
-                          </Badge>
-                        </TableCell>
-                        <TableCell>{user.dob}</TableCell>
-                        <TableCell>{user.gender}</TableCell>
-
-                        <TableCell className="text-right">
-                          <div className="flex justify-end gap-2">
-                            <Button
-                              variant="ghost"
-                              size="sm"
-                              onClick={() => handleEditUser(user)}
-                            >
-                              <Edit className="h-4 w-4" />
-                            </Button>
-
-                            <Button
-                              variant="ghost"
-                              size="sm"
-                              onClick={() => handleDeleteUser(user.user_code)}
-                            >
-                              <Trash2 className="h-4 w-4 text-red-500" />
-                            </Button>
-                          </div>
-                        </TableCell>
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-              </CardContent>
-            </Card>
-          </TabsContent> */}
 
           {/* User Tab */}
           <TabsContent value="user">
@@ -5687,65 +5512,6 @@ const [numberSeriesForm, setNumberSeriesForm] = useState({
           </TabsContent>
 
           {/* Attribute Tab */}
-          {/* <TabsContent value="attribute">
-            <Card>
-              <CardHeader>
-                <CardTitle>Attribute</CardTitle>
-                <CardDescription>Manage all Attribute and their details</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead>Code</TableHead>
-                      <TableHead>Sub Code</TableHead>
-                      <TableHead>Details Name</TableHead>
-                      <TableHead>Description</TableHead>
-                      <TableHead className="text-right">Actions</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {attributes.map((attribute: any) => (
-                      <TableRow
-                        key={`${attribute.attributeheader_code}-${attribute.attributedetails_code}`}
-                      >
-                        <TableCell>{attribute.attributeheader_code}</TableCell>
-                        <TableCell>{attribute.attributedetails_code}</TableCell>
-                        <TableCell>{attribute.attributedetails_name}</TableCell>
-                        <TableCell>{attribute.descriptions}</TableCell>
-                        <TableCell className="text-right">
-                          <div className="flex justify-end gap-2">
-                            <Button
-                              variant="ghost"
-                              size="sm"
-                              onClick={() => handleEditAttribute(attribute)}
-                            >
-                              <Edit className="h-4 w-4" />
-                            </Button>
-
-                            <Button
-                              variant="ghost"
-                              size="sm"
-                              onClick={() =>
-                                handleDeleteAttribute(
-                                  attribute.attributeheader_code,
-                                  attribute.attributedetails_code
-                                )
-                              }
-                            >
-                              <Trash2 className="h-4 w-4 text-red-500" />
-                            </Button>
-                          </div>
-                        </TableCell>
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-              </CardContent>
-            </Card>
-          </TabsContent> */}
-
-          {/* Attribute Tab */}
           <TabsContent value="attribute">
             <Card>
               <CardHeader className="text-left items-start">
@@ -5768,7 +5534,7 @@ const [numberSeriesForm, setNumberSeriesForm] = useState({
           </TabsContent>
 
           {/* NumberSeries Tab */}
-          <TabsContent value="NumberSeries">
+          {/* <TabsContent value="NumberSeries">
             <Card>
               <CardHeader className="text-left items-start">
                 <CardTitle>NumberSeries</CardTitle>
@@ -5778,16 +5544,16 @@ const [numberSeriesForm, setNumberSeriesForm] = useState({
                 <Table>
                   <TableHeader>
                     <TableRow>
-                      <TableHead>Screen_Type</TableHead>
-                      <TableHead>Start_Year</TableHead>
-                      <TableHead>End_Year</TableHead>
-                      <TableHead>Start_No</TableHead>
-                      <TableHead>Running_No</TableHead>
-                      <TableHead>End_No</TableHead>
-                      <TableHead>text</TableHead>
-                      <TableHead>status</TableHead>
-                      <TableHead>bill_format</TableHead>
-                          <TableHead className="text-right">Actions</TableHead>
+                      <TableHead>Screen Type</TableHead>
+                      <TableHead>Start Year</TableHead>
+                      <TableHead>End Year</TableHead>
+                      <TableHead>Start No</TableHead>
+                      <TableHead>Running No</TableHead>
+                      <TableHead>End No</TableHead>
+                      <TableHead>Text</TableHead>
+                      <TableHead>Status</TableHead>
+                      <TableHead>Bill Format</TableHead>
+                      <TableHead className="text-right">Actions</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
@@ -5810,7 +5576,7 @@ const [numberSeriesForm, setNumberSeriesForm] = useState({
                             <Button
                               variant="ghost"
                               size="sm"
-                              onClick={() => handleEditAttribute(NumberSeries)}
+                              onClick={() => handleEditNumberSeries(NumberSeries)}
                             >
                               <Edit className="h-4 w-4" />
                             </Button>
@@ -5818,12 +5584,7 @@ const [numberSeriesForm, setNumberSeriesForm] = useState({
                             <Button
                               variant="ghost"
                               size="sm"
-                              // onClick={() =>
-                              //   handleDeleteAttribute(
-                              //     attribute.attributeheader_code,
-                              //     attribute.attributedetails_code
-                              //   )
-                              // }
+                              onClick={() => handleDeleteNumberSeries(NumberSeries)}
                             >
                               <Trash2 className="h-4 w-4 text-red-500" />
                             </Button>
@@ -5835,7 +5596,28 @@ const [numberSeriesForm, setNumberSeriesForm] = useState({
                 </Table>
               </CardContent>
             </Card>
-          </TabsContent>          
+          </TabsContent> */}
+
+          <TabsContent value="NumberSeries">
+            <Card>
+              <CardHeader className="text-left items-start">
+                <CardTitle>Number Series</CardTitle>
+                <CardDescription>
+                  Manage all NumberSeries and their details
+                </CardDescription>
+              </CardHeader>
+
+              <CardContent>
+                <AgGridTable
+                  rowData={numberSeries}
+                  columnDefs={NumberSeriesColumnDefs}
+                  pagination={true}
+                  paginationPageSize={10}
+                  height="300px"
+                />
+              </CardContent>
+            </Card>
+          </TabsContent>
 
         </Tabs>
 
@@ -6058,12 +5840,7 @@ const [numberSeriesForm, setNumberSeriesForm] = useState({
                             maxLength={10}
                             inputMode="numeric"
                             value={companyForm.pincode}
-                            onChange={(e) =>
-                              setCompanyForm({
-                                ...companyForm,
-                                pincode: e.target.value.replace(/\D/g, ""),
-                              })
-                            }
+                            onChange={(e) => setCompanyForm({ ...companyForm, pincode: e.target.value.replace(/\D/g, ""), })}
                             placeholder="Enter Pin Code (e.g., 600001)"
                           />
                         </TooltipTrigger>
@@ -6166,6 +5943,7 @@ const [numberSeriesForm, setNumberSeriesForm] = useState({
                             id="name"
                             type="date"
                             value={companyForm.foundedDate}
+                            max={new Date().toISOString().split("T")[0]}
                             onChange={(e) => setCompanyForm({ ...companyForm, foundedDate: e.target.value })}
                             max={new Date().toISOString().split("T")[0]}
                             placeholder="Select founded date"
@@ -6493,10 +6271,11 @@ const [numberSeriesForm, setNumberSeriesForm] = useState({
                         <TooltipTrigger asChild>
                           <Input
                             id="name"
-                            type='number'
+                            inputMode="numeric"
+                            maxLength={3}
                             value={companyMappingForm.order_no}
                             onChange={(e) => setCompanyMappingForm({ ...companyMappingForm, order_no: e.target.value })}
-                            placeholder="e.g., Weight Loss Transformation"
+                            placeholder="Enter order number (e.g., 001)"
                           />
                         </TooltipTrigger>
 
@@ -6759,6 +6538,7 @@ const [numberSeriesForm, setNumberSeriesForm] = useState({
                         <TooltipTrigger asChild>
                           <Input
                             id="name"
+                            inputMode="numeric"
                             maxLength={10}
                             value={locationForm.pincode}
                             onChange={(e) => setLocationForm({ ...locationForm, pincode: e.target.value })}
@@ -6863,7 +6643,8 @@ const [numberSeriesForm, setNumberSeriesForm] = useState({
                           <Input
                             id="name"
                             value={locationForm.contact_no}
-                            maxLength={13}
+                            maxLength={100}
+                            inputMode="numeric"
                             onChange={(e) => setLocationForm({ ...locationForm, contact_no: e.target.value.replace(/\D/g, ""), })}
                             placeholder="Enter contact number (e.g., +91 9876543210)"
                           />
@@ -6943,7 +6724,7 @@ const [numberSeriesForm, setNumberSeriesForm] = useState({
                             id="name"
                             readOnly={!!editingRole}
                             value={roleForm.role_id}
-                            onChange={(e) => setRoleForm({ ...roleForm, role_id: e.target.value })}
+                            onChange={(e) => setRoleForm({ ...roleForm, role_id: e.target.value.replace(/[^a-zA-Z0-9_-]/g, ""), })}
                             placeholder="Enter the role id (e.g., ADMIN)"
                           />
                         </TooltipTrigger>
@@ -6963,7 +6744,7 @@ const [numberSeriesForm, setNumberSeriesForm] = useState({
                           <Input
                             id="name"
                             value={roleForm.role_name}
-                            onChange={(e) => setRoleForm({ ...roleForm, role_name: e.target.value })}
+                            onChange={(e) => setRoleForm({ ...roleForm, role_name: e.target.value.replace(/[^a-zA-Z0-9_-]/g, ""), })}
                             placeholder="Enter the role name (e.g., Administrator)"
                           />
                         </TooltipTrigger>
@@ -7324,61 +7105,149 @@ const [numberSeriesForm, setNumberSeriesForm] = useState({
 
                   <div className="space-y-2">
                     <Label htmlFor="name" className={submittedUser && !userForm.user_code ? "text-red-500" : ""}>User Code*</Label>
+                    <TooltipProvider>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
                     <Input
                       id="UserCode"
+                      readOnly={!!editingUser}
                       value={userForm.user_code}
                       onChange={(e) => setUserForm({ ...userForm, user_code: e.target.value })}
                       placeholder="e.g., User Code"
                     />
+                    </TooltipTrigger>
+
+                        <TooltipContent>
+                          <p>Enter User Code</p>
+                        </TooltipContent>
+                      </Tooltip>
+                    </TooltipProvider>
                   </div>
 
                   <div className="space-y-2">
                     {/* <Label htmlFor="name">User Name*</Label> */}
                     <Label htmlFor="name" className={submittedUser && !userForm.user_name ? "text-red-500" : ""}>User Name*</Label>
+                    <TooltipProvider>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
                     <Input
                       id="UserName"
                       value={userForm.user_name}
                       onChange={(e) => setUserForm({ ...userForm, user_name: e.target.value })}
                       placeholder="e.g., User Name"
                     />
+                    </TooltipTrigger>
+
+                        <TooltipContent>
+                          <p>Enter User Name</p>
+                        </TooltipContent>
+                      </Tooltip>
+                    </TooltipProvider>
                   </div>
+
                   <div className="space-y-2">
                     {/* <Label htmlFor="FirstName">First Name*</Label> */}
                     <Label htmlFor="name" className={submittedUser && !userForm.first_name ? "text-red-500" : ""}>First Name*</Label>
+                    <TooltipProvider>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
                     <Input
                       id="FirstName"
                       value={userForm.first_name}
                       onChange={(e) => setUserForm({ ...userForm, first_name: e.target.value })}
                       placeholder="e.g., First Name"
                     />
+                    </TooltipTrigger>
+
+                        <TooltipContent>
+                          <p>Enter First Name</p>
+                        </TooltipContent>
+                      </Tooltip>
+                    </TooltipProvider>
                   </div>
+
                   <div className="space-y-2">
                     {/* <Label htmlFor="LastName">Last Name*</Label> */}
                     <Label htmlFor="name" className={submittedUser && !userForm.last_name ? "text-red-500" : ""}>Last Name*</Label>
+                    <TooltipProvider>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
                     <Input
                       id="LastName"
                       value={userForm.last_name}
                       onChange={(e) => setUserForm({ ...userForm, last_name: e.target.value })}
                       placeholder="e.g., Last Name"
                     />
+                    </TooltipTrigger>
+
+                        <TooltipContent>
+                          <p>Enter Last Name</p>
+                        </TooltipContent>
+                      </Tooltip>
+                    </TooltipProvider>
                   </div>
+
                   <div className="space-y-2">
                     {/* <Label htmlFor="name">Password*</Label> */}
                     <Label htmlFor="name" className={submittedUser && !userForm.user_password ? "text-red-500" : ""}>Password*</Label>
-                    <Input
-                      id="Password"
-                      value={userForm.user_password}
-                      onChange={(e) => setUserForm({ ...userForm, user_password: e.target.value })}
-                      placeholder="e.g., Password"
-                    />
+                    <TooltipProvider>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                    <div className="relative">
+                      <Input
+                        id="Password"
+                        type={showPassword ? "text" : "password"}
+                        value={userForm.user_password}
+                        onChange={(e) =>
+                          setUserForm({
+                            ...userForm,
+                            user_password: e.target.value,
+                          })
+                        }
+                        placeholder="e.g., Password"
+                        className="pr-10"
+                      />
+
+                      <button
+                        type="button"
+                        onClick={() => setShowPassword(!showPassword)}
+                        className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700"
+                      >
+                        {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                      </button>
+                    </div>
+                    </TooltipTrigger>
+
+                        <TooltipContent>
+                          <p>Enter Password</p>
+                        </TooltipContent>
+                      </Tooltip>
+                    </TooltipProvider>
                   </div>
+
                   <div className="space-y-2">
                     {/* <Label htmlFor="UserCode">Status*</Label> */}
                     <Label htmlFor="name" className={submittedUser && !userForm.user_status ? "text-red-500" : ""}>Status*</Label>
-                    <Select value={userForm.user_status} onValueChange={(value) => setUserForm({ ...userForm, user_status: value })}>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select Status" />
-                      </SelectTrigger>
+                    <Select
+                      value={userForm.user_status}
+                      onValueChange={(value) =>
+                        setUserForm({ ...userForm, user_status: value })
+                      }
+                    >
+                      <TooltipProvider>
+                        <Tooltip>
+                          <TooltipTrigger asChild>
+                            <SelectTrigger>
+                              <SelectValue placeholder="Select Status" />
+                            </SelectTrigger>
+                          </TooltipTrigger>
+                    
+                          <TooltipContent>
+                            <p>Select the status</p>
+                          </TooltipContent>
+                        </Tooltip>
+                      </TooltipProvider>
+                    
                       <SelectContent>
                         {status.map((status: any) => (
                           <SelectItem
@@ -7392,32 +7261,34 @@ const [numberSeriesForm, setNumberSeriesForm] = useState({
                     </Select>
                   </div>
 
-                  {/* <div className="space-y-2">
-                    <Label htmlFor="Log">Log in/out</Label>
-                    <Select value={userForm.log_in_out} onValueChange={(value) => setUserForm({ ...userForm, log_in_out: value })}>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select Log in Or out" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {logInLogOut.map((status: any) => (
-                          <SelectItem
-                            key={status.attributedetails_code}
-                            value={status.attributedetails_code}
-                          >
-                            {status.attributedetails_name}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  </div> */}
-
                   <div className="space-y-2">
-                    {/* <Label htmlFor="RoleID">Role ID*</Label> */}
-                    <Label htmlFor="name" className={submittedUser && !userForm.role_id ? "text-red-500" : ""}>Role ID*</Label>
-                    <Select value={userForm.role_id} onValueChange={(value) => setUserForm({ ...userForm, role_id: value })}>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select Role ID" />
-                      </SelectTrigger>
+                    <Label
+                      htmlFor="name"
+                      className={submittedUser && !userForm.role_id ? "text-red-500" : ""}
+                    >
+                      Role ID*
+                    </Label>
+
+                    <Select
+                      value={userForm.role_id}
+                      onValueChange={(value) =>
+                        setUserForm({ ...userForm, role_id: value })
+                      }
+                    >
+                      <TooltipProvider>
+                        <Tooltip>
+                          <TooltipTrigger asChild>
+                            <SelectTrigger>
+                              <SelectValue placeholder="Select Role ID" />
+                            </SelectTrigger>
+                          </TooltipTrigger>
+                    
+                          <TooltipContent>
+                            <p>Select Role ID</p>
+                          </TooltipContent>
+                        </Tooltip>
+                      </TooltipProvider>
+                    
                       <SelectContent>
                         {role.map((role: any) => (
                           <SelectItem
@@ -7434,16 +7305,30 @@ const [numberSeriesForm, setNumberSeriesForm] = useState({
                   <div className="space-y-2">
                     {/* <Label htmlFor="Email">Email*</Label> */}
                     <Label htmlFor="name" className={submittedUser && !userForm.email_id ? "text-red-500" : ""}>Email*</Label>
+                    <TooltipProvider>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
                     <Input
                       id="Email"
                       value={userForm.email_id}
                       onChange={(e) => setUserForm({ ...userForm, email_id: e.target.value })}
                       placeholder="e.g., Email"
                     />
+                    </TooltipTrigger>
+
+                        <TooltipContent>
+                          <p>Enter Email</p>
+                        </TooltipContent>
+                      </Tooltip>
+                    </TooltipProvider>
                   </div>
+
                   <div className="space-y-2">
                     {/* <Label htmlFor="DOB">DOB*</Label> */}
                     <Label htmlFor="name" className={submittedUser && !userForm.dob ? "text-red-500" : ""}>DOB*</Label>
+                    <TooltipProvider>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
                     <Input
                       id="DOB"
                       type='date'
@@ -7451,30 +7336,56 @@ const [numberSeriesForm, setNumberSeriesForm] = useState({
                       onChange={(e) => setUserForm({ ...userForm, dob: e.target.value })}
                       placeholder="e.g., DOB"
                     />
+                    </TooltipTrigger>
+
+                        <TooltipContent>
+                          <p>Select DOB</p>
+                        </TooltipContent>
+                      </Tooltip>
+                    </TooltipProvider>
                   </div>
+
                   <div className="space-y-2">
                     <Label htmlFor="Gender">Gender</Label>
-                    <Select value={userForm.gender} onValueChange={(value) => setUserForm({ ...userForm, gender: value })}>
-                      <SelectTrigger>
-                        <SelectValue placeholder="SelectGender" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {gender.map((status: any) => (
-                          <SelectItem
-                            key={status.attributedetails_code}
-                            value={status.attributedetails_code}
-                          >
-                            {status.attributedetails_name}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  </div>
+
+                  <Select
+                    value={userForm.gender}
+                    onValueChange={(value) =>
+                      setUserForm({ ...userForm, gender: value })
+                    }
+                  >
+                    <TooltipProvider>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <SelectTrigger>
+                            <SelectValue placeholder="Select Gender" />
+                          </SelectTrigger>
+                          </TooltipTrigger>
+
+                        <TooltipContent>
+                          <p>Select Gender</p>
+                        </TooltipContent>
+                      </Tooltip>
+                      </TooltipProvider>
+
+                    <SelectContent>
+                      {gender.map((status: any) => (
+                        <SelectItem
+                          key={status.attributedetails_code}
+                          value={status.attributedetails_code}
+                        >
+                          {status.attributedetails_name}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
 
                   <div className="space-x-2">
                     <Switch
                       id="isActive"
                       checked={userForm.super_admin}
+                      disabled={!["sa", "super admin"].includes(userForm.role_id?.toLowerCase())}
                       onCheckedChange={(checked) => setUserForm({ ...userForm, super_admin: checked })}
                     />
                     <Label htmlFor="isActive">Super Admin</Label>
@@ -7697,7 +7608,7 @@ const [numberSeriesForm, setNumberSeriesForm] = useState({
               <div className="space-y-2">
                 <Label htmlFor="code" className={submittedAttributeHdr && !attributeHdrForm.attributeheader_code ? "text-red-500" : ""}>Code*</Label>
                 <TooltipProvider>
-                  <Tooltip>- 
+                  <Tooltip>-
                     <TooltipTrigger asChild>
                       <Input
                         id="Code"
@@ -7798,71 +7709,314 @@ const [numberSeriesForm, setNumberSeriesForm] = useState({
             </DialogFooter>
           </DialogContent>
         </Dialog>
-       {/* Add Numberseries Header Dialog  Or Popup*/}
+
+        {/* Add/Edit Numberseries Dialog Or Popup*/}
         <Dialog open={isNumberSeriesDialogOpen} onOpenChange={(open) => {
           if (!open) {
             setSubmittedNumberSeries(false);
           }
           setIsNumberSeriesDialogOpen(open);
         }}>
-          <DialogContent className="max-w-md">
+          <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
             <DialogHeader>
-              <DialogTitle>Add NumberSeries Hdr</DialogTitle>
-              <DialogDescription>Create a new NumberSeries Header</DialogDescription>
+              <DialogTitle>{editingNumberSeries ? 'Edit Nunmber Series ' : 'Add Nunmber Series '}</DialogTitle>
+              <DialogDescription>
+                {editingNumberSeries ? 'Update the Nunmber Series  details' : 'Create a new Nunmber Series '}
+              </DialogDescription>
             </DialogHeader>
+            <div className="grid gap-6 py-4">
+              <div className="space-y-4">
+                <h4 className="font-medium text-sm text-gray-700">Nunmber Series Details</h4>
+                <div className="grid grid-cols-2 gap-4">
 
-            <div className="grid gap-4 py-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="ScreenType" className={submittedNumberSeries && !numberSeriesForm.Screen_Type ? "text-red-500" : ""}>Screen Type*</Label>
+                    <TooltipProvider>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <div>
+                            <Select value={numberSeriesForm.Screen_Type} onValueChange={(value) => setNumberSeriesForm({ ...numberSeriesForm, Screen_Type: value })}>
+                              <SelectTrigger>
+                                <SelectValue placeholder="Select Screen Type" />
+                              </SelectTrigger>
+                              <SelectContent>
+                                {ScreenType.map((Screen_Type: any) => (
+                                  <SelectItem
+                                    key={Screen_Type.attributedetails_name}
+                                    value={Screen_Type.attributedetails_name}
+                                  >
+                                    {Screen_Type.attributedetails_name}
+                                  </SelectItem>
+                                ))}
+                              </SelectContent>
+                            </Select>
+                          </div>
+                        </TooltipTrigger>
 
-              <div className="space-y-2">
-                <Label htmlFor="code" className={submittedNumberSeries && !numberSeriesForm.Screen_Type ? "text-red-500" : ""}>Code*</Label>
-                <Input
-                  id="Code"
-                  value={numberSeriesForm.Screen_Type}
-                  onChange={(e) => setNumberSeriesForm({ ...numberSeriesForm, Screen_Type: e.target.value, })}
-                  placeholder="Enter Screen_Type (e.g., ACCOUNT_TYPE)"
-                />
-              </div>
+                        <TooltipContent>
+                          <p>Select the Screen Type</p>
+                        </TooltipContent>
+                      </Tooltip>
+                    </TooltipProvider>
+                  </div>
 
-              <div className="space-y-2">
-                <Label htmlFor="code" className={submittedNumberSeries && !numberSeriesForm.Screen_Type ? "text-red-500" : ""}>Name*</Label>
-                <Input
-                  id="Name"
-                  value={numberSeriesForm.Start_Year}
-                  onChange={(e) => setNumberSeriesForm({ ...numberSeriesForm, Start_Year: e.target.value, })}
-                  placeholder="Enter Start_Year (e.g., Account Type)"
-                />
-              </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="StartYear" className={submittedNumberSeries && !numberSeriesForm.Start_Year ? "text-red-500" : ""}>Start Year*</Label>
+                    <TooltipProvider>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <Input
+                            id="StartYear"
+                            type="date"
+                            min={fyStart}
+                            max={fyEnd}
+                            value={numberSeriesForm.Start_Year}
+                            onChange={(e) => setNumberSeriesForm({ ...numberSeriesForm, Start_Year: e.target.value })}
+                            placeholder="Select Start Year"
+                          />
+                        </TooltipTrigger>
 
-              <div className="space-y-2">
-                <Label htmlFor="code" className={submittedNumberSeries && !numberSeriesForm.status ? "text-red-500" : ""}>Status*</Label>
-                <Select value={numberSeriesForm.status} onValueChange={(value) => setNumberSeriesForm({ ...numberSeriesForm, status: value, })}>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select Status" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {status.map((status: any) => (
-                      <SelectItem
-                        key={status.Screen_Type}
-                        value={status.Screen_Type}
-                      >
-                        {status.Screen_Type}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
+                        <TooltipContent>
+                          <p>Select Start Year</p>
+                        </TooltipContent>
+                      </Tooltip>
+                    </TooltipProvider>
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label htmlFor="EndYear" className={submittedNumberSeries && !numberSeriesForm.End_Year ? "text-red-500" : ""}>End Year*</Label>
+                    <TooltipProvider>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <Input
+                            id="EndYear"
+                            type="date"
+                            min={fyStart}
+                            max={fyEnd}
+                            value={numberSeriesForm.End_Year}
+                            onChange={(e) => setNumberSeriesForm({ ...numberSeriesForm, End_Year: e.target.value })}
+                            placeholder="Select End Year"
+                          />
+                        </TooltipTrigger>
+
+                        <TooltipContent>
+                          <p>Select End Year</p>
+                        </TooltipContent>
+                      </Tooltip>
+                    </TooltipProvider>
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label htmlFor="Start No" className={submittedNumberSeries && !numberSeriesForm.Start_No ? "text-red-500" : ""}>Start No*</Label>
+                    <TooltipProvider>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <Input
+                            id="Start No"
+                            value={numberSeriesForm.Start_No}
+                            onChange={(e) => setNumberSeriesForm({ ...numberSeriesForm, Start_No: e.target.value })}
+                            placeholder="Enter Start No"
+                          />
+                        </TooltipTrigger>
+
+                        <TooltipContent>
+                          <p>Enter Start No</p>
+                        </TooltipContent>
+                      </Tooltip>
+                    </TooltipProvider>
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label htmlFor="Running No" className={submittedNumberSeries && !numberSeriesForm.Running_No ? "text-red-500" : ""}>Running No*</Label>
+                    <TooltipProvider>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <Input
+                            id="Running No"
+                            value={numberSeriesForm.Running_No}
+                            onChange={(e) => setNumberSeriesForm({ ...numberSeriesForm, Running_No: e.target.value })}
+                            placeholder="Enter Running No"
+                          />
+                        </TooltipTrigger>
+
+                        <TooltipContent>
+                          <p>Enter Running No</p>
+                        </TooltipContent>
+                      </Tooltip>
+                    </TooltipProvider>
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label htmlFor="End No" className={submittedNumberSeries && !numberSeriesForm.End_No ? "text-red-500" : ""}>End No*</Label>
+                    <TooltipProvider>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <Input
+                            id="End No"
+                            value={numberSeriesForm.End_No}
+                            onChange={(e) => setNumberSeriesForm({ ...numberSeriesForm, End_No: e.target.value })}
+                            placeholder="Enter End No"
+                          />
+                        </TooltipTrigger>
+
+                        <TooltipContent>
+                          <p>Enter End No</p>
+                        </TooltipContent>
+                      </Tooltip>
+                    </TooltipProvider>
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label htmlFor="Text" className={submittedNumberSeries && !numberSeriesForm.text ? "text-red-500" : ""}>Text*</Label>
+                    <TooltipProvider>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <Input
+                            id="text"
+                            value={numberSeriesForm.text}
+                            onChange={(e) => setNumberSeriesForm({ ...numberSeriesForm, text: e.target.value })}
+                            placeholder="Enter text"
+                          />
+
+                        </TooltipTrigger>
+
+                        <TooltipContent>
+                          <p>text</p>
+                        </TooltipContent>
+                      </Tooltip>
+                    </TooltipProvider>
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label htmlFor="Number Prefix" className={submittedNumberSeries && !numberSeriesForm.number_prefix ? "text-red-500" : ""}>Number Prefix*</Label>
+                    <TooltipProvider>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <div>
+                            <Select value={numberSeriesForm.number_prefix} onValueChange={(value) => setNumberSeriesForm({ ...numberSeriesForm, number_prefix: value })}>
+                              <SelectTrigger>
+                                <SelectValue placeholder="Select Number Prefix" />
+                              </SelectTrigger>
+                              <SelectContent>
+                                {NumberPrefix.map((Number_Prefix: any) => (
+                                  <SelectItem
+                                    key={Number_Prefix.attributedetails_name}
+                                    value={Number_Prefix.attributedetails_name}
+                                  >
+                                    {Number_Prefix.attributedetails_name}
+                                  </SelectItem>
+                                ))}
+                              </SelectContent>
+                            </Select>
+                          </div>
+                        </TooltipTrigger>
+
+                        <TooltipContent>
+                          <p>Select the Number Prefix</p>
+                        </TooltipContent>
+                      </Tooltip>
+                    </TooltipProvider>
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label htmlFor="Bill Format" className={submittedNumberSeries && !numberSeriesForm.bill_format ? "text-red-500" : ""}>Bill Format*</Label>
+                    <TooltipProvider>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <div>
+                            <Select value={numberSeriesForm.bill_format} onValueChange={(value) => setNumberSeriesForm({ ...numberSeriesForm, bill_format: value })}>
+                              <SelectTrigger>
+                                <SelectValue placeholder="Select Bill Format" />
+                              </SelectTrigger>
+                              <SelectContent>
+                                {BillFormat.map((bill_format: any) => (
+                                  <SelectItem
+                                    key={bill_format.attributedetails_name}
+                                    value={bill_format.attributedetails_name}
+                                  >
+                                    {bill_format.attributedetails_name}
+                                  </SelectItem>
+                                ))}
+                              </SelectContent>
+                            </Select>
+                          </div>
+                        </TooltipTrigger>
+
+                        <TooltipContent>
+                          <p>Select the Bill Format</p>
+                        </TooltipContent>
+                      </Tooltip>
+                    </TooltipProvider>
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label htmlFor="Status" className={submittedNumberSeries && !numberSeriesForm.Status ? "text-red-500" : ""}>Status*</Label>
+                    <TooltipProvider>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <div>
+                            <Select value={numberSeriesForm.Status} onValueChange={(value) => setNumberSeriesForm({ ...numberSeriesForm, Status: value })}>
+                              <SelectTrigger>
+                                <SelectValue placeholder="Select Status" />
+                              </SelectTrigger>
+                              <SelectContent>
+                                {status.map((status: any) => (
+                                  <SelectItem
+                                    key={status.attributedetails_name}
+                                    value={status.attributedetails_name}
+                                  >
+                                    {status.attributedetails_name}
+                                  </SelectItem>
+                                ))}
+                              </SelectContent>
+                            </Select>
+                          </div>
+                        </TooltipTrigger>
+
+                        <TooltipContent>
+                          <p>Select the status</p>
+                        </TooltipContent>
+                      </Tooltip>
+                    </TooltipProvider>
+                  </div>
+
+                </div>
               </div>
             </div>
-
             <DialogFooter>
-              <Button variant="outline" onClick={() => {
-                setSubmittedNumberSeries(false);
-                setIsNumberSeriesDialogOpen(false);
-              }}>Cancel</Button>
-              <Button >Save</Button>
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Button variant="outline" onClick={() => {
+                      setSubmittedNumberSeries(false);
+                      setIsNumberSeriesDialogOpen(false);
+                    }}>Cancel</Button>
+                  </TooltipTrigger>
+
+                  <TooltipContent>
+                    <p>Cancel without saving changes.</p>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Button onClick={handleSaveNumberSeries}>{editingNumberSeries ? 'Update' : 'Create'} Nunmber Series</Button>
+                  </TooltipTrigger>
+
+                  <TooltipContent>
+                    <p>
+                      {editingNumberSeries
+                        ? "Update Nunmber Series"
+                        : "Create a Nunmber Series"}
+                    </p>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
             </DialogFooter>
           </DialogContent>
         </Dialog>
-
       </main>
     </div>
   );
