@@ -103,3 +103,29 @@ All colors MUST be HSL.
     @apply bg-background text-foreground;
   }
 }
+
+/* Add this at the bottom of index.css */
+@layer utilities {
+  /* Custom scrollbar styling wrapper container kaaga */
+  .custom-scrollbar::-webkit-scrollbar {
+    height: 5px; /* Horizontal scrollbar height height */
+  }
+  
+  /* Scrollbar thumb (Namma nagarthura antha bar) */
+  .custom-scrollbar::-webkit-scrollbar-thumb {
+    background-color: hsl(var(--primary) / 0.4); /* Light transparent theme purple */
+    border-radius: 9999px;
+    transition: background-color 0.2s ease;
+  }
+
+  /* Hover pannum pothu thumb change aagum */
+  .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+    background-color: hsl(var(--primary)); /* Solid theme purple */
+  }
+
+  /* Scrollbar track background grid */
+  .custom-scrollbar::-webkit-scrollbar-track {
+    background-color: hsl(var(--muted));
+    border-radius: 9999px;
+  }
+}
