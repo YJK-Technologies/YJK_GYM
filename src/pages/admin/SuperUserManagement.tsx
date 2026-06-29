@@ -44,6 +44,11 @@ const WorkoutProgramManagement = () => {
   //Attribute Detail Screen
   const [attributehdr, setAttributeHdr] = useState<any[]>([]);
 
+  //Numberseries screen 
+  const [ScreenType, setScreenType] = useState<any[]>([]);
+  const [NumberPrefix, setNumberPrefix] = useState<any[]>([]);
+  const [BillFormat, setBillFormat] = useState<any[]>([]);
+
   const fetchCities = async () => {
     try {
       const response = await fetch(`${BASE_URL}/city`, {
@@ -360,6 +365,82 @@ const WorkoutProgramManagement = () => {
     }
   };
 
+  //Number series Detail Screen 
+  const fetchScreenType = async () => {
+    try {
+      const response = await fetch(`${BASE_URL}/screentype`, {
+        method: "post",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          company_code: "YJK",
+        }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        setScreenType(data);
+      } else {
+        console.error("Failed to fetch ScreenType");
+      }
+
+    } catch (error) {
+      console.error("Error fetching ScreenType:", error);
+    }
+  };
+
+  const fetchNumberPrefix = async () => {
+    try {
+      const response = await fetch(`${BASE_URL}/getboolean`, {
+        method: "post",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          company_code: "YJK",
+        }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        setNumberPrefix(data);
+      } else {
+        console.error("Failed to fetch NumberPrefix");
+      }
+
+    } catch (error) {
+      console.error("Error fetching ScreenType:", error);
+    }
+  };
+
+  const fetchBillFormat = async () => {
+    try {
+      const response = await fetch(`${BASE_URL}/getBillFormat`, {
+        method: "post",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          company_code: "YJK",
+        }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        setBillFormat(data);
+      } else {
+        console.error("Failed to fetch BillFormat");
+      }
+
+    } catch (error) {
+      console.error("Error fetching BillFormat:", error);
+    }
+  };
+
   useEffect(() => {
     const loadData = async () => {
       await Promise.all([
@@ -377,6 +458,9 @@ const WorkoutProgramManagement = () => {
         fetchLogInLogOut(),
         fetchGender(),
         fetchAttributeHdr(),
+        fetchScreenType(),
+        fetchNumberPrefix(),
+        fetchBillFormat()
       ]);
     };
 
@@ -721,7 +805,7 @@ const WorkoutProgramManagement = () => {
     status: "",
   });
 
-  //Company Ag Grid
+  //Location Ag Grid
   const LocationColumnDefs = [
     {
       headerName: "Location No",
@@ -998,7 +1082,7 @@ const WorkoutProgramManagement = () => {
     permission_type: "",
   });
 
-  //Role Mapping Ag Grid
+  //Role Rights Ag Grid
   const RoleRightsColumnDefs = [
     {
       headerName: "Role ID",
@@ -1050,8 +1134,6 @@ const WorkoutProgramManagement = () => {
     }
   ];
 
-
-
   //User Dialog States
   const [submittedUser, setSubmittedUser] = useState(false);
   const [users, setUsers] = useState([]);
@@ -1075,6 +1157,7 @@ const WorkoutProgramManagement = () => {
     created_by: "admin",
     modified_by: "admin",
   });
+
   const [userImages, setUserImages] = useState<(string | null)[]>([null, null]);
 
   const handleUserFiles = async (files: (File | null)[]) => {
@@ -1224,7 +1307,7 @@ const WorkoutProgramManagement = () => {
     descriptions: "",
   });
 
-  //User Ag Grid
+  //Attribute Ag Grid
   const AttributeColumnDefs = [
     {
       headerName: "Code",
@@ -1296,9 +1379,96 @@ const WorkoutProgramManagement = () => {
   const [numberSeries, setNumberSeries] = useState([]);
   const [numberSeriesForm, setNumberSeriesForm] = useState({
     company_code: "YJK", Screen_Type: "", Start_Year: "", End_Year: "", Start_No: "", Running_No: "",
-    End_No: "", text: "", number_prefix: "", status: "Active",
+    End_No: "", text: "", number_prefix: "0", Status: "Active",
     bill_format: "", created_by: "admin", modified_by: "admin"
   });
+
+  //Number Series Search States
+  const [numberSeriesSearchForm, setnumberSeriesSearchForm] = useState({
+    Screen_Type: ""
+  });
+
+  //Number Series Ag Grid
+  const NumberSeriesColumnDefs = [
+    {
+      headerName: "Screen Type",
+      field: "Screen_Type",
+      minWidth: 150,
+      cellStyle: { fontWeight: 600 },
+    },
+    {
+      headerName: "Start Year",
+      field: "Start_Year",
+      minWidth: 150,
+    },
+    {
+      headerName: "End Year",
+      field: "End_Year",
+      minWidth: 150,
+    },
+    {
+      headerName: "Start No",
+      field: "Start_No",
+      minWidth: 150,
+    },
+    {
+      headerName: "Running No",
+      field: "Running_No",
+      minWidth: 150,
+    },
+    {
+      headerName: "End No",
+      field: "End_No",
+      minWidth: 150,
+    },
+    {
+      headerName: "Text",
+      field: "text",
+      minWidth: 150,
+    },
+    {
+      headerName: "Status",
+      field: "Status",
+      minWidth: 150,
+    },
+    {
+      headerName: "Bill Format",
+      field: "bill_format",
+      minWidth: 150,
+    },
+    {
+      headerName: "Actions",
+      width: 120,
+      minWidth: 120,
+      maxWidth: 120,
+      sortable: false,
+      filter: false,
+      cellStyle: {
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+      },
+      cellRenderer: (params: any) => (
+        <div className="flex gap-2">
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => handleEditNumberSeries(params.data)}
+          >
+            <Edit className="h-4 w-4" />
+          </Button>
+
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => handleDeleteNumberSeries(params.data)}
+          >
+            <Trash2 className="h-4 w-4 text-red-500" />
+          </Button>
+        </div>
+      ),
+    }
+  ];
 
   //Company CRUD Functions
   const handleAddCompany = () => {
@@ -3729,7 +3899,7 @@ const WorkoutProgramManagement = () => {
   };
 
   // NumberSeries CRUD Functions  
-  const handleNumberSeries = () => {
+  const handleAddNumberSeries = () => {
     setEditingNumberSeries(null);
     setNumberSeriesForm({
       company_code: "YJK",
@@ -3741,7 +3911,7 @@ const WorkoutProgramManagement = () => {
       End_No: "",
       text: "",
       number_prefix: "",
-      status: "Active",
+      Status: "Active",
       bill_format: "",
       created_by: "admin",
       modified_by: "admin",
@@ -3759,7 +3929,7 @@ const WorkoutProgramManagement = () => {
       !numberSeriesForm.End_No ||
       !numberSeriesForm.text ||
       !numberSeriesForm.number_prefix ||
-      !numberSeriesForm.status ||
+      !numberSeriesForm.Status ||
       !numberSeriesForm.bill_format
     ) {
       toast({
@@ -3778,13 +3948,13 @@ const WorkoutProgramManagement = () => {
     if (!validateNumberSeries()) return;
 
     try {
-      const response = await fetch(`${BASE_URL}/addCompanyMappingData`,
+      const response = await fetch(`${BASE_URL}/addNumberseries`,
         {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
           },
-          body: JSON.stringify(companyMappingForm),
+          body: JSON.stringify(numberSeriesForm),
         }
       );
 
@@ -3796,7 +3966,7 @@ const WorkoutProgramManagement = () => {
           description: data.message || "Number Series created successfully.",
         });
 
-        handleNumberSeriesSearch();
+        handleSearchNumberSeries();
         setIsNumberSeriesDialogOpen(false);
         setSubmittedNumberSeries(false);
       } else {
@@ -3822,45 +3992,14 @@ const WorkoutProgramManagement = () => {
     if (!validateNumberSeries()) return;
 
     try {
-      const formData = new FormData();
-
-      Object.keys(numberSeriesForm).forEach((key) => {
-        formData.append(key, numberSeriesForm[key as keyof typeof numberSeriesForm] ?? "");
-      });
-
-      companyImages.forEach((img, index) => {
-        if (!img) return;
-
-        const base64 = img.split(",")[1];
-        const byteCharacters = atob(base64);
-
-        const byteNumbers = Array.from(byteCharacters, (char) =>
-          char.charCodeAt(0)
-        );
-
-        const byteArray = new Uint8Array(byteNumbers);
-
-        const blob = new Blob([byteArray], {
-          type: "image/png",
-        });
-
-        if (index === 0) {
-          formData.append("company_logo", blob, "company_logo.png");
-        }
-
-        if (index === 1) {
-          formData.append(
-            "authorisedSignatur",
-            blob,
-            "authorisedSignatur.png"
-          );
-        }
-      });
 
       const response = await fetch(`${BASE_URL}/NumberSeriesUpdate`,
-        {
+       {
           method: "POST",
-          body: formData,
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(numberSeriesForm),
         }
       );
 
@@ -3872,7 +4011,7 @@ const WorkoutProgramManagement = () => {
           description: data.message || "NumberSeries updated successfully.",
         });
 
-        handleNumberSeriesSearch();
+        handleSearchNumberSeries();
         setEditingNumberSeries(null);
         setIsNumberSeriesDialogOpen(false);
         setSubmittedNumberSeries(false);
@@ -3893,51 +4032,52 @@ const WorkoutProgramManagement = () => {
       });
     }
   };
-  const handleDeleteNumberSeries = async (keyfiels: string) => {
+  const handleDeleteNumberSeries = async (row: any) => {
     const confirmed = window.confirm(
-      "Are you sure you want to delete this NumberSeries? This action cannot be undone."
+      "Are you sure you want to delete this Number Series?"
     );
 
     if (!confirmed) return;
 
     try {
-      const response = await fetch(`${BASE_URL}/NumberSeriesdeleteData`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            "modified-by": "admin",
-          },
-          body: JSON.stringify({
-            keyfiels: [keyfiels],
-          }),
-        }
-      );
+      const response = await fetch(`${BASE_URL}/NumberSeriesdeleteData`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "modified-by": "admin",
+          "company_code": "YJK", // if required
+        },
+        body: JSON.stringify({
+          Screen_TypesToDelete: [
+            {
+              Screen_Type: row.Screen_Type,
+              Start_Year: row.Start_Year,
+              End_Year: row.End_Year,
+            },
+          ],
+        }),
+      });
 
       const data = await response.json();
 
       if (response.ok) {
         toast({
           title: "Success",
-          description:
-            data.message || "Number Series deleted successfully.",
+          description: data.message,
         });
 
-        handleNumberSeriesSearch();
+        handleSearchNumberSeries();
       } else {
         toast({
           title: "Error",
-          description:
-            data.message || "Failed to delete Number Series.",
+          description: data.message,
           variant: "destructive",
         });
       }
     } catch (err: any) {
-      console.error(err);
-
       toast({
         title: "Server Error",
-        description: err.message || "Something went wrong.",
+        description: err.message,
         variant: "destructive",
       });
     }
@@ -3949,38 +4089,57 @@ const WorkoutProgramManagement = () => {
       await handleCreateNumberSeries();
     }
   };
-  const handleNumberSeriesSearch = async () => {
+
+  const handleEditNumberSeries = (mapping: any) => {
+    setEditingNumberSeries(mapping);
+
+    setNumberSeriesForm({
+      company_code: "YJK",
+      Screen_Type: mapping.Screen_Type,
+      Start_Year: mapping.Start_Year,
+      End_Year: mapping.End_Year,
+      Start_No: mapping.Start_No,
+      Running_No: mapping.Running_No || "0",
+      End_No: mapping.End_No,
+      text: mapping.text,
+      number_prefix: mapping.number_prefix,
+      Status: mapping.Status,
+      bill_format: mapping.bill_format,
+      created_by: "admin",
+      modified_by: "admin",
+    });
+
+    setIsNumberSeriesDialogOpen(true);
+  };
+
+  const handleSearchNumberSeries = async () => {
+
     try {
-      const response = await fetch(`${BASE_URL}/NumberSeriessearchdata`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            company_code: "YJK",
-            user_code: companyMappingSearchForm.user_code,
-            company_no: companyMappingSearchForm.company_no,
-            location_no: companyMappingSearchForm.location_no,
-            status: companyMappingSearchForm.status,
-          }),
-        }
-      );
+      const response = await fetch(`${BASE_URL}/numberseriessearchdata`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          company_code: "YJK",
+          Screen_Type: numberSeriesSearchForm.Screen_Type,
+        }),
+      });
 
       const data = await response.json();
 
       if (response.ok) {
-        setCompanyMappings(data);
+        setNumberSeries(data);
       } else if (response.status === 404) {
-        setCompanies([]);
+        setNumberSeries([]);
 
         toast({
           title: "Data Not Found",
-          description: data?.message || "No matching companies found.",
+          description: data?.message || "No matching Number Series found.",
           variant: "destructive",
         });
       } else {
-        setCompanies([]);
+        setNumberSeries([]);
 
         toast({
           title: "Search Failed",
@@ -3991,7 +4150,7 @@ const WorkoutProgramManagement = () => {
     } catch (error: any) {
       console.error("Search Error:", error);
 
-      setCompanies([]);
+      setNumberSeries([]);
 
       toast({
         title: "Server Error",
@@ -4002,25 +4161,6 @@ const WorkoutProgramManagement = () => {
       });
     }
   };
-  const handleEditNumberSeries = (mapping: any) => {
-    setEditingNumberSeries(mapping);
-
-    setCompanyMappingForm({
-      company_code: "YJK",
-      user_code: mapping.user_code,
-      company_no: mapping.company_no,
-      location_no: mapping.location_no,
-      status: mapping.status,
-      order_no: mapping.order_no,
-      keyfiels: mapping.keyfiels,
-      created_by: mapping.created_by,
-      modified_by: mapping.modified_by,
-    });
-
-    setIsNumberSeriesDialogOpen(true);
-  };
-
-
 
   //TAB BUTTON LABELS
   const addLabels = {
@@ -4063,7 +4203,7 @@ const WorkoutProgramManagement = () => {
         handleAddAttribute();
         break;
       case "NumberSeries":
-        handleNumberSeries();
+        handleAddNumberSeries();
         break;
       default:
         break;
@@ -4818,6 +4958,43 @@ const WorkoutProgramManagement = () => {
     </div>
   );
 
+  const renderNumberSeriesSearch = () => (
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+
+      <div className="space-y-2">
+        <Label htmlFor="ScreenType" className={submittedNumberSeries && !numberSeriesSearchForm.Screen_Type ? "text-red-500" : ""}>Screen Type*</Label>
+        <TooltipProvider>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <div>
+                <Select value={numberSeriesSearchForm.Screen_Type} onValueChange={(value) => setnumberSeriesSearchForm({ ...numberSeriesSearchForm, Screen_Type: value })}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select Screen Type" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {ScreenType.map((Screen_Type: any) => (
+                      <SelectItem
+                        key={Screen_Type.attributedetails_name}
+                        value={Screen_Type.attributedetails_name}
+                      >
+                        {Screen_Type.attributedetails_name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+            </TooltipTrigger>
+
+            <TooltipContent>
+              <p>Select the Screen Type</p>
+            </TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
+      </div>
+
+    </div>
+  );
+
 
   const handleSearch = () => {
     switch (activeTab) {
@@ -4851,6 +5028,10 @@ const WorkoutProgramManagement = () => {
 
       case "attribute":
         handleAttributeSearch();
+        break;
+
+      case "NumberSeries":
+        handleSearchNumberSeries();
         break;
 
       default:
@@ -4977,6 +5158,8 @@ const WorkoutProgramManagement = () => {
             {activeTab === "user" && renderUserSearch()}
 
             {activeTab === "attribute" && renderAttributeSearch()}
+
+            {activeTab === "NumberSeries" && renderNumberSeriesSearch()}
 
             <div className="flex justify-end gap-4 mt-6">
               <TooltipProvider>
@@ -5771,7 +5954,7 @@ const WorkoutProgramManagement = () => {
           </TabsContent>
 
           {/* NumberSeries Tab */}
-          <TabsContent value="NumberSeries">
+          {/* <TabsContent value="NumberSeries">
             <Card>
               <CardHeader className="text-left items-start">
                 <CardTitle>NumberSeries</CardTitle>
@@ -5781,15 +5964,15 @@ const WorkoutProgramManagement = () => {
                 <Table>
                   <TableHeader>
                     <TableRow>
-                      <TableHead>Screen_Type</TableHead>
-                      <TableHead>Start_Year</TableHead>
-                      <TableHead>End_Year</TableHead>
-                      <TableHead>Start_No</TableHead>
-                      <TableHead>Running_No</TableHead>
-                      <TableHead>End_No</TableHead>
-                      <TableHead>text</TableHead>
-                      <TableHead>status</TableHead>
-                      <TableHead>bill_format</TableHead>
+                      <TableHead>Screen Type</TableHead>
+                      <TableHead>Start Year</TableHead>
+                      <TableHead>End Year</TableHead>
+                      <TableHead>Start No</TableHead>
+                      <TableHead>Running No</TableHead>
+                      <TableHead>End No</TableHead>
+                      <TableHead>Text</TableHead>
+                      <TableHead>Status</TableHead>
+                      <TableHead>Bill Format</TableHead>
                       <TableHead className="text-right">Actions</TableHead>
                     </TableRow>
                   </TableHeader>
@@ -5813,7 +5996,7 @@ const WorkoutProgramManagement = () => {
                             <Button
                               variant="ghost"
                               size="sm"
-                              onClick={() => handleEditAttribute(NumberSeries)}
+                              onClick={() => handleEditNumberSeries(NumberSeries)}
                             >
                               <Edit className="h-4 w-4" />
                             </Button>
@@ -5821,12 +6004,7 @@ const WorkoutProgramManagement = () => {
                             <Button
                               variant="ghost"
                               size="sm"
-                            // onClick={() =>
-                            //   handleDeleteAttribute(
-                            //     attribute.attributeheader_code,
-                            //     attribute.attributedetails_code
-                            //   )
-                            // }
+                              onClick={() => handleDeleteNumberSeries(NumberSeries)}
                             >
                               <Trash2 className="h-4 w-4 text-red-500" />
                             </Button>
@@ -5836,6 +6014,27 @@ const WorkoutProgramManagement = () => {
                     ))}
                   </TableBody>
                 </Table>
+              </CardContent>
+            </Card>
+          </TabsContent> */}
+
+          <TabsContent value="NumberSeries">
+            <Card>
+              <CardHeader className="text-left items-start">
+                <CardTitle>Number Series</CardTitle>
+                <CardDescription>
+                  Manage all NumberSeries and their details
+                </CardDescription>
+              </CardHeader>
+
+              <CardContent>
+                <AgGridTable
+                  rowData={numberSeries}
+                  columnDefs={NumberSeriesColumnDefs}
+                  pagination={true}
+                  paginationPageSize={10}
+                  height="300px"
+                />
               </CardContent>
             </Card>
           </TabsContent>
@@ -7805,71 +8004,309 @@ const WorkoutProgramManagement = () => {
           </DialogContent>
         </Dialog>
 
-        {/* Add Numberseries Header Dialog  Or Popup*/}
+        {/* Add/Edit Numberseries Dialog Or Popup*/}
         <Dialog open={isNumberSeriesDialogOpen} onOpenChange={(open) => {
           if (!open) {
             setSubmittedNumberSeries(false);
           }
           setIsNumberSeriesDialogOpen(open);
         }}>
-          <DialogContent className="max-w-md">
+          <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
             <DialogHeader>
-              <DialogTitle>Add NumberSeries Hdr</DialogTitle>
-              <DialogDescription>Create a new NumberSeries Header</DialogDescription>
+              <DialogTitle>{editingNumberSeries ? 'Edit Nunmber Series ' : 'Add Nunmber Series '}</DialogTitle>
+              <DialogDescription>
+                {editingNumberSeries ? 'Update the Nunmber Series  details' : 'Create a new Nunmber Series '}
+              </DialogDescription>
             </DialogHeader>
+            <div className="grid gap-6 py-4">
+              <div className="space-y-4">
+                <h4 className="font-medium text-sm text-gray-700">Nunmber Series Details</h4>
+                <div className="grid grid-cols-2 gap-4">
 
-            <div className="grid gap-4 py-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="ScreenType" className={submittedNumberSeries && !numberSeriesForm.Screen_Type ? "text-red-500" : ""}>Screen Type*</Label>
+                    <TooltipProvider>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <div>
+                            <Select value={numberSeriesForm.Screen_Type} onValueChange={(value) => setNumberSeriesForm({ ...numberSeriesForm, Screen_Type: value })}>
+                              <SelectTrigger>
+                                <SelectValue placeholder="Select Screen Type" />
+                              </SelectTrigger>
+                              <SelectContent>
+                                {ScreenType.map((Screen_Type: any) => (
+                                  <SelectItem
+                                    key={Screen_Type.attributedetails_name}
+                                    value={Screen_Type.attributedetails_name}
+                                  >
+                                    {Screen_Type.attributedetails_name}
+                                  </SelectItem>
+                                ))}
+                              </SelectContent>
+                            </Select>
+                          </div>
+                        </TooltipTrigger>
 
-              <div className="space-y-2">
-                <Label htmlFor="code" className={submittedNumberSeries && !numberSeriesForm.Screen_Type ? "text-red-500" : ""}>Code*</Label>
-                <Input
-                  id="Code"
-                  value={numberSeriesForm.Screen_Type}
-                  onChange={(e) => setNumberSeriesForm({ ...numberSeriesForm, Screen_Type: e.target.value, })}
-                  placeholder="Enter Screen_Type (e.g., ACCOUNT_TYPE)"
-                />
-              </div>
+                        <TooltipContent>
+                          <p>Select the Screen Type</p>
+                        </TooltipContent>
+                      </Tooltip>
+                    </TooltipProvider>
+                  </div>
 
-              <div className="space-y-2">
-                <Label htmlFor="code" className={submittedNumberSeries && !numberSeriesForm.Screen_Type ? "text-red-500" : ""}>Name*</Label>
-                <Input
-                  id="Name"
-                  value={numberSeriesForm.Start_Year}
-                  onChange={(e) => setNumberSeriesForm({ ...numberSeriesForm, Start_Year: e.target.value, })}
-                  placeholder="Enter Start_Year (e.g., Account Type)"
-                />
-              </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="StartYear" className={submittedNumberSeries && !numberSeriesForm.Start_Year ? "text-red-500" : ""}>Start Year*</Label>
+                    <TooltipProvider>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <Input
+                            id="StartYear"
+                            type="date"
+                            value={numberSeriesForm.Start_Year}
+                            onChange={(e) => setNumberSeriesForm({ ...numberSeriesForm, Start_Year: e.target.value })}
+                            placeholder="Select Start Year"
+                          />
+                        </TooltipTrigger>
 
-              <div className="space-y-2">
-                <Label htmlFor="code" className={submittedNumberSeries && !numberSeriesForm.status ? "text-red-500" : ""}>Status*</Label>
-                <Select value={numberSeriesForm.status} onValueChange={(value) => setNumberSeriesForm({ ...numberSeriesForm, status: value, })}>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select Status" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {status.map((status: any) => (
-                      <SelectItem
-                        key={status.Screen_Type}
-                        value={status.Screen_Type}
-                      >
-                        {status.Screen_Type}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
+                        <TooltipContent>
+                          <p>Select Start Year</p>
+                        </TooltipContent>
+                      </Tooltip>
+                    </TooltipProvider>
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label htmlFor="EndYear" className={submittedNumberSeries && !numberSeriesForm.End_Year ? "text-red-500" : ""}>End Year*</Label>
+                    <TooltipProvider>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <Input
+                            id="EndYear"
+                            type="date"
+                            value={numberSeriesForm.End_Year}
+                            onChange={(e) => setNumberSeriesForm({ ...numberSeriesForm, End_Year: e.target.value })}
+                            placeholder="Select End Year"
+                          />
+                        </TooltipTrigger>
+
+                        <TooltipContent>
+                          <p>Select End Year</p>
+                        </TooltipContent>
+                      </Tooltip>
+                    </TooltipProvider>
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label htmlFor="Start No" className={submittedNumberSeries && !numberSeriesForm.Start_No ? "text-red-500" : ""}>Start No*</Label>
+                    <TooltipProvider>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <Input
+                            id="Start No"
+                            value={numberSeriesForm.Start_No}
+                            onChange={(e) => setNumberSeriesForm({ ...numberSeriesForm, Start_No: e.target.value })}
+                            placeholder="Enter Start No"
+                          />
+                        </TooltipTrigger>
+
+                        <TooltipContent>
+                          <p>Enter Start No</p>
+                        </TooltipContent>
+                      </Tooltip>
+                    </TooltipProvider>
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label htmlFor="Running No" className={submittedNumberSeries && !numberSeriesForm.Running_No ? "text-red-500" : ""}>Running No*</Label>
+                    <TooltipProvider>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <Input
+                            id="Running No"
+                            value={numberSeriesForm.Running_No}
+                            onChange={(e) => setNumberSeriesForm({ ...numberSeriesForm, Running_No: e.target.value })}
+                            placeholder="Enter Running No"
+                          />
+                        </TooltipTrigger>
+
+                        <TooltipContent>
+                          <p>Enter Running No</p>
+                        </TooltipContent>
+                      </Tooltip>
+                    </TooltipProvider>
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label htmlFor="End No" className={submittedNumberSeries && !numberSeriesForm.End_No ? "text-red-500" : ""}>End No*</Label>
+                    <TooltipProvider>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <Input
+                            id="End No"
+                            value={numberSeriesForm.End_No}
+                            onChange={(e) => setNumberSeriesForm({ ...numberSeriesForm, End_No: e.target.value })}
+                            placeholder="Enter End No"
+                          />
+                        </TooltipTrigger>
+
+                        <TooltipContent>
+                          <p>Enter End No</p>
+                        </TooltipContent>
+                      </Tooltip>
+                    </TooltipProvider>
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label htmlFor="Text" className={submittedNumberSeries && !numberSeriesForm.text ? "text-red-500" : ""}>Text*</Label>
+                    <TooltipProvider>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <Input
+                            id="text"
+                            value={numberSeriesForm.text}
+                            onChange={(e) => setNumberSeriesForm({ ...numberSeriesForm, text: e.target.value })}
+                            placeholder="Enter text"
+                          />
+
+                        </TooltipTrigger>
+
+                        <TooltipContent>
+                          <p>text</p>
+                        </TooltipContent>
+                      </Tooltip>
+                    </TooltipProvider>
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label htmlFor="Number Prefix" className={submittedNumberSeries && !numberSeriesForm.number_prefix ? "text-red-500" : ""}>Number Prefix*</Label>
+                    <TooltipProvider>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <div>
+                            <Select value={numberSeriesForm.number_prefix} onValueChange={(value) => setNumberSeriesForm({ ...numberSeriesForm, number_prefix: value })}>
+                              <SelectTrigger>
+                                <SelectValue placeholder="Select Number Prefix" />
+                              </SelectTrigger>
+                              <SelectContent>
+                                {NumberPrefix.map((Number_Prefix: any) => (
+                                  <SelectItem
+                                    key={Number_Prefix.attributedetails_name}
+                                    value={Number_Prefix.attributedetails_name}
+                                  >
+                                    {Number_Prefix.attributedetails_name}
+                                  </SelectItem>
+                                ))}
+                              </SelectContent>
+                            </Select>
+                          </div>
+                        </TooltipTrigger>
+
+                        <TooltipContent>
+                          <p>Select the Number Prefix</p>
+                        </TooltipContent>
+                      </Tooltip>
+                    </TooltipProvider>
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label htmlFor="Bill Format" className={submittedNumberSeries && !numberSeriesForm.bill_format ? "text-red-500" : ""}>Bill Format*</Label>
+                    <TooltipProvider>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <div>
+                            <Select value={numberSeriesForm.bill_format} onValueChange={(value) => setNumberSeriesForm({ ...numberSeriesForm, bill_format: value })}>
+                              <SelectTrigger>
+                                <SelectValue placeholder="Select Bill Format" />
+                              </SelectTrigger>
+                              <SelectContent>
+                                {BillFormat.map((bill_format: any) => (
+                                  <SelectItem
+                                    key={bill_format.attributedetails_name}
+                                    value={bill_format.attributedetails_name}
+                                  >
+                                    {bill_format.attributedetails_name} 
+                                  </SelectItem>
+                                ))}
+                              </SelectContent>
+                            </Select>
+                          </div>
+                        </TooltipTrigger>
+
+                        <TooltipContent>
+                          <p>Select the Bill Format</p>
+                        </TooltipContent>
+                      </Tooltip>
+                    </TooltipProvider>
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label htmlFor="Status" className={submittedNumberSeries && !numberSeriesForm.Status ? "text-red-500" : ""}>Status*</Label>
+                    <TooltipProvider>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <div>
+                            <Select value={numberSeriesForm.Status} onValueChange={(value) => setNumberSeriesForm({ ...numberSeriesForm, Status: value })}>
+                              <SelectTrigger>
+                                <SelectValue placeholder="Select Status" />
+                              </SelectTrigger>
+                              <SelectContent>
+                                {status.map((status: any) => (
+                                  <SelectItem
+                                    key={status.attributedetails_name}
+                                    value={status.attributedetails_name}
+                                  >
+                                    {status.attributedetails_name}
+                                  </SelectItem>
+                                ))}
+                              </SelectContent>
+                            </Select>
+                          </div>
+                        </TooltipTrigger>
+
+                        <TooltipContent>
+                          <p>Select the status</p>
+                        </TooltipContent>
+                      </Tooltip>
+                    </TooltipProvider>
+                  </div>
+
+                </div>
               </div>
             </div>
-
             <DialogFooter>
-              <Button variant="outline" onClick={() => {
-                setSubmittedNumberSeries(false);
-                setIsNumberSeriesDialogOpen(false);
-              }}>Cancel</Button>
-              <Button >Save</Button>
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Button variant="outline" onClick={() => {
+                      setSubmittedNumberSeries(false);
+                      setIsNumberSeriesDialogOpen(false);
+                    }}>Cancel</Button>
+                  </TooltipTrigger>
+
+                  <TooltipContent>
+                    <p>Cancel without saving changes.</p>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Button onClick={handleSaveNumberSeries}>{editingNumberSeries ? 'Update' : 'Create'} Nunmber Series</Button>
+                  </TooltipTrigger>
+
+                  <TooltipContent>
+                    <p>
+                      {editingNumberSeries
+                        ? "Update Nunmber Series"
+                        : "Create a Nunmber Series"}
+                    </p>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
             </DialogFooter>
           </DialogContent>
         </Dialog>
-
       </main>
     </div>
   );
