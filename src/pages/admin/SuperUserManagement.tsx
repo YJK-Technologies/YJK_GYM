@@ -1891,7 +1891,7 @@ const [numberSeriesForm, setNumberSeriesForm] = useState({
       if (response.ok) {
         setCompanyMappings(data);
       } else if (response.status === 404) {
-        setCompanies([]);
+        setCompanyMappings([]);
 
         toast({
           title: "Data Not Found",
@@ -1899,7 +1899,7 @@ const [numberSeriesForm, setNumberSeriesForm] = useState({
           variant: "destructive",
         });
       } else {
-        setCompanies([]);
+        setCompanyMappings([]);
 
         toast({
           title: "Search Failed",
@@ -1910,7 +1910,7 @@ const [numberSeriesForm, setNumberSeriesForm] = useState({
     } catch (error: any) {
       console.error("Search Error:", error);
 
-      setCompanies([]);
+      setCompanyMappings([]);
 
       toast({
         title: "Server Error",
@@ -5181,7 +5181,7 @@ const [numberSeriesForm, setNumberSeriesForm] = useState({
                   columnDefs={CompanyColumnDefs}
                   pagination={true}
                   paginationPageSize={10}
-                  height="300px"
+                  height="400px"
                 />
               </CardContent>
             </Card>
@@ -5265,7 +5265,7 @@ const [numberSeriesForm, setNumberSeriesForm] = useState({
                   columnDefs={CompanyMappingColumnDefs}
                   pagination={true}
                   paginationPageSize={10}
-                  height="300px"
+                  height="500px"
                 />
               </CardContent>
             </Card>
@@ -5365,7 +5365,7 @@ const [numberSeriesForm, setNumberSeriesForm] = useState({
                   columnDefs={LocationColumnDefs}
                   pagination={true}
                   paginationPageSize={10}
-                  height="300px"
+                  height="400px"
                 />
               </CardContent>
             </Card>
@@ -5441,7 +5441,7 @@ const [numberSeriesForm, setNumberSeriesForm] = useState({
                   columnDefs={roleColumnDefs}
                   pagination={true}
                   paginationPageSize={10}
-                  height="300px"
+                  height="500px"
                 />
               </CardContent>
             </Card>
@@ -5518,7 +5518,7 @@ const [numberSeriesForm, setNumberSeriesForm] = useState({
                   columnDefs={RoleMappingColumnDefs}
                   pagination={true}
                   paginationPageSize={10}
-                  height="300px"
+                  height="500px"
                 />
               </CardContent>
             </Card>
@@ -5594,7 +5594,7 @@ const [numberSeriesForm, setNumberSeriesForm] = useState({
                   columnDefs={RoleRightsColumnDefs}
                   pagination={true}
                   paginationPageSize={10}
-                  height="300px"
+                  height="500px"
                 />
               </CardContent>
             </Card>
@@ -5680,7 +5680,7 @@ const [numberSeriesForm, setNumberSeriesForm] = useState({
                   columnDefs={UserColumnDefs}
                   pagination={true}
                   paginationPageSize={10}
-                  height="300px"
+                  height="400px"
                 />
               </CardContent>
             </Card>
@@ -5761,7 +5761,7 @@ const [numberSeriesForm, setNumberSeriesForm] = useState({
                   columnDefs={AttributeColumnDefs}
                   pagination={true}
                   paginationPageSize={10}
-                  height="300px"
+                  height="500px"
                 />
               </CardContent>
             </Card>
@@ -6167,6 +6167,7 @@ const [numberSeriesForm, setNumberSeriesForm] = useState({
                             type="date"
                             value={companyForm.foundedDate}
                             onChange={(e) => setCompanyForm({ ...companyForm, foundedDate: e.target.value })}
+                            max={new Date().toISOString().split("T")[0]}
                             placeholder="Select founded date"
                           />
                         </TooltipTrigger>
@@ -6206,10 +6207,10 @@ const [numberSeriesForm, setNumberSeriesForm] = useState({
                           <Input
                             id="name"
                             value={companyForm.contact_no}
-                            maxLength={100}
+                            maxLength={13}
                             inputMode="numeric"
                             onChange={(e) => setCompanyForm({ ...companyForm, contact_no: e.target.value.replace(/\D/g, ""), })}
-                            placeholder="Enter contact number (e.g., +91 9876543210)"
+                            placeholder="Enter contact number (e.g.,+91 9876543210)"
                           />
                         </TooltipTrigger>
 
@@ -6492,6 +6493,7 @@ const [numberSeriesForm, setNumberSeriesForm] = useState({
                         <TooltipTrigger asChild>
                           <Input
                             id="name"
+                            type='number'
                             value={companyMappingForm.order_no}
                             onChange={(e) => setCompanyMappingForm({ ...companyMappingForm, order_no: e.target.value })}
                             placeholder="e.g., Weight Loss Transformation"
@@ -6570,6 +6572,7 @@ const [numberSeriesForm, setNumberSeriesForm] = useState({
                         <TooltipTrigger asChild>
                           <Input
                             id="name"
+                            maxLength={18}
                             readOnly={!!editingLocation}
                             value={locationForm.location_no}
                             onChange={(e) => setLocationForm({ ...locationForm, location_no: e.target.value })}
@@ -6756,6 +6759,7 @@ const [numberSeriesForm, setNumberSeriesForm] = useState({
                         <TooltipTrigger asChild>
                           <Input
                             id="name"
+                            maxLength={10}
                             value={locationForm.pincode}
                             onChange={(e) => setLocationForm({ ...locationForm, pincode: e.target.value })}
                             placeholder="Enter Pin code (e.g., 600001)"
@@ -6859,7 +6863,7 @@ const [numberSeriesForm, setNumberSeriesForm] = useState({
                           <Input
                             id="name"
                             value={locationForm.contact_no}
-                            maxLength={100}
+                            maxLength={13}
                             onChange={(e) => setLocationForm({ ...locationForm, contact_no: e.target.value.replace(/\D/g, ""), })}
                             placeholder="Enter contact number (e.g., +91 9876543210)"
                           />
