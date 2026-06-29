@@ -115,6 +115,10 @@ router.post("/getBillFormat",dataController.getBillFormat)
 router.post("/getboolean", dataController.getboolean)
 router.post("/numberseriessearchdata",dataController.getnumberseriessearchdata)
 router.post("/addNumberseries",dataController.addNumberseries)
+router.post("/NumberSeriesUpdate",dataController.NumberSeriesUpdate)
+router.post("/NumberSeriesdeleteData",dataController.numberseriesdeleteData)
+
+
 
 
 module.exports = router;

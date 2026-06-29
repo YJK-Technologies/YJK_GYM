@@ -1398,6 +1398,7 @@ const [ numberSeriesForm, setNumberSeriesForm] = useState({
     Screen_Type: ""
   });
 
+  
   //Company CRUD Functions
   const handleAddCompany = () => {
     setEditingCompany(null);
@@ -3991,55 +3992,56 @@ const [ numberSeriesForm, setNumberSeriesForm] = useState({
       });
     }
   };
-    const handleDeleteNumberSeries = async (keyfiels: string) => {
-    const confirmed = window.confirm(
-      "Are you sure you want to delete this NumberSeries? This action cannot be undone."
-    );
+const handleDeleteNumberSeries = async (row: any) => {
+  const confirmed = window.confirm(
+    "Are you sure you want to delete this Number Series?"
+  );
 
-    if (!confirmed) return;
+  if (!confirmed) return;
 
-    try {
-      const response = await fetch(`${BASE_URL}/NumberSeriesdeleteData`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            "modified-by": "admin",
+  try {
+    const response = await fetch(`${BASE_URL}/NumberSeriesdeleteData`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "modified-by": "admin",
+        "company_code": "YJK", // if required
+      },
+      body: JSON.stringify({
+        Screen_TypesToDelete: [
+          {
+            Screen_Type: row.Screen_Type,
+            Start_Year: row.Start_Year,
+            End_Year: row.End_Year,
           },
-          body: JSON.stringify({
-            keyfiels: [keyfiels],
-          }),
-        }
-      );
+        ],
+      }),
+    });
 
-      const data = await response.json();
+    const data = await response.json();
 
-      if (response.ok) {
-        toast({
-          title: "Success",
-          description:
-            data.message || "Number Series deleted successfully.",
-        });
-
-        handleNumberSeriesSearch();
-      } else {
-        toast({
-          title: "Error",
-          description:
-            data.message || "Failed to delete Number Series.",
-          variant: "destructive",
-        });
-      }
-    } catch (err: any) {
-      console.error(err);
-
+    if (response.ok) {
       toast({
-        title: "Server Error",
-        description: err.message || "Something went wrong.",
+        title: "Success",
+        description: data.message,
+      });
+
+      handleNumberSeriesSearch();
+    } else {
+      toast({
+        title: "Error",
+        description: data.message,
         variant: "destructive",
       });
     }
-  };
+  } catch (err: any) {
+    toast({
+      title: "Server Error",
+      description: err.message,
+      variant: "destructive",
+    });
+  }
+};
   const handleSaveNumberSeries = async () => {
     if (editingNumberSeries) {
       await handleUpdateNumberSeries();
@@ -4103,16 +4105,20 @@ const [ numberSeriesForm, setNumberSeriesForm] = useState({
   const handleEditNumberSeries = (mapping: any) => {
     setEditingNumberSeries(mapping);
 
-    setCompanyMappingForm({
+    setNumberSeriesForm({
       company_code: "YJK",
-      user_code: mapping.user_code,
-      company_no: mapping.company_no,
-      location_no: mapping.location_no,
-      status: mapping.status,
-      order_no: mapping.order_no,
-      keyfiels: mapping.keyfiels,
-      created_by: mapping.created_by,
-      modified_by: mapping.modified_by,
+      Screen_Type: mapping.Screen_Type,
+      Start_Year: mapping.Start_Year,
+      End_Year:mapping.End_Year,
+      Start_No: mapping.Start_No,
+      Running_No: mapping.Running_No,
+      End_No: mapping.End_No ,
+      text: mapping.text ,
+      number_prefix: mapping.number_prefix ,
+      Status: "Active",
+      bill_format: mapping.bill_format,
+      created_by: "admin", 
+      modified_by: "admin", 
     });
 
     setIsNumberSeriesDialogOpen(true);
@@ -6004,7 +6010,7 @@ const [ numberSeriesForm, setNumberSeriesForm] = useState({
                             <Button
                               variant="ghost"
                               size="sm"
-                              onClick={() => handleEditAttribute(NumberSeries)}
+                              onClick={() => handleEditNumberSeries(NumberSeries)}
                             >
                               <Edit className="h-4 w-4" />
                             </Button>
@@ -6012,15 +6018,10 @@ const [ numberSeriesForm, setNumberSeriesForm] = useState({
                             <Button
                               variant="ghost"
                               size="sm"
-                              // onClick={() =>
-                              //   handleDeleteAttribute(
-                              //     attribute.attributeheader_code,
-                              //     attribute.attributedetails_code
-                              //   )
-                              // }
-                            >
-                              <Trash2 className="h-4 w-4 text-red-500" />
-                            </Button>
+                              onClick={() => handleDeleteNumberSeries(NumberSeries)}
+>
+                          <Trash2 className="h-4 w-4 text-red-500" />
+                          </Button>
                           </div>
                         </TableCell>
                       </TableRow>
@@ -8142,7 +8143,7 @@ const [ numberSeriesForm, setNumberSeriesForm] = useState({
                   </div>                 
  
                   <div className="space-y-2">
-                    <Label htmlFor="Text" className={submittedNumberSeries && !numberSeriesForm.text ? "text-red-500" : ""}>text*</Label>
+                    <Label htmlFor="Text" className={submittedNumberSeries && !numberSeriesForm.text ? "text-red-500" : ""}>Text*</Label>
                     <TooltipProvider>
                       <Tooltip>
                         <TooltipTrigger asChild>

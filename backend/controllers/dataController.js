@@ -2989,7 +2989,9 @@ getscreentype,
 getBillFormat,
 getboolean,
 getnumberseriessearchdata,
-addNumberseries
+addNumberseries,
+NumberSeriesUpdate,
+numberseriesdeleteData
 
 
 };
