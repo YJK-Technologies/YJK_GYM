@@ -13,6 +13,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { useNavigate } from 'react-router-dom';
 import { useToast } from '@/hooks/use-toast';
 import { ArrowLeft, Plus, Search, RotateCcw, Dumbbell, Package, Edit, Trash2, Eye, EyeOff, } from 'lucide-react';
+import { Building2, Building, MapPin, Shield, Users, ShieldCheck, User, Tags, Hash, } from "lucide-react";
 import ImageUpload from "../ImageUpload";
 import { BASE_URL } from '../ApiConfig';
 import AgGridTable from "@/components/ui/ag-grid-table";
@@ -4179,7 +4180,8 @@ console.log(numberSeriesForm)
   };
 
   const renderCompanySearch = () => (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-x-4 gap-y-6">
+
       <div className="space-y-2">
         <Label>Company No</Label>
         <TooltipProvider>
@@ -5222,7 +5224,7 @@ console.log(numberSeriesForm)
                 <ArrowLeft className="h-4 w-4 mr-2" />
                 Back to Dashboard
               </Button>
-              <h1 className="text-2xl font-bold text-gray-900">Super Admin Management</h1>
+              <h1 className="text-2xl font-bold text-gray-900">Super User Management</h1>
             </div>
             <Badge variant="secondary">Admin</Badge>
           </div>
@@ -5301,39 +5303,39 @@ console.log(numberSeriesForm)
             <div className="overflow-x-auto min-w-0 max-w-full custom-scrollbar pb-2">
               <TabsList className="inline-flex h-10 items-center justify-center rounded-md bg-muted p-1 text-muted-foreground w-max">
                 <TabsTrigger value="company" className="flex items-center gap-2">
-                  <Dumbbell className="h-4 w-4" />
+                  <Building className="h-4 w-4" />
                   Company
                 </TabsTrigger>
                 <TabsTrigger value="companyMapping" className="flex items-center gap-2">
-                  <Package className="h-4 w-4" />
+                  <Building2 className="h-4 w-4" />
                   Company Mapping
                 </TabsTrigger>
                 <TabsTrigger value="location" className="flex items-center gap-2">
-                  <Package className="h-4 w-4" />
+                  <MapPin className="h-4 w-4" />
                   Location
                 </TabsTrigger>
                 <TabsTrigger value="role" className="flex items-center gap-2">
-                  <Package className="h-4 w-4" />
+                  <Shield className="h-4 w-4" />
                   Role
                 </TabsTrigger>
                 <TabsTrigger value="roleMapping" className="flex items-center gap-2">
-                  <Package className="h-4 w-4" />
+                  <Users className="h-4 w-4" />
                   Role Mapping
                 </TabsTrigger>
                 <TabsTrigger value="roleRights" className="flex items-center gap-2">
-                  <Package className="h-4 w-4" />
+                  <ShieldCheck className="h-4 w-4" />
                   Role Rights
                 </TabsTrigger>
                 <TabsTrigger value="user" className="flex items-center gap-2">
-                  <Package className="h-4 w-4" />
+                  <User className="h-4 w-4" />
                   User
                 </TabsTrigger>
                 <TabsTrigger value="attribute" className="flex items-center gap-2">
-                  <Package className="h-4 w-4" />
+                  <Tags className="h-4 w-4" />
                   Attribute
                 </TabsTrigger>
                 <TabsTrigger value="NumberSeries" className="flex items-center gap-2">
-                  <Package className="h-4 w-4" />
+                  <Hash className="h-4 w-4" />
                   Number Series
                 </TabsTrigger>
               </TabsList>
@@ -5643,7 +5645,7 @@ console.log(numberSeriesForm)
                 <div className="grid grid-cols-2 gap-4">
 
                   <div className="space-y-2">
-                    <Label htmlFor="name" className={submittedCompany && !companyForm.company_no ? "text-red-500" : ""}>Company Code*</Label>
+                    <Label htmlFor="name" className={submittedCompany && !companyForm.company_no ? "text-red-500" : ""}>Company No*</Label>
                     <TooltipProvider>
                       <Tooltip>
                         <TooltipTrigger asChild>
@@ -5653,15 +5655,15 @@ console.log(numberSeriesForm)
                             value={companyForm.company_no}
                             maxLength={18}
                             onChange={(e) => setCompanyForm({ ...companyForm, company_no: e.target.value })}
-                            placeholder="Enter company code (e.g., CMP001)"
+                            placeholder="Enter company number (e.g., CMP001)"
                           />
                         </TooltipTrigger>
 
                         <TooltipContent>
                           <p>
                             {editingCompany
-                              ? "Company Code cannot be changed while editing."
-                              : "Enter company code"}
+                              ? "Company No cannot be changed while editing."
+                              : "Enter company number"}
                           </p>
                         </TooltipContent>
                       </Tooltip>
