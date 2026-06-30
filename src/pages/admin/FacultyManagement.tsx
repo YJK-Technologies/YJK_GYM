@@ -8,7 +8,7 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { useNavigate } from 'react-router-dom';
-import { ArrowLeft, Plus, Edit, Trash2, GraduationCap, Mail, Phone, Clock, Award, Users } from 'lucide-react';
+import { ArrowLeft, Plus, Edit, Trash2, GraduationCap, Mail, Phone, Clock, Award, Users, Eye, EyeOff, } from 'lucide-react';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { BASE_URL } from '../ApiConfig';
@@ -42,6 +42,7 @@ const [submittedTrainer, setSubmittedTrainer] = useState(false);
 const [Trainers, setTrainers] = useState([]);
 const [editingTrainer, setEditingTrainer] = useState<any>(null);
 const [isTrainerDialogOpen, setIsTrainerDialogOpen] = useState(false);
+const [showPassword, setShowPassword] = useState(false);
 const [TrainerForm, setTrainerForm] = useState({
     company_code: "",
     user_code: "",
@@ -347,15 +348,15 @@ const [TrainerForm, setTrainerForm] = useState({
         // Object.entries(TrainerForm).forEach(([key, value]) => {
         //   formData.append(key, value as string);
         // });
-        Object.entries(TrainerForm).forEach(([key, value]) => {
-          if (key === "super_admin") {
-            formData.append("super_admin", value ? "Yes" : "No");
-          } else {
-            formData.append(key, String(value ?? ""));
-          }
-        });
+        // Object.entries(TrainerForm).forEach(([key, value]) => {
+        //   if (key === "super_admin") {
+        //     formData.append("super_admin", value ? "Yes" : "No");
+        //   } else {
+        //     formData.append(key, String(value ?? ""));
+        //   }
+        // });
   
-        const response = await fetch(`${BASE_URL}/useradd`, {
+        const response = await fetch(`${BASE_URL}/GYM_TrainerInsert`, {
           method: "POST",
           body: formData,
         });
@@ -622,6 +623,45 @@ const [TrainerForm, setTrainerForm] = useState({
                         <Label htmlFor="email">Email</Label>
                         <Input id="email" type="email" placeholder="trainer@ruw.edu.bh" />
                       </div>
+                      
+                      {/* Newly Added Field */}
+                            <div className="space-y-2">
+                          {/* <Label htmlFor="name">Password*</Label> */}
+                          <Label htmlFor="name" className={submittedTrainer && !TrainerForm.user_password ? "text-red-500" : ""}>Password*</Label>
+                          <TooltipProvider>
+                            <Tooltip>
+                              <TooltipTrigger asChild>
+                          <div className="relative">
+                            <Input
+                              id="Password"
+                              type={showPassword ? "text" : "password"}
+                              value={TrainerForm.user_password}
+                              onChange={(e) =>
+                                setTrainerForm({
+                                  ...TrainerForm,
+                                  user_password: e.target.value,
+                                })
+                              }
+                              placeholder="e.g., Password"
+                              className="pr-10"
+                            />
+
+                            <button
+                              type="button"
+                              onClick={() => setShowPassword(!showPassword)}
+                              className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700"
+                            >
+                              {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                            </button>
+                          </div>
+                          </TooltipTrigger>
+                            
+                              <TooltipContent>
+                                <p>Enter Password</p>
+                              </TooltipContent>
+                            </Tooltip>
+                          </TooltipProvider>
+                        </div>
 
                       {/* Newly Added Field */}
                       <div className="space-y-2">
@@ -664,9 +704,9 @@ const [TrainerForm, setTrainerForm] = useState({
                           </SelectContent>
                         </Select>
                       </div>
-                    </div>
+                    {/* </div> */}
 
-                    <div className="grid grid-cols-2 gap-4">
+                    {/* <div className="grid grid-cols-2 gap-4"> */}
                       <div className="space-y-2">
                         <Label htmlFor="phone">Phone</Label>
                         <Input id="phone" placeholder="+973 XXXX XXXX" />
