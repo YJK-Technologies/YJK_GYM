@@ -7244,7 +7244,7 @@ console.log(numberSeriesForm)
                           </TooltipTrigger>
                     
                           <TooltipContent>
-                            <p>Select the status</p>
+                            <p>Select the Status</p>
                           </TooltipContent>
                         </Tooltip>
                       </TooltipProvider>
