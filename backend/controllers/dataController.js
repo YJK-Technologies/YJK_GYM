@@ -2900,9 +2900,7 @@ const getnumberseriessearchdata = async (req, res) => {
 };
 //Code Ended by Ramya on 27-06-2026
 
-
-// Auto-generated Node.js CRUD for sp_GYM_Trainer
-
+// Code added by Dinesh Gokul 29-06-2026
 const GYM_TrainerInsert = async (req, res) => {
   const {
   TrainerID, FullName, Email, Password, Gender, Mobile, Certifications, Specializations, Experience, WorkingSchedule, DOB, Biography, Is_Active, Location_Code, KeyField,
@@ -2940,7 +2938,7 @@ const GYM_TrainerInsert = async (req, res) => {
       .input("created_date", sql.DateTime, created_date)
       .input("modified_by", sql.NVarChar, modified_by)
       .input("modified_date", sql.DateTime, modified_date)
-      .query(`EXEC sp_GYM_Trainer @mode, @TrainerID, @FullName, @Email, @Password, @Gender, @Mobile, @Photo, @Certifications, @Specializations, @Experience, @WorkingSchedule, @DOB, @Biography, @Is_Active, @Location_Code, @KeyField, @company_code, @created_by, @created_date, @modified_by, @modified_date`);
+      .query(`EXEC sp_GYM_Trainer @mode, @TrainerID, @FullName, @Email, @Password, @Gender, @Mobile, @Photo, @Certifications, @Specializations, @Experience, @WorkingSchedule, @DOB, @Biography, @Is_Active, @Location_Code, @KeyField, @company_code, 0, 0, '', '',@created_by, @created_date, @modified_by, @modified_date`);
 
     res.status(200).json({ success: true, message: "GYM_Trainer insertd successfully" });
   } catch (err) {
@@ -2986,7 +2984,7 @@ const GYM_TrainerUpdate = async (req, res) => {
       .input("created_date", sql.DateTime, created_date)
       .input("modified_by", sql.NVarChar, modified_by)
       .input("modified_date", sql.DateTime, modified_date)
-      .query(`EXEC sp_GYM_Trainer @mode, @TrainerID, @FullName, @Email, @Password, @Gender, @Mobile, @Photo, @Certifications, @Specializations, @Experience, @WorkingSchedule, @DOB, @Biography, @Is_Active, @Location_Code, @KeyField, @company_code, @created_by, @created_date, @modified_by, @modified_date`);
+      .query(`EXEC sp_GYM_Trainer @mode, @TrainerID, @FullName, @Email, @Password, @Gender, @Mobile, @Photo, @Certifications, @Specializations, @Experience, @WorkingSchedule, @DOB, @Biography, @Is_Active, @Location_Code, @KeyField, @company_code,   0, 0, 0, 0,@created_by, @created_date, @modified_by, @modified_date`);
 
     res.status(200).json({ success: true, message: "GYM_Trainer updated successfully" });
   } catch (err) {
@@ -3032,7 +3030,7 @@ const GYM_TrainerDelete = async (req, res) => {
       .input("created_date", sql.DateTime, created_date)
       .input("modified_by", sql.NVarChar, modified_by)
       .input("modified_date", sql.DateTime, modified_date)
-      .query(`EXEC sp_GYM_Trainer @mode, @TrainerID, @FullName, @Email, @Password, @Gender, @Mobile, @Photo, @Certifications, @Specializations, @Experience, @WorkingSchedule, @DOB, @Biography, @Is_Active, @Location_Code, @KeyField, @company_code, @created_by, @created_date, @modified_by, @modified_date`);
+      .query(`EXEC sp_GYM_Trainer @mode, @TrainerID, @FullName, @Email, @Password, @Gender, @Mobile, @Photo, @Certifications, @Specializations, @Experience, @WorkingSchedule, @DOB, @Biography, @Is_Active, @Location_Code, @KeyField, @company_code, @created_by,  0, 0, '', '',@created_date, @modified_by, @modified_date`);
 
     res.status(200).json({ success: true, message: "GYM_Trainer deleted successfully" });
   } catch (err) {
@@ -3041,8 +3039,6 @@ const GYM_TrainerDelete = async (req, res) => {
   }
 };
 
-// ---------- HEADER LOOP CRUD ----------
-// Auto-generated GYM_TrainerLoopInsert API for sp_GYM_Trainer
 const GYM_TrainerLoopInsert = async (req, res) => {
   const GYM_TrainerData = req.body.GYM_TrainerData;
   if (!GYM_TrainerData || !GYM_TrainerData.length) {
@@ -3075,7 +3071,7 @@ const GYM_TrainerLoopInsert = async (req, res) => {
         .input("created_date", sql.DateTime, item.created_date)
         .input("modified_by", sql.NVarChar, item.modified_by)
         .input("modified_date", sql.DateTime, item.modified_date)
-        .query(`EXEC sp_GYM_Trainer @mode, @TrainerID, @FullName, @Email, @Password, @Gender, @Mobile, @Photo, @Certifications, @Specializations, @Experience, @WorkingSchedule, @DOB, @Biography, @Is_Active, @Location_Code, @KeyField, @company_code, @created_by, @created_date, @modified_by, @modified_date`);
+        .query(`EXEC sp_GYM_Trainer @mode, @TrainerID, @FullName, @Email, @Password, @Gender, @Mobile, @Photo, @Certifications, @Specializations, @Experience, @WorkingSchedule, @DOB, @Biography, @Is_Active, @Location_Code, @KeyField, @company_code,  0, 0, '', '',@created_by, @created_date, @modified_by, @modified_date`);
     }
     res.status(200).json("GYM_Trainer data inserted successfully");
   } catch (err) {
@@ -3084,7 +3080,6 @@ const GYM_TrainerLoopInsert = async (req, res) => {
   }
 };
 
-// Auto-generated GYM_TrainerLoopUpdate API for sp_GYM_Trainer
 const GYM_TrainerLoopUpdate = async (req, res) => {
   const GYM_TrainerData = req.body.GYM_TrainerData;
   if (!GYM_TrainerData || !GYM_TrainerData.length) {
@@ -3117,7 +3112,7 @@ const GYM_TrainerLoopUpdate = async (req, res) => {
         .input("created_date", sql.DateTime, item.created_date)
         .input("modified_by", sql.NVarChar, item.modified_by)
         .input("modified_date", sql.DateTime, item.modified_date)
-        .query(`EXEC sp_GYM_Trainer @mode, @TrainerID, @FullName, @Email, @Password, @Gender, @Mobile, @Photo, @Certifications, @Specializations, @Experience, @WorkingSchedule, @DOB, @Biography, @Is_Active, @Location_Code, @KeyField, @company_code, @created_by, @created_date, @modified_by, @modified_date`);
+        .query(`EXEC sp_GYM_Trainer @mode, @TrainerID, @FullName, @Email, @Password, @Gender, @Mobile, @Photo, @Certifications, @Specializations, @Experience, @WorkingSchedule, @DOB, @Biography, @Is_Active, @Location_Code, @KeyField, @company_code,  0, 0, '', '',@created_by, @created_date, @modified_by, @modified_date`);
     }
     res.status(200).json("GYM_Trainer data updated successfully");
   } catch (err) {
@@ -3126,7 +3121,6 @@ const GYM_TrainerLoopUpdate = async (req, res) => {
   }
 };
 
-// Auto-generated GYM_TrainerLoopDelete API for sp_GYM_Trainer
 const GYM_TrainerLoopDelete = async (req, res) => {
   const GYM_TrainerData = req.body.GYM_TrainerData;
   if (!GYM_TrainerData || !GYM_TrainerData.length) {
@@ -3159,7 +3153,7 @@ const GYM_TrainerLoopDelete = async (req, res) => {
         .input("created_date", sql.DateTime, item.created_date)
         .input("modified_by", sql.NVarChar, item.modified_by)
         .input("modified_date", sql.DateTime, item.modified_date)
-        .query(`EXEC sp_GYM_Trainer @mode, @TrainerID, @FullName, @Email, @Password, @Gender, @Mobile, @Photo, @Certifications, @Specializations, @Experience, @WorkingSchedule, @DOB, @Biography, @Is_Active, @Location_Code, @KeyField, @company_code, @created_by, @created_date, @modified_by, @modified_date`);
+        .query(`EXEC sp_GYM_Trainer @mode, @TrainerID, @FullName, @Email, @Password, @Gender, @Mobile, @Photo, @Certifications, @Specializations, @Experience, @WorkingSchedule, @DOB, @Biography, @Is_Active, @Location_Code, @KeyField, @company_code,  0, 0, '', '', @created_by, @created_date, @modified_by, @modified_date`);
     }
     res.status(200).json("GYM_Trainer data deleted successfully");
   } catch (err) {
@@ -3167,6 +3161,53 @@ const GYM_TrainerLoopDelete = async (req, res) => {
     res.status(500).json({ message: err.message || "Internal Server Error" });
   }
 };
+// Code ended by Dinesh Gokul 29-06-2026
+
+// Code added by Dinesh Gokul 30-06-2026
+const getTrainerSC = async (req, res) => {
+  const { company_code,Location_Code,FullName,Email,Gender,Mobile,
+    Specializations,Experience,WorkingSchedule,DOB,age_from,age_to,experience_from,experience_to } = req.body;
+
+  try {
+    // Connect to the database
+    const pool = await connection.connectToDatabase();
+
+    // Execute the query
+    const result = await pool
+      .request()
+      .input("mode", sql.NVarChar, "SC")
+      .input("company_code", sql.NVarChar, company_code)
+      .input("Location_Code", sql.NVarChar, Location_Code)
+      .input("FullName", sql.NVarChar, FullName)
+      .input("Email", sql.NVarChar, Email)
+      .input("Gender", sql.NVarChar, Gender)
+      .input("Mobile", sql.NVarChar, Mobile)
+      .input("Specializations", sql.NVarChar, Specializations)
+      .input("Experience", sql.NVarChar, Experience)
+      .input("WorkingSchedule", sql.NVarChar, WorkingSchedule)
+      .input("DOB", sql.NVarChar, DOB)
+      .input("age_from", sql.Int, age_from)
+      .input("age_to", sql.Int, age_to)
+      .input("experience_from", sql.Int, experience_from)
+      .input("experience_to", sql.Int, experience_to)
+      .query(`EXEC sp_GYM_Trainer @mode, '', @FullName, @Email, '', @Gender, @Mobile, Null, 
+        '', @Specializations, @Experience, @WorkingSchedule, @DOB, '', '', 
+        @Location_Code, '', @company_code,  @age_from, @age_to, @experience_from, @experience_to, '', '', '', ''`);
+
+    // Send response
+    if (result.recordset.length > 0) {
+      res.status(200).json(result.recordset); // 200 OK if data is found
+    } else {
+      res.status(404).json("Data not found"); // 404 Not Found if no data is found
+    }
+  } catch (err) {
+    console.error("Error", err.message);
+    return res
+      .status(500)
+      .json({ message: err.message || "Internal Server Error" });
+  }
+};
+// Code ended by Dinesh Gokul 30-06-2026
 
 
 module.exports = {
@@ -3266,7 +3307,8 @@ GYM_TrainerUpdate,
 GYM_TrainerDelete,
 GYM_TrainerLoopInsert, 
 GYM_TrainerLoopUpdate, 
-GYM_TrainerLoopDelete 
+GYM_TrainerLoopDelete,
+getTrainerSC
 
 
 };
