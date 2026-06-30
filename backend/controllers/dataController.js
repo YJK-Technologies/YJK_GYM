@@ -2900,6 +2900,316 @@ const getnumberseriessearchdata = async (req, res) => {
 };
 //Code Ended by Ramya on 27-06-2026
 
+// Code added by Dinesh Gokul 29-06-2026
+const GYM_TrainerInsert = async (req, res) => {
+  const {
+  TrainerID, FullName, Email, Password, Gender, Mobile, Certifications, Specializations, Experience, WorkingSchedule, DOB, Biography, Is_Active, Location_Code, KeyField,
+  created_date,
+  modified_date,
+  created_by,
+  modified_by,
+  company_code
+} = req.body;
+  let Photo = null;
+  if (req.file) Photo = req.file.buffer;
+
+  try {
+    const pool = await sql.connect(dbConfig);
+    await pool.request()
+      .input("mode", sql.NVarChar, "I")
+      .input("TrainerID", sql.NVarChar, TrainerID)
+      .input("FullName", sql.NVarChar, FullName)
+      .input("Email", sql.NVarChar, Email)
+      .input("Password", sql.NVarChar, Password)
+      .input("Gender", sql.NVarChar, Gender)
+      .input("Mobile", sql.NVarChar, Mobile)
+      .input("Photo", sql.VarBinary, Photo)
+      .input("Certifications", sql.NVarChar, Certifications)
+      .input("Specializations", sql.NVarChar, Specializations)
+      .input("Experience", sql.Int, Experience)
+      .input("WorkingSchedule", sql.NVarChar, WorkingSchedule)
+      .input("DOB", sql.DateTime, DOB)
+      .input("Biography", sql.NVarChar, Biography)
+      .input("Is_Active", sql.NVarChar, Is_Active)
+      .input("Location_Code", sql.NVarChar, Location_Code)
+      .input("KeyField", sql.NVarChar, KeyField)
+      .input("company_code", sql.NVarChar, company_code)
+      .input("created_by", sql.NVarChar, created_by)
+      .input("created_date", sql.DateTime, created_date)
+      .input("modified_by", sql.NVarChar, modified_by)
+      .input("modified_date", sql.DateTime, modified_date)
+      .query(`EXEC sp_GYM_Trainer @mode, @TrainerID, @FullName, @Email, @Password, @Gender, @Mobile, @Photo, @Certifications, @Specializations, @Experience, @WorkingSchedule, @DOB, @Biography, @Is_Active, @Location_Code, @KeyField, @company_code, 0, 0, '', '',@created_by, @created_date, @modified_by, @modified_date`);
+
+    res.status(200).json({ success: true, message: "GYM_Trainer insertd successfully" });
+  } catch (err) {
+    console.error("Error during GYM_Trainer insert:", err);
+    res.status(500).json({ message: err.message || "Internal Server Error" });
+  }
+};
+
+const GYM_TrainerUpdate = async (req, res) => {
+  const {
+  TrainerID, FullName, Email, Password, Gender, Mobile, Certifications, Specializations, Experience, WorkingSchedule, DOB, Biography, Is_Active, Location_Code, KeyField,
+  created_date,
+  modified_date,
+  created_by,
+  modified_by,
+  company_code
+} = req.body;
+  let Photo = null;
+  if (req.file) Photo = req.file.buffer;
+
+  try {
+    const pool = await sql.connect(dbConfig);
+    await pool.request()
+      .input("mode", sql.NVarChar, "U")
+      .input("TrainerID", sql.NVarChar, TrainerID)
+      .input("FullName", sql.NVarChar, FullName)
+      .input("Email", sql.NVarChar, Email)
+      .input("Password", sql.NVarChar, Password)
+      .input("Gender", sql.NVarChar, Gender)
+      .input("Mobile", sql.NVarChar, Mobile)
+      .input("Photo", sql.VarBinary, Photo)
+      .input("Certifications", sql.NVarChar, Certifications)
+      .input("Specializations", sql.NVarChar, Specializations)
+      .input("Experience", sql.Int, Experience)
+      .input("WorkingSchedule", sql.NVarChar, WorkingSchedule)
+      .input("DOB", sql.DateTime, DOB)
+      .input("Biography", sql.NVarChar, Biography)
+      .input("Is_Active", sql.NVarChar, Is_Active)
+      .input("Location_Code", sql.NVarChar, Location_Code)
+      .input("KeyField", sql.NVarChar, KeyField)
+      .input("company_code", sql.NVarChar, company_code)
+      .input("created_by", sql.NVarChar, created_by)
+      .input("created_date", sql.DateTime, created_date)
+      .input("modified_by", sql.NVarChar, modified_by)
+      .input("modified_date", sql.DateTime, modified_date)
+      .query(`EXEC sp_GYM_Trainer @mode, @TrainerID, @FullName, @Email, @Password, @Gender, @Mobile, @Photo, @Certifications, @Specializations, @Experience, @WorkingSchedule, @DOB, @Biography, @Is_Active, @Location_Code, @KeyField, @company_code,   0, 0, 0, 0,@created_by, @created_date, @modified_by, @modified_date`);
+
+    res.status(200).json({ success: true, message: "GYM_Trainer updated successfully" });
+  } catch (err) {
+    console.error("Error during GYM_Trainer update:", err);
+    res.status(500).json({ message: err.message || "Internal Server Error" });
+  }
+};
+
+const GYM_TrainerDelete = async (req, res) => {
+  const {
+  TrainerID, FullName, Email, Password, Gender, Mobile, Certifications, Specializations, Experience, WorkingSchedule, DOB, Biography, Is_Active, Location_Code, KeyField,
+  created_date,
+  modified_date,
+  created_by,
+  modified_by,
+  company_code
+} = req.body;
+  let Photo = null;
+  if (req.file) Photo = req.file.buffer;
+
+  try {
+    const pool = await sql.connect(dbConfig);
+    await pool.request()
+      .input("mode", sql.NVarChar, "D")
+      .input("TrainerID", sql.NVarChar, TrainerID)
+      .input("FullName", sql.NVarChar, FullName)
+      .input("Email", sql.NVarChar, Email)
+      .input("Password", sql.NVarChar, Password)
+      .input("Gender", sql.NVarChar, Gender)
+      .input("Mobile", sql.NVarChar, Mobile)
+      .input("Photo", sql.VarBinary, Photo)
+      .input("Certifications", sql.NVarChar, Certifications)
+      .input("Specializations", sql.NVarChar, Specializations)
+      .input("Experience", sql.Int, Experience)
+      .input("WorkingSchedule", sql.NVarChar, WorkingSchedule)
+      .input("DOB", sql.DateTime, DOB)
+      .input("Biography", sql.NVarChar, Biography)
+      .input("Is_Active", sql.NVarChar, Is_Active)
+      .input("Location_Code", sql.NVarChar, Location_Code)
+      .input("KeyField", sql.NVarChar, KeyField)
+      .input("company_code", sql.NVarChar, company_code)
+      .input("created_by", sql.NVarChar, created_by)
+      .input("created_date", sql.DateTime, created_date)
+      .input("modified_by", sql.NVarChar, modified_by)
+      .input("modified_date", sql.DateTime, modified_date)
+      .query(`EXEC sp_GYM_Trainer @mode, @TrainerID, @FullName, @Email, @Password, @Gender, @Mobile, @Photo, @Certifications, @Specializations, @Experience, @WorkingSchedule, @DOB, @Biography, @Is_Active, @Location_Code, @KeyField, @company_code, @created_by,  0, 0, '', '',@created_date, @modified_by, @modified_date`);
+
+    res.status(200).json({ success: true, message: "GYM_Trainer deleted successfully" });
+  } catch (err) {
+    console.error("Error during GYM_Trainer delete:", err);
+    res.status(500).json({ message: err.message || "Internal Server Error" });
+  }
+};
+
+const GYM_TrainerLoopInsert = async (req, res) => {
+  const GYM_TrainerData = req.body.GYM_TrainerData;
+  if (!GYM_TrainerData || !GYM_TrainerData.length) {
+    return res.status(400).json("Invalid or empty GYM_TrainerData array.");
+  }
+
+  try {
+    const pool = await sql.connect(dbConfig);
+    for (const item of GYM_TrainerData) {
+      await pool.request()
+        .input("mode", sql.NVarChar, "I")
+        .input("TrainerID", sql.NVarChar, item.TrainerID)
+        .input("FullName", sql.NVarChar, item.FullName)
+        .input("Email", sql.NVarChar, item.Email)
+        .input("Password", sql.NVarChar, item.Password)
+        .input("Gender", sql.NVarChar, item.Gender)
+        .input("Mobile", sql.NVarChar, item.Mobile)
+        .input("Photo", sql.VarBinary, item.Photo)
+        .input("Certifications", sql.NVarChar, item.Certifications)
+        .input("Specializations", sql.NVarChar, item.Specializations)
+        .input("Experience", sql.Int, item.Experience)
+        .input("WorkingSchedule", sql.NVarChar, item.WorkingSchedule)
+        .input("DOB", sql.DateTime, item.DOB)
+        .input("Biography", sql.NVarChar, item.Biography)
+        .input("Is_Active", sql.NVarChar, item.Is_Active)
+        .input("Location_Code", sql.NVarChar, item.Location_Code)
+        .input("KeyField", sql.NVarChar, item.KeyField)
+        .input("company_code", sql.NVarChar, item.company_code)
+        .input("created_by", sql.NVarChar, item.created_by)
+        .input("created_date", sql.DateTime, item.created_date)
+        .input("modified_by", sql.NVarChar, item.modified_by)
+        .input("modified_date", sql.DateTime, item.modified_date)
+        .query(`EXEC sp_GYM_Trainer @mode, @TrainerID, @FullName, @Email, @Password, @Gender, @Mobile, @Photo, @Certifications, @Specializations, @Experience, @WorkingSchedule, @DOB, @Biography, @Is_Active, @Location_Code, @KeyField, @company_code,  0, 0, '', '',@created_by, @created_date, @modified_by, @modified_date`);
+    }
+    res.status(200).json("GYM_Trainer data inserted successfully");
+  } catch (err) {
+    console.error("Error in GYM_TrainerLoopInsert:", err);
+    res.status(500).json({ message: err.message || "Internal Server Error" });
+  }
+};
+
+const GYM_TrainerLoopUpdate = async (req, res) => {
+  const GYM_TrainerData = req.body.GYM_TrainerData;
+  if (!GYM_TrainerData || !GYM_TrainerData.length) {
+    return res.status(400).json("Invalid or empty GYM_TrainerData array.");
+  }
+
+  try {
+    const pool = await sql.connect(dbConfig);
+    for (const item of GYM_TrainerData) {
+      await pool.request()
+        .input("mode", sql.NVarChar, "U")
+        .input("TrainerID", sql.NVarChar, item.TrainerID)
+        .input("FullName", sql.NVarChar, item.FullName)
+        .input("Email", sql.NVarChar, item.Email)
+        .input("Password", sql.NVarChar, item.Password)
+        .input("Gender", sql.NVarChar, item.Gender)
+        .input("Mobile", sql.NVarChar, item.Mobile)
+        .input("Photo", sql.VarBinary, item.Photo)
+        .input("Certifications", sql.NVarChar, item.Certifications)
+        .input("Specializations", sql.NVarChar, item.Specializations)
+        .input("Experience", sql.Int, item.Experience)
+        .input("WorkingSchedule", sql.NVarChar, item.WorkingSchedule)
+        .input("DOB", sql.DateTime, item.DOB)
+        .input("Biography", sql.NVarChar, item.Biography)
+        .input("Is_Active", sql.NVarChar, item.Is_Active)
+        .input("Location_Code", sql.NVarChar, item.Location_Code)
+        .input("KeyField", sql.NVarChar, item.KeyField)
+        .input("company_code", sql.NVarChar, item.company_code)
+        .input("created_by", sql.NVarChar, item.created_by)
+        .input("created_date", sql.DateTime, item.created_date)
+        .input("modified_by", sql.NVarChar, item.modified_by)
+        .input("modified_date", sql.DateTime, item.modified_date)
+        .query(`EXEC sp_GYM_Trainer @mode, @TrainerID, @FullName, @Email, @Password, @Gender, @Mobile, @Photo, @Certifications, @Specializations, @Experience, @WorkingSchedule, @DOB, @Biography, @Is_Active, @Location_Code, @KeyField, @company_code,  0, 0, '', '',@created_by, @created_date, @modified_by, @modified_date`);
+    }
+    res.status(200).json("GYM_Trainer data updated successfully");
+  } catch (err) {
+    console.error("Error in GYM_TrainerLoopUpdate:", err);
+    res.status(500).json({ message: err.message || "Internal Server Error" });
+  }
+};
+
+const GYM_TrainerLoopDelete = async (req, res) => {
+  const GYM_TrainerData = req.body.GYM_TrainerData;
+  if (!GYM_TrainerData || !GYM_TrainerData.length) {
+    return res.status(400).json("Invalid or empty GYM_TrainerData array.");
+  }
+
+  try {
+    const pool = await sql.connect(dbConfig);
+    for (const item of GYM_TrainerData) {
+      await pool.request()
+        .input("mode", sql.NVarChar, "D")
+        .input("TrainerID", sql.NVarChar, item.TrainerID)
+        .input("FullName", sql.NVarChar, item.FullName)
+        .input("Email", sql.NVarChar, item.Email)
+        .input("Password", sql.NVarChar, item.Password)
+        .input("Gender", sql.NVarChar, item.Gender)
+        .input("Mobile", sql.NVarChar, item.Mobile)
+        .input("Photo", sql.VarBinary, item.Photo)
+        .input("Certifications", sql.NVarChar, item.Certifications)
+        .input("Specializations", sql.NVarChar, item.Specializations)
+        .input("Experience", sql.Int, item.Experience)
+        .input("WorkingSchedule", sql.NVarChar, item.WorkingSchedule)
+        .input("DOB", sql.DateTime, item.DOB)
+        .input("Biography", sql.NVarChar, item.Biography)
+        .input("Is_Active", sql.NVarChar, item.Is_Active)
+        .input("Location_Code", sql.NVarChar, item.Location_Code)
+        .input("KeyField", sql.NVarChar, item.KeyField)
+        .input("company_code", sql.NVarChar, item.company_code)
+        .input("created_by", sql.NVarChar, item.created_by)
+        .input("created_date", sql.DateTime, item.created_date)
+        .input("modified_by", sql.NVarChar, item.modified_by)
+        .input("modified_date", sql.DateTime, item.modified_date)
+        .query(`EXEC sp_GYM_Trainer @mode, @TrainerID, @FullName, @Email, @Password, @Gender, @Mobile, @Photo, @Certifications, @Specializations, @Experience, @WorkingSchedule, @DOB, @Biography, @Is_Active, @Location_Code, @KeyField, @company_code,  0, 0, '', '', @created_by, @created_date, @modified_by, @modified_date`);
+    }
+    res.status(200).json("GYM_Trainer data deleted successfully");
+  } catch (err) {
+    console.error("Error in GYM_TrainerLoopDelete:", err);
+    res.status(500).json({ message: err.message || "Internal Server Error" });
+  }
+};
+// Code ended by Dinesh Gokul 29-06-2026
+
+// Code added by Dinesh Gokul 30-06-2026
+const getTrainerSC = async (req, res) => {
+  const { company_code,Location_Code,FullName,Email,Gender,Mobile,
+    Specializations,Experience,WorkingSchedule,DOB,age_from,age_to,experience_from,experience_to } = req.body;
+
+  try {
+    // Connect to the database
+    const pool = await connection.connectToDatabase();
+
+    // Execute the query
+    const result = await pool
+      .request()
+      .input("mode", sql.NVarChar, "SC")
+      .input("company_code", sql.NVarChar, company_code)
+      .input("Location_Code", sql.NVarChar, Location_Code)
+      .input("FullName", sql.NVarChar, FullName)
+      .input("Email", sql.NVarChar, Email)
+      .input("Gender", sql.NVarChar, Gender)
+      .input("Mobile", sql.NVarChar, Mobile)
+      .input("Specializations", sql.NVarChar, Specializations)
+      .input("Experience", sql.NVarChar, Experience)
+      .input("WorkingSchedule", sql.NVarChar, WorkingSchedule)
+      .input("DOB", sql.NVarChar, DOB)
+      .input("age_from", sql.Int, age_from)
+      .input("age_to", sql.Int, age_to)
+      .input("experience_from", sql.Int, experience_from)
+      .input("experience_to", sql.Int, experience_to)
+      .query(`EXEC sp_GYM_Trainer @mode, '', @FullName, @Email, '', @Gender, @Mobile, Null, 
+        '', @Specializations, @Experience, @WorkingSchedule, @DOB, '', '', 
+        @Location_Code, '', @company_code,  @age_from, @age_to, @experience_from, @experience_to, '', '', '', ''`);
+
+    // Send response
+    if (result.recordset.length > 0) {
+      res.status(200).json(result.recordset); // 200 OK if data is found
+    } else {
+      res.status(404).json("Data not found"); // 404 Not Found if no data is found
+    }
+  } catch (err) {
+    console.error("Error", err.message);
+    return res
+      .status(500)
+      .json({ message: err.message || "Internal Server Error" });
+  }
+};
+// Code ended by Dinesh Gokul 30-06-2026
+
+
 module.exports = {
 getCompanyno,
 getsearchdata,
@@ -2991,7 +3301,14 @@ getboolean,
 getnumberseriessearchdata,
 addNumberseries,
 NumberSeriesUpdate,
-numberseriesdeleteData
+numberseriesdeleteData,
+GYM_TrainerInsert, 
+GYM_TrainerUpdate, 
+GYM_TrainerDelete,
+GYM_TrainerLoopInsert, 
+GYM_TrainerLoopUpdate, 
+GYM_TrainerLoopDelete,
+getTrainerSC
 
 
 };
