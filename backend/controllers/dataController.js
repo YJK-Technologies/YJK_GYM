@@ -2626,7 +2626,7 @@ const addNumberseries = async (req, res) => {
     Start_No,
     Running_No,
     End_No,
-    comtext,
+    text,
     number_prefix,
     Status,
     bill_format,
@@ -2654,7 +2654,7 @@ const addNumberseries = async (req, res) => {
       .input("Start_No", sql.Int, Start_No)
       .input("Running_No", sql.Int, Running_No)
       .input("End_No", sql.Int, End_No)
-      .input("comtext", sql.NVarChar, comtext)
+      .input("text", sql.NVarChar, text)
       .input("number_prefix", sql.NVarChar, number_prefix)
       .input("Status", sql.NVarChar, Status)
       .input("bill_format", sql.NVarChar, bill_format)
@@ -2668,7 +2668,7 @@ const addNumberseries = async (req, res) => {
       .input("datetime2", sql.NVarChar, datetime2)
       .input("datetime3", sql.NVarChar, datetime3)
       .input("datetime4", sql.NVarChar, datetime4)
-      .query(`EXEC sp_numberseries @mode,@company_code,@Screen_Type,@Start_Year,@End_Year,@Start_No,@Running_No,@End_No,@comtext,@number_prefix,@Status,@bill_format,
+      .query(`EXEC sp_numberseries @mode,@company_code,@Screen_Type,@Start_Year,@End_Year,@Start_No,@Running_No,@End_No,@text,@number_prefix,@Status,@bill_format,
       @created_by,@modified_by, @tempstr1,@tempstr2,@tempstr3,@tempstr4,@datetime1,@datetime2,@datetime3,@datetime4,''`);
 
     res.status(200).json("Edited data saved successfully");
@@ -2716,7 +2716,7 @@ const saveEditedNumberseriesData = async (req, res) => {
         .input("datetime2", updatedRow.datetime2)
         .input("datetime3", updatedRow.datetime3)
         .input("datetime4", updatedRow.datetime4)
-        .query(`EXEC sp_numberseries @mode, @company_code,@Screen_Type, @Start_Year, @End_Year, @Start_No, @Running_No, @End_No,@comtext,@number_prefix,@Status,@bill_format,
+        .query(`EXEC sp_numberseries @mode, @company_code,@Screen_Type, @Start_Year, @End_Year, @Start_No, @Running_No, @End_No,@text,@number_prefix,@Status,@bill_format,
         @created_by,@modified_by,@tempstr1, @tempstr2, @tempstr3, @tempstr4,@datetime1, @datetime2, @datetime3, @datetime4,''`);
     }
 
@@ -2739,7 +2739,7 @@ const numberseriesdeleteData = async (req, res) => {
 
     for (const updatedRow of Screen_TypesToDelete) {
       try {
-        await pool.request()
+        const result = await pool.request()
           .input("Screen_Type", updatedRow.Screen_Type)
           .input("Start_Year", updatedRow.Start_Year)
           .input("End_Year", updatedRow.End_Year)

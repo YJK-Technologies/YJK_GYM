@@ -4019,6 +4019,7 @@ console.log(numberSeriesForm)
         body: JSON.stringify({
           Screen_TypesToDelete: [
             {
+              KeyField: row.keyfield,
               Screen_Type: row.Screen_Type,
               Start_Year: row.Start_Year,
               End_Year: row.End_Year,
@@ -4029,9 +4030,13 @@ console.log(numberSeriesForm)
 
       const data = await response.json();
 
+      console.log("Response Status:", response.status);
+      console.log("Response Data:", data);
+
+
       if (response.ok) {
         toast({
-          title: "Success",
+          title: "Number series deleted successfully",
           description: data.message,
         });
 
@@ -5036,7 +5041,7 @@ console.log(numberSeriesForm)
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
 
       <div className="space-y-2">
-        <Label htmlFor="ScreenType" className={submittedNumberSeries && !numberSeriesSearchForm.Screen_Type ? "text-red-500" : ""}>Screen Type*</Label>
+        <Label htmlFor="ScreenType" className={submittedNumberSeries && !numberSeriesSearchForm.Screen_Type ? "text-red-500" : ""}>Screen Type</Label>
         <TooltipProvider>
           <Tooltip>
             <TooltipTrigger asChild>
@@ -7815,7 +7820,9 @@ console.log(numberSeriesForm)
                           <Input
                             id="Start No"
                             value={numberSeriesForm.Start_No}
-                            onChange={(e) => setNumberSeriesForm({ ...numberSeriesForm, Start_No: e.target.value })}
+                            onChange={(e) => setNumberSeriesForm({ ...numberSeriesForm, Start_No: e.target.value.replace(/[^0-9]/g, ""),
+                            })
+                          }
                             placeholder="Enter Start No"
                           />
                         </TooltipTrigger>
@@ -7835,7 +7842,7 @@ console.log(numberSeriesForm)
                           <Input
                             id="Running No"
                             value={numberSeriesForm.Running_No}
-                            onChange={(e) => setNumberSeriesForm({ ...numberSeriesForm, Running_No: e.target.value })}
+                            onChange={(e) => setNumberSeriesForm({ ...numberSeriesForm, Running_No: e.target.value.replace(/[^0-9]/g, "") })}
                             placeholder="Enter Running No"
                           />
                         </TooltipTrigger>
@@ -7855,7 +7862,7 @@ console.log(numberSeriesForm)
                           <Input
                             id="End No"
                             value={numberSeriesForm.End_No}
-                            onChange={(e) => setNumberSeriesForm({ ...numberSeriesForm, End_No: e.target.value })}
+                            onChange={(e) => setNumberSeriesForm({ ...numberSeriesForm, End_No: e.target.value.replace(/[^0-9]/g, "") })}
                             placeholder="Enter End No"
                           />
                         </TooltipTrigger>
