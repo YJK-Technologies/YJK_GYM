@@ -3331,7 +3331,7 @@ const memberDeleteData = async (req, res) => {
         .query(`EXEC sp_Member_Hdr_Test 'D',@MemberID,'','','','','','','','','','','','','','',NULL,'','','','',@Company_code,@Location_code,'',0,0,'','','','','',@modified_by`);
     }
 
-    res.status(200).json("user deleted successfully");
+    res.status(200).json("member deleted successfully");
   } catch (err) {
     console.error("Error", err);
     res.status(500).json({ message: err.message || "Internal Server Error" });
