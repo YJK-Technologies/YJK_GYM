@@ -2995,13 +2995,7 @@ const GYM_TrainerUpdate = async (req, res) => {
 
 const GYM_TrainerDelete = async (req, res) => {
   const {
-  TrainerID, FullName, Email, Password, Gender, Mobile, Certifications, Specializations, Experience, WorkingSchedule, DOB, Biography, Is_Active, Location_Code, KeyField,
-  created_date,
-  modified_date,
-  created_by,
-  modified_by,
-  company_code
-} = req.body;
+  TrainerID,  Location_Code, KeyField, modified_by, company_code} = req.body;
   let Photo = null;
   if (req.file) Photo = req.file.buffer;
 
@@ -3010,27 +3004,11 @@ const GYM_TrainerDelete = async (req, res) => {
     await pool.request()
       .input("mode", sql.NVarChar, "D")
       .input("TrainerID", sql.NVarChar, TrainerID)
-      .input("FullName", sql.NVarChar, FullName)
-      .input("Email", sql.NVarChar, Email)
-      .input("Password", sql.NVarChar, Password)
-      .input("Gender", sql.NVarChar, Gender)
-      .input("Mobile", sql.NVarChar, Mobile)
-      .input("Photo", sql.VarBinary, Photo)
-      .input("Certifications", sql.NVarChar, Certifications)
-      .input("Specializations", sql.NVarChar, Specializations)
-      .input("Experience", sql.Int, Experience)
-      .input("WorkingSchedule", sql.NVarChar, WorkingSchedule)
-      .input("DOB", sql.DateTime, DOB)
-      .input("Biography", sql.NVarChar, Biography)
-      .input("Is_Active", sql.NVarChar, Is_Active)
       .input("Location_Code", sql.NVarChar, Location_Code)
       .input("KeyField", sql.NVarChar, KeyField)
       .input("company_code", sql.NVarChar, company_code)
-      .input("created_by", sql.NVarChar, created_by)
-      .input("created_date", sql.DateTime, created_date)
       .input("modified_by", sql.NVarChar, modified_by)
-      .input("modified_date", sql.DateTime, modified_date)
-      .query(`EXEC sp_GYM_Trainer @mode, @TrainerID, @FullName, @Email, @Password, @Gender, @Mobile, @Photo, @Certifications, @Specializations, @Experience, @WorkingSchedule, @DOB, @Biography, @Is_Active, @Location_Code, @KeyField, @company_code, @created_by,  0, 0, '', '',@created_date, @modified_by, @modified_date`);
+      .query(`EXEC sp_GYM_Trainer @mode, @TrainerID, '', '', '', '', '', Null, '', '', '', '', '', '', '', @Location_Code, @KeyField, @company_code,  0, 0, '', '', '' ,'', '', ''`);
 
     res.status(200).json({ success: true, message: "GYM_Trainer deleted successfully" });
   } catch (err) {

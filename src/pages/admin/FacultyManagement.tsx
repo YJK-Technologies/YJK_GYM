@@ -123,92 +123,6 @@ const [TrainerForm, setTrainerForm] = useState({
 
     });
   
-    //Trainer Ag Grid
-    const TrainerColumnDefs = [
-      {
-        headerName: "User Code",
-        field: "user_code",
-        minWidth: 150,
-        cellStyle: { fontWeight: 600 },
-      },
-      {
-        headerName: "User Name",
-        field: "user_name",
-        minWidth: 150,
-      },
-      {
-        headerName: "First Name",
-        field: "first_name",
-        minWidth: 150,
-      },
-      {
-        headerName: "Last Name",
-        field: "last_name",
-        minWidth: 150,
-      },
-      {
-        headerName: "User Status",
-        field: "user_status",
-        minWidth: 150,
-        cellRenderer: (params: any) => {
-          const status = params.value?.toString().toLowerCase();
-        
-          return (
-            <Badge variant={status === "active" ? "default" : "secondary"}>
-              {params.value}
-            </Badge>
-          );
-        },
-      },
-      {
-        headerName: "DOB",
-        field: "dob",
-        minWidth: 150,
-      },
-      {
-        headerName: "Role ID",
-        field: "role_id",
-        minWidth: 150,
-      },
-      {
-        headerName: "Gender",
-        field: "gender",
-        minWidth: 150,
-      },
-      {
-    headerName: "Actions",
-    width: 120,
-    minWidth: 120,
-    maxWidth: 120,
-    sortable: false,
-    filter: false,
-    cellStyle: {
-      display: "flex",
-      justifyContent: "center",
-      alignItems: "center",
-    },
-    cellRenderer: (params: any) => (
-      <div className="flex gap-2">
-        <Button
-          variant="ghost"
-          size="sm"
-          onClick={() => handleEditTrainer(params.data)}
-        >
-          <Edit className="h-4 w-4" />
-        </Button>
-  
-        <Button
-          variant="ghost"
-          size="sm"
-          onClick={() => handleDeleteTrainer(params.data.user_code)}
-        >
-          <Trash2 className="h-4 w-4 text-red-500" />
-        </Button>
-      </div>
-    ),
-  }
-    ];
-  
   // Gender DropDown
   const fetchGender = async () => {
       try {
@@ -244,9 +158,9 @@ const [TrainerForm, setTrainerForm] = useState({
       loadData();
     }, []);
 
-    useEffect(() => {
-  handleTrainerSearch();
-}, []);
+//     useEffect(() => {
+//   handleTrainerSearch();
+// }, []);
 
   //Trainer CRUD Functions
   const handleAddTrainer = () => {
@@ -453,52 +367,101 @@ const [TrainerForm, setTrainerForm] = useState({
       }
     };
     
-    const handleDeleteTrainer = async (user_code: string) => {
-      const confirmDelete = window.confirm(
-        "Are you sure you want to delete this Trainer?"
-      );
+    // const handleDeleteTrainer = async (user_code: string) => {
+    //   const confirmDelete = window.confirm(
+    //     "Are you sure you want to delete this Trainer?"
+    //   );
   
-      if (!confirmDelete) return;
+    //   if (!confirmDelete) return;
   
-      try {
-        const response = await fetch(`${BASE_URL}/userdelete`, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            "modified-by": "admin",
-            "company_code": "YJK",
-          },
-          body: JSON.stringify({
-            user_codes: [user_code],
-          }),
-        });
+    //   try {
+    //     const response = await fetch(`${BASE_URL}/GYM_TrainerDelete`, {
+    //       method: "POST",
+    //       headers: {
+    //         "Content-Type": "application/json",
+    //         "modified-by": "admin",
+    //         "company_code": "YJK",
+    //       },
+    //       body: JSON.stringify({
+    //         user_codes: [user_code],
+    //       }),
+    //     });
   
-        const data = await response.json();
+    //     const data = await response.json();
   
-        if (response.ok) {
-          toast({
-            title: "Success",
-            description: data.message || "Trainer deleted successfully.",
-          });
+    //     if (response.ok) {
+    //       toast({
+    //         title: "Success",
+    //         description: data.message || "Trainer deleted successfully.",
+    //       });
   
-          handleTrainerSearch();
-        } else {
-          toast({
-            title: "Error",
-            description: data.message || "Failed to delete Trainer.",
-            variant: "destructive",
-          });
-        }
-      } catch (err: any) {
-        console.error(err);
+    //       handleTrainerSearch();
+    //     } else {
+    //       toast({
+    //         title: "Error",
+    //         description: data.message || "Failed to delete Trainer.",
+    //         variant: "destructive",
+    //       });
+    //     }
+    //   } catch (err: any) {
+    //     console.error(err);
   
-        toast({
-          title: "Server Error",
-          description: err.message || "Something went wrong.",
-          variant: "destructive",
-        });
-      }
-    };
+    //     toast({
+    //       title: "Server Error",
+    //       description: err.message || "Something went wrong.",
+    //       variant: "destructive",
+    //     });
+    //   }
+    // };
+
+    const handleDeleteTrainer = async (trainer: any) => {
+  const confirmDelete = window.confirm(
+    `Are you sure you want to delete ${trainer.FullName}?`
+  );
+
+  if (!confirmDelete) return;
+
+  try {
+    const response = await fetch(`${BASE_URL}/GYM_TrainerDelete`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        company_code: trainer.company_code,
+        Location_Code: trainer.Location_Code,
+        TrainerID: trainer.TrainerID,
+        KeyField: trainer.KeyField,
+        modified_by: "admin",
+      }),
+    });
+
+    const data = await response.json();
+
+    if (response.ok) {
+      toast({
+        title: "Success",
+        description: data.message || "Trainer deleted successfully.",
+      });
+
+      handleTrainerSearch();
+    } else {
+      toast({
+        title: "Error",
+        description: data.message || "Failed to delete trainer.",
+        variant: "destructive",
+      });
+    }
+  } catch (err: any) {
+    console.error(err);
+
+    toast({
+      title: "Server Error",
+      description: err.message,
+      variant: "destructive",
+    });
+  }
+};
   
     const handleSaveTrainer = async () => {
       if (editingTrainer) {
@@ -1327,7 +1290,12 @@ const [TrainerForm, setTrainerForm] = useState({
                         >
                             <Edit className="h-4 w-4" />
                         </Button>
-                        <Button variant="ghost" size="icon" className="text-red-500 hover:text-red-700">
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          className="text-red-500 hover:text-red-700"
+                          onClick={() => handleDeleteTrainer(trainer)}
+                        >
                           <Trash2 className="h-4 w-4" />
                         </Button>
                       </div>
