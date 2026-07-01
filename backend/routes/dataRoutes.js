@@ -130,6 +130,7 @@ router.post("/GYM_TrainerLoopInsert",dataController.GYM_TrainerLoopInsert)
 router.post("/GYM_TrainerLoopUpdate",dataController.GYM_TrainerLoopUpdate)
 router.post("/GYM_TrainerLoopDelete",dataController.GYM_TrainerLoopDelete)
 router.post("/getTrainerSC",dataController.getTrainerSC)
+router.post("/searchMemberData",dataController.searchMemberData)
 
 
 

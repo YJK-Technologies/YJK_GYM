@@ -7,21 +7,19 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Textarea } from '@/components/ui/textarea';
-import { Calendar } from '@/components/ui/calendar';
-import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger, DialogFooter } from '@/components/ui/dialog';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Switch } from '@/components/ui/switch';
 import { useNavigate } from 'react-router-dom';
 import { useToast } from '@/hooks/use-toast';
 import { format } from 'date-fns';
 import { cn } from '@/lib/utils';
-import { ArrowLeft, Edit, Users, UserCheck, UserX, Clock, Search, Plus, Eye, EyeOff, Pencil, Trash2, CalendarIcon, Phone, Mail, MapPin, AlertCircle, Bell, Megaphone } from 'lucide-react';
+import { ArrowLeft, Search, RotateCcw, Users, UserCheck, UserX, Clock, Plus, Eye, EyeOff, Pencil, Trash2, Phone, Mail, MapPin, AlertCircle, Bell, Megaphone } from 'lucide-react';
 import { BASE_URL } from '../ApiConfig';
 import AgGridTable from "@/components/ui/ag-grid-table";
 import ImageUpload from "../ImageUpload";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import { showConfirmToast } from '../../components/ui/show-confirm-toast';
 
 interface Member {
   MemberID: string;
@@ -81,6 +79,7 @@ const MemberManagement = () => {
   const [gender, setGender] = useState<any[]>([]);
   const [membershipType, setMembershipType] = useState<any[]>([]);
   const [relationship, setRelationship] = useState<any[]>([]);
+  const [status, setStatus] = useState<any[]>([]);
   const maxDOB = new Date();
   maxDOB.setFullYear(maxDOB.getFullYear() - 18);
 
@@ -173,6 +172,32 @@ const MemberManagement = () => {
 
       if (response.ok) {
         setMembers(data);
+
+        console.log(data)
+      } else {
+        console.error("Failed to fetch status");
+      }
+    } catch (error) {
+      console.error("Error fetching status:", error);
+    }
+  };
+
+  const fetchStatus = async () => {
+    try {
+      const response = await fetch(`${BASE_URL}/status`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          company_code: "YJK",
+        }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        setStatus(data);
       } else {
         console.error("Failed to fetch status");
       }
@@ -188,17 +213,14 @@ const MemberManagement = () => {
         fetchMembershipType(),
         fetchRelationship(),
         fetchMembersData(),
+        fetchStatus()
       ]);
     };
 
     loadData();
   }, []);
 
-
-  const [members, setMembers] = useState<Member[]>();
-  const [searchTerm, setSearchTerm] = useState('');
-  const [statusFilter, setStatusFilter] = useState<'all' | 'active' | 'inactive'>('all');
-  const [membershipFilter, setMembershipFilter] = useState<string>('all');
+  const [members, setMembers] = useState<Member[]>([]);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [isViewDialogOpen, setIsViewDialogOpen] = useState(false);
   const [editingMember, setEditingMember] = useState<Member | null>(null);
@@ -207,6 +229,24 @@ const MemberManagement = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [memberImages, setMemberImages] = useState<(string | null)[]>([null, null]);
   const [submittedMember, setSubmittedMember] = useState(false);
+
+  const [memberSearchForm, setMemberSearchForm] = useState({
+    MemberID: "",
+    Identity_No: "",
+    Full_name: "",
+    age_from: "",
+    age_to: "",
+    Gender: "",
+    Mobile: "",
+    WhatsApp_Number: "",
+    Email: "",
+    Membership_type: "",
+    is_active: "",
+    Joined_date_from: "",
+    Joined_date_to: "",
+    expiry_date_from: "",
+    expiry_date_to: ""
+  });
 
   const handleMemberFiles = async (files: (File | null)[]) => {
     const convertedImages = await Promise.all(
@@ -337,11 +377,15 @@ const MemberManagement = () => {
       headerName: "Status",
       field: "is_active",
       minWidth: 120,
-      cellRenderer: (params: any) => (
-        <Badge variant={params.value ? "default" : "secondary"}>
-          {params.value ? "Active" : "Inactive"}
-        </Badge>
-      ),
+      cellRenderer: (params: any) => {
+        const isActive = params.value === "Active";
+
+        return (
+          <Badge variant={isActive ? "default" : "secondary"}>
+            {params.value}
+          </Badge>
+        );
+      },
     },
     {
       headerName: "Actions",
@@ -357,66 +401,94 @@ const MemberManagement = () => {
       },
       cellRenderer: (params: any) => (
         <div className="flex gap-2">
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={() => handleViewMember(params.data)}
-          >
-            <Eye className="h-4 w-4" />
-          </Button>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => handleViewMember(params.data)}
+              >
+                <Eye className="h-4 w-4" />
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent>View</TooltipContent>
+          </Tooltip>
 
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={() => handleEditMember(params.data)}
-          >
-            <Pencil className="h-4 w-4" />
-          </Button>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => handleEditMember(params.data)}
+              >
+                <Pencil className="h-4 w-4" />
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent>Edit</TooltipContent>
+          </Tooltip>
 
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={() => handleDeleteMember(params.data.MemberID)}
-          >
-            <Trash2 className="h-4 w-4 text-red-500" />
-          </Button>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => handleDeleteMember(params.data.MemberID)}
+              >
+                <Trash2 className="h-4 w-4 text-red-500" />
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent>Delete</TooltipContent>
+          </Tooltip>
         </div>
       ),
     },
   ];
 
-  // const stats = [
-  //   { title: 'Total Members', value: members.length, icon: Users, color: 'bg-blue-500' },
-  //   { title: 'Active', value: members.filter(m => m.is_active).length, icon: UserCheck, color: 'bg-green-500' },
-  //   { title: 'Inactive', value: members.filter(m => !m.is_active).length, icon: UserX, color: 'bg-red-500' },
-  //   {
-  //     title: 'Expiring Soon',
-  //     value: members.filter(m => {
-  //       const daysUntilExpiry = Math.ceil((m.Plan_expiry_date.getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24));
-  //       return daysUntilExpiry > 0 && daysUntilExpiry <= 30;
-  //     }).length,
-  //     icon: Clock,
-  //     color: 'bg-orange-500'
-  //   },
-  // ];
+  const stats = [
+    {
+      title: "Total Members",
+      value: members?.length ?? 0,
+      icon: Users,
+      color: "bg-blue-500",
+    },
+    {
+      title: "Active",
+      value: members?.filter(
+        (m: any) => String(m.is_active).toLowerCase() === "active"
+      ).length ?? 0,
+      icon: UserCheck,
+      color: "bg-green-500",
+    },
+    {
+      title: "Inactive",
+      value: members?.filter(
+        (m: any) => String(m.is_active).toLowerCase() === "close"
+      ).length ?? 0,
+      icon: UserX,
+      color: "bg-red-500",
+    },
+    {
+      title: "Expiring Soon",
+      value:
+        members?.filter((m: any) => {
+          if (!m.Plan_expiry_date) return false;
 
-  // const filteredMembers = members.filter(member => {
-  //   const matchesSearch =
-  //     member.fullName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-  //     member.cpr.includes(searchTerm) ||
-  //     member.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
-  //     member.bahrainMobile.includes(searchTerm);
+          const today = new Date();
+          today.setHours(0, 0, 0, 0);
 
-  //   const matchesStatus =
-  //     statusFilter === 'all' ||
-  //     (statusFilter === 'active' && member.isActive) ||
-  //     (statusFilter === 'inactive' && !member.isActive);
+          const expiry = new Date(m.Plan_expiry_date);
+          expiry.setHours(0, 0, 0, 0);
 
-  //   const matchesMembership =
-  //     membershipFilter === 'all' || member.membershipType === membershipFilter;
+          const diffDays = Math.ceil(
+            (expiry.getTime() - today.getTime()) / (1000 * 60 * 60 * 24)
+          );
 
-  //   return matchesSearch && matchesStatus && matchesMembership;
-  // });
+          return diffDays >= 0 && diffDays <= 30;
+        }).length ?? 0,
+      icon: Clock,
+      color: "bg-orange-500",
+    },
+  ];
 
   const handleAddMember = () => {
     setEditingMember(null);
@@ -438,8 +510,7 @@ const MemberManagement = () => {
         member.Receive_notifications === true,
 
       is_active:
-        member.is_active === 1 ||
-        member.is_active === "1" ||
+        member.is_active === "Active" ||
         member.is_active === true,
     });
 
@@ -466,7 +537,15 @@ const MemberManagement = () => {
     setIsViewDialogOpen(true);
   };
 
-  const handleDeleteMember = async (memberID: string) => {
+  const handleDeleteMember = (memberID: string) => {
+    showConfirmToast({
+      title: "Delete Member",
+      description: "Are you sure you want to delete this member?",
+      onConfirm: () => deleteMember(memberID),
+    });
+  };
+
+  const deleteMember = async (memberID: string) => {
     try {
       const response = await fetch(`${BASE_URL}/memberDeleteData`, {
         method: "POST",
@@ -474,7 +553,7 @@ const MemberManagement = () => {
           "Content-Type": "application/json",
           company_code: "YJK",
           location_code: "LOC001",
-          "modified-by": "admin", 
+          "modified-by": "admin",
         },
         body: JSON.stringify({
           MemberIDs: [memberID],
@@ -489,7 +568,7 @@ const MemberManagement = () => {
           description: data || "Member deleted successfully.",
         });
 
-        fetchMembersData();
+        handleMemberSearch();
 
       } else {
         toast({
@@ -533,18 +612,6 @@ const MemberManagement = () => {
       return false;
     }
 
-    // Email validation
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-
-    if (!emailRegex.test(formData.Email)) {
-      toast({
-        title: "Invalid Email",
-        description: "Please enter a valid email address.",
-        variant: "destructive",
-      });
-      return false;
-    }
-
     return true;
   };
 
@@ -572,6 +639,8 @@ const MemberManagement = () => {
     setSubmittedMember(true);
 
     if (!validateMember()) return;
+
+    if (!validateEmail()) return;
 
     if (!isValidPhoneNumber(formData.Mobile)) {
       toast({
@@ -636,7 +705,7 @@ const MemberManagement = () => {
           case "is_active":
             form.append(
               key,
-              value ? "1" : "0"
+              value ? "Active" : "Close"
             );
             break;
 
@@ -691,7 +760,7 @@ const MemberManagement = () => {
         setIsDialogOpen(false);
         setSubmittedMember(false);
 
-        // handleUserSearch();
+        handleMemberSearch();
       } else {
         toast({
           title: "Error",
@@ -710,10 +779,20 @@ const MemberManagement = () => {
     }
   };
 
-  const handleUpdateMember = async () => {
+  const handleUpdateMember = () => {
+    showConfirmToast({
+      title: "Update Member",
+      description: "Do you want to update these changes?",
+      onConfirm: updateMember,
+    });
+  };
+
+  const updateMember = async () => {
     setSubmittedMember(true);
 
     if (!validateMember()) return;
+
+    if (!validateEmail()) return;
 
     if (!isValidPhoneNumber(formData.Mobile)) {
       toast({
@@ -777,7 +856,7 @@ const MemberManagement = () => {
           case "is_active":
             form.append(
               key,
-              value ? "1" : "0"
+              value ? "Active" : "Close"
             );
             break;
 
@@ -833,7 +912,7 @@ const MemberManagement = () => {
         setIsDialogOpen(false);
         setSubmittedMember(false);
 
-        fetchMembersData();
+        handleMemberSearch();
       } else {
         toast({
           title: "Error",
@@ -872,6 +951,222 @@ const MemberManagement = () => {
     });
   };
 
+  const handleReset = () => {
+    setMemberSearchForm({
+      MemberID: "",
+      Identity_No: "",
+      Full_name: "",
+      age_from: "",
+      age_to: "",
+      Gender: "",
+      Mobile: "",
+      WhatsApp_Number: "",
+      Email: "",
+      Membership_type: "",
+      is_active: "",
+      Joined_date_from: "",
+      Joined_date_to: "",
+      expiry_date_from: "",
+      expiry_date_to: ""
+    });
+    setMembers([]);
+  };
+
+  const validateEmail = () => {
+    if (!memberSearchForm.Email) return true;
+
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+    if (!emailRegex.test(memberSearchForm.Email)) {
+      toast({
+        title: "Invalid Email",
+        description: "Please enter a valid email address.",
+        variant: "destructive",
+      });
+      return false;
+    }
+
+    return true;
+  };
+
+  const validatePhoneNumbers = () => {
+    if (
+      memberSearchForm.Mobile &&
+      !isValidPhoneNumber(memberSearchForm.Mobile)
+    ) {
+      toast({
+        title: "Invalid Mobile Number",
+        description:
+          "Mobile number must contain only digits and be between 8 and 15 digits.",
+        variant: "destructive",
+      });
+      return false;
+    }
+
+    if (
+      memberSearchForm.WhatsApp_Number &&
+      !isValidPhoneNumber(memberSearchForm.WhatsApp_Number)
+    ) {
+      toast({
+        title: "Invalid WhatsApp Number",
+        description:
+          "WhatsApp number must contain only digits and be between 8 and 15 digits.",
+        variant: "destructive",
+      });
+      return false;
+    }
+
+    return true;
+  };
+
+  const validateJoinedDateRange = () => {
+    const { Joined_date_from, Joined_date_to } = memberSearchForm;
+
+    if (!Joined_date_from || !Joined_date_to) return true;
+
+    const from = new Date(Joined_date_from);
+    const to = new Date(Joined_date_to);
+
+    if (from > to) {
+      toast({
+        title: "Invalid Joined Date Range",
+        description: "'Joined Date From' cannot be greater than 'Joined Date To'.",
+        variant: "destructive",
+      });
+
+      return false;
+    }
+
+    return true;
+  };
+
+  const validateExpiryDateRange = () => {
+    const { expiry_date_from, expiry_date_to } = memberSearchForm;
+
+    if (!expiry_date_from || !expiry_date_to) return true;
+
+    const from = new Date(expiry_date_from);
+    const to = new Date(expiry_date_to);
+
+    if (from > to) {
+      toast({
+        title: "Invalid Expiry Date Range",
+        description: "'Expiry Date From' cannot be greater than 'Expiry Date To'.",
+        variant: "destructive",
+      });
+
+      return false;
+    }
+
+    return true;
+  };
+
+  const validateAgeRange = () => {
+    const { age_from, age_to } = memberSearchForm;
+
+    if (!age_from || !age_to) return true;
+
+    const from = Number(age_from);
+    const to = Number(age_to);
+
+    if (from > to) {
+      toast({
+        title: "Invalid Age Range",
+        description: "'Age From' cannot be greater than 'Age To'.",
+        variant: "destructive",
+      });
+
+      return false;
+    }
+
+    return true;
+  };
+
+  const handleMemberSearch = async () => {
+
+    if (!validateEmail()) return;
+
+    if (!validatePhoneNumbers()) return;
+
+    if (!validateJoinedDateRange()) return;
+
+    if (!validateExpiryDateRange()) return;
+
+    if (!validateAgeRange()) return;
+
+    if (!validatePlanExpiryDate()) return;
+
+    try {
+      const response = await fetch(`${BASE_URL}/searchMemberData`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          Company_code: "YJK",
+          Location_code: "LOC001",
+          MemberID: memberSearchForm.MemberID,
+          Identity_No: memberSearchForm.Identity_No,
+          Full_name: memberSearchForm.Full_name,
+          age_from: memberSearchForm.age_from,
+          age_to: memberSearchForm.age_to,
+          Gender: memberSearchForm.Gender,
+          Mobile: memberSearchForm.Mobile,
+          WhatsApp_Number: memberSearchForm.WhatsApp_Number,
+          Email: memberSearchForm.Email,
+          Membership_type: memberSearchForm.Membership_type,
+          is_active: memberSearchForm.is_active,
+          Joined_date_from: memberSearchForm.Joined_date_from,
+          Joined_date_to: memberSearchForm.Joined_date_to,
+          expiry_date_from: memberSearchForm.expiry_date_from,
+          expiry_date_to: memberSearchForm.expiry_date_to,
+        }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        setMembers(data);
+      } else if (response.status === 404) {
+        setMembers([]);
+        toast({
+          title: "Data Not Found",
+          description: data?.message || "No matching roles found.",
+          variant: "destructive",
+        });
+      } else {
+        setMembers([]);
+        toast({
+          title: "Search Failed",
+          description: data?.message || "Something went wrong while searching.",
+          variant: "destructive",
+        });
+      }
+    } catch (error: any) {
+      console.error("Search Error:", error);
+      setMembers([]);
+      toast({
+        title: "Server Error",
+        description:
+          error?.message ||
+          "Unable to connect to the server. Please try again later.",
+        variant: "destructive",
+      });
+    }
+  };
+
+  const handleSearchNumberChange = (
+    e: React.ChangeEvent<HTMLInputElement>,
+    field: keyof typeof memberSearchForm
+  ) => {
+    const value = e.target.value.replace(/\D/g, "").slice(0, 15);
+
+    setMemberSearchForm({
+      ...memberSearchForm,
+      [field]: value,
+    });
+  };
+
   return (
     <div className="min-h-screen bg-gray-50">
       <header className="bg-white shadow-sm border-b">
@@ -884,17 +1179,22 @@ const MemberManagement = () => {
               </Button>
               <h1 className="text-2xl font-bold text-gray-900">Member Management</h1>
             </div>
-            <Button onClick={handleAddMember}>
-              <Plus className="h-4 w-4 mr-2" />
-              Add Member
-            </Button>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button onClick={handleAddMember}>
+                  <Plus className="h-4 w-4 mr-2" />
+                  Add Member
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent>Add Member</TooltipContent>
+            </Tooltip>
           </div>
         </div>
       </header>
 
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Stats Grid */}
-        {/* <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
           {stats.map((stat, index) => (
             <Card key={index}>
               <CardContent className="p-6">
@@ -910,109 +1210,389 @@ const MemberManagement = () => {
               </CardContent>
             </Card>
           ))}
-        </div> */}
+        </div>
 
         {/* Search and Filters */}
-        {/* <Card className="mb-6">
+        <Card className="mb-6">
           <CardContent className="p-4">
-            <div className="flex flex-col md:flex-row gap-4">
-              <div className="flex-1 relative">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
-                <Input
-                  placeholder="Search by name, CPR, email, or phone..."
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                  className="pl-10"
-                />
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-x-4 gap-y-6">
+
+              <div className="space-y-2">
+                <Label>Member ID</Label>
+                <TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Input
+                        placeholder="Enter member id"
+                        value={memberSearchForm.MemberID}
+                        maxLength={30}
+                        onChange={(e) => setMemberSearchForm({ ...memberSearchForm, MemberID: e.target.value, })} />
+                    </TooltipTrigger>
+
+                    <TooltipContent>
+                      <p>Enter Member ID</p>
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
               </div>
-              <Select value={statusFilter} onValueChange={(value: 'all' | 'active' | 'inactive') => setStatusFilter(value)}>
-                <SelectTrigger className="w-full md:w-40">
-                  <SelectValue placeholder="Status" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">All Status</SelectItem>
-                  <SelectItem value="active">Active</SelectItem>
-                  <SelectItem value="inactive">Inactive</SelectItem>
-                </SelectContent>
-              </Select>
-              <Select value={membershipFilter} onValueChange={setMembershipFilter}>
-                <SelectTrigger className="w-full md:w-40">
-                  <SelectValue placeholder="Membership" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">All Types</SelectItem>
-                  <SelectItem value="Premium">Premium</SelectItem>
-                  <SelectItem value="Standard">Standard</SelectItem>
-                  <SelectItem value="Basic">Basic</SelectItem>
-                </SelectContent>
-              </Select>
+
+              <div className="space-y-2">
+                <Label>Indentity No</Label>
+                <TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Input
+                        maxLength={20}
+                        placeholder="Enter identity number"
+                        value={memberSearchForm.Identity_No}
+                        onChange={(e) => setMemberSearchForm({ ...memberSearchForm, Identity_No: e.target.value, })} />
+                    </TooltipTrigger>
+
+                    <TooltipContent>
+                      <p>Enter Indentity No</p>
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
+              </div>
+
+              <div className="space-y-2">
+                <Label>Full Name</Label>
+                <TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Input
+                        placeholder="Enter full name"
+                        maxLength={100}
+                        value={memberSearchForm.Full_name}
+                        onChange={(e) => setMemberSearchForm({ ...memberSearchForm, Full_name: e.target.value, })} />
+                    </TooltipTrigger>
+
+                    <TooltipContent>
+                      <p>Enter Full Name</p>
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
+              </div>
+
+              <div className="space-y-2">
+                <Label>Age From</Label>
+                <TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Input
+                        maxLength={3}
+                        placeholder="Enter age from"
+                        value={memberSearchForm.age_from}
+                        onChange={(e) => handleSearchNumberChange(e, "age_from")} />
+                    </TooltipTrigger>
+
+                    <TooltipContent>
+                      <p>Enter Age From</p>
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
+              </div>
+
+              <div className="space-y-2">
+                <Label>Age To</Label>
+                <TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Input
+                        maxLength={3}
+                        placeholder="Enter age to"
+                        value={memberSearchForm.age_to}
+                        onChange={(e) => handleSearchNumberChange(e, "age_to")} />
+                    </TooltipTrigger>
+
+                    <TooltipContent>
+                      <p>Enter Age To</p>
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
+              </div>
+
+              <div className="space-y-2">
+                <Label>Gender</Label>
+
+                <TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <div>
+                        <Select
+                          value={memberSearchForm.Gender}
+                          onValueChange={(value) => setMemberSearchForm({ ...memberSearchForm, Gender: value, })}>
+                          <SelectTrigger>
+                            <SelectValue placeholder="Select Gender" />
+                          </SelectTrigger>
+
+                          <SelectContent>
+                            {gender.map((gender: any) => (
+                              <SelectItem
+                                key={gender.attributedetails_name}
+                                value={gender.attributedetails_name}
+                              >
+                                {gender.attributedetails_name}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      </div>
+                    </TooltipTrigger>
+
+                    <TooltipContent>
+                      <p>Select Gender</p>
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
+              </div>
+
+              <div className="space-y-2">
+                <Label>Mobile</Label>
+                <TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Input
+                        placeholder="Enter mobile number"
+                        value={memberSearchForm.Mobile}
+                        inputMode="numeric"
+                        maxLength={15}
+                        onChange={(e) => handleSearchNumberChange(e, "Mobile")} />
+                    </TooltipTrigger>
+
+                    <TooltipContent>
+                      <p>Enter Mobile Number</p>
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
+              </div>
+
+              <div className="space-y-2">
+                <Label>WhatsApp Number</Label>
+                <TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Input
+                        placeholder="Enter whatsapp number"
+                        maxLength={10}
+                        value={memberSearchForm.WhatsApp_Number}
+                        inputMode="numeric"
+                        onChange={(e) => handleSearchNumberChange(e, "WhatsApp_Number")} />
+                    </TooltipTrigger>
+
+                    <TooltipContent>
+                      <p>Enter WhatsApp Number</p>
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
+              </div>
+
+              <div className="space-y-2">
+                <Label>Email Address</Label>
+                <TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Input
+                        placeholder="Enter email address (e.g., branch@example.com)"
+                        value={memberSearchForm.Email}
+                        maxLength={100}
+                        onChange={(e) => setMemberSearchForm({ ...memberSearchForm, Email: e.target.value, })} />
+                    </TooltipTrigger>
+
+                    <TooltipContent>
+                      <p>Enter Email Address</p>
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
+              </div>
+
+              <div className="space-y-2">
+                <Label>Membership Type</Label>
+
+                <TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <div>
+                        <Select
+                          value={memberSearchForm.Membership_type}
+                          onValueChange={(value) => setMemberSearchForm({ ...memberSearchForm, Membership_type: value, })}>
+                          <SelectTrigger>
+                            <SelectValue placeholder="Select Membership Type" />
+                          </SelectTrigger>
+
+                          <SelectContent>
+                            {membershipType.map((membershipType) => (
+                              <SelectItem
+                                key={membershipType.attributedetails_name}
+                                value={membershipType.attributedetails_name}
+                              >
+                                {membershipType.attributedetails_name}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      </div>
+                    </TooltipTrigger>
+
+                    <TooltipContent>
+                      <p>Select Membership Type</p>
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
+              </div>
+
+              <div className="space-y-2">
+                <Label>Status</Label>
+
+                <TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <div>
+                        <Select
+                          value={memberSearchForm.is_active}
+                          onValueChange={(value) => setMemberSearchForm({ ...memberSearchForm, is_active: value, })}>
+                          <SelectTrigger>
+                            <SelectValue placeholder="Select Status" />
+                          </SelectTrigger>
+
+                          <SelectContent>
+                            {status.map((item: any) => (
+                              <SelectItem
+                                key={item.attributedetails_name}
+                                value={item.attributedetails_name}
+                              >
+                                {item.attributedetails_name}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      </div>
+                    </TooltipTrigger>
+
+                    <TooltipContent>
+                      <p>Select Status</p>
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
+              </div>
+
+              <div className="space-y-2">
+                <Label>Join Date From</Label>
+                <TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Input
+                        type="date"
+                        value={memberSearchForm.Joined_date_from}
+                        onChange={(e) => setMemberSearchForm({ ...memberSearchForm, Joined_date_from: e.target.value, })} />
+                    </TooltipTrigger>
+
+                    <TooltipContent>
+                      <p>Select Join Date From</p>
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
+              </div>
+
+              <div className="space-y-2">
+                <Label>Join Date To</Label>
+                <TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Input
+                        type="date"
+                        value={memberSearchForm.Joined_date_to}
+                        onChange={(e) => setMemberSearchForm({ ...memberSearchForm, Joined_date_to: e.target.value, })} />
+                    </TooltipTrigger>
+
+                    <TooltipContent>
+                      <p>Select Join Date To</p>
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
+              </div>
+
+              <div className="space-y-2">
+                <Label>Plan Expiry From</Label>
+                <TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Input
+                        type="date"
+                        value={memberSearchForm.expiry_date_from}
+                        onChange={(e) => setMemberSearchForm({ ...memberSearchForm, expiry_date_from: e.target.value, })} />
+                    </TooltipTrigger>
+
+                    <TooltipContent>
+                      <p>Select Plan Expiry From</p>
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
+              </div>
+
+              <div className="space-y-2">
+                <Label>Plan Expiry To</Label>
+                <TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Input
+                        type="date"
+                        value={memberSearchForm.expiry_date_to}
+                        onChange={(e) => setMemberSearchForm({ ...memberSearchForm, expiry_date_to: e.target.value, })} />
+                    </TooltipTrigger>
+
+                    <TooltipContent>
+                      <p>Select Plan Expiry To</p>
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
+              </div>
+
+
+
+            </div>
+            <div className="flex justify-end gap-4 mt-6">
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Button
+                      size="icon"
+                      className="rounded-full"
+                      onClick={handleMemberSearch}
+                    >
+                      <Search className="h-5 w-5" />
+                    </Button>
+                  </TooltipTrigger>
+
+                  <TooltipContent>
+                    <p>Search</p>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Button
+                      size="icon"
+                      variant="secondary"
+                      className="rounded-full"
+                      onClick={handleReset}
+                    >
+                      <RotateCcw className="h-5 w-5" />
+                    </Button>
+                  </TooltipTrigger>
+
+                  <TooltipContent>
+                    <p>Reload</p>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
             </div>
           </CardContent>
-        </Card> */}
+        </Card>
 
         {/* Members Table */}
-        {/* <Card>
-          <CardHeader>
-            <CardTitle>Members ({filteredMembers.length})</CardTitle>
-            <CardDescription>Manage gym members with CPR as primary identifier</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="overflow-x-auto">
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>CPR Number</TableHead>
-                    <TableHead>Full Name</TableHead>
-                    <TableHead>Mobile</TableHead>
-                    <TableHead>Email</TableHead>
-                    <TableHead>Joined Date</TableHead>
-                    <TableHead>Plan Expiry</TableHead>
-                    <TableHead>Status</TableHead>
-                    <TableHead className="text-right">Actions</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {filteredMembers.map((member) => (
-                    <TableRow key={member.cpr}>
-                      <TableCell className="font-mono font-medium">{member.cpr}</TableCell>
-                      <TableCell className="font-medium">{member.fullName}</TableCell>
-                      <TableCell>{member.bahrainMobile}</TableCell>
-                      <TableCell>{member.email}</TableCell>
-                      <TableCell>{format(member.joinedDate, 'dd MMM yyyy')}</TableCell>
-                      <TableCell>{format(member.planExpiryDate, 'dd MMM yyyy')}</TableCell>
-                      <TableCell>
-                        <Badge variant={member.isActive ? 'default' : 'secondary'}>
-                          {member.isActive ? 'Active' : 'Inactive'}
-                        </Badge>
-                      </TableCell>
-                      <TableCell className="text-right">
-                        <div className="flex justify-end gap-2">
-                          <Button variant="ghost" size="sm" onClick={() => handleViewMember(member)}>
-                            <Eye className="h-4 w-4" />
-                          </Button>
-                          <Button variant="ghost" size="sm" onClick={() => handleEditMember(member)}>
-                            <Pencil className="h-4 w-4" />
-                          </Button>
-                          <Button variant="ghost" size="sm" onClick={() => handleDeleteMember(member.cpr)}>
-                            <Trash2 className="h-4 w-4 text-red-500" />
-                          </Button>
-                        </div>
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                  {filteredMembers.length === 0 && (
-                    <TableRow>
-                      <TableCell colSpan={8} className="text-center py-8 text-gray-500">
-                        No members found matching your criteria
-                      </TableCell>
-                    </TableRow>
-                  )}
-                </TableBody>
-              </Table>
-            </div>
-          </CardContent>
-        </Card> */}
-
         <Card>
           <CardHeader>
             {/* <CardTitle>Members ({members.length})</CardTitle> */}
@@ -1247,6 +1827,7 @@ const MemberManagement = () => {
                             type="email"
                             placeholder="Enter email address (e.g., branch@example.com)"
                             value={formData.Email}
+                            maxLength={100}
                             onChange={(e) => setFormData({ ...formData, Email: e.target.value })}
                           />
                         </TooltipTrigger>
@@ -1413,6 +1994,7 @@ const MemberManagement = () => {
                             id="DOB"
                             type='date'
                             value={formData.Joined_date}
+                            max={new Date().toISOString().split("T")[0]} 
                             onChange={(e) => setFormData({ ...formData, Joined_date: e.target.value })}
                             placeholder="Select joined date"
                           />
@@ -1559,8 +2141,11 @@ const MemberManagement = () => {
                 <div className="flex items-center justify-between">
                   <div>
                     <h2 className="text-2xl font-bold">{viewingMember.Full_name}</h2>
-                    <Badge variant={viewingMember.is_active ? 'default' : 'secondary'} className="mt-2">
-                      {viewingMember.is_active ? 'Active' : 'Inactive'}
+                    <Badge
+                      variant={String(viewingMember.is_active) === "Active" ? "default" : "secondary"}
+                      className="mt-2"
+                    >
+                      {String(viewingMember.is_active)}
                     </Badge>
                     <Badge variant="outline" className="ml-2">
                       {viewingMember.Membership_type}
