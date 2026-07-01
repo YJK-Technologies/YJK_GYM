@@ -38,6 +38,9 @@ const FacultyManagement = () => {
 
   const [TrainerImages, setTrainerImages] = useState<(string | null)[]>([null, null]);
 
+  const maxDOB = new Date();
+  maxDOB.setFullYear(maxDOB.getFullYear() - 18);
+
   const bufferToBase64 = (buffer: number[], mimeType: string = "image/png") => {
     let binary = "";
 
@@ -76,6 +79,18 @@ const [TrainerForm, setTrainerForm] = useState({
     created_by: "admin",
     modified_by: "admin",
   });
+
+  const handlePhoneNumberChange = (
+    e: React.ChangeEvent<HTMLInputElement>,
+    field: keyof typeof TrainerForm
+  ) => {
+    const value = e.target.value.replace(/\D/g, "").slice(0, 15);
+
+    setTrainerForm({
+      ...TrainerForm,
+      [field]: value,
+    });
+  };
 
   // Trainer
     const handleTrainerFiles = async (files: (File | null)[]) => {
@@ -192,8 +207,6 @@ const [TrainerForm, setTrainerForm] = useState({
     const validateTrainer = () => {
       if (
         !TrainerForm.company_code ||
-        // !TrainerForm.TrainerID ||
-        // !TrainerForm.KeyField ||
         !TrainerForm.FullName ||
         !TrainerForm.Email ||
         !TrainerForm.Password ||
@@ -210,6 +223,7 @@ const [TrainerForm, setTrainerForm] = useState({
           variant: "destructive",
         });
         return false;
+        
       }
   
       // Email validation
@@ -223,14 +237,45 @@ const [TrainerForm, setTrainerForm] = useState({
         });
         return false;
       }
-  
+
+      if (Number(TrainerForm.Experience) <= 0) {
+        toast({
+          title: "Invalid Experience",
+          description: "Experience must be greater than 0.",
+          variant: "destructive",
+        });
+        return false;
+      }
+      
       return true;
     };
+
+    const isValidPhoneNumber = (Mobile: string) => {
+    return /^\d{8,15}$/.test(Mobile);
+  };
   
     const handleCreateTrainer = async () => {
       setSubmittedTrainer(true);
   
       if (!validateTrainer()) return;
+
+      if (!isValidPhoneNumber(TrainerForm.Mobile)) {
+        toast({
+          title: "Invalid Mobile Number",
+          description: "Mobile number must contain only digits and be between 8 and 15 digits.",
+          variant: "destructive",
+        });
+        return false;
+      }
+
+      if (!TrainerForm.Password || TrainerForm.Password.length < 8) {
+        toast({
+          title: "Invalid Password",
+          description: "Password must contain at least 8 characters.",
+          variant: "destructive",
+        });
+        return false;
+      }
   
       try {
         const formData = new FormData();
@@ -316,6 +361,24 @@ const [TrainerForm, setTrainerForm] = useState({
       setSubmittedTrainer(true);
   
       if (!validateTrainer()) return;
+
+      if (!isValidPhoneNumber(TrainerForm.Mobile)) {
+        toast({
+          title: "Invalid Mobile Number",
+          description: "Mobile number must contain only digits and be between 8 and 15 digits.",
+          variant: "destructive",
+        });
+        return false;
+      }
+      
+      if (!TrainerForm.Password || TrainerForm.Password.length < 8) {
+        toast({
+          title: "Invalid Password",
+          description: "Password must contain at least 8 characters.",
+          variant: "destructive",
+        });
+        return false;
+      }
   
       try {
         const formData = new FormData();
@@ -330,6 +393,37 @@ const [TrainerForm, setTrainerForm] = useState({
             formData.append(key, String(value ?? ""));
           }
         });
+
+        TrainerImages.forEach((img, index) => {
+        if (!img) return;
+
+        // Extract mime type from base64 string
+        const mimeType = img.match(/data:(.*?);base64/)?.[1] || "image/png";
+
+        const base64 = img.split(",")[1];
+        const byteCharacters = atob(base64);
+
+        const byteNumbers = Array.from(byteCharacters, (char) =>
+          char.charCodeAt(0)
+        );
+
+        const byteArray = new Uint8Array(byteNumbers);
+
+        const blob = new Blob([byteArray], {
+          type: mimeType,
+        });
+
+        // Generate extension based on mime type
+        const extension = mimeType.split("/")[1] || "png";
+
+        if (index === 0) {
+          formData.append(
+            "Photo",
+            blob,
+            `Photo.${extension}`
+          );
+        }
+      });
 
         const response = await fetch(`${BASE_URL}/GYM_TrainerUpdate`, {
           method: "POST",
@@ -497,7 +591,7 @@ const [TrainerForm, setTrainerForm] = useState({
         });
   
         const data = await response.json();
-  
+        console.log(data);
         if (response.ok) {
           setTrainers(data);
         } else if (response.status === 404) {
@@ -544,7 +638,7 @@ const [TrainerForm, setTrainerForm] = useState({
         FullName: Trainer.FullName,
         Email: Trainer.Email,
         Password: Trainer.Password,
-        DOB: Trainer.DOB,
+        DOB: Trainer.DOB ? new Date(Trainer.DOB).toISOString().split("T")[0] : "",
         Gender: Trainer.Gender,
         Mobile: Trainer.Mobile,
         Experience: Trainer.Experience,
@@ -567,6 +661,26 @@ const [TrainerForm, setTrainerForm] = useState({
   
       setIsTrainerDialogOpen(true);
     };
+
+    const handleReset = () => {
+        setTrainersSearchForm({
+          company_code: "YJK",
+      Location_Code: "001",
+        FullName: "",
+        Email: "",
+        age_from: "",
+        age_to: "",
+        DOB: "",
+        Mobile: "",
+        experience_from: "",
+        experience_to: "",
+        Experience: "",
+        Gender: "",
+        Specializations: "",
+        WorkingSchedule: "",
+        });
+        setTrainers([]);
+      };
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -606,14 +720,13 @@ const [TrainerForm, setTrainerForm] = useState({
                     <div className="grid grid-cols-2 gap-4">
 
                       <div className="space-y-2">
-                        {/* <Label htmlFor="name">Full Name*</Label>
-                        <Input id="name" placeholder="Enter full name" /> */}
                         <Label htmlFor="name" className={submittedTrainer && !TrainerForm.FullName ? "text-red-500" : ""}>Full Name*</Label>
                                             <TooltipProvider>
                                               <Tooltip>
                                                 <TooltipTrigger asChild>
                                             <Input
                                               id="Email"
+                                              maxLength={100}
                                               value={TrainerForm.FullName}
                                               onChange={(e) => setTrainerForm({ ...TrainerForm, FullName: e.target.value })}
                                               placeholder="e.g., Full Name"
@@ -636,6 +749,7 @@ const [TrainerForm, setTrainerForm] = useState({
                                                 <TooltipTrigger asChild>
                                             <Input
                                               id="Email"
+                                              maxLength={255}
                                               value={TrainerForm.Email}
                                               onChange={(e) => setTrainerForm({ ...TrainerForm, Email: e.target.value })}
                                               placeholder="e.g., Email"
@@ -651,7 +765,6 @@ const [TrainerForm, setTrainerForm] = useState({
                       
                       {/* Newly Added Field */}
                             <div className="space-y-2">
-                          {/* <Label htmlFor="name">Password*</Label> */}
                           <Label htmlFor="name" className={submittedTrainer && !TrainerForm.Password ? "text-red-500" : ""}>Password*</Label>
                           <TooltipProvider>
                             <Tooltip>
@@ -659,6 +772,7 @@ const [TrainerForm, setTrainerForm] = useState({
                           <div className="relative">
                             <Input
                               id="Password"
+                              maxLength={50}
                               type={showPassword ? "text" : "password"}
                               value={TrainerForm.Password}
                               onChange={(e) =>
@@ -700,6 +814,7 @@ const [TrainerForm, setTrainerForm] = useState({
                                               id="DOB"
                                               type='date'
                                               value={TrainerForm.DOB}
+                                              max={maxDOB.toISOString().split("T")[0]}
                                               onChange={(e) => setTrainerForm({ ...TrainerForm, DOB: e.target.value })}
                                               placeholder="e.g., DOB"
                                             />
@@ -752,16 +867,17 @@ const [TrainerForm, setTrainerForm] = useState({
 
                     {/* <div className="grid grid-cols-2 gap-4"> */}
                       <div className="space-y-2">
-                        {/* <Label htmlFor="phone">Phone*</Label>
-                        <Input id="phone" placeholder="+973 XXXX XXXX" /> */}
                         <Label htmlFor="name" className={submittedTrainer && !TrainerForm.Mobile ? "text-red-500" : ""}>Phone*</Label>
                                             <TooltipProvider>
                                               <Tooltip>
                                                 <TooltipTrigger asChild>
                                             <Input
                                               id="Email"
+                                              
                                               value={TrainerForm.Mobile}
-                                              onChange={(e) => setTrainerForm({ ...TrainerForm, Mobile: e.target.value })}
+                                              onChange={(e) => handlePhoneNumberChange(e, "Mobile")}
+                                              inputMode="numeric"
+                                              maxLength={15}
                                               placeholder="e.g., +973 XXXX XXXX"
                                             />
                                             </TooltipTrigger>
@@ -773,17 +889,24 @@ const [TrainerForm, setTrainerForm] = useState({
                                             </TooltipProvider>
                       </div>
                       <div className="space-y-2">
-                        {/* <Label htmlFor="experience">Years of Experience*</Label>
-                        <Input id="experience" type="number" placeholder="5" /> */}
                         <Label htmlFor="name" className={submittedTrainer && !TrainerForm.Experience ? "text-red-500" : ""}>Years of Experience*</Label>
                                             <TooltipProvider>
                                               <Tooltip>
                                                 <TooltipTrigger asChild>
                                             <Input
-                                              id="Email"
-                                              type="number"
+                                              id="Experience"
+                                              type="text"
+                                              inputMode="numeric"
+                                              maxLength={2}
                                               value={TrainerForm.Experience}
-                                              onChange={(e) => setTrainerForm({ ...TrainerForm, Experience: e.target.value })}
+                                              onChange={(e) => {
+                                                const value = e.target.value.replace(/\D/g, ""); // Allow digits only
+                                              
+                                                setTrainerForm({
+                                                  ...TrainerForm,
+                                                  Experience: value,
+                                                });
+                                              }}
                                               placeholder="e.g., 5"
                                             />
                                             </TooltipTrigger>
@@ -804,6 +927,7 @@ const [TrainerForm, setTrainerForm] = useState({
                                             <Input
                                               id="Email"
                                               value={TrainerForm.Certifications}
+                                              maxLength={500}
                                               onChange={(e) => setTrainerForm({ ...TrainerForm, Certifications: e.target.value })}
                                               placeholder="e.g., NASM CPT, ACE Fitness..."
                                             />
@@ -825,6 +949,7 @@ const [TrainerForm, setTrainerForm] = useState({
                                             <Input
                                               id="Email"
                                               value={TrainerForm.Specializations}
+                                              maxLength={500}
                                               onChange={(e) => setTrainerForm({ ...TrainerForm, Specializations: e.target.value })}
                                               placeholder="e.g., Weight Loss, Strength Training..."
                                             />
@@ -846,6 +971,7 @@ const [TrainerForm, setTrainerForm] = useState({
                                             <Input
                                               id="Email"
                                               value={TrainerForm.WorkingSchedule}
+                                              maxLength={500}
                                               onChange={(e) => setTrainerForm({ ...TrainerForm, WorkingSchedule: e.target.value })}
                                               placeholder="e.g., Sun-Thu: 6AM-2PM"
                                             />
@@ -866,6 +992,7 @@ const [TrainerForm, setTrainerForm] = useState({
                                             <Textarea
                                               id="Email"
                                               value={TrainerForm.Biography}
+                                              maxLength={1000}
                                               onChange={(e) => setTrainerForm({ ...TrainerForm, Biography: e.target.value })}
                                               placeholder="e.g., Brief description about the trainer..."
                                             />
@@ -983,6 +1110,7 @@ const [TrainerForm, setTrainerForm] = useState({
               <Tooltip>
                 <TooltipTrigger asChild>
                   <Input
+                    maxLength={100}
                     placeholder="Enter Full Name"
                     value={TrainersSearchForm.FullName}
                     onChange={(e) =>
@@ -1008,6 +1136,7 @@ const [TrainerForm, setTrainerForm] = useState({
               <Tooltip>
                 <TooltipTrigger asChild>
                   <Input
+                    maxLength={255}
                     placeholder="Enter Email"
                     value={TrainersSearchForm.Email}
                     onChange={(e) =>
@@ -1025,25 +1154,6 @@ const [TrainerForm, setTrainerForm] = useState({
               </Tooltip>
             </TooltipProvider>
           </div>
-
-          {/* <div className="space-y-2">
-            <Label>DOB</Label>
-            <TooltipProvider>
-              <Tooltip>
-                <TooltipTrigger asChild>
-            <Input
-              type='date'
-              placeholder="Enter DOB"
-              value={TrainersSearchForm.DOB}
-              onChange={(e) => setTrainersSearchForm({ ...TrainersSearchForm, DOB: e.target.value, })} />
-              </TooltipTrigger>
-    
-                <TooltipContent>
-                  <p>Select DOB</p>
-                </TooltipContent>
-              </Tooltip>
-            </TooltipProvider>
-          </div> */}
     
           <div className="space-y-2">
             <Label>Age From</Label>
@@ -1051,9 +1161,18 @@ const [TrainerForm, setTrainerForm] = useState({
               <Tooltip>
                 <TooltipTrigger asChild>
             <Input
+              type="text"
+              inputMode="numeric"
+              maxLength={3}
               placeholder="Enter Age From"
               value={TrainersSearchForm.age_from}
-              onChange={(e) => setTrainersSearchForm({ ...TrainersSearchForm, age_from: e.target.value, })} />
+              onChange={(e) =>
+                setTrainersSearchForm({
+                  ...TrainersSearchForm,
+                  age_from: e.target.value.replace(/\D/g, ""), // Numbers only
+                })
+              }
+            />
               </TooltipTrigger>
                   
                 <TooltipContent>
@@ -1069,9 +1188,12 @@ const [TrainerForm, setTrainerForm] = useState({
               <Tooltip>
                 <TooltipTrigger asChild>
             <Input
+              type="text"
+              inputMode="numeric"
+              maxLength={3}
               placeholder="Enter Age To"
               value={TrainersSearchForm.age_to}
-              onChange={(e) => setTrainersSearchForm({ ...TrainersSearchForm, age_to: e.target.value, })} />
+              onChange={(e) => setTrainersSearchForm({ ...TrainersSearchForm, age_to: e.target.value.replace(/\D/g, ""), })} />
               </TooltipTrigger>
                   
                 <TooltipContent>
@@ -1089,7 +1211,9 @@ const [TrainerForm, setTrainerForm] = useState({
             <Input
               placeholder="Enter Phone"
               value={TrainersSearchForm.Mobile}
-              onChange={(e) => setTrainersSearchForm({ ...TrainersSearchForm, Mobile: e.target.value, })} />
+              inputMode="numeric"
+              maxLength={15}
+              onChange={(e) => setTrainersSearchForm({ ...TrainersSearchForm, Mobile: e.target.value.replace(/\D/g, ""), })} />
               </TooltipTrigger>
                   
                 <TooltipContent>
@@ -1107,7 +1231,9 @@ const [TrainerForm, setTrainerForm] = useState({
             <Input
               placeholder="Enter Years of Experience From"
               value={TrainersSearchForm.experience_from}
-              onChange={(e) => setTrainersSearchForm({ ...TrainersSearchForm, experience_from: e.target.value, })} />
+              inputMode="numeric"
+              maxLength={2}
+              onChange={(e) => setTrainersSearchForm({ ...TrainersSearchForm, experience_from: e.target.value.replace(/\D/g, ""), })} />
               </TooltipTrigger>
                   
                 <TooltipContent>
@@ -1125,7 +1251,9 @@ const [TrainerForm, setTrainerForm] = useState({
             <Input
               placeholder="Enter Years of Experience To"
               value={TrainersSearchForm.experience_to}
-              onChange={(e) => setTrainersSearchForm({ ...TrainersSearchForm, experience_to: e.target.value, })} />
+              inputMode="numeric"
+              maxLength={2}
+              onChange={(e) => setTrainersSearchForm({ ...TrainersSearchForm, experience_to: e.target.value.replace(/\D/g, ""), })} />
               </TooltipTrigger>
                   
                 <TooltipContent>
@@ -1184,6 +1312,7 @@ const [TrainerForm, setTrainerForm] = useState({
                                             <Input
                                               id="Email"
                                               value={TrainersSearchForm.Specializations}
+                                              maxLength={500}
                                               onChange={(e) => setTrainersSearchForm({ ...TrainersSearchForm, Specializations: e.target.value })}
                                               placeholder="e.g., Weight Loss, Strength Training..."
                                             />
@@ -1205,6 +1334,7 @@ const [TrainerForm, setTrainerForm] = useState({
                                             <Input
                                               id="Email"
                                               value={TrainersSearchForm.WorkingSchedule}
+                                              maxLength={500}
                                               onChange={(e) => setTrainersSearchForm({ ...TrainersSearchForm, WorkingSchedule: e.target.value })}
                                               placeholder="e.g., Sun-Thu: 6AM-2PM"
                                             />
@@ -1216,7 +1346,7 @@ const [TrainerForm, setTrainerForm] = useState({
                                               </Tooltip>
                                             </TooltipProvider>
                     </div>
-              <div className="flex justify-end gap-4 mt-6">
+              <div className="col-span-full flex justify-end gap-4 mt-6">
               <TooltipProvider>
                 <Tooltip>
                   <TooltipTrigger asChild>
@@ -1242,7 +1372,7 @@ const [TrainerForm, setTrainerForm] = useState({
                       size="icon"
                       variant="secondary"
                       className="rounded-full"
-                      // onClick={handleReset}
+                      onClick={handleReset}
                     >
                       <RotateCcw className="h-5 w-5" />
                     </Button>
@@ -1322,9 +1452,11 @@ const [TrainerForm, setTrainerForm] = useState({
                       </div>
                     </div>
 
+                    
                     <div className="mt-4">
                       <p className="text-sm font-medium text-gray-700 mb-2">Specializations:</p>
                       <div className="flex flex-wrap gap-2">
+                        {console.log("Trainer:", trainer)}
                         {typeof trainer.Specializations === "string"
                           ? trainer.Specializations.split(",").map((spec: string, index: number) => (
                               <Badge key={index} variant="outline">
@@ -1345,18 +1477,18 @@ const [TrainerForm, setTrainerForm] = useState({
                       <p className="text-sm font-medium text-gray-700 mb-2">Certifications:</p>
                       <div className="flex flex-wrap gap-2">
                         {typeof trainer.Certifications === "string"
-  ? trainer.Certifications.split(",").map((cert: string, index: number) => (
-      <Badge key={index} variant="secondary" className="text-xs">
-        {cert.trim()}
-      </Badge>
-    ))
-  : Array.isArray(trainer.Certifications)
-  ? trainer.Certifications.map((cert: string, index: number) => (
-      <Badge key={index} variant="secondary" className="text-xs">
-        {cert}
-      </Badge>
-    ))
-  : null}
+                          ? trainer.Certifications.split(",").map((cert: string, index: number) => (
+                              <Badge key={index} variant="secondary" className="text-xs">
+                                {cert.trim()}
+                              </Badge>
+                            ))
+                          : Array.isArray(trainer.Certifications)
+                          ? trainer.Certifications.map((cert: string, index: number) => (
+                              <Badge key={index} variant="secondary" className="text-xs">
+                                {cert}
+                              </Badge>
+                            ))
+                          : null}
                       </div>
                     </div>
                   </CardContent>

@@ -7408,7 +7408,7 @@ console.log(numberSeriesForm)
                 setIsUserDialogOpen(false);
                 setSubmittedUser(false);
               }}>Cancel</Button>
-              <Button onClick={handleSaveUser}>{editingUser ? 'Update User' : 'Create User'} Program</Button>
+              <Button onClick={handleSaveUser}>{editingUser ? 'Update User' : 'Create User'}</Button>
             </DialogFooter>
           </DialogContent>
         </Dialog>
