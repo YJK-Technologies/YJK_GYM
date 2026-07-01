@@ -3244,12 +3244,12 @@ const memberAddData = async (req, res) => {
       .input("Joined_date", sql.Date, Joined_date)
       .input("Plan_expiry_date", sql.DateTime, Plan_expiry_date)
       .input("Membership_type", sql.NVarChar, Membership_type)
-      .input("is_active", sql.Bit, Number(is_active))
+      .input("is_active", sql.VarChar, is_active)
       .input("Company_code", sql.NVarChar, Company_code)
       .input("Location_code", sql.NVarChar, Location_code)
       .input("created_by", sql.NVarChar, created_by)
-      .query(`EXEC sp_Member_Hdr @mode,'',@Identity_No,@Full_name,@DOB,@Gender,@Mobile,@WhatsApp_Number,@Email,@Password,@Address,@Emergency_contact_name,@Emergency_contact_phone,@Emergency_contact_relation,
-        @Receive_promotions,@Receive_notifications,@Photo,@Joined_date,@Plan_expiry_date,@Membership_type,@is_active,@Company_code,@Location_code,'',@created_by,''`);
+      .query(`EXEC sp_Member_Hdr_Test @mode,'',@Identity_No,@Full_name,@DOB,@Gender,@Mobile,@WhatsApp_Number,@Email,@Password,@Address,@Emergency_contact_name,@Emergency_contact_phone,@Emergency_contact_relation,
+        @Receive_promotions,@Receive_notifications,@Photo,@Joined_date,@Plan_expiry_date,@Membership_type,@is_active,@Company_code,@Location_code,'',0,0,'','','','',@created_by,''`);
 
     res.status(200).json({ success: true, message: "Data inserted successfully" });
 
@@ -3295,14 +3295,14 @@ const memberUpdate = async (req, res) => {
       .input("Joined_date", sql.Date, Joined_date)
       .input("Plan_expiry_date", sql.DateTime, Plan_expiry_date)
       .input("Membership_type", sql.NVarChar, Membership_type)
-      .input("is_active", sql.Bit, Number(is_active))
+      .input("is_active", sql.VarChar, is_active)
       .input("Company_code", sql.NVarChar, Company_code)
       .input("Location_code", sql.NVarChar, Location_code)
       .input("Keyfield", sql.NVarChar, Keyfield)
       .input("modified_by", sql.NVarChar, modified_by)
-      .query(`EXEC sp_Member_Hdr @mode,@MemberID,@Identity_No,@Full_name,@DOB,Gender,@Mobile,@WhatsApp_Number,@Email,@Password,@Address,
+      .query(`EXEC sp_Member_Hdr_Test @mode,@MemberID,@Identity_No,@Full_name,@DOB,@Gender,@Mobile,@WhatsApp_Number,@Email,@Password,@Address,
           @Emergency_contact_name,@Emergency_contact_phone,@Emergency_contact_relation,@Receive_promotions,@Receive_notifications,
-          @Photo,@Joined_date,@Plan_expiry_date,@Membership_type,@is_active,@Company_code,@Location_code,@Keyfield,'',@modified_by`);
+          @Photo,@Joined_date,@Plan_expiry_date,@Membership_type,@is_active,@Company_code,@Location_code,@Keyfield,0,0,'','','','','',@modified_by`);
     res.status(200).json("Edited data saved successfully");
   } catch (err) {
     console.error("Error", err);
@@ -3328,7 +3328,7 @@ const memberDeleteData = async (req, res) => {
         .input("Company_code", sql.NVarChar, req.headers["company_code"])
         .input("Location_code", sql.NVarChar, req.headers["location_code"])
         .input("modified_by", sql.NVarChar, req.headers["modified-by"])
-        .query(`EXEC sp_Member_Hdr 'D',@MemberID,'','','','','','','','','','','','','','',NULL,'','','',0,@Company_code,@Location_code,'','',@modified_by`);
+        .query(`EXEC sp_Member_Hdr_Test 'D',@MemberID,'','','','','','','','','','','','','','',NULL,'','','','',@Company_code,@Location_code,'',0,0,'','','','','',@modified_by`);
     }
 
     res.status(200).json("user deleted successfully");
@@ -3346,7 +3346,7 @@ const getAllmemberData = async (req, res) => {
       .request()
       .input("Company_code", sql.NVarChar, Company_code)
       .input("Location_code", sql.NVarChar, Location_code)
-      .query(`EXEC sp_Member_Hdr 'A','','','','','','','','','','','','','','','',NULL,'','','',0,@Company_code,@Location_code,'','',''`);
+      .query(`EXEC sp_Member_Hdr_Test 'A','','','','','','','','','','','','','','','',NULL,'','','','',@Company_code,@Location_code,'',0,0,'','','','','',''`);
 
     if (result.recordset.length > 0) {
       res.status(200).json(result.recordset);
@@ -3398,6 +3398,51 @@ const getRelationship = async (req, res) => {
   }
 };
 //Code Ended by pavun on 30-06-2026
+
+//Code Added by Pavun on 01-07-2026
+const searchMemberData = async (req, res) => {
+  const { MemberID, Identity_No, Full_name, age_from, age_to, Gender, Mobile, WhatsApp_Number, Email, Membership_type, is_active, Joined_date_from,
+    Joined_date_to, expiry_date_from, expiry_date_to, Company_code, Location_code } = req.body;
+
+
+  try {
+    const pool = await connection.connectToDatabase();
+
+    const result = await pool
+      .request()
+      .input("mode", sql.NVarChar, "SC")
+      .input("MemberID", sql.NVarChar, MemberID)
+      .input("Identity_No", sql.NVarChar, Identity_No)
+      .input("Full_name", sql.NVarChar, Full_name)
+      .input("age_from", sql.Int, age_from)
+      .input("age_to", sql.Int, age_to)
+      .input("Gender", sql.NVarChar, Gender)
+      .input("Mobile", sql.NVarChar, Mobile)
+      .input("WhatsApp_Number", sql.NVarChar, WhatsApp_Number)
+      .input("Email", sql.NVarChar, Email)
+      .input("Membership_type", sql.NVarChar, Membership_type)
+      .input("is_active", sql.VarChar, is_active)
+      .input("Joined_date_from", sql.NVarChar, Joined_date_from)
+      .input("Joined_date_to", sql.NVarChar, Joined_date_to)
+      .input("expiry_date_from", sql.NVarChar, expiry_date_from)
+      .input("expiry_date_to", sql.NVarChar, expiry_date_to)
+      .input("Company_code", sql.NVarChar, Company_code)
+      .input("Location_code", sql.NVarChar, Location_code)
+      .query(`EXEC sp_Member_Hdr_Test @mode,@MemberID,@Identity_No,@Full_name,'',@Gender,@Mobile,@WhatsApp_Number,@Email,'','','','','',
+        '','',NULL,'','',@Membership_type,@is_active,@Company_code,@Location_code,'',@age_from,@age_to,@Joined_date_from,@Joined_date_to,@expiry_date_from,@expiry_date_to,'',''`);
+    
+if (result.recordset.length > 0) {
+      res.status(200).json(result.recordset);
+    } else {
+      res.status(404).json("Data not found");
+    }
+
+  } catch (err) {
+    console.error("Error", err);
+    res.status(500).json({ message: err.message || "Internal Server Error" });
+  }
+};
+//Code Ended by Pavun on 01-07-2026
 
 module.exports = {
   getCompanyno,
@@ -3503,7 +3548,8 @@ module.exports = {
   GYM_TrainerLoopInsert,
   GYM_TrainerLoopUpdate,
   GYM_TrainerLoopDelete,
-  getTrainerSC
+  getTrainerSC,
+  searchMemberData
 
 
 };
