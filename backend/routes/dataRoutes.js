@@ -126,9 +126,6 @@ router.post("/getAllmemberData", dataController.getAllmemberData)
 router.post("/GYM_TrainerInsert", upload.single("Photo"), dataController.GYM_TrainerInsert);
 router.post("/GYM_TrainerUpdate", upload.single("Photo"), dataController.GYM_TrainerUpdate)
 router.post("/GYM_TrainerDelete",dataController.GYM_TrainerDelete)
-router.post("/GYM_TrainerLoopInsert",dataController.GYM_TrainerLoopInsert)
-router.post("/GYM_TrainerLoopUpdate",dataController.GYM_TrainerLoopUpdate)
-router.post("/GYM_TrainerLoopDelete",dataController.GYM_TrainerLoopDelete)
 router.post("/getTrainerSC",dataController.getTrainerSC)
 router.post("/searchMemberData",dataController.searchMemberData)
 
