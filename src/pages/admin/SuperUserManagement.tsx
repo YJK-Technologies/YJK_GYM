@@ -7539,11 +7539,31 @@ const WorkoutProgramManagement = () => {
 
             </div>
             <DialogFooter>
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger asChild>
               <Button variant="outline" onClick={() => {
                 setIsUserDialogOpen(false);
                 setSubmittedUser(false);
               }}>Cancel</Button>
+              </TooltipTrigger>
+              
+                  <TooltipContent>
+                    Cancel without saving changes.
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger asChild>
               <Button onClick={handleSaveUser}>{editingUser ? 'Update User' : 'Create User'}</Button>
+              </TooltipTrigger>
+              
+                  <TooltipContent>
+                    <p>{editingUser ? "Update a User" : "Add a User"}</p>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
             </DialogFooter>
           </DialogContent>
         </Dialog>

@@ -14,6 +14,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { BASE_URL } from '../ApiConfig';
 import { useToast } from '@/hooks/use-toast';
 import ImageUpload from "../ImageUpload";
+import { showConfirmToast } from '../../components/ui/show-confirm-toast';
 
 interface Trainer {
   id: string;
@@ -383,9 +384,6 @@ const [TrainerForm, setTrainerForm] = useState({
       try {
         const formData = new FormData();
   
-        // Object.entries(TrainerForm).forEach(([key, value]) => {
-        //   formData.append(key, value as string);
-        // });
         Object.entries(TrainerForm).forEach(([key, value]) => {
           if (key === "super_admin") {
             formData.append("super_admin", value ? "Yes" : "No");
@@ -460,101 +458,104 @@ const [TrainerForm, setTrainerForm] = useState({
         });
       }
     };
-    
-    // const handleDeleteTrainer = async (user_code: string) => {
-    //   const confirmDelete = window.confirm(
-    //     "Are you sure you want to delete this Trainer?"
-    //   );
-  
-    //   if (!confirmDelete) return;
-  
-    //   try {
-    //     const response = await fetch(`${BASE_URL}/GYM_TrainerDelete`, {
-    //       method: "POST",
-    //       headers: {
-    //         "Content-Type": "application/json",
-    //         "modified-by": "admin",
-    //         "company_code": "YJK",
-    //       },
-    //       body: JSON.stringify({
-    //         user_codes: [user_code],
-    //       }),
-    //     });
-  
-    //     const data = await response.json();
-  
-    //     if (response.ok) {
-    //       toast({
-    //         title: "Success",
-    //         description: data.message || "Trainer deleted successfully.",
-    //       });
-  
-    //       handleTrainerSearch();
-    //     } else {
-    //       toast({
-    //         title: "Error",
-    //         description: data.message || "Failed to delete Trainer.",
-    //         variant: "destructive",
-    //       });
-    //     }
-    //   } catch (err: any) {
-    //     console.error(err);
-  
-    //     toast({
-    //       title: "Server Error",
-    //       description: err.message || "Something went wrong.",
-    //       variant: "destructive",
-    //     });
-    //   }
-    // };
 
-    const handleDeleteTrainer = async (trainer: any) => {
-  const confirmDelete = window.confirm(
-    `Are you sure you want to delete ${trainer.FullName}?`
-  );
+//     const handleDeleteTrainer = async (trainer: any) => {
 
-  if (!confirmDelete) return;
+//   const confirmDelete = window.confirm(
+//     `Are you sure you want to delete ${trainer.FullName}?`
+//   );
 
-  try {
-    const response = await fetch(`${BASE_URL}/GYM_TrainerDelete`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        company_code: trainer.company_code,
-        Location_Code: trainer.Location_Code,
-        TrainerID: trainer.TrainerID,
-        KeyField: trainer.KeyField,
-        modified_by: "admin",
-      }),
-    });
+//   if (!confirmDelete) return;
 
-    const data = await response.json();
+//   try {
+//     const response = await fetch(`${BASE_URL}/GYM_TrainerDelete`, {
+//       method: "POST",
+//       headers: {
+//         "Content-Type": "application/json",
+//       },
+//       body: JSON.stringify({
+//         company_code: trainer.company_code,
+//         Location_Code: trainer.Location_Code,
+//         TrainerID: trainer.TrainerID,
+//         KeyField: trainer.KeyField,
+//         modified_by: "admin",
+//       }),
+//     });
 
-    if (response.ok) {
-      toast({
-        title: "Success",
-        description: data.message || "Trainer deleted successfully.",
-      });
+//     const data = await response.json();
 
-      handleTrainerSearch();
-    } else {
-      toast({
-        title: "Error",
-        description: data.message || "Failed to delete trainer.",
-        variant: "destructive",
-      });
-    }
-  } catch (err: any) {
-    console.error(err);
+//     if (response.ok) {
+//       toast({
+//         title: "Success",
+//         description: data.message || "Trainer deleted successfully.",
+//       });
 
-    toast({
-      title: "Server Error",
-      description: err.message,
-      variant: "destructive",
-    });
-  }
+//       handleTrainerSearch();
+//     } else {
+//       toast({
+//         title: "Error",
+//         description: data.message || "Failed to delete trainer.",
+//         variant: "destructive",
+//       });
+//     }
+//   } catch (err: any) {
+//     console.error(err);
+
+//     toast({
+//       title: "Server Error",
+//       description: err.message,
+//       variant: "destructive",
+//     });
+//   }
+// };
+
+const handleDeleteTrainer = (trainer: any) => {
+  showConfirmToast({
+    title: "Delete Trainer",
+    description: `Are you sure you want to delete ${trainer.FullName}?`,
+    onConfirm: async () => {
+      try {
+        const response = await fetch(`${BASE_URL}/GYM_TrainerDelete`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            company_code: trainer.company_code,
+            Location_Code: trainer.Location_Code,
+            TrainerID: trainer.TrainerID,
+            KeyField: trainer.KeyField,
+            modified_by: "admin",
+          }),
+        });
+
+        const data = await response.json();
+
+        if (response.ok) {
+          toast({
+            title: "Success",
+            description: data.message || "Trainer deleted successfully.",
+          });
+
+          handleTrainerSearch();
+        } else {
+          toast({
+            title: "Error",
+            description: data.message || "Failed to delete trainer.",
+            variant: "destructive",
+          });
+        }
+      } catch (err: any) {
+        console.error(err);
+
+        toast({
+          title: "Server Error",
+          description: err.message,
+          variant: "destructive",
+        });
+      }
+    },
+  });
 };
   
     const handleSaveTrainer = async () => {
@@ -700,10 +701,20 @@ const [TrainerForm, setTrainerForm] = useState({
                   open={isTrainerDialogOpen}
                   onOpenChange={setIsTrainerDialogOpen}
                 >
+                  <TooltipProvider>
+                    <Tooltip>
+                      <TooltipTrigger asChild>
                   <Button onClick={handleAddTrainer}>
                     <Plus className="h-4 w-4 mr-2" />
                     Add Trainer
                   </Button>
+                  </TooltipTrigger>
+
+                      <TooltipContent>
+                        Add Trainer
+                      </TooltipContent>
+                    </Tooltip>
+                  </TooltipProvider>
                 <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
                   <DialogHeader>
                     <DialogTitle>
@@ -934,14 +945,12 @@ const [TrainerForm, setTrainerForm] = useState({
                                             </TooltipTrigger>
                         
                                                 <TooltipContent>
-                                                  <p>Enter Certifications (comma-separated)</p>
+                                                  <p>Enter Certifications</p>
                                                 </TooltipContent>
                                               </Tooltip>
                                             </TooltipProvider>
                     </div>
                     <div className="space-y-2">
-                      {/* <Label htmlFor="specializations">Specializations* (comma-separated)</Label>
-                      <Input id="specializations" placeholder="Weight Loss, Strength Training..." /> */}
                       <Label htmlFor="name" className={submittedTrainer && !TrainerForm.Specializations ? "text-red-500" : ""}>Specializations* (comma-separated)</Label>
                                             <TooltipProvider>
                                               <Tooltip>
@@ -956,7 +965,7 @@ const [TrainerForm, setTrainerForm] = useState({
                                             </TooltipTrigger>
                         
                                                 <TooltipContent>
-                                                  <p>Enter Specializations* (comma-separated)</p>
+                                                  <p>Enter Specializations</p>
                                                 </TooltipContent>
                                               </Tooltip>
                                             </TooltipProvider>
@@ -1014,6 +1023,9 @@ const [TrainerForm, setTrainerForm] = useState({
               />
                   </div>
                   <div className="flex justify-end gap-2">
+                    <TooltipProvider>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
                     <Button
                         variant="outline"
                         onClick={() => {
@@ -1023,9 +1035,26 @@ const [TrainerForm, setTrainerForm] = useState({
                     >
                         Cancel
                     </Button>
-                    <Button onClick={handleSaveTrainer}>
-                        {editingTrainer ? "Update Trainer" : "Add Trainer"}
-                    </Button>
+                    </TooltipTrigger>
+
+                        <TooltipContent>
+                          Cancel without saving changes.
+                        </TooltipContent>
+                      </Tooltip>
+                    </TooltipProvider>
+                    <TooltipProvider>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <Button onClick={handleSaveTrainer}>
+                            {editingTrainer ? "Update Trainer" : "Add Trainer"}
+                          </Button>
+                        </TooltipTrigger>
+
+                        <TooltipContent>
+                          <p>{editingTrainer ? "Update a Trainer" : "Add a Trainer"}</p>
+                        </TooltipContent>
+                      </Tooltip>
+                    </TooltipProvider>
                   </div>
                 </DialogContent>
               </Dialog>
