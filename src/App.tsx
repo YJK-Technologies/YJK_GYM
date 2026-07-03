@@ -22,6 +22,7 @@ import DietPlans from "./pages/member/DietPlans";
 import WorkoutPrograms from "./pages/member/WorkoutPrograms";
 import NotFound from "./pages/NotFound";
 import Quotation from "./pages/Quotation";
+import CompaniesList from "./pages/admin/CompaniesList";
 
 const queryClient = new QueryClient();
 
@@ -49,6 +50,7 @@ const App = () => (
           <Route path="/member/diet-plans" element={<DietPlans />} />
           <Route path="/member/programs" element={<WorkoutPrograms />} />
           <Route path="/quotation" element={<Quotation />} />
+          <Route path="/admin/companies" element={<CompaniesList />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>

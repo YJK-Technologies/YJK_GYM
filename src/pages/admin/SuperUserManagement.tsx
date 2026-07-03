@@ -5945,7 +5945,7 @@ console.log(numberSeriesForm)
                             value={companyForm.foundedDate}
                             max={new Date().toISOString().split("T")[0]}
                             onChange={(e) => setCompanyForm({ ...companyForm, foundedDate: e.target.value })}
-                            max={new Date().toISOString().split("T")[0]}
+                            // max={new Date().toISOString().split("T")[0]}
                             placeholder="Select founded date"
                           />
                         </TooltipTrigger>
