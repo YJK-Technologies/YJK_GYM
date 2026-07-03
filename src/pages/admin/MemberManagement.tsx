@@ -359,11 +359,15 @@ const MemberManagement = () => {
       headerName: "Joined Date",
       field: "Joined_date",
       minWidth: 140,
+      valueFormatter: (params: any) =>
+        params.value ? params.value.split(" ")[0] : "",
     },
     {
       headerName: "Plan Expiry",
       field: "Plan_expiry_date",
       minWidth: 150,
+      valueFormatter: (params: any) =>
+        params.value ? params.value.split(" ")[0] : "",
     },
     {
       headerName: "Membership",
@@ -493,7 +497,17 @@ const MemberManagement = () => {
   const handleAddMember = () => {
     setEditingMember(null);
     setFormData(emptyMember as Member);
+
+    // Clear previously loaded image
+    setMemberImages([null, null]);
     setIsDialogOpen(true);
+  };
+
+  // Added for date fetiching in update screen
+  const formatDateForInput = (date: any) => {
+    if (!date) return "";
+
+    return new Date(date).toISOString().split("T")[0];
   };
 
   const handleEditMember = (member: any) => {
@@ -501,6 +515,11 @@ const MemberManagement = () => {
     setFormData({
       ...member,
       modified_by: member.modified_by ?? "admin",
+
+      // Added for date fetiching in update screen
+      Joined_date: formatDateForInput(member.Joined_date),
+      Plan_expiry_date: formatDateForInput(member.Plan_expiry_date),
+
       Receive_promotions:
         member.Receive_promotions === "Yes" ||
         member.Receive_promotions === true,
@@ -760,6 +779,9 @@ const MemberManagement = () => {
         setIsDialogOpen(false);
         setSubmittedMember(false);
 
+        // Clear previously loaded image
+        setMemberImages([null, null]);
+
         handleMemberSearch();
       } else {
         toast({
@@ -912,6 +934,9 @@ const MemberManagement = () => {
         setIsDialogOpen(false);
         setSubmittedMember(false);
 
+        // Clear previously loaded image
+        setMemberImages([null, null]);
+
         handleMemberSearch();
       } else {
         toast({
@@ -973,11 +998,11 @@ const MemberManagement = () => {
   };
 
   const validateEmail = () => {
-    if (!memberSearchForm.Email) return true;
+    if (!formData.Email) return true;
 
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
-    if (!emailRegex.test(memberSearchForm.Email)) {
+    if (!emailRegex.test(formData.Email)) {
       toast({
         title: "Invalid Email",
         description: "Please enter a valid email address.",
@@ -988,6 +1013,24 @@ const MemberManagement = () => {
 
     return true;
   };
+
+  // For search form validation - Email
+  const validateSearchEmail = () => {
+  if (!memberSearchForm.Email) return true;
+
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+  if (!emailRegex.test(memberSearchForm.Email)) {
+    toast({
+      title: "Invalid Email",
+      description: "Please enter a valid email address.",
+      variant: "destructive",
+    });
+    return false;
+  }
+
+  return true;
+};
 
   const validatePhoneNumbers = () => {
     if (
@@ -1084,7 +1127,7 @@ const MemberManagement = () => {
 
   const handleMemberSearch = async () => {
 
-    if (!validateEmail()) return;
+    if (!validateSearchEmail()) return;
 
     if (!validatePhoneNumbers()) return;
 
@@ -1442,41 +1485,6 @@ const MemberManagement = () => {
               </div>
 
               <div className="space-y-2">
-                <Label>Status</Label>
-
-                <TooltipProvider>
-                  <Tooltip>
-                    <TooltipTrigger asChild>
-                      <div>
-                        <Select
-                          value={memberSearchForm.is_active}
-                          onValueChange={(value) => setMemberSearchForm({ ...memberSearchForm, is_active: value, })}>
-                          <SelectTrigger>
-                            <SelectValue placeholder="Select Status" />
-                          </SelectTrigger>
-
-                          <SelectContent>
-                            {status.map((item: any) => (
-                              <SelectItem
-                                key={item.attributedetails_name}
-                                value={item.attributedetails_name}
-                              >
-                                {item.attributedetails_name}
-                              </SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
-                      </div>
-                    </TooltipTrigger>
-
-                    <TooltipContent>
-                      <p>Select Status</p>
-                    </TooltipContent>
-                  </Tooltip>
-                </TooltipProvider>
-              </div>
-
-              <div className="space-y-2">
                 <Label>Join Date From</Label>
                 <TooltipProvider>
                   <Tooltip>
@@ -1543,6 +1551,41 @@ const MemberManagement = () => {
 
                     <TooltipContent>
                       <p>Select Plan Expiry To</p>
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
+              </div>
+
+              <div className="space-y-2">
+                <Label>Status</Label>
+
+                <TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <div>
+                        <Select
+                          value={memberSearchForm.is_active}
+                          onValueChange={(value) => setMemberSearchForm({ ...memberSearchForm, is_active: value, })}>
+                          <SelectTrigger>
+                            <SelectValue placeholder="Select Status" />
+                          </SelectTrigger>
+
+                          <SelectContent>
+                            {status.map((item: any) => (
+                              <SelectItem
+                                key={item.attributedetails_name}
+                                value={item.attributedetails_name}
+                              >
+                                {item.attributedetails_name}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      </div>
+                    </TooltipTrigger>
+
+                    <TooltipContent>
+                      <p>Select Status</p>
                     </TooltipContent>
                   </Tooltip>
                 </TooltipProvider>
