@@ -174,9 +174,9 @@ const [TrainerForm, setTrainerForm] = useState({
       loadData();
     }, []);
 
-//     useEffect(() => {
-//   handleTrainerSearch();
-// }, []);
+    useEffect(() => {
+  handleTrainerSearch();
+}, []);
 
   //Trainer CRUD Functions
   const handleAddTrainer = () => {
@@ -358,106 +358,213 @@ const [TrainerForm, setTrainerForm] = useState({
       }
     };
   
-    const handleUpdateTrainer = async () => {
-      setSubmittedTrainer(true);
+    // const handleUpdateTrainer = async () => {
+    //   setSubmittedTrainer(true);
   
-      if (!validateTrainer()) return;
+    //   if (!validateTrainer()) return;
 
-      if (!isValidPhoneNumber(TrainerForm.Mobile)) {
-        toast({
-          title: "Invalid Mobile Number",
-          description: "Mobile number must contain only digits and be between 8 and 15 digits.",
-          variant: "destructive",
-        });
-        return false;
-      }
+    //   if (!isValidPhoneNumber(TrainerForm.Mobile)) {
+    //     toast({
+    //       title: "Invalid Mobile Number",
+    //       description: "Mobile number must contain only digits and be between 8 and 15 digits.",
+    //       variant: "destructive",
+    //     });
+    //     return false;
+    //   }
       
-      if (!TrainerForm.Password || TrainerForm.Password.length < 8) {
-        toast({
-          title: "Invalid Password",
-          description: "Password must contain at least 8 characters.",
-          variant: "destructive",
-        });
-        return false;
+    //   if (!TrainerForm.Password || TrainerForm.Password.length < 8) {
+    //     toast({
+    //       title: "Invalid Password",
+    //       description: "Password must contain at least 8 characters.",
+    //       variant: "destructive",
+    //     });
+    //     return false;
+    //   }
+  
+    //   try {
+    //     const formData = new FormData();
+  
+    //     Object.entries(TrainerForm).forEach(([key, value]) => {
+    //       if (key === "super_admin") {
+    //         formData.append("super_admin", value ? "Yes" : "No");
+    //       } else {
+    //         formData.append(key, String(value ?? ""));
+    //       }
+    //     });
+
+    //     TrainerImages.forEach((img, index) => {
+    //     if (!img) return;
+
+    //     // Extract mime type from base64 string
+    //     const mimeType = img.match(/data:(.*?);base64/)?.[1] || "image/png";
+
+    //     const base64 = img.split(",")[1];
+    //     const byteCharacters = atob(base64);
+
+    //     const byteNumbers = Array.from(byteCharacters, (char) =>
+    //       char.charCodeAt(0)
+    //     );
+
+    //     const byteArray = new Uint8Array(byteNumbers);
+
+    //     const blob = new Blob([byteArray], {
+    //       type: mimeType,
+    //     });
+
+    //     // Generate extension based on mime type
+    //     const extension = mimeType.split("/")[1] || "png";
+
+    //     if (index === 0) {
+    //       formData.append(
+    //         "Photo",
+    //         blob,
+    //         `Photo.${extension}`
+    //       );
+    //     }
+    //   });
+
+    //     const response = await fetch(`${BASE_URL}/GYM_TrainerUpdate`, {
+    //       method: "POST",
+    //       body: formData,
+    //     });
+  
+    //     const data = await response.json();
+  
+    //     if (response.ok) {
+    //       toast({
+    //         title: "Success",
+    //         description: data.message || "Trainer updated successfully.",
+    //       });
+  
+    //       setEditingTrainer(null);
+    //       setIsTrainerDialogOpen(false);
+    //       setSubmittedTrainer(false);
+  
+    //       handleTrainerSearch();
+    //     } else {
+    //       toast({
+    //         title: "Error",
+    //         description: data.message || "Failed to update Trainer.",
+    //         variant: "destructive",
+    //       });
+    //     }
+    //   } catch (err: any) {
+    //     console.error(err);
+  
+    //     toast({
+    //       title: "Server Error",
+    //       description: err.message || "Something went wrong.",
+    //       variant: "destructive",
+    //     });
+    //   }
+    // };
+
+    const handleUpdateTrainer = () => {
+  showConfirmToast({
+    title: "Update Trainer",
+    description: "Do you want to update these changes?",
+    onConfirm: updateTrainer,
+  });
+};
+
+const updateTrainer = async () => {
+  setSubmittedTrainer(true);
+
+  if (!validateTrainer()) return;
+
+  if (!isValidPhoneNumber(TrainerForm.Mobile)) {
+    toast({
+      title: "Invalid Mobile Number",
+      description: "Mobile number must contain only digits and be between 8 and 15 digits.",
+      variant: "destructive",
+    });
+    return false;
+  }
+
+  if (!TrainerForm.Password || TrainerForm.Password.length < 8) {
+    toast({
+      title: "Invalid Password",
+      description: "Password must contain at least 8 characters.",
+      variant: "destructive",
+    });
+    return false;
+  }
+
+  try {
+    const formData = new FormData();
+
+    Object.entries(TrainerForm).forEach(([key, value]) => {
+      if (key === "super_admin") {
+        formData.append("super_admin", value ? "Yes" : "No");
+      } else {
+        formData.append(key, String(value ?? ""));
       }
-  
-      try {
-        const formData = new FormData();
-  
-        Object.entries(TrainerForm).forEach(([key, value]) => {
-          if (key === "super_admin") {
-            formData.append("super_admin", value ? "Yes" : "No");
-          } else {
-            formData.append(key, String(value ?? ""));
-          }
-        });
+    });
 
-        TrainerImages.forEach((img, index) => {
-        if (!img) return;
+    TrainerImages.forEach((img, index) => {
+      if (!img) return;
 
-        // Extract mime type from base64 string
-        const mimeType = img.match(/data:(.*?);base64/)?.[1] || "image/png";
+      const mimeType = img.match(/data:(.*?);base64/)?.[1] || "image/png";
 
-        const base64 = img.split(",")[1];
-        const byteCharacters = atob(base64);
+      const base64 = img.split(",")[1];
+      const byteCharacters = atob(base64);
 
-        const byteNumbers = Array.from(byteCharacters, (char) =>
-          char.charCodeAt(0)
-        );
+      const byteNumbers = Array.from(byteCharacters, (char) =>
+        char.charCodeAt(0)
+      );
 
-        const byteArray = new Uint8Array(byteNumbers);
+      const byteArray = new Uint8Array(byteNumbers);
 
-        const blob = new Blob([byteArray], {
-          type: mimeType,
-        });
-
-        // Generate extension based on mime type
-        const extension = mimeType.split("/")[1] || "png";
-
-        if (index === 0) {
-          formData.append(
-            "Photo",
-            blob,
-            `Photo.${extension}`
-          );
-        }
+      const blob = new Blob([byteArray], {
+        type: mimeType,
       });
 
-        const response = await fetch(`${BASE_URL}/GYM_TrainerUpdate`, {
-          method: "POST",
-          body: formData,
-        });
-  
-        const data = await response.json();
-  
-        if (response.ok) {
-          toast({
-            title: "Success",
-            description: data.message || "Trainer updated successfully.",
-          });
-  
-          setEditingTrainer(null);
-          setIsTrainerDialogOpen(false);
-          setSubmittedTrainer(false);
-  
-          handleTrainerSearch();
-        } else {
-          toast({
-            title: "Error",
-            description: data.message || "Failed to update Trainer.",
-            variant: "destructive",
-          });
-        }
-      } catch (err: any) {
-        console.error(err);
-  
-        toast({
-          title: "Server Error",
-          description: err.message || "Something went wrong.",
-          variant: "destructive",
-        });
+      const extension = mimeType.split("/")[1] || "png";
+
+      if (index === 0) {
+        formData.append(
+          "Photo",
+          blob,
+          `Photo.${extension}`
+        );
       }
-    };
+    });
+
+    const response = await fetch(`${BASE_URL}/GYM_TrainerUpdate`, {
+      method: "POST",
+      body: formData,
+    });
+
+    const data = await response.json();
+
+    if (response.ok) {
+      toast({
+        title: "Success",
+        description: data.message || "Trainer updated successfully.",
+      });
+
+      setEditingTrainer(null);
+      setIsTrainerDialogOpen(false);
+      setSubmittedTrainer(false);
+
+      handleTrainerSearch();
+    } else {
+      toast({
+        title: "Error",
+        description: data.message || "Failed to update Trainer.",
+        variant: "destructive",
+      });
+    }
+  } catch (err: any) {
+    console.error(err);
+
+    toast({
+      title: "Server Error",
+      description: err.message || "Something went wrong.",
+      variant: "destructive",
+    });
+  }
+};
 
 //     const handleDeleteTrainer = async (trainer: any) => {
 
@@ -629,7 +736,7 @@ const handleDeleteTrainer = (trainer: any) => {
   
     const handleEditTrainer = (Trainer: any) => {
       setEditingTrainer(Trainer);
-      console.log(Trainer);
+      // console.log(Trainer);
   
       setTrainerForm({
         company_code: Trainer.company_code,
