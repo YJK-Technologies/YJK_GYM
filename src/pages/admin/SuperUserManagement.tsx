@@ -6082,6 +6082,7 @@ const WorkoutProgramManagement = () => {
                             value={companyForm.foundedDate}
                             max={new Date().toISOString().split("T")[0]}
                             onChange={(e) => setCompanyForm({ ...companyForm, foundedDate: e.target.value })}
+                            // max={new Date().toISOString().split("T")[0]}
                             placeholder="Select founded date"
                           />
                         </TooltipTrigger>
@@ -6121,10 +6122,10 @@ const WorkoutProgramManagement = () => {
                           <Input
                             id="name"
                             value={companyForm.contact_no}
-                            maxLength={100}
+                            maxLength={13}
                             inputMode="numeric"
                             onChange={(e) => setCompanyForm({ ...companyForm, contact_no: e.target.value.replace(/\D/g, ""), })}
-                            placeholder="Enter contact number (e.g., +91 9876543210)"
+                            placeholder="Enter contact number (e.g.,+91 9876543210)"
                           />
                         </TooltipTrigger>
 
