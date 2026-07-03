@@ -30,10 +30,9 @@ interface AgGridTableProps {
   height?: string;
   gridOptions?: GridOptions;
   onGridReady?: (params: GridReadyEvent) => void;
-
-  // Add these two props
   pagination?: boolean;
   paginationPageSize?: number;
+  paginationPageSizeSelector?: boolean;
 }
 
 // export default function AgGridTable({
@@ -53,6 +52,7 @@ export default function AgGridTable({
   onGridReady,
   pagination = false,
   paginationPageSize = 10,
+  paginationPageSizeSelector = false,
 }: AgGridTableProps) {
   return (
     <div
@@ -68,7 +68,8 @@ export default function AgGridTable({
         headerHeight={48}
         rowHeight={60}
         pagination={pagination}
-paginationPageSize={paginationPageSize}
+        paginationPageSize={paginationPageSize}
+        paginationPageSizeSelector={paginationPageSizeSelector}
         defaultColDef={{
           sortable: true,
           filter: false,

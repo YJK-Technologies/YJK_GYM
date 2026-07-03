@@ -38,7 +38,7 @@ const AdminDashboard = () => {
     { title: 'Notifications', description: 'Send bulk Email, SMS & WhatsApp notifications', route: '/admin/notifications' },
     { title: 'Faculty Management', description: 'Manage personal trainers and staff', route: '/admin/faculty' },
     { title: 'Diet Plan Management', description: 'Create and assign nutrition programs', route: '/admin/diet-plans' },
-    { title: 'Super User Management', description: 'Add, edit, or remove Company Info', route: '/admin/super-user' },
+    { title: 'Super User Management', description: 'Manage all administrative modules.', route: '/admin/super-user' },
   ];
 
   return (

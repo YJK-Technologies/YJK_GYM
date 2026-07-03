@@ -12,13 +12,14 @@ import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, D
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useNavigate } from 'react-router-dom';
 import { useToast } from '@/hooks/use-toast';
-import { ArrowLeft, Plus, Search, RotateCcw, Dumbbell, Package, Edit, Trash2, Eye, EyeOff, } from 'lucide-react';
+import { ArrowLeft, Plus, Search, RotateCcw, Edit, Trash2, Eye, EyeOff, } from 'lucide-react';
+import { Building2, Building, MapPin, Shield, Users, ShieldCheck, User, Tags, Hash, } from "lucide-react";
 import ImageUpload from "../ImageUpload";
 import { BASE_URL } from '../ApiConfig';
 import AgGridTable from "@/components/ui/ag-grid-table";
 import '../../index.css';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
-
+import { showConfirmToast } from '../../components/ui/show-confirm-toast';
 
 const WorkoutProgramManagement = () => {
   const navigate = useNavigate();
@@ -625,21 +626,31 @@ const WorkoutProgramManagement = () => {
       },
       cellRenderer: (params: any) => (
         <div className="flex gap-2">
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={() => handleEditCompany(params.data)}
-          >
-            <Edit className="h-4 w-4" />
-          </Button>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => handleEditCompany(params.data)}
+              >
+                <Edit className="h-4 w-4" />
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent>Edit</TooltipContent>
+          </Tooltip>
 
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={() => handleDeleteCompany(params.data.company_no)}
-          >
-            <Trash2 className="h-4 w-4 text-red-500" />
-          </Button>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => handleDeleteCompany(params.data.company_no)}
+              >
+                <Trash2 className="h-4 w-4 text-red-500" />
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent>Delete</TooltipContent>
+          </Tooltip>
         </div>
       ),
     }
@@ -753,21 +764,31 @@ const WorkoutProgramManagement = () => {
       },
       cellRenderer: (params: any) => (
         <div className="flex gap-2">
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={() => handleEditCompanyMapping(params.data)}
-          >
-            <Edit className="h-4 w-4" />
-          </Button>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => handleEditCompanyMapping(params.data)}
+              >
+                <Edit className="h-4 w-4" />
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent>Edit</TooltipContent>
+          </Tooltip>
 
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={() => handleDeleteCompanyMapping(params.data.keyfiels)}
-          >
-            <Trash2 className="h-4 w-4 text-red-500" />
-          </Button>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => handleDeleteCompanyMapping(params.data.keyfiels)}
+              >
+                <Trash2 className="h-4 w-4 text-red-500" />
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent>Delete</TooltipContent>
+          </Tooltip>
         </div>
       ),
     }
@@ -898,21 +919,31 @@ const WorkoutProgramManagement = () => {
       },
       cellRenderer: (params: any) => (
         <div className="flex gap-2">
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={() => handleEditLocation(params.data)}
-          >
-            <Edit className="h-4 w-4" />
-          </Button>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => handleEditLocation(params.data)}
+              >
+                <Edit className="h-4 w-4" />
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent>Edit</TooltipContent>
+          </Tooltip>
 
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={() => handleDeleteLocation(params.data.location_no)}
-          >
-            <Trash2 className="h-4 w-4 text-red-500" />
-          </Button>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => handleDeleteLocation(params.data.location_no)}
+              >
+                <Trash2 className="h-4 w-4 text-red-500" />
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent>Delete</TooltipContent>
+          </Tooltip>
         </div>
       ),
     }
@@ -963,21 +994,31 @@ const WorkoutProgramManagement = () => {
       },
       cellRenderer: (params: any) => (
         <div className="flex gap-2">
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={() => handleEditRole(params.data)}
-          >
-            <Edit className="h-4 w-4" />
-          </Button>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => handleEditRole(params.data)}
+              >
+                <Edit className="h-4 w-4" />
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent>Edit</TooltipContent>
+          </Tooltip>
 
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={() => handleDeleteRole(params.data.role_id)}
-          >
-            <Trash2 className="h-4 w-4 text-red-500" />
-          </Button>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => handleDeleteRole(params.data.role_id)}
+              >
+                <Trash2 className="h-4 w-4 text-red-500" />
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent>Delete</TooltipContent>
+          </Tooltip>
         </div>
       ),
     },
@@ -1042,21 +1083,31 @@ const WorkoutProgramManagement = () => {
       },
       cellRenderer: (params: any) => (
         <div className="flex gap-2">
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={() => handleEditRoleMapping(params.data)}
-          >
-            <Edit className="h-4 w-4" />
-          </Button>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => handleEditRoleMapping(params.data)}
+              >
+                <Edit className="h-4 w-4" />
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent>Edit</TooltipContent>
+          </Tooltip>
 
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={() => handleDeleteRoleMapping(params.data.keyfield)}
-          >
-            <Trash2 className="h-4 w-4 text-red-500" />
-          </Button>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => handleDeleteRoleMapping(params.data.keyfield)}
+              >
+                <Trash2 className="h-4 w-4 text-red-500" />
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent>Delete</TooltipContent>
+          </Tooltip>
         </div>
       ),
     }
@@ -1116,21 +1167,31 @@ const WorkoutProgramManagement = () => {
       },
       cellRenderer: (params: any) => (
         <div className="flex gap-2">
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={() => handleEditRoleRight(params.data)}
-          >
-            <Edit className="h-4 w-4" />
-          </Button>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => handleEditRoleRight(params.data)}
+              >
+                <Edit className="h-4 w-4" />
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent>Edit</TooltipContent>
+          </Tooltip>
 
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={() => handleDeleteRoleRight(params.data.keyfield)}
-          >
-            <Trash2 className="h-4 w-4 text-red-500" />
-          </Button>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => handleDeleteRoleRight(params.data.keyfield)}
+              >
+                <Trash2 className="h-4 w-4 text-red-500" />
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent>Delete</TooltipContent>
+          </Tooltip>
         </div>
       ),
     }
@@ -1266,21 +1327,31 @@ const WorkoutProgramManagement = () => {
       },
       cellRenderer: (params: any) => (
         <div className="flex gap-2">
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={() => handleEditUser(params.data)}
-          >
-            <Edit className="h-4 w-4" />
-          </Button>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => handleEditUser(params.data)}
+              >
+                <Edit className="h-4 w-4" />
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent>Edit</TooltipContent>
+          </Tooltip>
 
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={() => handleDeleteUser(params.data.user_code)}
-          >
-            <Trash2 className="h-4 w-4 text-red-500" />
-          </Button>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => handleDeleteUser(params.data.user_code)}
+              >
+                <Trash2 className="h-4 w-4 text-red-500" />
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent>Delete</TooltipContent>
+          </Tooltip>
         </div>
       ),
     }
@@ -1346,21 +1417,31 @@ const WorkoutProgramManagement = () => {
       },
       cellRenderer: (params: any) => (
         <div className="flex gap-2">
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={() => handleEditAttribute(params.data)}
-          >
-            <Edit className="h-4 w-4" />
-          </Button>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => handleEditAttribute(params.data)}
+              >
+                <Edit className="h-4 w-4" />
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent>Edit</TooltipContent>
+          </Tooltip>
 
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={() => handleDeleteAttribute(params.data.attributeheader_code, params.data.attributedetails_code)}
-          >
-            <Trash2 className="h-4 w-4 text-red-500" />
-          </Button>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => handleDeleteAttribute(params.data.attributeheader_code, params.data.attributedetails_code)}
+              >
+                <Trash2 className="h-4 w-4 text-red-500" />
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent>Delete</TooltipContent>
+          </Tooltip>
         </div>
       ),
     }
@@ -1375,42 +1456,39 @@ const WorkoutProgramManagement = () => {
   });
 
   //Nunmber Series 
-  
   const [submittedNumberSeries, setSubmittedNumberSeries] = useState(false);
   const [isNumberSeriesDialogOpen, setIsNumberSeriesDialogOpen] = useState(false);
   const [editingNumberSeries, setEditingNumberSeries] = useState<any>(null);
   const [numberSeries, setNumberSeries] = useState([]);
-const [numberSeriesForm, setNumberSeriesForm] = useState({
-  company_code: "YJK",
-  Screen_Type: "",
-  Start_Year: "",
-  End_Year: "",
-  Start_No: "",
-  Running_No: "",
-  End_No: "",
-  text: "",
-  number_prefix: "0",
-  Status: "Active",
-  bill_format: "",
-  created_by: "admin",
-  modified_by: "admin",
-});
+  const [numberSeriesForm, setNumberSeriesForm] = useState({
+    company_code: "YJK",
+    Screen_Type: "",
+    Start_Year: "",
+    End_Year: "",
+    Start_No: "",
+    Running_No: "",
+    End_No: "",
+    text: "",
+    number_prefix: "0",
+    Status: "Active",
+    bill_format: "",
+    created_by: "admin",
+    modified_by: "admin",
+  });
 
-useEffect(() => {
-  const today = new Date();
-  const financialYear =
-    today.getMonth() >= 3
-      ? today.getFullYear()
-      : today.getFullYear() - 1;
+  useEffect(() => {
+    const today = new Date();
+    const financialYear =
+      today.getMonth() >= 3
+        ? today.getFullYear()
+        : today.getFullYear() - 1;
 
-  setNumberSeriesForm((prev) => ({
-    ...prev,
-    Start_Year: `${financialYear}-04-01`,
-    End_Year: `${financialYear + 1}-03-31`,
-  }));
-}, []);
-
-console.log(numberSeriesForm)
+    setNumberSeriesForm((prev) => ({
+      ...prev,
+      Start_Year: `${financialYear}-04-01`,
+      End_Year: `${financialYear + 1}-03-31`,
+    }));
+  }, []);
 
   const currentYear = new Date().getFullYear();
 
@@ -1484,21 +1562,31 @@ console.log(numberSeriesForm)
       },
       cellRenderer: (params: any) => (
         <div className="flex gap-2">
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={() => handleEditNumberSeries(params.data)}
-          >
-            <Edit className="h-4 w-4" />
-          </Button>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => handleEditNumberSeries(params.data)}
+              >
+                <Edit className="h-4 w-4" />
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent>Edit</TooltipContent>
+          </Tooltip>
 
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={() => handleDeleteNumberSeries(params.data)}
-          >
-            <Trash2 className="h-4 w-4 text-red-500" />
-          </Button>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => handleDeleteNumberSeries(params.data)}
+              >
+                <Trash2 className="h-4 w-4 text-red-500" />
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent>Delete</TooltipContent>
+          </Tooltip>
         </div>
       ),
     }
@@ -1648,7 +1736,15 @@ console.log(numberSeriesForm)
     }
   };
 
-  const handleUpdateCompany = async () => {
+  const handleUpdateCompany = () => {
+    showConfirmToast({
+      title: "Update Company",
+      description: "Do you want to update these changes?",
+      onConfirm: updateCompany,
+    });
+  };
+
+  const updateCompany = async () => {
     setSubmittedCompany(true);
 
     if (!validateCompany()) return;
@@ -1726,13 +1822,15 @@ console.log(numberSeriesForm)
     }
   };
 
-  const handleDeleteCompany = async (companyNo: string) => {
-    const confirmDelete = window.confirm(
-      "Are you sure you want to delete this company?"
-    );
+  const handleDeleteCompany = (companyNo: string) => {
+    showConfirmToast({
+      title: "Delete Company",
+      description: "Are you sure you want to delete this company?",
+      onConfirm: () => deleteCompany(companyNo),
+    });
+  };
 
-    if (!confirmDelete) return;
-
+  const deleteCompany = async (companyNo: string) => {
     try {
       const response = await fetch(`${BASE_URL}/delete`,
         {
@@ -1970,7 +2068,15 @@ console.log(numberSeriesForm)
     }
   };
 
-  const handleUpdateCompanyMapping = async () => {
+  const handleUpdateCompanyMapping = () => {
+    showConfirmToast({
+      title: "Update Company Mapping",
+      description: "Do you want to update these changes?",
+      onConfirm: updateCompanyMapping,
+    });
+  };
+
+  const updateCompanyMapping = async () => {
     setSubmittedCompanyMapping(true);
 
     if (!validateCompanyMapping()) return;
@@ -2016,13 +2122,15 @@ console.log(numberSeriesForm)
     }
   };
 
-  const handleDeleteCompanyMapping = async (keyfiels: string) => {
-    const confirmed = window.confirm(
-      "Are you sure you want to delete this company mapping? This action cannot be undone."
-    );
+  const handleDeleteCompanyMapping = (keyfiels: string) => {
+    showConfirmToast({
+      title: "Delete Company Mapping",
+      description: "Are you sure you want to delete this company mapping?",
+      onConfirm: () => deleteCompanyMapping(keyfiels),
+    });
+  };
 
-    if (!confirmed) return;
-
+  const deleteCompanyMapping = async (keyfiels: string) => {
     try {
       const response = await fetch(`${BASE_URL}/commappingdeleteData`,
         {
@@ -2251,7 +2359,15 @@ console.log(numberSeriesForm)
     }
   };
 
-  const handleUpdateLocation = async () => {
+  const handleUpdateLocation = () => {
+    showConfirmToast({
+      title: "Update Location",
+      description: "Do you want to update these changes?",
+      onConfirm: updateLocation,
+    });
+  };
+
+  const updateLocation = async () => {
     setSubmittedLocation(true);
 
     if (!validateLocation()) return;
@@ -2297,13 +2413,15 @@ console.log(numberSeriesForm)
     }
   };
 
-  const handleDeleteLocation = async (location_no: string) => {
-    const confirmed = window.confirm(
-      "Are you sure you want to delete this location? This action cannot be undone."
-    );
+  const handleDeleteLocation = (location_no: string) => {
+    showConfirmToast({
+      title: "Delete Location",
+      description: "Are you sure you want to delete this location?",
+      onConfirm: () => deleteLocation(location_no),
+    });
+  };
 
-    if (!confirmed) return;
-
+  const deleteLocation = async (location_no: string) => {
     try {
       const response = await fetch(`${BASE_URL}/deletelocation`,
         {
@@ -2376,7 +2494,7 @@ console.log(numberSeriesForm)
       if (response.ok) {
         setLocations(data);
       } else if (response.status === 404) {
-        setCompanies([]);
+        setLocations([]);
 
         toast({
           title: "Data Not Found",
@@ -2384,7 +2502,7 @@ console.log(numberSeriesForm)
           variant: "destructive",
         });
       } else {
-        setCompanies([]);
+        setLocations([]);
 
         toast({
           title: "Search Failed",
@@ -2395,7 +2513,7 @@ console.log(numberSeriesForm)
     } catch (error: any) {
       console.error("Search Error:", error);
 
-      setCompanies([]);
+      setLocations([]);
 
       toast({
         title: "Server Error",
@@ -2504,7 +2622,15 @@ console.log(numberSeriesForm)
     }
   };
 
-  const handleUpdateRole = async () => {
+  const handleUpdateRole = () => {
+    showConfirmToast({
+      title: "Update Role",
+      description: "Do you want to update these changes?",
+      onConfirm: updateRole,
+    });
+  };
+
+  const updateRole = async () => {
     setSubmittedRole(true);
 
     if (!validateRole()) return;
@@ -2548,13 +2674,15 @@ console.log(numberSeriesForm)
     }
   };
 
-  const handleDeleteRole = async (role_id: string) => {
-    const confirmed = window.confirm(
-      "Are you sure you want to delete this role? This action cannot be undone."
-    );
+  const handleDeleteRole = (role_id: string) => {
+    showConfirmToast({
+      title: "Delete Role",
+      description: "Are you sure you want to delete this role?",
+      onConfirm: () => deleteRole(role_id),
+    });
+  };
 
-    if (!confirmed) return;
-
+  const deleteRole = async (role_id: string) => {
     try {
       const response = await fetch(`${BASE_URL}/roledelete`, {
         method: "POST",
@@ -2622,7 +2750,7 @@ console.log(numberSeriesForm)
       if (response.ok) {
         setRoles(data);
       } else if (response.status === 404) {
-        setCompanies([]);
+        setRoles([]);
 
         toast({
           title: "Data Not Found",
@@ -2630,7 +2758,7 @@ console.log(numberSeriesForm)
           variant: "destructive",
         });
       } else {
-        setCompanies([]);
+        setRoles([]);
 
         toast({
           title: "Search Failed",
@@ -2641,7 +2769,7 @@ console.log(numberSeriesForm)
     } catch (error: any) {
       console.error("Search Error:", error);
 
-      setCompanies([]);
+      setRoles([]);
 
       toast({
         title: "Server Error",
@@ -2741,7 +2869,15 @@ console.log(numberSeriesForm)
     }
   };
 
-  const handleUpdateRoleMapping = async () => {
+  const handleUpdateRoleMapping = () => {
+    showConfirmToast({
+      title: "Update Role Mapping",
+      description: "Do you want to update these changes?",
+      onConfirm: updateRoleMapping,
+    });
+  };
+
+  const updateRoleMapping = async () => {
     setSubmittedRoleMapping(true);
 
     if (!validateRoleMapping()) return;
@@ -2785,12 +2921,15 @@ console.log(numberSeriesForm)
     }
   };
 
-  const handleDeleteRoleMapping = async (keyfield: string) => {
-    const confirmed = window.confirm(
-      "Are you sure you want to delete this role mapping? This action cannot be undone."
-    );
+  const handleDeleteRoleMapping = (keyfield: string) => {
+    showConfirmToast({
+      title: "Delete Role Mapping",
+      description: "Are you sure you want to delete this role mapping?",
+      onConfirm: () => deleteRoleMapping(keyfield),
+    });
+  };
 
-    if (!confirmed) return;
+  const deleteRoleMapping = async (keyfield: string) => {
 
     try {
       const response = await fetch(`${BASE_URL}/RollMappingDelete`, {
@@ -2862,7 +3001,7 @@ console.log(numberSeriesForm)
       if (response.ok) {
         setRoleMappings(data);
       } else if (response.status === 404) {
-        setCompanies([]);
+        setRoleMappings([]);
 
         toast({
           title: "Data Not Found",
@@ -2870,7 +3009,7 @@ console.log(numberSeriesForm)
           variant: "destructive",
         });
       } else {
-        setCompanies([]);
+        setRoleMappings([]);
 
         toast({
           title: "Search Failed",
@@ -2881,7 +3020,7 @@ console.log(numberSeriesForm)
     } catch (error: any) {
       console.error("Search Error:", error);
 
-      setCompanies([]);
+      setRoleMappings([]);
 
       toast({
         title: "Server Error",
@@ -2983,7 +3122,15 @@ console.log(numberSeriesForm)
     }
   };
 
-  const handleUpdateRoleRight = async () => {
+  const handleUpdateRoleRight = () => {
+    showConfirmToast({
+      title: "Update Role Rights",
+      description: "Do you want to update these changes?",
+      onConfirm: updateRoleRight,
+    });
+  };
+
+  const updateRoleRight = async () => {
     setSubmittedRoleRights(true);
 
     if (!validateRoleRights()) return;
@@ -3027,13 +3174,15 @@ console.log(numberSeriesForm)
     }
   };
 
-  const handleDeleteRoleRight = async (keyfield: string) => {
-    const confirmed = window.confirm(
-      "Are you sure you want to delete this role right? This action cannot be undone."
-    );
+  const handleDeleteRoleRight = (keyfield: string) => {
+    showConfirmToast({
+      title: "Delete Role Rights",
+      description: "Are you sure you want to delete this role right?",
+      onConfirm: () => deleteRoleRight(keyfield),
+    });
+  };
 
-    if (!confirmed) return;
-
+  const deleteRoleRight = async (keyfield: string) => {
     try {
       const response = await fetch(`${BASE_URL}/userscreenmapdeleteData`, {
         method: "POST",
@@ -3103,7 +3252,7 @@ console.log(numberSeriesForm)
       if (response.ok) {
         setRoleRights(data);
       } else if (response.status === 404) {
-        setCompanies([]);
+        setRoleRights([]);
 
         toast({
           title: "Data Not Found",
@@ -3111,7 +3260,7 @@ console.log(numberSeriesForm)
           variant: "destructive",
         });
       } else {
-        setCompanies([]);
+        setRoleRights([]);
 
         toast({
           title: "Search Failed",
@@ -3122,7 +3271,7 @@ console.log(numberSeriesForm)
     } catch (error: any) {
       console.error("Search Error:", error);
 
-      setCompanies([]);
+      setRoleRights([]);
 
       toast({
         title: "Server Error",
@@ -3300,7 +3449,15 @@ console.log(numberSeriesForm)
     }
   };
 
-  const handleUpdateUser = async () => {
+  const handleUpdateUser = () => {
+    showConfirmToast({
+      title: "Update User",
+      description: "Do you want to update these changes?",
+      onConfirm: updateUser,
+    });
+  };
+
+  const updateUser = async () => {
     setSubmittedUser(true);
 
     if (!validateUser()) return;
@@ -3390,13 +3547,15 @@ console.log(numberSeriesForm)
     }
   };
 
-  const handleDeleteUser = async (user_code: string) => {
-    const confirmDelete = window.confirm(
-      "Are you sure you want to delete this user?"
-    );
+  const handleDeleteUser = (user_code: string) => {
+    showConfirmToast({
+      title: "Delete User",
+      description: "Are you sure you want to delete this user?",
+      onConfirm: () => deleteUser(user_code),
+    });
+  };
 
-    if (!confirmDelete) return;
-
+  const deleteUser = async (user_code: string) => {
     try {
       const response = await fetch(`${BASE_URL}/userdelete`, {
         method: "POST",
@@ -3611,7 +3770,15 @@ console.log(numberSeriesForm)
     }
   };
 
-  const handleUpdateAttribute = async () => {
+  const handleUpdateAttribute = () => {
+    showConfirmToast({
+      title: "Update Attribute",
+      description: "Do you want to update these changes?",
+      onConfirm: updateAttribute,
+    });
+  };
+
+  const updateAttribute = async () => {
     setSubmittedAttributeDet(true);
 
     if (!validateAttributeDet()) return;
@@ -3657,13 +3824,17 @@ console.log(numberSeriesForm)
     }
   };
 
-  const handleDeleteAttribute = async (attributeheader_code: string, attributedetails_code: string) => {
-    const confirmed = window.confirm(
-      "Are you sure you want to delete this attribute? This action cannot be undone."
-    );
+  const handleDeleteAttribute = (attributeheader_code: string, attributedetails_code: string) => {
+    showConfirmToast({
+      title: "Delete Attribute",
+      description:
+        "Are you sure you want to delete this attribute?",
+      onConfirm: () =>
+        deleteAttribute(attributeheader_code, attributedetails_code),
+    });
+  };
 
-    if (!confirmed) return;
-
+  const deleteAttribute = async (attributeheader_code: string, attributedetails_code: string) => {
     try {
       const response = await fetch(`${BASE_URL}/delattridetData`, {
         method: "POST",
@@ -3887,6 +4058,7 @@ console.log(numberSeriesForm)
 
     setIsNumberSeriesDialogOpen(true);
   };
+
   const validateNumberSeries = () => {
     if (
       !numberSeriesForm.Screen_Type ||
@@ -3910,6 +4082,7 @@ console.log(numberSeriesForm)
 
     return true;
   };
+
   const handleCreateNumberSeries = async () => {
     setSubmittedNumberSeries(true);
 
@@ -3954,7 +4127,16 @@ console.log(numberSeriesForm)
       });
     }
   };
-  const handleUpdateNumberSeries = async () => {
+
+  const handleUpdateNumberSeries = () => {
+    showConfirmToast({
+      title: "Update Number Series",
+      description: "Do you want to update these changes?",
+      onConfirm: updateNumberSeries,
+    });
+  };
+
+  const updateNumberSeries = async () => {
     setSubmittedNumberSeries(true);
 
     if (!validateNumberSeries()) return;
@@ -4000,13 +4182,16 @@ console.log(numberSeriesForm)
       });
     }
   };
-  const handleDeleteNumberSeries = async (row: any) => {
-    const confirmed = window.confirm(
-      "Are you sure you want to delete this Number Series?"
-    );
 
-    if (!confirmed) return;
+  const handleDeleteNumberSeries = (row: any) => {
+    showConfirmToast({
+      title: "Delete Number Series",
+      description: "Are you sure you want to delete this Number Series?",
+      onConfirm: () => deleteNumberSeries(row),
+    });
+  };
 
+  const deleteNumberSeries = async (row: any) => {
     try {
       const response = await fetch(`${BASE_URL}/NumberSeriesdeleteData`, {
         method: "POST",
@@ -4018,6 +4203,7 @@ console.log(numberSeriesForm)
         body: JSON.stringify({
           Screen_TypesToDelete: [
             {
+              KeyField: row.keyfield,
               Screen_Type: row.Screen_Type,
               Start_Year: row.Start_Year,
               End_Year: row.End_Year,
@@ -4028,9 +4214,13 @@ console.log(numberSeriesForm)
 
       const data = await response.json();
 
+      console.log("Response Status:", response.status);
+      console.log("Response Data:", data);
+
+
       if (response.ok) {
         toast({
-          title: "Success",
+          title: "Number series deleted successfully",
           description: data.message,
         });
 
@@ -4050,6 +4240,7 @@ console.log(numberSeriesForm)
       });
     }
   };
+
   const handleSaveNumberSeries = async () => {
     if (editingNumberSeries) {
       await handleUpdateNumberSeries();
@@ -4179,7 +4370,8 @@ console.log(numberSeriesForm)
   };
 
   const renderCompanySearch = () => (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-x-4 gap-y-6">
+
       <div className="space-y-2">
         <Label>Company No</Label>
         <TooltipProvider>
@@ -4783,7 +4975,7 @@ console.log(numberSeriesForm)
                 }
               />
             </TooltipTrigger>
-              
+
             <TooltipContent>
               <p>Enter User Code</p>
             </TooltipContent>
@@ -4808,7 +5000,7 @@ console.log(numberSeriesForm)
                 }
               />
             </TooltipTrigger>
-              
+
             <TooltipContent>
               <p>Enter User Name</p>
             </TooltipContent>
@@ -4821,12 +5013,12 @@ console.log(numberSeriesForm)
         <TooltipProvider>
           <Tooltip>
             <TooltipTrigger asChild>
-        <Input
-          placeholder="Enter First Name"
-          value={usersSearchForm.first_name}
-          onChange={(e) => setusersSearchForm({ ...usersSearchForm, first_name: e.target.value, })} />
-          </TooltipTrigger>
-              
+              <Input
+                placeholder="Enter First Name"
+                value={usersSearchForm.first_name}
+                onChange={(e) => setusersSearchForm({ ...usersSearchForm, first_name: e.target.value, })} />
+            </TooltipTrigger>
+
             <TooltipContent>
               <p>Enter First Name</p>
             </TooltipContent>
@@ -4839,12 +5031,12 @@ console.log(numberSeriesForm)
         <TooltipProvider>
           <Tooltip>
             <TooltipTrigger asChild>
-        <Input
-          placeholder="Enter Last Name"
-          value={usersSearchForm.last_name}
-          onChange={(e) => setusersSearchForm({ ...usersSearchForm, last_name: e.target.value, })} />
-          </TooltipTrigger>
-              
+              <Input
+                placeholder="Enter Last Name"
+                value={usersSearchForm.last_name}
+                onChange={(e) => setusersSearchForm({ ...usersSearchForm, last_name: e.target.value, })} />
+            </TooltipTrigger>
+
             <TooltipContent>
               <p>Enter Last Name</p>
             </TooltipContent>
@@ -4854,7 +5046,7 @@ console.log(numberSeriesForm)
 
       <div className="space-y-2">
         <Label>User Status</Label>
-                    
+
         <Select
           value={usersSearchForm.user_status}
           onValueChange={(value) =>
@@ -4871,13 +5063,13 @@ console.log(numberSeriesForm)
                   <SelectValue placeholder="Select User Status" />
                 </SelectTrigger>
               </TooltipTrigger>
-        
+
               <TooltipContent>
                 <p>Select User Status</p>
               </TooltipContent>
             </Tooltip>
           </TooltipProvider>
-        
+
           <SelectContent>
             {status.map((item: any) => (
               <SelectItem
@@ -4896,12 +5088,12 @@ console.log(numberSeriesForm)
         <TooltipProvider>
           <Tooltip>
             <TooltipTrigger asChild>
-        <Input
-          type='date'
-          placeholder="Enter DOB"
-          value={usersSearchForm.dob}
-          onChange={(e) => setusersSearchForm({ ...usersSearchForm, dob: e.target.value, })} />
-          </TooltipTrigger>
+              <Input
+                type='date'
+                placeholder="Enter DOB"
+                value={usersSearchForm.dob}
+                onChange={(e) => setusersSearchForm({ ...usersSearchForm, dob: e.target.value, })} />
+            </TooltipTrigger>
 
             <TooltipContent>
               <p>Select DOB</p>
@@ -4911,43 +5103,43 @@ console.log(numberSeriesForm)
       </div>
 
       <div className="space-y-2">
-  <Label>Gender</Label>
+        <Label>Gender</Label>
 
-  <Select
-    value={usersSearchForm.gender}
-    onValueChange={(value) =>
-      setusersSearchForm({
-        ...usersSearchForm,
-        gender: value,
-      })
-    }
-  >
-    <TooltipProvider>
-      <Tooltip>
-        <TooltipTrigger asChild>
-          <SelectTrigger>
-            <SelectValue placeholder="Select Gender" />
-          </SelectTrigger>
-        </TooltipTrigger>
-
-        <TooltipContent>
-          <p>Select Gender</p>
-        </TooltipContent>
-      </Tooltip>
-    </TooltipProvider>
-
-    <SelectContent>
-      {gender.map((gender: any) => (
-        <SelectItem
-          key={gender.attributedetails_code}
-          value={gender.attributedetails_code}
+        <Select
+          value={usersSearchForm.gender}
+          onValueChange={(value) =>
+            setusersSearchForm({
+              ...usersSearchForm,
+              gender: value,
+            })
+          }
         >
-          {gender.attributedetails_name}
-        </SelectItem>
-      ))}
-    </SelectContent>
-  </Select>
-</div>
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <SelectTrigger>
+                  <SelectValue placeholder="Select Gender" />
+                </SelectTrigger>
+              </TooltipTrigger>
+
+              <TooltipContent>
+                <p>Select Gender</p>
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
+
+          <SelectContent>
+            {gender.map((gender: any) => (
+              <SelectItem
+                key={gender.attributedetails_code}
+                value={gender.attributedetails_code}
+              >
+                {gender.attributedetails_name}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+      </div>
 
     </div>
   );
@@ -5034,7 +5226,7 @@ console.log(numberSeriesForm)
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
 
       <div className="space-y-2">
-        <Label htmlFor="ScreenType" className={submittedNumberSeries && !numberSeriesSearchForm.Screen_Type ? "text-red-500" : ""}>Screen Type*</Label>
+        <Label htmlFor="ScreenType" className={submittedNumberSeries && !numberSeriesSearchForm.Screen_Type ? "text-red-500" : ""}>Screen Type</Label>
         <TooltipProvider>
           <Tooltip>
             <TooltipTrigger asChild>
@@ -5222,7 +5414,7 @@ console.log(numberSeriesForm)
                 <ArrowLeft className="h-4 w-4 mr-2" />
                 Back to Dashboard
               </Button>
-              <h1 className="text-2xl font-bold text-gray-900">Super Admin Management</h1>
+              <h1 className="text-2xl font-bold text-gray-900">Super User Management</h1>
             </div>
             <Badge variant="secondary">Admin</Badge>
           </div>
@@ -5301,39 +5493,39 @@ console.log(numberSeriesForm)
             <div className="overflow-x-auto min-w-0 max-w-full custom-scrollbar pb-2">
               <TabsList className="inline-flex h-10 items-center justify-center rounded-md bg-muted p-1 text-muted-foreground w-max">
                 <TabsTrigger value="company" className="flex items-center gap-2">
-                  <Dumbbell className="h-4 w-4" />
+                  <Building className="h-4 w-4" />
                   Company
                 </TabsTrigger>
                 <TabsTrigger value="companyMapping" className="flex items-center gap-2">
-                  <Package className="h-4 w-4" />
+                  <Building2 className="h-4 w-4" />
                   Company Mapping
                 </TabsTrigger>
                 <TabsTrigger value="location" className="flex items-center gap-2">
-                  <Package className="h-4 w-4" />
+                  <MapPin className="h-4 w-4" />
                   Location
                 </TabsTrigger>
                 <TabsTrigger value="role" className="flex items-center gap-2">
-                  <Package className="h-4 w-4" />
+                  <Shield className="h-4 w-4" />
                   Role
                 </TabsTrigger>
                 <TabsTrigger value="roleMapping" className="flex items-center gap-2">
-                  <Package className="h-4 w-4" />
+                  <Users className="h-4 w-4" />
                   Role Mapping
                 </TabsTrigger>
                 <TabsTrigger value="roleRights" className="flex items-center gap-2">
-                  <Package className="h-4 w-4" />
+                  <ShieldCheck className="h-4 w-4" />
                   Role Rights
                 </TabsTrigger>
                 <TabsTrigger value="user" className="flex items-center gap-2">
-                  <Package className="h-4 w-4" />
+                  <User className="h-4 w-4" />
                   User
                 </TabsTrigger>
                 <TabsTrigger value="attribute" className="flex items-center gap-2">
-                  <Package className="h-4 w-4" />
+                  <Tags className="h-4 w-4" />
                   Attribute
                 </TabsTrigger>
                 <TabsTrigger value="NumberSeries" className="flex items-center gap-2">
-                  <Package className="h-4 w-4" />
+                  <Hash className="h-4 w-4" />
                   Number Series
                 </TabsTrigger>
               </TabsList>
@@ -5373,7 +5565,8 @@ console.log(numberSeriesForm)
                   columnDefs={CompanyColumnDefs}
                   pagination={true}
                   paginationPageSize={10}
-                  height="400px"
+                  paginationPageSizeSelector={false}
+                  height="300px"
                 />
               </CardContent>
             </Card>
@@ -5395,11 +5588,13 @@ console.log(numberSeriesForm)
                   columnDefs={CompanyMappingColumnDefs}
                   pagination={true}
                   paginationPageSize={10}
-                  height="500px"
+                  paginationPageSizeSelector={false}
+                  height="300px"
                 />
               </CardContent>
             </Card>
           </TabsContent>
+
           {/* Location Tab */}
           <TabsContent value="location">
             <Card>
@@ -5416,7 +5611,8 @@ console.log(numberSeriesForm)
                   columnDefs={LocationColumnDefs}
                   pagination={true}
                   paginationPageSize={10}
-                  height="400px"
+                  paginationPageSizeSelector={false}
+                  height="300px"
                 />
               </CardContent>
             </Card>
@@ -5438,7 +5634,8 @@ console.log(numberSeriesForm)
                   columnDefs={roleColumnDefs}
                   pagination={true}
                   paginationPageSize={10}
-                  height="500px"
+                  paginationPageSizeSelector={false}
+                  height="300px"
                 />
               </CardContent>
             </Card>
@@ -5460,12 +5657,12 @@ console.log(numberSeriesForm)
                   columnDefs={RoleMappingColumnDefs}
                   pagination={true}
                   paginationPageSize={10}
-                  height="500px"
+                  paginationPageSizeSelector={false}
+                  height="300px"
                 />
               </CardContent>
             </Card>
           </TabsContent>
-
 
           {/* Role Rights Tab */}
           <TabsContent value="roleRights">
@@ -5483,7 +5680,8 @@ console.log(numberSeriesForm)
                   columnDefs={RoleRightsColumnDefs}
                   pagination={true}
                   paginationPageSize={10}
-                  height="500px"
+                  paginationPageSizeSelector={false}
+                  height="300px"
                 />
               </CardContent>
             </Card>
@@ -5505,7 +5703,8 @@ console.log(numberSeriesForm)
                   columnDefs={UserColumnDefs}
                   pagination={true}
                   paginationPageSize={10}
-                  height="400px"
+                  paginationPageSizeSelector={false}
+                  height="300px"
                 />
               </CardContent>
             </Card>
@@ -5527,77 +5726,14 @@ console.log(numberSeriesForm)
                   columnDefs={AttributeColumnDefs}
                   pagination={true}
                   paginationPageSize={10}
-                  height="500px"
+                  paginationPageSizeSelector={false}
+                  height="300px"
                 />
               </CardContent>
             </Card>
           </TabsContent>
 
           {/* NumberSeries Tab */}
-          {/* <TabsContent value="NumberSeries">
-            <Card>
-              <CardHeader className="text-left items-start">
-                <CardTitle>NumberSeries</CardTitle>
-                <CardDescription>Manage all NumberSeries and their details</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead>Screen Type</TableHead>
-                      <TableHead>Start Year</TableHead>
-                      <TableHead>End Year</TableHead>
-                      <TableHead>Start No</TableHead>
-                      <TableHead>Running No</TableHead>
-                      <TableHead>End No</TableHead>
-                      <TableHead>Text</TableHead>
-                      <TableHead>Status</TableHead>
-                      <TableHead>Bill Format</TableHead>
-                      <TableHead className="text-right">Actions</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {numberSeries.map((NumberSeries: any) => (
-                      <TableRow
-                        key={`${NumberSeries.attributeheader_code}-${NumberSeries.attributedetails_code}`}
-                      >
-                        <TableCell>{NumberSeries.Screen_Type}</TableCell>
-                        <TableCell>{NumberSeries.Start_Year}</TableCell>
-                        <TableCell>{NumberSeries.End_Year}</TableCell>
-                        <TableCell>{NumberSeries.Start_No}</TableCell>
-                        <TableCell>{NumberSeries.Running_No}</TableCell>
-                        <TableCell>{NumberSeries.End_No}</TableCell>
-                        <TableCell>{NumberSeries.text}</TableCell>
-                        <TableCell>{NumberSeries.status}</TableCell>
-                        <TableCell>{NumberSeries.bill_format}</TableCell>
-
-                        <TableCell className="text-right">
-                          <div className="flex justify-end gap-2">
-                            <Button
-                              variant="ghost"
-                              size="sm"
-                              onClick={() => handleEditNumberSeries(NumberSeries)}
-                            >
-                              <Edit className="h-4 w-4" />
-                            </Button>
-
-                            <Button
-                              variant="ghost"
-                              size="sm"
-                              onClick={() => handleDeleteNumberSeries(NumberSeries)}
-                            >
-                              <Trash2 className="h-4 w-4 text-red-500" />
-                            </Button>
-                          </div>
-                        </TableCell>
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-              </CardContent>
-            </Card>
-          </TabsContent> */}
-
           <TabsContent value="NumberSeries">
             <Card>
               <CardHeader className="text-left items-start">
@@ -5613,6 +5749,7 @@ console.log(numberSeriesForm)
                   columnDefs={NumberSeriesColumnDefs}
                   pagination={true}
                   paginationPageSize={10}
+                  paginationPageSizeSelector={false}
                   height="300px"
                 />
               </CardContent>
@@ -5643,7 +5780,7 @@ console.log(numberSeriesForm)
                 <div className="grid grid-cols-2 gap-4">
 
                   <div className="space-y-2">
-                    <Label htmlFor="name" className={submittedCompany && !companyForm.company_no ? "text-red-500" : ""}>Company Code*</Label>
+                    <Label htmlFor="name" className={submittedCompany && !companyForm.company_no ? "text-red-500" : ""}>Company No*</Label>
                     <TooltipProvider>
                       <Tooltip>
                         <TooltipTrigger asChild>
@@ -5653,15 +5790,15 @@ console.log(numberSeriesForm)
                             value={companyForm.company_no}
                             maxLength={18}
                             onChange={(e) => setCompanyForm({ ...companyForm, company_no: e.target.value })}
-                            placeholder="Enter company code (e.g., CMP001)"
+                            placeholder="Enter company number (e.g., CMP001)"
                           />
                         </TooltipTrigger>
 
                         <TooltipContent>
                           <p>
                             {editingCompany
-                              ? "Company Code cannot be changed while editing."
-                              : "Enter company code"}
+                              ? "Company No cannot be changed while editing."
+                              : "Enter company number"}
                           </p>
                         </TooltipContent>
                       </Tooltip>
@@ -6028,12 +6165,12 @@ console.log(numberSeriesForm)
                             id="name"
                             value={companyForm.company_gst_no}
                             onChange={(e) => setCompanyForm({ ...companyForm, company_gst_no: e.target.value })}
-                            placeholder="Enter Identification number (e.g., 33ABCDE1234F1Z5)"
+                            placeholder="Enter identification number (e.g., 33ABCDE1234F1Z5)"
                           />
                         </TooltipTrigger>
 
                         <TooltipContent>
-                          <p>Enter GST number</p>
+                          <p>Enter identification number</p>
                         </TooltipContent>
                       </Tooltip>
                     </TooltipProvider>
@@ -7108,14 +7245,14 @@ console.log(numberSeriesForm)
                     <TooltipProvider>
                       <Tooltip>
                         <TooltipTrigger asChild>
-                    <Input
-                      id="UserCode"
-                      readOnly={!!editingUser}
-                      value={userForm.user_code}
-                      onChange={(e) => setUserForm({ ...userForm, user_code: e.target.value })}
-                      placeholder="e.g., User Code"
-                    />
-                    </TooltipTrigger>
+                          <Input
+                            id="UserCode"
+                            readOnly={!!editingUser}
+                            value={userForm.user_code}
+                            onChange={(e) => setUserForm({ ...userForm, user_code: e.target.value })}
+                            placeholder="e.g., User Code"
+                          />
+                        </TooltipTrigger>
 
                         <TooltipContent>
                           <p>Enter User Code</p>
@@ -7130,13 +7267,13 @@ console.log(numberSeriesForm)
                     <TooltipProvider>
                       <Tooltip>
                         <TooltipTrigger asChild>
-                    <Input
-                      id="UserName"
-                      value={userForm.user_name}
-                      onChange={(e) => setUserForm({ ...userForm, user_name: e.target.value })}
-                      placeholder="e.g., User Name"
-                    />
-                    </TooltipTrigger>
+                          <Input
+                            id="UserName"
+                            value={userForm.user_name}
+                            onChange={(e) => setUserForm({ ...userForm, user_name: e.target.value })}
+                            placeholder="e.g., User Name"
+                          />
+                        </TooltipTrigger>
 
                         <TooltipContent>
                           <p>Enter User Name</p>
@@ -7151,13 +7288,13 @@ console.log(numberSeriesForm)
                     <TooltipProvider>
                       <Tooltip>
                         <TooltipTrigger asChild>
-                    <Input
-                      id="FirstName"
-                      value={userForm.first_name}
-                      onChange={(e) => setUserForm({ ...userForm, first_name: e.target.value })}
-                      placeholder="e.g., First Name"
-                    />
-                    </TooltipTrigger>
+                          <Input
+                            id="FirstName"
+                            value={userForm.first_name}
+                            onChange={(e) => setUserForm({ ...userForm, first_name: e.target.value })}
+                            placeholder="e.g., First Name"
+                          />
+                        </TooltipTrigger>
 
                         <TooltipContent>
                           <p>Enter First Name</p>
@@ -7172,13 +7309,13 @@ console.log(numberSeriesForm)
                     <TooltipProvider>
                       <Tooltip>
                         <TooltipTrigger asChild>
-                    <Input
-                      id="LastName"
-                      value={userForm.last_name}
-                      onChange={(e) => setUserForm({ ...userForm, last_name: e.target.value })}
-                      placeholder="e.g., Last Name"
-                    />
-                    </TooltipTrigger>
+                          <Input
+                            id="LastName"
+                            value={userForm.last_name}
+                            onChange={(e) => setUserForm({ ...userForm, last_name: e.target.value })}
+                            placeholder="e.g., Last Name"
+                          />
+                        </TooltipTrigger>
 
                         <TooltipContent>
                           <p>Enter Last Name</p>
@@ -7193,30 +7330,30 @@ console.log(numberSeriesForm)
                     <TooltipProvider>
                       <Tooltip>
                         <TooltipTrigger asChild>
-                    <div className="relative">
-                      <Input
-                        id="Password"
-                        type={showPassword ? "text" : "password"}
-                        value={userForm.user_password}
-                        onChange={(e) =>
-                          setUserForm({
-                            ...userForm,
-                            user_password: e.target.value,
-                          })
-                        }
-                        placeholder="e.g., Password"
-                        className="pr-10"
-                      />
+                          <div className="relative">
+                            <Input
+                              id="Password"
+                              type={showPassword ? "text" : "password"}
+                              value={userForm.user_password}
+                              onChange={(e) =>
+                                setUserForm({
+                                  ...userForm,
+                                  user_password: e.target.value,
+                                })
+                              }
+                              placeholder="e.g., Password"
+                              className="pr-10"
+                            />
 
-                      <button
-                        type="button"
-                        onClick={() => setShowPassword(!showPassword)}
-                        className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700"
-                      >
-                        {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
-                      </button>
-                    </div>
-                    </TooltipTrigger>
+                            <button
+                              type="button"
+                              onClick={() => setShowPassword(!showPassword)}
+                              className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700"
+                            >
+                              {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                            </button>
+                          </div>
+                        </TooltipTrigger>
 
                         <TooltipContent>
                           <p>Enter Password</p>
@@ -7241,13 +7378,13 @@ console.log(numberSeriesForm)
                               <SelectValue placeholder="Select Status" />
                             </SelectTrigger>
                           </TooltipTrigger>
-                    
+
                           <TooltipContent>
-                            <p>Select the status</p>
+                            <p>Select the Status</p>
                           </TooltipContent>
                         </Tooltip>
                       </TooltipProvider>
-                    
+
                       <SelectContent>
                         {status.map((status: any) => (
                           <SelectItem
@@ -7282,13 +7419,13 @@ console.log(numberSeriesForm)
                               <SelectValue placeholder="Select Role ID" />
                             </SelectTrigger>
                           </TooltipTrigger>
-                    
+
                           <TooltipContent>
                             <p>Select Role ID</p>
                           </TooltipContent>
                         </Tooltip>
                       </TooltipProvider>
-                    
+
                       <SelectContent>
                         {role.map((role: any) => (
                           <SelectItem
@@ -7308,13 +7445,13 @@ console.log(numberSeriesForm)
                     <TooltipProvider>
                       <Tooltip>
                         <TooltipTrigger asChild>
-                    <Input
-                      id="Email"
-                      value={userForm.email_id}
-                      onChange={(e) => setUserForm({ ...userForm, email_id: e.target.value })}
-                      placeholder="e.g., Email"
-                    />
-                    </TooltipTrigger>
+                          <Input
+                            id="Email"
+                            value={userForm.email_id}
+                            onChange={(e) => setUserForm({ ...userForm, email_id: e.target.value })}
+                            placeholder="e.g., Email"
+                          />
+                        </TooltipTrigger>
 
                         <TooltipContent>
                           <p>Enter Email</p>
@@ -7329,14 +7466,14 @@ console.log(numberSeriesForm)
                     <TooltipProvider>
                       <Tooltip>
                         <TooltipTrigger asChild>
-                    <Input
-                      id="DOB"
-                      type='date'
-                      value={userForm.dob}
-                      onChange={(e) => setUserForm({ ...userForm, dob: e.target.value })}
-                      placeholder="e.g., DOB"
-                    />
-                    </TooltipTrigger>
+                          <Input
+                            id="DOB"
+                            type='date'
+                            value={userForm.dob}
+                            onChange={(e) => setUserForm({ ...userForm, dob: e.target.value })}
+                            placeholder="e.g., DOB"
+                          />
+                        </TooltipTrigger>
 
                         <TooltipContent>
                           <p>Select DOB</p>
@@ -7348,38 +7485,38 @@ console.log(numberSeriesForm)
                   <div className="space-y-2">
                     <Label htmlFor="Gender">Gender</Label>
 
-                  <Select
-                    value={userForm.gender}
-                    onValueChange={(value) =>
-                      setUserForm({ ...userForm, gender: value })
-                    }
-                  >
-                    <TooltipProvider>
-                      <Tooltip>
-                        <TooltipTrigger asChild>
-                          <SelectTrigger>
-                            <SelectValue placeholder="Select Gender" />
-                          </SelectTrigger>
+                    <Select
+                      value={userForm.gender}
+                      onValueChange={(value) =>
+                        setUserForm({ ...userForm, gender: value })
+                      }
+                    >
+                      <TooltipProvider>
+                        <Tooltip>
+                          <TooltipTrigger asChild>
+                            <SelectTrigger>
+                              <SelectValue placeholder="Select Gender" />
+                            </SelectTrigger>
                           </TooltipTrigger>
 
-                        <TooltipContent>
-                          <p>Select Gender</p>
-                        </TooltipContent>
-                      </Tooltip>
+                          <TooltipContent>
+                            <p>Select Gender</p>
+                          </TooltipContent>
+                        </Tooltip>
                       </TooltipProvider>
 
-                    <SelectContent>
-                      {gender.map((status: any) => (
-                        <SelectItem
-                          key={status.attributedetails_code}
-                          value={status.attributedetails_code}
-                        >
-                          {status.attributedetails_name}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
+                      <SelectContent>
+                        {gender.map((status: any) => (
+                          <SelectItem
+                            key={status.attributedetails_code}
+                            value={status.attributedetails_code}
+                          >
+                            {status.attributedetails_name}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
 
                   <div className="space-x-2">
                     <Switch
@@ -7403,11 +7540,31 @@ console.log(numberSeriesForm)
 
             </div>
             <DialogFooter>
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger asChild>
               <Button variant="outline" onClick={() => {
                 setIsUserDialogOpen(false);
                 setSubmittedUser(false);
               }}>Cancel</Button>
-              <Button onClick={handleSaveUser}>{editingUser ? 'Update User' : 'Create User'} Program</Button>
+              </TooltipTrigger>
+              
+                  <TooltipContent>
+                    Cancel without saving changes.
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+              <Button onClick={handleSaveUser}>{editingUser ? 'Update User' : 'Create User'}</Button>
+              </TooltipTrigger>
+              
+                  <TooltipContent>
+                    <p>{editingUser ? "Update a User" : "Add a User"}</p>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
             </DialogFooter>
           </DialogContent>
         </Dialog>
@@ -7608,7 +7765,7 @@ console.log(numberSeriesForm)
               <div className="space-y-2">
                 <Label htmlFor="code" className={submittedAttributeHdr && !attributeHdrForm.attributeheader_code ? "text-red-500" : ""}>Code*</Label>
                 <TooltipProvider>
-                  <Tooltip>-
+                  <Tooltip>
                     <TooltipTrigger asChild>
                       <Input
                         id="Code"
@@ -7814,7 +7971,9 @@ console.log(numberSeriesForm)
                           <Input
                             id="Start No"
                             value={numberSeriesForm.Start_No}
-                            onChange={(e) => setNumberSeriesForm({ ...numberSeriesForm, Start_No: e.target.value })}
+                            onChange={(e) => setNumberSeriesForm({ ...numberSeriesForm, Start_No: e.target.value.replace(/[^0-9]/g, ""),
+                            })
+                          }
                             placeholder="Enter Start No"
                           />
                         </TooltipTrigger>
@@ -7834,7 +7993,7 @@ console.log(numberSeriesForm)
                           <Input
                             id="Running No"
                             value={numberSeriesForm.Running_No}
-                            onChange={(e) => setNumberSeriesForm({ ...numberSeriesForm, Running_No: e.target.value })}
+                            onChange={(e) => setNumberSeriesForm({ ...numberSeriesForm, Running_No: e.target.value.replace(/[^0-9]/g, "") })}
                             placeholder="Enter Running No"
                           />
                         </TooltipTrigger>
@@ -7854,7 +8013,7 @@ console.log(numberSeriesForm)
                           <Input
                             id="End No"
                             value={numberSeriesForm.End_No}
-                            onChange={(e) => setNumberSeriesForm({ ...numberSeriesForm, End_No: e.target.value })}
+                            onChange={(e) => setNumberSeriesForm({ ...numberSeriesForm, End_No: e.target.value.replace(/[^0-9]/g, "") })}
                             placeholder="Enter End No"
                           />
                         </TooltipTrigger>
