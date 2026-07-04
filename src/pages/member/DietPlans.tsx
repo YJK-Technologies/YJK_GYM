@@ -123,7 +123,7 @@ const DietPlans = () => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center py-4">
             <div className="flex items-center">
-              <Button variant="ghost" onClick={() => navigate('/member')} className="mr-4">
+              <Button variant="ghost" onClick={() => navigate('/Member')} className="mr-4">
                 <ArrowLeft className="h-4 w-4 mr-2" />
                 Back
               </Button>
