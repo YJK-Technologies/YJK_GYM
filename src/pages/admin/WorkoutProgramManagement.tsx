@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -14,6 +14,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { useNavigate } from 'react-router-dom';
 import { useToast } from '@/hooks/use-toast';
 import { ArrowLeft, Plus, Search, Dumbbell, Package, Users, Clock, Edit, Trash2, Eye, Calendar, DollarSign, CheckCircle, XCircle } from 'lucide-react';
+import { BASE_URL } from '../ApiConfig';
+import AgGridTable from "@/components/ui/ag-grid-table";
 
 interface Exercise {
   name: string;
@@ -197,7 +199,98 @@ const WorkoutProgramManagement = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [programs, setPrograms] = useState<WorkoutProgram[]>(samplePrograms);
   const [packages, setPackages] = useState<WorkoutPackage[]>(samplePackages);
-  
+  const [category, setCategory] = useState<any[]>([]);
+  const [difficultyLevel, setDifficultyLevel] = useState<any[]>([]);
+  const [trainers, setTrainers] = useState<any[]>([]);
+
+  const fetchCategory = async () => {
+    try {
+      const response = await fetch(`${BASE_URL}/getCategory`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          company_code: "YJK",
+        }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        setCategory(data);
+      } else {
+        console.error("Failed to fetch categories");
+      }
+
+    } catch (error) {
+      console.error("Error fetching categories:", error);
+    }
+  };
+
+  const fetchDifficultyLevel = async () => {
+    try {
+      const response = await fetch(`${BASE_URL}/getDifficultyLevel`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          company_code: "YJK",
+        }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        setDifficultyLevel(data);
+      } else {
+        console.error("Failed to fetch difficulty levels");
+      }
+
+    } catch (error) {
+      console.error("Error fetching difficulty levels:", error);
+    }
+  };
+
+  const fetchTrainers = async () => {
+    try {
+      const response = await fetch(`${BASE_URL}/getTrainers`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          company_code: "YJK",
+          Location_Code: "LOC001",
+        }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        setTrainers(data);
+      } else {
+        console.error("Failed to fetch trainers");
+      }
+
+    } catch (error) {
+      console.error("Error fetching trainers:", error);
+    }
+  };
+
+  useEffect(() => {
+    const loadData = async () => {
+      await Promise.all([
+        fetchCategory(),
+        fetchDifficultyLevel(),
+        fetchTrainers()
+      ]);
+    };
+
+    loadData();
+  }, []);
+
   // Program Dialog States
   const [isProgramDialogOpen, setIsProgramDialogOpen] = useState(false);
   const [editingProgram, setEditingProgram] = useState<WorkoutProgram | null>(null);
@@ -230,12 +323,12 @@ const WorkoutProgramManagement = () => {
     features: '',
   });
 
-  const stats = [
-    { title: 'Total Programs', value: programs.length.toString(), icon: Dumbbell, color: 'bg-purple-500' },
-    { title: 'Active Programs', value: programs.filter(p => p.isActive).length.toString(), icon: CheckCircle, color: 'bg-green-500' },
-    { title: 'Total Packages', value: packages.length.toString(), icon: Package, color: 'bg-purple-500' },
-    { title: 'Active Packages', value: packages.filter(p => p.isActive).length.toString(), icon: Calendar, color: 'bg-orange-500' },
-  ];
+  // const stats = [
+  //   { title: 'Total Programs', value: programs.length.toString(), icon: Dumbbell, color: 'bg-purple-500' },
+  //   { title: 'Active Programs', value: programs.filter(p => p.isActive).length.toString(), icon: CheckCircle, color: 'bg-green-500' },
+  //   { title: 'Total Packages', value: packages.length.toString(), icon: Package, color: 'bg-purple-500' },
+  //   { title: 'Active Packages', value: packages.filter(p => p.isActive).length.toString(), icon: Calendar, color: 'bg-orange-500' },
+  // ];
 
   const getDurationDays = (type: string): number => {
     switch (type) {
@@ -308,16 +401,16 @@ const WorkoutProgramManagement = () => {
 
   const handleSaveProgram = () => {
     const faculty = sampleFaculty.find(f => f.id === programForm.assignedFaculty);
-    
+
     if (editingProgram) {
-      setPrograms(programs.map(p => 
-        p.id === editingProgram.id 
+      setPrograms(programs.map(p =>
+        p.id === editingProgram.id
           ? {
-              ...p,
-              ...programForm,
-              goals: programForm.goals.split(',').map(g => g.trim()).filter(Boolean),
-              facultyName: faculty?.name || '',
-            }
+            ...p,
+            ...programForm,
+            goals: programForm.goals.split(',').map(g => g.trim()).filter(Boolean),
+            facultyName: faculty?.name || '',
+          }
           : p
       ));
       toast({ title: "Program Updated", description: "Workout program has been updated successfully." });
@@ -385,18 +478,18 @@ const WorkoutProgramManagement = () => {
   const handleSavePackage = () => {
     const program = programs.find(p => p.id === packageForm.programId);
     const faculty = sampleFaculty.find(f => f.id === packageForm.facultyId);
-    
+
     if (editingPackage) {
-      setPackages(packages.map(p => 
-        p.id === editingPackage.id 
+      setPackages(packages.map(p =>
+        p.id === editingPackage.id
           ? {
-              ...p,
-              ...packageForm,
-              durationDays: getDurationDays(packageForm.packageType),
-              programName: program?.name || '',
-              facultyName: faculty?.name || '',
-              features: packageForm.features.split(',').map(f => f.trim()).filter(Boolean),
-            }
+            ...p,
+            ...packageForm,
+            durationDays: getDurationDays(packageForm.packageType),
+            programName: program?.name || '',
+            facultyName: faculty?.name || '',
+            features: packageForm.features.split(',').map(f => f.trim()).filter(Boolean),
+          }
           : p
       ));
       toast({ title: "Package Updated", description: "Workout package has been updated successfully." });
@@ -471,7 +564,7 @@ const WorkoutProgramManagement = () => {
 
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Stats Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+        {/* <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
           {stats.map((stat, index) => (
             <Card key={index}>
               <CardContent className="p-6">
@@ -487,10 +580,10 @@ const WorkoutProgramManagement = () => {
               </CardContent>
             </Card>
           ))}
-        </div>
+        </div> */}
 
         {/* Search and Add */}
-        <Card className="mb-6">
+        {/* <Card className="mb-6">
           <CardContent className="p-4">
             <div className="flex flex-col sm:flex-row gap-4 justify-between">
               <div className="relative flex-1">
@@ -504,7 +597,7 @@ const WorkoutProgramManagement = () => {
               </div>
             </div>
           </CardContent>
-        </Card>
+        </Card> */}
 
         {/* Tabs for Programs and Packages */}
         <Tabs value={activeTab} onValueChange={setActiveTab}>
@@ -556,7 +649,7 @@ const WorkoutProgramManagement = () => {
                         <TableCell>
                           <Badge variant={
                             program.difficultyLevel === 'Beginner' ? 'secondary' :
-                            program.difficultyLevel === 'Intermediate' ? 'default' : 'destructive'
+                              program.difficultyLevel === 'Intermediate' ? 'default' : 'destructive'
                           }>
                             {program.difficultyLevel}
                           </Badge>
@@ -675,12 +768,14 @@ const WorkoutProgramManagement = () => {
                         <SelectValue placeholder="Select category" />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="Strength">Strength</SelectItem>
-                        <SelectItem value="Cardio">Cardio</SelectItem>
-                        <SelectItem value="HIIT">HIIT</SelectItem>
-                        <SelectItem value="Yoga">Yoga</SelectItem>
-                        <SelectItem value="CrossFit">CrossFit</SelectItem>
-                        <SelectItem value="Flexibility">Flexibility</SelectItem>
+                        {category.map((category: any) => (
+                          <SelectItem
+                            key={category.attributedetails_name}
+                            value={category.attributedetails_name}
+                          >
+                            {category.attributedetails_name}
+                          </SelectItem>
+                        ))}
                       </SelectContent>
                     </Select>
                   </div>
@@ -693,9 +788,14 @@ const WorkoutProgramManagement = () => {
                         <SelectValue placeholder="Select difficulty" />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="Beginner">Beginner</SelectItem>
-                        <SelectItem value="Intermediate">Intermediate</SelectItem>
-                        <SelectItem value="Advanced">Advanced</SelectItem>
+                        {difficultyLevel.map((difficultyLevel: any) => (
+                          <SelectItem
+                            key={difficultyLevel.attributedetails_name}
+                            value={difficultyLevel.attributedetails_name}
+                          >
+                            {difficultyLevel.attributedetails_name}
+                          </SelectItem>
+                        ))}
                       </SelectContent>
                     </Select>
                   </div>
@@ -766,8 +866,13 @@ const WorkoutProgramManagement = () => {
                       <SelectValue placeholder="Select trainer" />
                     </SelectTrigger>
                     <SelectContent>
-                      {sampleFaculty.map((faculty) => (
-                        <SelectItem key={faculty.id} value={faculty.id}>{faculty.name}</SelectItem>
+                      {trainers.map((trainers: any) => (
+                        <SelectItem
+                          key={trainers.TrainerID}
+                          value={trainers.TrainerID}
+                        >
+                          {trainers.TrainerID} - {trainers.FullName}
+                        </SelectItem>
                       ))}
                     </SelectContent>
                   </Select>

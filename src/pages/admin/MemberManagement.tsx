@@ -570,7 +570,7 @@ const MemberManagement = () => {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          company_code: "YJK",
+          company_code: "YJKT",
           location_code: "LOC001",
           "modified-by": "admin",
         },
