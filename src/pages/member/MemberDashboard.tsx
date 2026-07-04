@@ -27,11 +27,11 @@ const MemberDashboard = () => {
   ];
 
   const quickActions = [
-    { title: 'Payment History', description: 'View all payments and receipts', route: '/member/payments' },
-    { title: 'Daily Workouts', description: 'Check your personalized workout plan', route: '/member/workouts' },
-    { title: 'Workout Programs', description: 'Browse available programs and packages', route: '/member/programs' },
-    { title: 'Body Progress', description: 'Track your fitness journey', route: '/member/progress' },
-    { title: 'Attendance', description: 'View your gym check-in history', route: '/member/attendance' },
+    { title: 'Payment History', description: 'View all payments and receipts', route: '/MemberPayments' },
+    { title: 'Daily Workouts', description: 'Check your personalized workout plan', route: '/MemberWorkouts' },
+    { title: 'Workout Programs', description: 'Browse available programs and packages', route: '/MemberPrograms' },
+    { title: 'Body Progress', description: 'Track your fitness journey', route: '/MemberProgress' },
+    { title: 'Attendance', description: 'View your gym check-in history', route: '/MemberAttendance' },
   ];
 
   const recentAlerts = [
@@ -153,7 +153,7 @@ const MemberDashboard = () => {
                 <Badge variant="outline" className="mt-2">Pending</Badge>
               </div>
             </div>
-            <Button className="w-full mt-4" onClick={() => navigate('/member/workouts')}>
+            <Button className="w-full mt-4" onClick={() => navigate('/MemberWorkouts')}>
               View Full Workout Plan
             </Button>
           </CardContent>
