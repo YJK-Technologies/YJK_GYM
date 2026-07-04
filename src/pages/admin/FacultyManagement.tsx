@@ -15,6 +15,7 @@ import { BASE_URL } from '../ApiConfig';
 import { useToast } from '@/hooks/use-toast';
 import ImageUpload from "../ImageUpload";
 import { showConfirmToast } from '../../components/ui/show-confirm-toast';
+import { Switch } from '@/components/ui/switch';
 
 interface Trainer {
   id: string;
@@ -28,7 +29,7 @@ interface Trainer {
   schedule: string;
   bio: string;
   assignedMembers: number;
-  isActive: boolean;
+  Is_Active: boolean;
 }
 
 const FacultyManagement = () => {
@@ -60,6 +61,7 @@ const [Trainers, setTrainers] = useState([]);
 const [editingTrainer, setEditingTrainer] = useState<any>(null);
 const [isTrainerDialogOpen, setIsTrainerDialogOpen] = useState(false);
 const [showPassword, setShowPassword] = useState(false);
+const [status, setStatus] = useState<any[]>([]);
 const [TrainerForm, setTrainerForm] = useState({
     company_code: "YJK",
     Location_Code: "LOC001",
@@ -76,7 +78,7 @@ const [TrainerForm, setTrainerForm] = useState({
     Specializations: "",
     WorkingSchedule: "",
     Biography: "",
-    Is_Active: "Active",
+    Is_Active: "Close",
     created_by: "admin",
     modified_by: "admin",
   });
@@ -137,6 +139,7 @@ const [TrainerForm, setTrainerForm] = useState({
         Gender: "",
         Specializations: "",
         WorkingSchedule: "",
+        Is_Active: "",
 
     });
   
@@ -158,6 +161,31 @@ const [TrainerForm, setTrainerForm] = useState({
         if (response.ok) {
           setGender(data);
         } else {
+          console.error("Failed to fetch gender");
+        }
+      } catch (error) {
+        console.error("Error fetching status:", error);
+      }
+    };
+
+    // Status DropDown
+    const fetchStatus = async () => {
+      try {
+        const response = await fetch(`${BASE_URL}/status`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            company_code: "YJK",
+          }),
+        });
+  
+        const data = await response.json();
+  
+        if (response.ok) {
+          setStatus(data);
+        } else {
           console.error("Failed to fetch status");
         }
       } catch (error) {
@@ -169,6 +197,7 @@ const [TrainerForm, setTrainerForm] = useState({
       const loadData = async () => {
         await Promise.all([
           fetchGender(),
+          fetchStatus()
         ]);
       };
   
@@ -198,7 +227,7 @@ const [TrainerForm, setTrainerForm] = useState({
         Specializations: "",
         WorkingSchedule: "",
         Biography: "",
-        Is_Active: "Active",
+        Is_Active: "Close",
         created_by: "admin",
         modified_by: "admin",
       });
@@ -583,6 +612,7 @@ const handleDeleteTrainer = (trainer: any) => {
           body: JSON.stringify({
             company_code: "YJK",
             Location_Code: "LOC001",
+            TrainerID: TrainersSearchForm.TrainerID,
             FullName: TrainersSearchForm.FullName,
             Email: TrainersSearchForm.Email,
             DOB: TrainersSearchForm.DOB,
@@ -595,6 +625,7 @@ const handleDeleteTrainer = (trainer: any) => {
             age_to: TrainersSearchForm.age_to,
             experience_from: TrainersSearchForm.experience_from,
             experience_to: TrainersSearchForm.experience_to,
+            Is_Active: TrainersSearchForm.Is_Active,
           }),
         });
   
@@ -687,6 +718,7 @@ const handleDeleteTrainer = (trainer: any) => {
           Gender: "",
           Specializations: "",
           WorkingSchedule: "",
+          Is_Active: "",
         });
         setTrainers([]);
       };
@@ -936,10 +968,28 @@ const handleDeleteTrainer = (trainer: any) => {
                                               </Tooltip>
                                             </TooltipProvider>
                       </div>
+
+                      <div className="space-y-2">
+                    <Label>Status</Label>
+                    <div className="flex items-center space-x-2 pt-2">
+                      <Switch
+                        checked={TrainerForm.Is_Active === "Active"}
+                        onCheckedChange={(checked) =>
+                          setTrainerForm({
+                            ...TrainerForm,
+                            Is_Active: checked ? "Active" : "Close",
+                          })
+                        }
+                      />
+                      <Label>
+                        {TrainerForm.Is_Active}
+                      </Label>
                     </div>
+                  </div>
+                    </div>
+
                     <div className="space-y-2">
                       <Label htmlFor="certifications">Certifications (comma-separated)</Label>
-                      {/* <Input id="certifications" placeholder="NASM CPT, ACE Fitness..." /> */}
                       <TooltipProvider>
                                               <Tooltip>
                                                 <TooltipTrigger asChild>
@@ -979,8 +1029,6 @@ const handleDeleteTrainer = (trainer: any) => {
                                             </TooltipProvider>
                     </div>
                     <div className="space-y-2">
-                      {/* <Label htmlFor="schedule">Working Schedule*</Label>
-                      <Input id="schedule" placeholder="Sun-Thu: 6AM-2PM" /> */}
                       <Label htmlFor="name" className={submittedTrainer && !TrainerForm.WorkingSchedule ? "text-red-500" : ""}>Working Schedule*</Label>
                                             <TooltipProvider>
                                               <Tooltip>
@@ -1002,7 +1050,6 @@ const handleDeleteTrainer = (trainer: any) => {
                     </div>
                     <div className="space-y-2">
                       <Label htmlFor="bio">Biography</Label>
-                      {/* <Textarea id="bio" placeholder="Brief description about the trainer..." rows={4} /> */}
                       <TooltipProvider>
                                               <Tooltip>
                                                 <TooltipTrigger asChild>
@@ -1218,6 +1265,26 @@ const handleDeleteTrainer = (trainer: any) => {
               </Tooltip>
             </TooltipProvider>
           </div>
+
+          <div className="space-y-2">
+            <Label>Phone</Label>
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger asChild>
+            <Input
+              placeholder="Enter Phone"
+              value={TrainersSearchForm.Mobile}
+              inputMode="numeric"
+              maxLength={15}
+              onChange={(e) => setTrainersSearchForm({ ...TrainersSearchForm, Mobile: e.target.value.replace(/\D/g, ""), })} />
+              </TooltipTrigger>
+                  
+                <TooltipContent>
+                  <p>Enter Phone</p>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
+          </div>
     
           <div className="space-y-2">
             <Label>Age From</Label>
@@ -1262,26 +1329,6 @@ const handleDeleteTrainer = (trainer: any) => {
                   
                 <TooltipContent>
                   <p>Enter Age To</p>
-                </TooltipContent>
-              </Tooltip>
-            </TooltipProvider>
-          </div>
-
-          <div className="space-y-2">
-            <Label>Phone</Label>
-            <TooltipProvider>
-              <Tooltip>
-                <TooltipTrigger asChild>
-            <Input
-              placeholder="Enter Phone"
-              value={TrainersSearchForm.Mobile}
-              inputMode="numeric"
-              maxLength={15}
-              onChange={(e) => setTrainersSearchForm({ ...TrainersSearchForm, Mobile: e.target.value.replace(/\D/g, ""), })} />
-              </TooltipTrigger>
-                  
-                <TooltipContent>
-                  <p>Enter Phone</p>
                 </TooltipContent>
               </Tooltip>
             </TooltipProvider>
@@ -1368,8 +1415,6 @@ const handleDeleteTrainer = (trainer: any) => {
 
         <div className="space-y-2">
                       <Label htmlFor="specializations">Specializations</Label>
-                      {/* <Input id="specializations" placeholder="Weight Loss, Strength Training..." /> */}
-                      {/* <Label htmlFor="name" className={submittedTrainer && !TrainerForm.Specializations ? "text-red-500" : ""}>Specializations* (comma-separated)</Label> */}
                                             <TooltipProvider>
                                               <Tooltip>
                                                 <TooltipTrigger asChild>
@@ -1388,10 +1433,9 @@ const handleDeleteTrainer = (trainer: any) => {
                                               </Tooltip>
                                             </TooltipProvider>
                     </div>
+
                     <div className="space-y-2">
                       <Label htmlFor="schedule">Working Schedule</Label>
-                      {/* <Input id="schedule" placeholder="Sun-Thu: 6AM-2PM" /> */}
-                      {/* <Label htmlFor="name" className={submittedTrainer && !TrainerForm.WorkingSchedule ? "text-red-500" : ""}>Working Schedule*</Label> */}
                                             <TooltipProvider>
                                               <Tooltip>
                                                 <TooltipTrigger asChild>
@@ -1410,6 +1454,41 @@ const handleDeleteTrainer = (trainer: any) => {
                                               </Tooltip>
                                             </TooltipProvider>
                     </div>
+
+                    <div className="space-y-2">
+                <Label>Status</Label>
+                <TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <div>
+                        <Select
+                          value={TrainersSearchForm.Is_Active}
+                          onValueChange={(value) => setTrainersSearchForm({ ...TrainersSearchForm, Is_Active: value, })}>
+                          <SelectTrigger>
+                            <SelectValue placeholder="Select Status" />
+                          </SelectTrigger>
+
+                          <SelectContent>
+                            {status.map((item: any) => (
+                              <SelectItem
+                                key={item.attributedetails_name}
+                                value={item.attributedetails_name}
+                              >
+                                {item.attributedetails_name}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      </div>
+                    </TooltipTrigger>
+
+                    <TooltipContent>
+                      <p>Select Status</p>
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
+              </div>
+
               <div className="col-span-full flex justify-end gap-4 mt-6">
               <TooltipProvider>
                 <Tooltip>
@@ -1470,9 +1549,13 @@ const handleDeleteTrainer = (trainer: any) => {
                         </div>
                         <div>
                           <h3 className="font-semibold text-lg">{trainer.FullName}</h3>
+                          <p className="text-sm text-gray-500">{trainer.TrainerID}</p>
                           <p className="text-sm text-gray-500">{trainer.Experience} years experience</p>
-                          <Badge variant={trainer.Is_Active === "Active" ? 'default' : 'secondary'} className="mt-1">
-                            {trainer.Is_Active ? 'Active' : 'Inactive'}
+                          <Badge
+                            variant={trainer.Is_Active === "Active" ? "default" : "secondary"}
+                            className="mt-1"
+                          >
+                            {trainer.Is_Active === "Active" ? "Active" : "Closed"}
                           </Badge>
                         </div>
                       </div>
@@ -1495,7 +1578,7 @@ const handleDeleteTrainer = (trainer: any) => {
                       </div>
                     </div>
 
-                    <p className="text-gray-600 text-sm mb-4 line-clamp-2">{trainer.Biography}</p>
+                    
 
                     <div className="space-y-3">
                       <div className="flex items-center text-sm text-gray-600">
@@ -1555,6 +1638,7 @@ const handleDeleteTrainer = (trainer: any) => {
                           : null}
                       </div>
                     </div>
+                    <p className="text-gray-600 text-sm mb-4 line-clamp-2">{trainer.Biography}</p>
                   </CardContent>
                 </Card>
               ))}

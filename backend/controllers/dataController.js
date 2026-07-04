@@ -3020,8 +3020,8 @@ const GYM_TrainerDelete = async (req, res) => {
 
 // Code added by Dinesh Gokul 30-06-2026
 const getTrainerSC = async (req, res) => {
-  const { company_code, Location_Code, FullName, Email, Gender, Mobile,
-    Specializations, Experience, WorkingSchedule, DOB, age_from, age_to, experience_from, experience_to } = req.body;
+  const { company_code, Location_Code, TrainerID, FullName, Email, Gender, Mobile,
+    Specializations, Experience, WorkingSchedule, DOB, Is_Active, age_from, age_to, experience_from, experience_to } = req.body;
 
   try {
     // Connect to the database
@@ -3034,6 +3034,7 @@ const getTrainerSC = async (req, res) => {
       .input("company_code", sql.NVarChar, company_code)
       .input("Location_Code", sql.NVarChar, Location_Code)
       .input("FullName", sql.NVarChar, FullName)
+      .input("TrainerID", sql.NVarChar, TrainerID)
       .input("Email", sql.NVarChar, Email)
       .input("Gender", sql.NVarChar, Gender)
       .input("Mobile", sql.NVarChar, Mobile)
@@ -3041,12 +3042,13 @@ const getTrainerSC = async (req, res) => {
       .input("Experience", sql.NVarChar, Experience)
       .input("WorkingSchedule", sql.NVarChar, WorkingSchedule)
       .input("DOB", sql.NVarChar, DOB)
+      .input("Is_Active", sql.NVarChar, Is_Active)
       .input("age_from", sql.Int, age_from)
       .input("age_to", sql.Int, age_to)
       .input("experience_from", sql.Int, experience_from)
       .input("experience_to", sql.Int, experience_to)
-      .query(`EXEC sp_GYM_Trainer @mode, '', @FullName, @Email, '', @Gender, @Mobile, Null, 
-        '', @Specializations, @Experience, @WorkingSchedule, @DOB, '', '', 
+      .query(`EXEC sp_GYM_Trainer @mode, @TrainerID, @FullName, @Email, '', @Gender, @Mobile, Null, 
+        '', @Specializations, @Experience, @WorkingSchedule, @DOB, '', @Is_Active, 
         @Location_Code, '', @company_code,  @age_from, @age_to, @experience_from, @experience_to, '', '', '', ''`);
 
     // Send response
