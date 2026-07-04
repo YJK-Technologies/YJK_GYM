@@ -124,6 +124,7 @@ const [TrainerForm, setTrainerForm] = useState({
     const [TrainersSearchForm, setTrainersSearchForm] = useState({
       company_code: "YJK",
       Location_Code: "001",
+        TrainerID: "",
         FullName: "",
         Email: "",
         age_from: "",
@@ -357,107 +358,6 @@ const [TrainerForm, setTrainerForm] = useState({
         });
       }
     };
-  
-    // const handleUpdateTrainer = async () => {
-    //   setSubmittedTrainer(true);
-  
-    //   if (!validateTrainer()) return;
-
-    //   if (!isValidPhoneNumber(TrainerForm.Mobile)) {
-    //     toast({
-    //       title: "Invalid Mobile Number",
-    //       description: "Mobile number must contain only digits and be between 8 and 15 digits.",
-    //       variant: "destructive",
-    //     });
-    //     return false;
-    //   }
-      
-    //   if (!TrainerForm.Password || TrainerForm.Password.length < 8) {
-    //     toast({
-    //       title: "Invalid Password",
-    //       description: "Password must contain at least 8 characters.",
-    //       variant: "destructive",
-    //     });
-    //     return false;
-    //   }
-  
-    //   try {
-    //     const formData = new FormData();
-  
-    //     Object.entries(TrainerForm).forEach(([key, value]) => {
-    //       if (key === "super_admin") {
-    //         formData.append("super_admin", value ? "Yes" : "No");
-    //       } else {
-    //         formData.append(key, String(value ?? ""));
-    //       }
-    //     });
-
-    //     TrainerImages.forEach((img, index) => {
-    //     if (!img) return;
-
-    //     // Extract mime type from base64 string
-    //     const mimeType = img.match(/data:(.*?);base64/)?.[1] || "image/png";
-
-    //     const base64 = img.split(",")[1];
-    //     const byteCharacters = atob(base64);
-
-    //     const byteNumbers = Array.from(byteCharacters, (char) =>
-    //       char.charCodeAt(0)
-    //     );
-
-    //     const byteArray = new Uint8Array(byteNumbers);
-
-    //     const blob = new Blob([byteArray], {
-    //       type: mimeType,
-    //     });
-
-    //     // Generate extension based on mime type
-    //     const extension = mimeType.split("/")[1] || "png";
-
-    //     if (index === 0) {
-    //       formData.append(
-    //         "Photo",
-    //         blob,
-    //         `Photo.${extension}`
-    //       );
-    //     }
-    //   });
-
-    //     const response = await fetch(`${BASE_URL}/GYM_TrainerUpdate`, {
-    //       method: "POST",
-    //       body: formData,
-    //     });
-  
-    //     const data = await response.json();
-  
-    //     if (response.ok) {
-    //       toast({
-    //         title: "Success",
-    //         description: data.message || "Trainer updated successfully.",
-    //       });
-  
-    //       setEditingTrainer(null);
-    //       setIsTrainerDialogOpen(false);
-    //       setSubmittedTrainer(false);
-  
-    //       handleTrainerSearch();
-    //     } else {
-    //       toast({
-    //         title: "Error",
-    //         description: data.message || "Failed to update Trainer.",
-    //         variant: "destructive",
-    //       });
-    //     }
-    //   } catch (err: any) {
-    //     console.error(err);
-  
-    //     toast({
-    //       title: "Server Error",
-    //       description: err.message || "Something went wrong.",
-    //       variant: "destructive",
-    //     });
-    //   }
-    // };
 
     const handleUpdateTrainer = () => {
   showConfirmToast({
@@ -773,19 +673,20 @@ const handleDeleteTrainer = (trainer: any) => {
     const handleReset = () => {
         setTrainersSearchForm({
           company_code: "YJK",
-      Location_Code: "001",
-        FullName: "",
-        Email: "",
-        age_from: "",
-        age_to: "",
-        DOB: "",
-        Mobile: "",
-        experience_from: "",
-        experience_to: "",
-        Experience: "",
-        Gender: "",
-        Specializations: "",
-        WorkingSchedule: "",
+          Location_Code: "001",
+          TrainerID: "",
+          FullName: "",
+          Email: "",
+          age_from: "",
+          age_to: "",
+          DOB: "",
+          Mobile: "",
+          experience_from: "",
+          experience_to: "",
+          Experience: "",
+          Gender: "",
+          Specializations: "",
+          WorkingSchedule: "",
         });
         setTrainers([]);
       };
@@ -1240,6 +1141,33 @@ const handleDeleteTrainer = (trainer: any) => {
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
     
           <div className="space-y-2">
+            <Label>Trainer ID</Label>
+    
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Input
+                    maxLength={100}
+                    placeholder="Enter Full Name"
+                    value={TrainersSearchForm.TrainerID}
+                    onChange={(e) =>
+                      setTrainersSearchForm({
+                        ...TrainersSearchForm,
+                        TrainerID: e.target.value,
+                      })
+                    }
+                  />
+                </TooltipTrigger>
+                  
+                <TooltipContent>
+                  <p>Enter Full Name</p>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
+          </div>
+
+          <div className="space-y-2">
+
             <Label>Full Name</Label>
     
             <TooltipProvider>
