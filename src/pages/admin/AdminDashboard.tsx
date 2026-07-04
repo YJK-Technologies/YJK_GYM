@@ -21,6 +21,10 @@ const AdminDashboard = () => {
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
+  const permissions = JSON.parse(sessionStorage.getItem("permissions") || "[]");
+
+  const allowedScreens = permissions.map((item: any) => item.screen_type);
+
   const stats = [
     { title: 'Total Members', value: '1,234', icon: Users, color: 'bg-purple-500' },
     { title: 'Monthly Revenue', value: 'BHD 12,500', icon: DollarSign, color: 'bg-green-500' },
@@ -29,17 +33,19 @@ const AdminDashboard = () => {
   ];
 
   const quickActions = [
-    { title: 'Member Management', description: 'Add, edit, or remove members', route: '/admin/members' },
-    { title: 'Workout Programs', description: 'Create and assign workout plans', route: '/admin/programs' },
-    { title: 'Payment Management', description: 'Process payments (Cash/Online/BenefitPay)', route: '/admin/payments' },
-    { title: 'Coupon Management', description: 'Create discount and offer codes', route: '/admin/coupons' },
-    { title: 'Inventory & Sales', description: 'Manage products and expenses', route: '/admin/inventory' },
-    { title: 'Reports', description: 'Generate financial and attendance reports', route: '/admin/reports' },
-    { title: 'Notifications', description: 'Send bulk Email, SMS & WhatsApp notifications', route: '/admin/notifications' },
-    { title: 'Faculty Management', description: 'Manage personal trainers and staff', route: '/admin/faculty' },
-    { title: 'Diet Plan Management', description: 'Create and assign nutrition programs', route: '/admin/diet-plans' },
-    { title: 'Super User Management', description: 'Manage all administrative modules.', route: '/admin/super-user' },
+    { title: 'Member Management', description: 'Add, edit, or remove members', route: '/AdminMembers' },
+    { title: 'Workout Programs', description: 'Create and assign workout plans', route: '/AdminPrograms' },
+    { title: 'Payment Management', description: 'Process payments (Cash/Online/BenefitPay)', route: '/AdminPayments' },
+    { title: 'Coupon Management', description: 'Create discount and offer codes', route: '/AdminCoupons' },
+    { title: 'Inventory & Sales', description: 'Manage products and expenses', route: '/AdminInventory' },
+    { title: 'Reports', description: 'Generate financial and attendance reports', route: '/AdminReports' },
+    { title: 'Notifications', description: 'Send bulk Email, SMS & WhatsApp notifications', route: '/AdminNotification' },
+    { title: 'Faculty Management', description: 'Manage personal trainers and staff', route: '/AdminFaculty' },
+    { title: 'Diet Plan Management', description: 'Create and assign nutrition programs', route: '/AdminDietPlans' },
+    { title: 'Super User Management', description: 'Manage all administrative modules.', route: '/SuperUser' },
   ];
+
+  const filteredQuickActions = quickActions.filter((action) => allowedScreens.includes(action.route.replace("/", "")));
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -92,7 +98,7 @@ const AdminDashboard = () => {
                   <button
                     onClick={() => {
                       setIsMenuOpen(false);
-                      navigate('/admin/companies');
+                      navigate('/AdminCompanies');
                     }}
                     className="w-full text-left flex items-center px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 transition-colors group"
                   >
@@ -161,7 +167,7 @@ const AdminDashboard = () => {
           </CardHeader>
           <CardContent>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-              {quickActions.map((action, index) => (
+              {filteredQuickActions.map((action, index) => (
                 <Card key={index} className="hover:shadow-md transition-shadow cursor-pointer">
                   <CardContent className="p-4">
                     <h3 className="font-semibold text-lg mb-2">{action.title}</h3>
