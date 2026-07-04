@@ -128,6 +128,12 @@ router.post("/GYM_TrainerUpdate", upload.single("Photo"), dataController.GYM_Tra
 router.post("/GYM_TrainerDelete",dataController.GYM_TrainerDelete)
 router.post("/getTrainerSC",dataController.getTrainerSC)
 router.post("/searchMemberData",dataController.searchMemberData)
+router.post("/getCategory",dataController.getCategory)
+router.post("/getDifficultyLevel",dataController.getDifficultyLevel)
+router.post("/getTrainers",dataController.getTrainers)
+router.post("/programInsertData",dataController.programInsertData)
+router.post("/programUpdateData",dataController.programUpdateData)
+router.post("/programDeleteData",dataController.programDeleteData)
 
 
 

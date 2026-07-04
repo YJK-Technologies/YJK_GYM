@@ -62,7 +62,7 @@ const [isTrainerDialogOpen, setIsTrainerDialogOpen] = useState(false);
 const [showPassword, setShowPassword] = useState(false);
 const [TrainerForm, setTrainerForm] = useState({
     company_code: "YJK",
-    Location_Code: "001",
+    Location_Code: "LOC001",
     TrainerID: "",
     KeyField: "",
     FullName: "",
@@ -184,7 +184,7 @@ const [TrainerForm, setTrainerForm] = useState({
       setEditingTrainer(null);
       setTrainerForm({
         company_code: "YJK",
-        Location_Code: "001",
+        Location_Code: "LOC001",
         TrainerID: "",
         KeyField: "",
         FullName: "",
@@ -582,7 +582,7 @@ const handleDeleteTrainer = (trainer: any) => {
           },
           body: JSON.stringify({
             company_code: "YJK",
-            Location_Code: "001",
+            Location_Code: "LOC001",
             FullName: TrainersSearchForm.FullName,
             Email: TrainersSearchForm.Email,
             DOB: TrainersSearchForm.DOB,
