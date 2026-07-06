@@ -20,123 +20,221 @@ const Login = () => {
   const secretKey = "yjk26012024";
   const navigate = useNavigate();
 
+  //   const handleLogin = async (role: "admin" | "member") => {
+  //   setLoading(true);
+  //   setLoginError("");
+
+  //   if (!userCode.trim()) {
+  //   setLoginError("User Code is required.");
+  //   setLoading(false);
+  //   return;
+  // }
+
+  // if (!password.trim()) {
+  //   setLoginError("Password is required.");
+  //   setLoading(false);
+  //   return;
+  // }
+
+  //   try {
+  //     const encryptedUserCode = CryptoJS.AES.encrypt(userCode,secretKey).toString();
+  //     const encryptedPassword = CryptoJS.AES.encrypt(password,secretKey).toString();
+
+  //     const response = await fetch(`${BASE_URL}/login`, {
+  //       method: "POST",
+  //       headers: {
+  //         "Content-Type": "application/json",
+  //       },
+  //       body: JSON.stringify({
+  //         user_code: encryptedUserCode,
+  //         user_password: encryptedPassword,
+  //       }),
+  //     });
+
+  //     const data = await response.json();
+
+  //     // if (response.ok) {
+  //     // if (data.length > 0) {
+  //     //   const user = data[0];
+
+  //     //   sessionStorage.setItem("isLoggedIn", "true"); sessionStorage.setItem("user_code", user.user_code); sessionStorage.setItem("user_name", user.user_name); sessionStorage.setItem("role_id", user.role_id);
+
+  //     //   await UserPermission(user.role_id);
+  //     //   await fetchUserData(user.user_code);
+
+  //     //   if (role === "admin") {
+  //     //     navigate("/AdminDashboard");
+  //     //   } else {
+  //     //     navigate("/Member");
+  //     //   }
+  //     // }
+  //     // } else {
+  //     //   setLoginError(data.message || "Invalid User Code or Password");
+  //     // }
+  //     if (response.ok) {
+  //   if (Array.isArray(data) && data.length > 0) {
+  //     const user = data[0];
+
+  //     sessionStorage.setItem("isLoggedIn", "true");
+  //     sessionStorage.setItem("user_code", user.user_code);
+  //     sessionStorage.setItem("user_name", user.user_name);
+  //     sessionStorage.setItem("role_id", user.role_id);
+
+  //     await UserPermission(user.role_id);
+  //     await fetchUserData(user.user_code);
+
+  //     if (role === "admin") {
+  //       navigate("/AdminDashboard");
+  //     } else {
+  //       navigate("/Member");
+  //     }
+  //   } else {
+  //     // Backend returned success but no user found
+  //     setLoginError(data.message || "Invalid User Code or Password.");
+  //   }
+  //   } else {
+  //     // Backend returned an error response
+  //     setLoginError(data.message || "Invalid User Code or Password.");
+  //   }
+  //   } catch (err: any) {
+  //     console.error(err);
+  //     setLoginError(err.message || "Something went wrong.");
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // };
+
   const handleLogin = async (role: "admin" | "member") => {
-  setLoading(true);
-  setLoginError("");
+    setLoading(true);
+    setLoginError("");
 
-  try {
-    const encryptedUserCode = CryptoJS.AES.encrypt(
-      userCode,
-      secretKey
-    ).toString();
+    if (!email.trim()) {
+      setLoginError("Email ID is required.");
+      setLoading(false);
+      return;
+    }
 
-    const encryptedPassword = CryptoJS.AES.encrypt(
-      password,
-      secretKey
-    ).toString();
+    if (!password.trim()) {
+      setLoginError("Password is required.");
+      setLoading(false);
+      return;
+    }
 
-    const response = await fetch(`${BASE_URL}/login`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        user_code: encryptedUserCode,
-        user_password: encryptedPassword,
-      }),
-    });
+    try {
+      const encryptedEmail = CryptoJS.AES.encrypt(
+        email,
+        secretKey
+      ).toString();
 
-    const data = await response.json();
+      const encryptedPassword = CryptoJS.AES.encrypt(
+        password,
+        secretKey
+      ).toString();
 
-    if (response.ok) {
-    if (data.length > 0) {
-      const user = data[0];
+      const response = await fetch(`${BASE_URL}/login`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          email_id: encryptedEmail,
+          user_password: encryptedPassword,
+        }),
+      });
 
-      sessionStorage.setItem("isLoggedIn", "true");
-      sessionStorage.setItem("user_code", user.user_code);
-      sessionStorage.setItem("user_name", user.user_name);
-      sessionStorage.setItem("role_id", user.role_id);
+      const data = await response.json();
 
-      await UserPermission(user.role_id);
-      await fetchUserData(user.user_code);
+      if (response.ok) {
+        if (Array.isArray(data) && data.length > 0) {
+          const user = data[0];
 
-      if (role === "admin") {
-        navigate("/AdminDashboard");
+          sessionStorage.setItem("isLoggedIn", "true");
+          sessionStorage.setItem("user_code", user.user_code);
+          sessionStorage.setItem("user_name", user.user_name);
+          sessionStorage.setItem("role_id", user.role_id);
+
+          await UserPermission(user.role_id);
+          await fetchUserData(user.user_code);
+
+          if (role === "admin") {
+            navigate("/AdminDashboard");
+          } else {
+            navigate("/Member");
+          }
+        } else {
+          setLoginError(data.message || "Invalid Email ID or Password.");
+        }
       } else {
-        navigate("/Member");
+        setLoginError(data.message || "Invalid Email ID or Password.");
       }
+    } catch (err: any) {
+      console.error(err);
+      setLoginError(err.message || "Something went wrong.");
+    } finally {
+      setLoading(false);
     }
-    } else {
-      setLoginError(data.message || "Invalid User Code or Password");
-    }
-  } catch (err: any) {
-    console.error(err);
-    setLoginError(err.message || "Something went wrong.");
-  } finally {
-    setLoading(false);
-  }
-};
+  };
 
-const UserPermission = async (role_id: any) => {
-  try {
-    const response = await fetch(`${BASE_URL}/getUserPermission`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ role_id }),
-    });
+  const UserPermission = async (role_id: any) => {
+    try {
+      const response = await fetch(`${BASE_URL}/getUserPermission`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ role_id }),
+      });
 
-    if (response.ok) {
-      const data = await response.json();
-      console.log(data);
-      sessionStorage.setItem("permissions", JSON.stringify(data));
+      if (response.ok) {
+        const data = await response.json();
+        console.log(data);
+        sessionStorage.setItem("permissions", JSON.stringify(data));
 
-      window.dispatchEvent(new Event("permissionsUpdated"));
-    }
-  } catch (err) {
-    console.error(err);
-  }
-};
-
-const fetchUserData = async (userCode: string) => {
-  try {
-    const response = await fetch(`${BASE_URL}/getusercompany`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        user_code: userCode,
-      }),
-    });
-
-    if (response.ok) {
-      const data = await response.json();
-
-      if (data.length > 0) {
-        handleSave(data[0]);
-
-        // Change the page if needed
-        navigate("/AccountInformation");
+        window.dispatchEvent(new Event("permissionsUpdated"));
       }
+    } catch (err) {
+      console.error(err);
     }
-  } catch (err) {
-    console.error(err);
-  }
-};
+  };
 
-const handleSave = (data: any) => {
-  if (!data) return;
+  const fetchUserData = async (userCode: string) => {
+    try {
+      const response = await fetch(`${BASE_URL}/getusercompany`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          user_code: userCode,
+        }),
+      });
 
-  sessionStorage.setItem("selectedCompanyCode", data.company_no);
-  sessionStorage.setItem("selectedCompanyName", data.company_name);
-  sessionStorage.setItem("selectedLocationCode", data.location_no);
-  sessionStorage.setItem("selectedLocationName", data.location_name);
-  sessionStorage.setItem("selectedShortName", data.short_name);
-  sessionStorage.setItem("selectedUserName", data.user_name);
-  sessionStorage.setItem("selectedUserCode", data.user_code);
-};
+      if (response.ok) {
+        const data = await response.json();
+
+        if (data.length > 0) {
+          handleSave(data[0]);
+
+          // Change the page if needed
+          navigate("/AccountInformation");
+        }
+      }
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  const handleSave = (data: any) => {
+    if (!data) return;
+
+    sessionStorage.setItem("selectedCompanyCode", data.company_no);
+    sessionStorage.setItem("selectedCompanyName", data.company_name);
+    sessionStorage.setItem("selectedLocationCode", data.location_no);
+    sessionStorage.setItem("selectedLocationName", data.location_name);
+    sessionStorage.setItem("selectedShortName", data.short_name);
+    sessionStorage.setItem("selectedUserName", data.user_name);
+    sessionStorage.setItem("selectedUserCode", data.user_code);
+  };
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-purple-50 to-violet-100">
@@ -156,24 +254,39 @@ const handleSave = (data: any) => {
 
             <TabsContent value="member" className="space-y-4">
               <div className="space-y-4">
-                <div>
+                {/* <div>
                   <Label htmlFor="member-Code">User Code</Label>
                   <Input
                     id="member-Code"
                     type="Text"
                     placeholder="Enter your userCode"
                     value={userCode}
-                    onChange={(e) => setUserCode(e.target.value)}
+                    // onChange={(e) => setUserCode(e.target.value)}
+                    onChange={(e) => { setUserCode(e.target.value); setLoginError("");}}
+                  />
+                </div> */}
+                <div className="space-y-2">
+                  <Label htmlFor="member-email">Email ID</Label>
+                  <Input
+                    id="member-email"
+                    type="email"
+                    placeholder="Enter your Email ID"
+                    value={email}
+                    onChange={(e) => {
+                      setEmail(e.target.value);
+                      setLoginError("");
+                    }}
                   />
                 </div>
-                <div>
+                <div className="space-y-2">
                   <Label htmlFor="member-password">Password</Label>
                   <Input
                     id="member-password"
                     type="password"
                     placeholder="Enter your password"
                     value={password}
-                    onChange={(e) => setPassword(e.target.value)}
+                    // onChange={(e) => setPassword(e.target.value)}
+                    onChange={(e) => { setPassword(e.target.value); setLoginError(""); }}
                   />
                 </div>
                 {loginError && (
@@ -193,26 +306,46 @@ const handleSave = (data: any) => {
 
             <TabsContent value="admin" className="space-y-4">
               <div className="space-y-4">
-                <div>
+                {/* <div>
                   <Label htmlFor="admin-Code">Admin Code</Label>
                   <Input
                     id="admin-Code"
                     type="Text"
                     placeholder="Enter Admin Code"
                     value={userCode}
-                    onChange={(e) => setUserCode(e.target.value)}
+                    // onChange={(e) => setUserCode(e.target.value)}
+                    onChange={(e) => { setUserCode(e.target.value); setLoginError("");}}
+                  />
+                </div> */}
+                <div className="space-y-2">
+                  <Label htmlFor="admin-email">Email ID</Label>
+                  <Input
+                    id="admin-email"
+                    type="email"
+                    placeholder="Enter Admin Email ID"
+                    value={email}
+                    onChange={(e) => {
+                      setEmail(e.target.value);
+                      setLoginError("");
+                    }}
                   />
                 </div>
-                <div>
+                <div className="space-y-2">
                   <Label htmlFor="admin-password">Admin Password</Label>
                   <Input
                     id="admin-password"
                     type="password"
                     placeholder="Enter admin password"
                     value={password}
-                    onChange={(e) => setPassword(e.target.value)}
+                    // onChange={(e) => setPassword(e.target.value)}
+                    onChange={(e) => { setPassword(e.target.value); setLoginError(""); }}
                   />
                 </div>
+                {loginError && (
+                  <p className="text-red-500 text-sm">
+                    {loginError}
+                  </p>
+                )}
                 <Button
                   className="w-full"
                   variant="destructive"
