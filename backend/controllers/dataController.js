@@ -2061,37 +2061,77 @@ const Passwords = async (req, res) => {
     res.status(500).json({ message: err.message || "Internal Server Error" });
   }
 };
+
+// const login = async (req, res) => {
+//   const { user_code, user_password } = req.body;
+//   const secretKey = "yjk26012024";
+
+//   try {
+//     const decryptedUserCode = CryptoJS.AES.decrypt(
+//       user_code,
+//       secretKey,
+//     ).toString(CryptoJS.enc.Utf8);
+//     const decryptedPassword = CryptoJS.AES.decrypt(
+//       user_password,
+//       secretKey,
+//     ).toString(CryptoJS.enc.Utf8);
+
+//     const pool = await connection.connectToDatabase();
+//     const result = await pool
+//       .request()
+//       .input("mode", sql.NVarChar, "LUC")
+//       .input("user_code", sql.NVarChar, decryptedUserCode)
+//       .input("user_password", sql.NVarChar, decryptedPassword)
+//       .query(`EXEC sp_user_info_hdr_Pavun 'LUC','',@user_code,'','','',@user_password,'','','','','','','','','','','','','','','','','','',''`);
+//     if (result.recordset.length > 0) {
+//       res.status(200).json(result.recordset);
+//     } else {
+//       res.status(404).json("Data not found");
+//     }
+//   } catch (err) {
+//     console.error("Error", err.message);
+//     res.status(500).json({ message: err.message || "Internal Server Error" });
+//   }
+// };
+
 const login = async (req, res) => {
-  const { user_code, user_password } = req.body;
+  const { email_id, user_password } = req.body;
   const secretKey = "yjk26012024";
 
   try {
-    const decryptedUserCode = CryptoJS.AES.decrypt(
-      user_code,
-      secretKey,
+    const decryptedEmail = CryptoJS.AES.decrypt(
+      email_id,
+      secretKey
     ).toString(CryptoJS.enc.Utf8);
+
     const decryptedPassword = CryptoJS.AES.decrypt(
       user_password,
-      secretKey,
+      secretKey
     ).toString(CryptoJS.enc.Utf8);
 
     const pool = await connection.connectToDatabase();
+
     const result = await pool
       .request()
       .input("mode", sql.NVarChar, "LUC")
-      .input("user_code", sql.NVarChar, decryptedUserCode)
+      .input("email_id", sql.NVarChar, decryptedEmail)
       .input("user_password", sql.NVarChar, decryptedPassword)
-      .query(`EXEC sp_user_info_hdr_Pavun 'LUC','',@user_code,'','','',@user_password,'','','','','','','','','','','','','','','','','','',''`);
+      .query(` EXEC sp_user_info_hdr_Ramya 'LUC', '', '', '', '', '', @user_password, '', '', '', @email_id,
+         '', '', '', '', '', '', '', '', '', '', '', '', '', '', '' `);
+
     if (result.recordset.length > 0) {
       res.status(200).json(result.recordset);
     } else {
-      res.status(404).json("Data not found");
+      res.status(404).json({ message: "Data not found" });
     }
+
   } catch (err) {
-    console.error("Error", err.message);
-    res.status(500).json({ message: err.message || "Internal Server Error" });
+    console.error(err);
+    res.status(500).json({
+      message: err.message || "Internal Server Error",
+    });
   }
-};
+  };
 
 const getAlluserData = async (req, res) => {
   try {
