@@ -168,7 +168,7 @@ const CompaniesList = () => {
                             <Button
                                 variant="ghost"
                                 size="icon"
-                                onClick={() => navigate('/admin')}
+                                onClick={() => navigate('/AdminDashboard')}
                                 className="hover:bg-gray-100 rounded-full"
                             >
                                 <ArrowLeft className="h-5 w-5 text-gray-600" />

@@ -15,6 +15,7 @@ import { BASE_URL } from '../ApiConfig';
 import { useToast } from '@/hooks/use-toast';
 import ImageUpload from "../ImageUpload";
 import { showConfirmToast } from '../../components/ui/show-confirm-toast';
+import { Switch } from '@/components/ui/switch';
 
 interface Trainer {
   id: string;
@@ -28,7 +29,7 @@ interface Trainer {
   schedule: string;
   bio: string;
   assignedMembers: number;
-  isActive: boolean;
+  Is_Active: boolean;
 }
 
 const FacultyManagement = () => {
@@ -60,6 +61,7 @@ const [Trainers, setTrainers] = useState([]);
 const [editingTrainer, setEditingTrainer] = useState<any>(null);
 const [isTrainerDialogOpen, setIsTrainerDialogOpen] = useState(false);
 const [showPassword, setShowPassword] = useState(false);
+const [status, setStatus] = useState<any[]>([]);
 const [TrainerForm, setTrainerForm] = useState({
     company_code: "YJK",
     Location_Code: "LOC001",
@@ -76,7 +78,7 @@ const [TrainerForm, setTrainerForm] = useState({
     Specializations: "",
     WorkingSchedule: "",
     Biography: "",
-    Is_Active: "Active",
+    Is_Active: "Close",
     created_by: "admin",
     modified_by: "admin",
   });
@@ -124,6 +126,7 @@ const [TrainerForm, setTrainerForm] = useState({
     const [TrainersSearchForm, setTrainersSearchForm] = useState({
       company_code: "YJK",
       Location_Code: "001",
+        TrainerID: "",
         FullName: "",
         Email: "",
         age_from: "",
@@ -136,6 +139,7 @@ const [TrainerForm, setTrainerForm] = useState({
         Gender: "",
         Specializations: "",
         WorkingSchedule: "",
+        Is_Active: "",
 
     });
   
@@ -157,6 +161,31 @@ const [TrainerForm, setTrainerForm] = useState({
         if (response.ok) {
           setGender(data);
         } else {
+          console.error("Failed to fetch gender");
+        }
+      } catch (error) {
+        console.error("Error fetching status:", error);
+      }
+    };
+
+    // Status DropDown
+    const fetchStatus = async () => {
+      try {
+        const response = await fetch(`${BASE_URL}/status`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            company_code: "YJK",
+          }),
+        });
+  
+        const data = await response.json();
+  
+        if (response.ok) {
+          setStatus(data);
+        } else {
           console.error("Failed to fetch status");
         }
       } catch (error) {
@@ -168,6 +197,7 @@ const [TrainerForm, setTrainerForm] = useState({
       const loadData = async () => {
         await Promise.all([
           fetchGender(),
+          fetchStatus()
         ]);
       };
   
@@ -197,7 +227,7 @@ const [TrainerForm, setTrainerForm] = useState({
         Specializations: "",
         WorkingSchedule: "",
         Biography: "",
-        Is_Active: "Active",
+        Is_Active: "Close",
         created_by: "admin",
         modified_by: "admin",
       });
@@ -357,107 +387,6 @@ const [TrainerForm, setTrainerForm] = useState({
         });
       }
     };
-  
-    // const handleUpdateTrainer = async () => {
-    //   setSubmittedTrainer(true);
-  
-    //   if (!validateTrainer()) return;
-
-    //   if (!isValidPhoneNumber(TrainerForm.Mobile)) {
-    //     toast({
-    //       title: "Invalid Mobile Number",
-    //       description: "Mobile number must contain only digits and be between 8 and 15 digits.",
-    //       variant: "destructive",
-    //     });
-    //     return false;
-    //   }
-      
-    //   if (!TrainerForm.Password || TrainerForm.Password.length < 8) {
-    //     toast({
-    //       title: "Invalid Password",
-    //       description: "Password must contain at least 8 characters.",
-    //       variant: "destructive",
-    //     });
-    //     return false;
-    //   }
-  
-    //   try {
-    //     const formData = new FormData();
-  
-    //     Object.entries(TrainerForm).forEach(([key, value]) => {
-    //       if (key === "super_admin") {
-    //         formData.append("super_admin", value ? "Yes" : "No");
-    //       } else {
-    //         formData.append(key, String(value ?? ""));
-    //       }
-    //     });
-
-    //     TrainerImages.forEach((img, index) => {
-    //     if (!img) return;
-
-    //     // Extract mime type from base64 string
-    //     const mimeType = img.match(/data:(.*?);base64/)?.[1] || "image/png";
-
-    //     const base64 = img.split(",")[1];
-    //     const byteCharacters = atob(base64);
-
-    //     const byteNumbers = Array.from(byteCharacters, (char) =>
-    //       char.charCodeAt(0)
-    //     );
-
-    //     const byteArray = new Uint8Array(byteNumbers);
-
-    //     const blob = new Blob([byteArray], {
-    //       type: mimeType,
-    //     });
-
-    //     // Generate extension based on mime type
-    //     const extension = mimeType.split("/")[1] || "png";
-
-    //     if (index === 0) {
-    //       formData.append(
-    //         "Photo",
-    //         blob,
-    //         `Photo.${extension}`
-    //       );
-    //     }
-    //   });
-
-    //     const response = await fetch(`${BASE_URL}/GYM_TrainerUpdate`, {
-    //       method: "POST",
-    //       body: formData,
-    //     });
-  
-    //     const data = await response.json();
-  
-    //     if (response.ok) {
-    //       toast({
-    //         title: "Success",
-    //         description: data.message || "Trainer updated successfully.",
-    //       });
-  
-    //       setEditingTrainer(null);
-    //       setIsTrainerDialogOpen(false);
-    //       setSubmittedTrainer(false);
-  
-    //       handleTrainerSearch();
-    //     } else {
-    //       toast({
-    //         title: "Error",
-    //         description: data.message || "Failed to update Trainer.",
-    //         variant: "destructive",
-    //       });
-    //     }
-    //   } catch (err: any) {
-    //     console.error(err);
-  
-    //     toast({
-    //       title: "Server Error",
-    //       description: err.message || "Something went wrong.",
-    //       variant: "destructive",
-    //     });
-    //   }
-    // };
 
     const handleUpdateTrainer = () => {
   showConfirmToast({
@@ -683,6 +612,7 @@ const handleDeleteTrainer = (trainer: any) => {
           body: JSON.stringify({
             company_code: "YJK",
             Location_Code: "LOC001",
+            TrainerID: TrainersSearchForm.TrainerID,
             FullName: TrainersSearchForm.FullName,
             Email: TrainersSearchForm.Email,
             DOB: TrainersSearchForm.DOB,
@@ -695,6 +625,7 @@ const handleDeleteTrainer = (trainer: any) => {
             age_to: TrainersSearchForm.age_to,
             experience_from: TrainersSearchForm.experience_from,
             experience_to: TrainersSearchForm.experience_to,
+            Is_Active: TrainersSearchForm.Is_Active,
           }),
         });
   
@@ -773,19 +704,21 @@ const handleDeleteTrainer = (trainer: any) => {
     const handleReset = () => {
         setTrainersSearchForm({
           company_code: "YJK",
-      Location_Code: "001",
-        FullName: "",
-        Email: "",
-        age_from: "",
-        age_to: "",
-        DOB: "",
-        Mobile: "",
-        experience_from: "",
-        experience_to: "",
-        Experience: "",
-        Gender: "",
-        Specializations: "",
-        WorkingSchedule: "",
+          Location_Code: "001",
+          TrainerID: "",
+          FullName: "",
+          Email: "",
+          age_from: "",
+          age_to: "",
+          DOB: "",
+          Mobile: "",
+          experience_from: "",
+          experience_to: "",
+          Experience: "",
+          Gender: "",
+          Specializations: "",
+          WorkingSchedule: "",
+          Is_Active: "",
         });
         setTrainers([]);
       };
@@ -796,7 +729,7 @@ const handleDeleteTrainer = (trainer: any) => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center py-4">
             <div className="flex items-center">
-              <Button variant="ghost" onClick={() => navigate('/admin')} className="mr-4">
+              <Button variant="ghost" onClick={() => navigate('/AdminDashboard')} className="mr-4">
                 <ArrowLeft className="h-4 w-4 mr-2" />
                 Back
               </Button>
@@ -1035,10 +968,28 @@ const handleDeleteTrainer = (trainer: any) => {
                                               </Tooltip>
                                             </TooltipProvider>
                       </div>
+
+                      <div className="space-y-2">
+                    <Label>Status</Label>
+                    <div className="flex items-center space-x-2 pt-2">
+                      <Switch
+                        checked={TrainerForm.Is_Active === "Active"}
+                        onCheckedChange={(checked) =>
+                          setTrainerForm({
+                            ...TrainerForm,
+                            Is_Active: checked ? "Active" : "Close",
+                          })
+                        }
+                      />
+                      <Label>
+                        {TrainerForm.Is_Active}
+                      </Label>
                     </div>
+                  </div>
+                    </div>
+
                     <div className="space-y-2">
                       <Label htmlFor="certifications">Certifications (comma-separated)</Label>
-                      {/* <Input id="certifications" placeholder="NASM CPT, ACE Fitness..." /> */}
                       <TooltipProvider>
                                               <Tooltip>
                                                 <TooltipTrigger asChild>
@@ -1078,8 +1029,6 @@ const handleDeleteTrainer = (trainer: any) => {
                                             </TooltipProvider>
                     </div>
                     <div className="space-y-2">
-                      {/* <Label htmlFor="schedule">Working Schedule*</Label>
-                      <Input id="schedule" placeholder="Sun-Thu: 6AM-2PM" /> */}
                       <Label htmlFor="name" className={submittedTrainer && !TrainerForm.WorkingSchedule ? "text-red-500" : ""}>Working Schedule*</Label>
                                             <TooltipProvider>
                                               <Tooltip>
@@ -1101,7 +1050,6 @@ const handleDeleteTrainer = (trainer: any) => {
                     </div>
                     <div className="space-y-2">
                       <Label htmlFor="bio">Biography</Label>
-                      {/* <Textarea id="bio" placeholder="Brief description about the trainer..." rows={4} /> */}
                       <TooltipProvider>
                                               <Tooltip>
                                                 <TooltipTrigger asChild>
@@ -1240,6 +1188,33 @@ const handleDeleteTrainer = (trainer: any) => {
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
     
           <div className="space-y-2">
+            <Label>Trainer ID</Label>
+    
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Input
+                    maxLength={100}
+                    placeholder="Enter Full Name"
+                    value={TrainersSearchForm.TrainerID}
+                    onChange={(e) =>
+                      setTrainersSearchForm({
+                        ...TrainersSearchForm,
+                        TrainerID: e.target.value,
+                      })
+                    }
+                  />
+                </TooltipTrigger>
+                  
+                <TooltipContent>
+                  <p>Enter Full Name</p>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
+          </div>
+
+          <div className="space-y-2">
+
             <Label>Full Name</Label>
     
             <TooltipProvider>
@@ -1290,6 +1265,26 @@ const handleDeleteTrainer = (trainer: any) => {
               </Tooltip>
             </TooltipProvider>
           </div>
+
+          <div className="space-y-2">
+            <Label>Phone</Label>
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger asChild>
+            <Input
+              placeholder="Enter Phone"
+              value={TrainersSearchForm.Mobile}
+              inputMode="numeric"
+              maxLength={15}
+              onChange={(e) => setTrainersSearchForm({ ...TrainersSearchForm, Mobile: e.target.value.replace(/\D/g, ""), })} />
+              </TooltipTrigger>
+                  
+                <TooltipContent>
+                  <p>Enter Phone</p>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
+          </div>
     
           <div className="space-y-2">
             <Label>Age From</Label>
@@ -1334,26 +1329,6 @@ const handleDeleteTrainer = (trainer: any) => {
                   
                 <TooltipContent>
                   <p>Enter Age To</p>
-                </TooltipContent>
-              </Tooltip>
-            </TooltipProvider>
-          </div>
-
-          <div className="space-y-2">
-            <Label>Phone</Label>
-            <TooltipProvider>
-              <Tooltip>
-                <TooltipTrigger asChild>
-            <Input
-              placeholder="Enter Phone"
-              value={TrainersSearchForm.Mobile}
-              inputMode="numeric"
-              maxLength={15}
-              onChange={(e) => setTrainersSearchForm({ ...TrainersSearchForm, Mobile: e.target.value.replace(/\D/g, ""), })} />
-              </TooltipTrigger>
-                  
-                <TooltipContent>
-                  <p>Enter Phone</p>
                 </TooltipContent>
               </Tooltip>
             </TooltipProvider>
@@ -1440,8 +1415,6 @@ const handleDeleteTrainer = (trainer: any) => {
 
         <div className="space-y-2">
                       <Label htmlFor="specializations">Specializations</Label>
-                      {/* <Input id="specializations" placeholder="Weight Loss, Strength Training..." /> */}
-                      {/* <Label htmlFor="name" className={submittedTrainer && !TrainerForm.Specializations ? "text-red-500" : ""}>Specializations* (comma-separated)</Label> */}
                                             <TooltipProvider>
                                               <Tooltip>
                                                 <TooltipTrigger asChild>
@@ -1460,10 +1433,9 @@ const handleDeleteTrainer = (trainer: any) => {
                                               </Tooltip>
                                             </TooltipProvider>
                     </div>
+
                     <div className="space-y-2">
                       <Label htmlFor="schedule">Working Schedule</Label>
-                      {/* <Input id="schedule" placeholder="Sun-Thu: 6AM-2PM" /> */}
-                      {/* <Label htmlFor="name" className={submittedTrainer && !TrainerForm.WorkingSchedule ? "text-red-500" : ""}>Working Schedule*</Label> */}
                                             <TooltipProvider>
                                               <Tooltip>
                                                 <TooltipTrigger asChild>
@@ -1482,6 +1454,41 @@ const handleDeleteTrainer = (trainer: any) => {
                                               </Tooltip>
                                             </TooltipProvider>
                     </div>
+
+                    <div className="space-y-2">
+                <Label>Status</Label>
+                <TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <div>
+                        <Select
+                          value={TrainersSearchForm.Is_Active}
+                          onValueChange={(value) => setTrainersSearchForm({ ...TrainersSearchForm, Is_Active: value, })}>
+                          <SelectTrigger>
+                            <SelectValue placeholder="Select Status" />
+                          </SelectTrigger>
+
+                          <SelectContent>
+                            {status.map((item: any) => (
+                              <SelectItem
+                                key={item.attributedetails_name}
+                                value={item.attributedetails_name}
+                              >
+                                {item.attributedetails_name}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      </div>
+                    </TooltipTrigger>
+
+                    <TooltipContent>
+                      <p>Select Status</p>
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
+              </div>
+
               <div className="col-span-full flex justify-end gap-4 mt-6">
               <TooltipProvider>
                 <Tooltip>
@@ -1542,9 +1549,13 @@ const handleDeleteTrainer = (trainer: any) => {
                         </div>
                         <div>
                           <h3 className="font-semibold text-lg">{trainer.FullName}</h3>
+                          <p className="text-sm text-gray-500">{trainer.TrainerID}</p>
                           <p className="text-sm text-gray-500">{trainer.Experience} years experience</p>
-                          <Badge variant={trainer.Is_Active === "Active" ? 'default' : 'secondary'} className="mt-1">
-                            {trainer.Is_Active ? 'Active' : 'Inactive'}
+                          <Badge
+                            variant={trainer.Is_Active === "Active" ? "default" : "secondary"}
+                            className="mt-1"
+                          >
+                            {trainer.Is_Active === "Active" ? "Active" : "Closed"}
                           </Badge>
                         </div>
                       </div>
@@ -1567,7 +1578,7 @@ const handleDeleteTrainer = (trainer: any) => {
                       </div>
                     </div>
 
-                    <p className="text-gray-600 text-sm mb-4 line-clamp-2">{trainer.Biography}</p>
+                    
 
                     <div className="space-y-3">
                       <div className="flex items-center text-sm text-gray-600">
@@ -1627,6 +1638,7 @@ const handleDeleteTrainer = (trainer: any) => {
                           : null}
                       </div>
                     </div>
+                    <p className="text-gray-600 text-sm mb-4 line-clamp-2">{trainer.Biography}</p>
                   </CardContent>
                 </Card>
               ))}

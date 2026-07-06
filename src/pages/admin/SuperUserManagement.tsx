@@ -24,7 +24,6 @@ import { showConfirmToast } from '../../components/ui/show-confirm-toast';
 const WorkoutProgramManagement = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
-  const [activeTab, setActiveTab] = useState('company');
   const [cities, setCities] = useState<any[]>([]);
   const [states, setStates] = useState<any[]>([]);
   const [countries, setCountries] = useState<any[]>([]);
@@ -469,6 +468,72 @@ const WorkoutProgramManagement = () => {
 
     loadData();
   }, []);
+
+  const tabs = [
+    { value: "company", label: "Company", screenType: "Company", icon: Building },
+    { value: "companyMapping", label: "Company Mapping", screenType: "CompanyMapping", icon: Building2 },
+    { value: "location", label: "Location", screenType: "Location", icon: MapPin },
+    { value: "role", label: "Role", screenType: "Role", icon: Shield },
+    { value: "roleMapping", label: "Role Mapping", screenType: "RoleMapping", icon: Users },
+    { value: "roleRights", label: "Role Rights", screenType: "RoleRights", icon: ShieldCheck },
+    { value: "user", label: "User", screenType: "User", icon: User },
+    { value: "attribute", label: "Attribute", screenType: "Attribute", icon: Tags },
+    { value: "NumberSeries", label: "Number Series", screenType: "NumberSeries", icon: Hash },
+  ];
+
+  const [activeTab, setActiveTab] = useState('');
+
+  const permissions = JSON.parse(sessionStorage.getItem("permissions") || "[]");
+
+  const allowedScreens = permissions.map((p: any) => p.screen_type);
+
+  const allowedTabs = tabs.filter(tab => allowedScreens.includes(tab.screenType));
+
+  useEffect(() => {
+    if (allowedTabs.length > 0) {
+      setActiveTab(allowedTabs[0].value);
+    }
+  }, []);
+
+  const tabPermissions = [
+    "Company",
+    "CompanyMapping",
+    "Location",
+    "Role",
+    "RoleMapping",
+    "RoleRights",
+    "User",
+    "Attribute",
+    "NumberSeries",
+  ];
+
+  const hasAnyTabPermission = tabPermissions.some((tab) => allowedScreens.includes(tab));
+
+  if (!hasAnyTabPermission) {
+    return (
+      <div className="min-h-[70vh] flex items-center justify-center">
+        <div className="text-center">
+          <h1 className="text-7xl font-bold text-gray-300">404</h1>
+
+          <h2 className="mt-4 text-2xl font-semibold text-gray-800">
+            No Permission Available
+          </h2>
+
+          <p className="mt-2 text-gray-500">
+            You don't have permission to access any module in Super User
+            Management.
+          </p>
+
+          <Button
+            className="mt-6"
+            onClick={() => navigate("/AdminDashboard")}
+          >
+            Back to Dashboard
+          </Button>
+        </div>
+      </div>
+    );
+  }
 
   //Company Dialog States
   const [submittedCompany, setSubmittedCompany] = useState(false);
@@ -1259,6 +1324,7 @@ const WorkoutProgramManagement = () => {
     user_status: "",
     dob: "",
     gender: "",
+    created_by: "JK",
   });
 
   //User Ag Grid
@@ -3620,6 +3686,7 @@ const WorkoutProgramManagement = () => {
           user_status: usersSearchForm.user_status,
           dob: usersSearchForm.dob,
           gender: usersSearchForm.gender,
+          created_by: usersSearchForm.created_by,
         }),
       });
 
@@ -5378,6 +5445,7 @@ const WorkoutProgramManagement = () => {
           user_status: "",
           dob: "",
           gender: "",
+          created_by: "",
         });
         setUsers([]);
         break;
@@ -5410,7 +5478,7 @@ const WorkoutProgramManagement = () => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center py-4">
             <div className="flex items-center space-x-4">
-              <Button variant="ghost" onClick={() => navigate('/admin')}>
+              <Button variant="ghost" onClick={() => navigate('/AdminDashboard')}>
                 <ArrowLeft className="h-4 w-4 mr-2" />
                 Back to Dashboard
               </Button>
@@ -5491,7 +5559,7 @@ const WorkoutProgramManagement = () => {
         <Tabs value={activeTab} onValueChange={setActiveTab}>
           <div className="flex flex-wrap items-center justify-between gap-4 mb-4 w-full">
             <div className="overflow-x-auto min-w-0 max-w-full custom-scrollbar pb-2">
-              <TabsList className="inline-flex h-10 items-center justify-center rounded-md bg-muted p-1 text-muted-foreground w-max">
+              {/* <TabsList className="inline-flex h-10 items-center justify-center rounded-md bg-muted p-1 text-muted-foreground w-max">
                 <TabsTrigger value="company" className="flex items-center gap-2">
                   <Building className="h-4 w-4" />
                   Company
@@ -5528,6 +5596,18 @@ const WorkoutProgramManagement = () => {
                   <Hash className="h-4 w-4" />
                   Number Series
                 </TabsTrigger>
+              </TabsList> */}
+              <TabsList className="inline-flex h-10 items-center justify-center rounded-md bg-muted p-1 text-muted-foreground w-max">
+                {allowedTabs.map((tab) => {
+                  const Icon = tab.icon;
+
+                  return (
+                    <TabsTrigger key={tab.value} value={tab.value} className="flex items-center gap-2">
+                      <Icon className="h-4 w-4 mr-2" />
+                      {tab.label}
+                    </TabsTrigger>
+                  );
+                })}
               </TabsList>
             </div>
 
@@ -7543,12 +7623,12 @@ const WorkoutProgramManagement = () => {
               <TooltipProvider>
                 <Tooltip>
                   <TooltipTrigger asChild>
-              <Button variant="outline" onClick={() => {
-                setIsUserDialogOpen(false);
-                setSubmittedUser(false);
-              }}>Cancel</Button>
-              </TooltipTrigger>
-              
+                    <Button variant="outline" onClick={() => {
+                      setIsUserDialogOpen(false);
+                      setSubmittedUser(false);
+                    }}>Cancel</Button>
+                  </TooltipTrigger>
+
                   <TooltipContent>
                     Cancel without saving changes.
                   </TooltipContent>
@@ -7557,9 +7637,9 @@ const WorkoutProgramManagement = () => {
               <TooltipProvider>
                 <Tooltip>
                   <TooltipTrigger asChild>
-              <Button onClick={handleSaveUser}>{editingUser ? 'Update User' : 'Create User'}</Button>
-              </TooltipTrigger>
-              
+                    <Button onClick={handleSaveUser}>{editingUser ? 'Update User' : 'Create User'}</Button>
+                  </TooltipTrigger>
+
                   <TooltipContent>
                     <p>{editingUser ? "Update a User" : "Add a User"}</p>
                   </TooltipContent>
@@ -7971,9 +8051,10 @@ const WorkoutProgramManagement = () => {
                           <Input
                             id="Start No"
                             value={numberSeriesForm.Start_No}
-                            onChange={(e) => setNumberSeriesForm({ ...numberSeriesForm, Start_No: e.target.value.replace(/[^0-9]/g, ""),
+                            onChange={(e) => setNumberSeriesForm({
+                              ...numberSeriesForm, Start_No: e.target.value.replace(/[^0-9]/g, ""),
                             })
-                          }
+                            }
                             placeholder="Enter Start No"
                           />
                         </TooltipTrigger>
