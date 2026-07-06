@@ -134,6 +134,13 @@ router.post("/getTrainers",dataController.getTrainers)
 router.post("/programInsertData",dataController.programInsertData)
 router.post("/programUpdateData",dataController.programUpdateData)
 router.post("/programDeleteData",dataController.programDeleteData)
+router.post("/programFacultyInsertData",dataController.programFacultyInsertData)
+router.post("/programFacultyUpdateData",dataController.programFacultyUpdateData)
+router.post("/programFacultyDeleteData",dataController.programFacultyDeleteData)
+router.post("/programExerciseInsertData",dataController.programExerciseInsertData)
+router.post("/programExerciseUpdateData",dataController.programExerciseUpdateData)
+router.post("/programExerciseDeleteData",dataController.programExerciseDeleteData)
+router.post("/getMemberCardData",dataController.getMemberCardData)
 
 
 
