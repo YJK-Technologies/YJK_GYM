@@ -15,6 +15,7 @@ import { useNavigate } from 'react-router-dom';
 import { useToast } from '@/hooks/use-toast';
 import { ArrowLeft, Plus, Search, Dumbbell, Package, Users, Clock, Edit, Trash2, Eye, Calendar, DollarSign, CheckCircle, XCircle } from 'lucide-react';
 import { BASE_URL } from '../ApiConfig';
+import { MultiSelect } from "@/components/ui/MultiSelect";
 import AgGridTable from "@/components/ui/ag-grid-table";
 
 interface Exercise {
@@ -545,6 +546,22 @@ const WorkoutProgramManagement = () => {
     p.facultyName.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
+  const removeExerciseField = (indexToRemove: number) => {
+    // Prevent deleting if it's the only row left, keeping at least 1 row active
+    if (programForm.exercises.length <= 1) {
+      setProgramForm({
+        ...programForm,
+        exercises: [{ name: '', sets: 3, reps: '' }]
+      });
+      return;
+    }
+
+    setProgramForm({
+      ...programForm,
+      exercises: programForm.exercises.filter((_, index) => index !== indexToRemove),
+    });
+  };
+
   return (
     <div className="min-h-screen bg-gray-50">
       <header className="bg-white shadow-sm border-b">
@@ -880,7 +897,7 @@ const WorkoutProgramManagement = () => {
               </div>
 
               {/* Exercises */}
-              <div className="space-y-4">
+              {/* <div className="space-y-4">
                 <div className="flex justify-between items-center">
                   <h4 className="font-medium text-sm text-gray-700">Exercises</h4>
                   <Button type="button" variant="outline" size="sm" onClick={addExerciseField}>
@@ -907,6 +924,68 @@ const WorkoutProgramManagement = () => {
                     />
                   </div>
                 ))}
+              </div> */}
+
+              {/* Exercises Section */}
+              <div className="space-y-4">
+                <div className="flex justify-between items-center">
+                  <h4 className="font-medium text-sm text-gray-700">Exercises</h4>
+                </div>
+
+                <div className="space-y-3">
+                  {programForm.exercises.map((exercise, index) => (
+                    <div key={index} className="flex items-center gap-3">
+                      {/* Inputs Layout Grid */}
+                      <div className="grid grid-cols-3 gap-2 flex-1">
+                        <Input
+                          placeholder="Exercise name"
+                          value={exercise.name}
+                          onChange={(e) => updateExercise(index, 'name', e.target.value)}
+                          className="bg-white"
+                        />
+                        <Input
+                          type="number"
+                          placeholder="Sets"
+                          value={exercise.sets}
+                          onChange={(e) => updateExercise(index, 'sets', parseInt(e.target.value) || 0)}
+                          className="bg-white"
+                        />
+                        <Input
+                          placeholder="Reps (e.g., 10-12)"
+                          value={exercise.reps}
+                          onChange={(e) => updateExercise(index, 'reps', e.target.value)}
+                          className="bg-white"
+                        />
+                      </div>
+
+                      {/* Row Actions (+ / -) */}
+                      <div className="flex items-center gap-1.5 shrink-0">
+                        <Button
+                          type="button"
+                          variant="ghost"
+                          size="icon"
+                          onClick={addExerciseField}
+                          className="h-9 w-9 text-blue-600 hover:text-blue-700 hover:bg-blue-50 border border-gray-200 rounded-md"
+                          title="Add new row"
+                        >
+                          <Plus className="h-4 w-4 font-bold" />
+                        </Button>
+
+                        <Button
+                          type="button"
+                          variant="ghost"
+                          size="icon"
+                          onClick={() => removeExerciseField(index)}
+                          className="h-9 w-9 text-red-500 hover:text-red-600 hover:bg-red-50 border border-gray-200 rounded-md"
+                          title="Remove row"
+                        >
+                          {/* Using a simple custom minus line divider/icon or Lucide Trash2/Minus */}
+                          <span className="text-lg font-bold leading-none select-none">-</span>
+                        </Button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
               </div>
 
               {/* Status */}
