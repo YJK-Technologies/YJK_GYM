@@ -5,6 +5,7 @@ import { Badge } from '@/components/ui/badge';
 import { useNavigate } from 'react-router-dom';
 import { Users, DollarSign, Calendar, TrendingUp, ChevronDown, Building2, LogOut, Shield, Settings } from 'lucide-react';
 import GymFloorActivity from '@/components/admin/GymFloorActivity';
+import { showConfirmToast } from "@/components/ui/show-confirm-toast";
 
 const AdminDashboard = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -47,6 +48,10 @@ const AdminDashboard = () => {
 
   const filteredQuickActions = quickActions.filter((action) => allowedScreens.includes(action.route.replace("/", "")));
 
+  const performLogout = () => {
+    sessionStorage.clear(); // or remove only the required items
+    navigate("/");
+  };
   return (
     <div className="min-h-screen bg-gray-50">
       {/* <header className="bg-white shadow-sm border-b">
@@ -110,7 +115,7 @@ const AdminDashboard = () => {
                   <button
                     onClick={() => {
                       setIsMenuOpen(false);
-                      navigate('/admin/settings'); 
+                      navigate('/admin/settings');
                     }}
                     className="w-full text-left flex items-center px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 transition-colors group"
                   >
@@ -121,10 +126,25 @@ const AdminDashboard = () => {
                   <div className="border-t border-gray-100 my-1"></div>
 
                   {/* 3. Log out */}
-                  <button
+                  {/* <button
                     onClick={() => {
                       setIsMenuOpen(false);
                       navigate('/');
+                    }}
+                    className="w-full text-left flex items-center px-4 py-2.5 text-sm text-red-600 hover:bg-red-50/50 transition-colors font-medium group"
+                  >
+                    <LogOut className="h-4 w-4 text-red-400 group-hover:text-red-600 mr-3 transition-colors" />
+                    Log out
+                  </button> */}
+                  <button
+                    onClick={() => {
+                      setIsMenuOpen(false);
+                      showConfirmToast({
+                        title: "Confirm Logout", description: "Are you sure you want to logout?",
+                        onConfirm: () => {
+                          performLogout();
+                        },
+                      });
                     }}
                     className="w-full text-left flex items-center px-4 py-2.5 text-sm text-red-600 hover:bg-red-50/50 transition-colors font-medium group"
                   >
