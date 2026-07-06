@@ -13,10 +13,11 @@ import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, D
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useNavigate } from 'react-router-dom';
 import { useToast } from '@/hooks/use-toast';
-import { ArrowLeft, Plus, Search, Dumbbell, Package, Users, Clock, Edit, Trash2, Eye, Calendar, DollarSign, CheckCircle, XCircle } from 'lucide-react';
+import { ArrowLeft, Plus, Minus, Search, RotateCcw, Dumbbell, Package, Users, Clock, Edit, Trash2, Eye, Calendar, DollarSign, CheckCircle, XCircle } from 'lucide-react';
 import { BASE_URL } from '../ApiConfig';
-import { MultiSelect } from "@/components/ui/MultiSelect";
+import ReactMultiSelect, { MultiSelectOption } from "@/components/ui/react-multi-select";
 import AgGridTable from "@/components/ui/ag-grid-table";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 
 interface Exercise {
   name: string;
@@ -33,9 +34,8 @@ interface WorkoutProgram {
   goals: string[];
   exercises: Exercise[];
   durationPerSession: string;
-  sessionsPerWeek: number;
-  assignedFaculty: string;
-  facultyName: string;
+  sessionsPerWeek: string;
+  assignedFaculty: string[];
   workingHours: string;
   isActive: boolean;
   createdDate: string;
@@ -63,70 +63,6 @@ const sampleFaculty = [
   { id: 'FAC002', name: 'Omar Khalil' },
   { id: 'FAC003', name: 'Fatima Hassan' },
   { id: 'FAC004', name: 'Mohammed Ali' },
-];
-
-// Sample Programs Data
-const samplePrograms: WorkoutProgram[] = [
-  {
-    id: 'PRG001',
-    name: 'Weight Loss Transformation',
-    description: 'Intensive HIIT program designed for maximum fat burning and weight loss',
-    category: 'HIIT',
-    difficultyLevel: 'Intermediate',
-    goals: ['Weight Loss', 'Endurance', 'Cardio Fitness'],
-    exercises: [
-      { name: 'Burpees', sets: 4, reps: '15' },
-      { name: 'Mountain Climbers', sets: 4, reps: '30 sec' },
-      { name: 'Jump Squats', sets: 4, reps: '20' },
-    ],
-    durationPerSession: '45 minutes',
-    sessionsPerWeek: 5,
-    assignedFaculty: 'FAC001',
-    facultyName: 'Ahmed Al-Rashid',
-    workingHours: '6AM-10AM, 5PM-9PM',
-    isActive: true,
-    createdDate: '2024-01-15',
-  },
-  {
-    id: 'PRG002',
-    name: 'Muscle Building Pro',
-    description: 'Advanced strength training program for muscle hypertrophy and power',
-    category: 'Strength',
-    difficultyLevel: 'Advanced',
-    goals: ['Muscle Gain', 'Strength', 'Power'],
-    exercises: [
-      { name: 'Bench Press', sets: 5, reps: '8-10' },
-      { name: 'Deadlift', sets: 5, reps: '6-8' },
-      { name: 'Squats', sets: 5, reps: '8-10' },
-    ],
-    durationPerSession: '60 minutes',
-    sessionsPerWeek: 4,
-    assignedFaculty: 'FAC002',
-    facultyName: 'Omar Khalil',
-    workingHours: '8AM-12PM, 4PM-8PM',
-    isActive: true,
-    createdDate: '2024-02-01',
-  },
-  {
-    id: 'PRG003',
-    name: 'Yoga & Flexibility',
-    description: 'Relaxing yoga sessions for flexibility, balance, and mental wellness',
-    category: 'Yoga',
-    difficultyLevel: 'Beginner',
-    goals: ['Flexibility', 'Balance', 'Stress Relief'],
-    exercises: [
-      { name: 'Sun Salutation', sets: 1, reps: '10 rounds' },
-      { name: 'Warrior Poses', sets: 1, reps: '5 min each' },
-      { name: 'Stretching Flow', sets: 1, reps: '15 min' },
-    ],
-    durationPerSession: '60 minutes',
-    sessionsPerWeek: 3,
-    assignedFaculty: 'FAC003',
-    facultyName: 'Fatima Hassan',
-    workingHours: '7AM-9AM, 6PM-8PM',
-    isActive: false,
-    createdDate: '2024-01-20',
-  },
 ];
 
 // Sample Packages Data
@@ -198,11 +134,11 @@ const WorkoutProgramManagement = () => {
   const { toast } = useToast();
   const [activeTab, setActiveTab] = useState('programs');
   const [searchTerm, setSearchTerm] = useState('');
-  const [programs, setPrograms] = useState<WorkoutProgram[]>(samplePrograms);
   const [packages, setPackages] = useState<WorkoutPackage[]>(samplePackages);
   const [category, setCategory] = useState<any[]>([]);
   const [difficultyLevel, setDifficultyLevel] = useState<any[]>([]);
   const [trainers, setTrainers] = useState<any[]>([]);
+  const [status, setStatus] = useState<any[]>([]);
 
   const fetchCategory = async () => {
     try {
@@ -280,12 +216,44 @@ const WorkoutProgramManagement = () => {
     }
   };
 
+  const trainerOptions: MultiSelectOption[] = trainers.map(
+    (trainer: any) => ({
+      value: trainer.TrainerID,
+      label: `${trainer.TrainerID} - ${trainer.FullName}`,
+    })
+  );
+
+  const fetchStatus = async () => {
+    try {
+      const response = await fetch(`${BASE_URL}/status`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          company_code: "YJK",
+        }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        setStatus(data);
+      } else {
+        console.error("Failed to fetch status");
+      }
+    } catch (error) {
+      console.error("Error fetching status:", error);
+    }
+  };
+
   useEffect(() => {
     const loadData = async () => {
       await Promise.all([
         fetchCategory(),
         fetchDifficultyLevel(),
-        fetchTrainers()
+        fetchTrainers(),
+        fetchStatus()
       ]);
     };
 
@@ -293,20 +261,51 @@ const WorkoutProgramManagement = () => {
   }, []);
 
   // Program Dialog States
+  const [programs, setPrograms] = useState<WorkoutProgram[]>([]);
+  const [submittedPrograms, setSubmittedPrograms] = useState(false);
   const [isProgramDialogOpen, setIsProgramDialogOpen] = useState(false);
   const [editingProgram, setEditingProgram] = useState<WorkoutProgram | null>(null);
   const [programForm, setProgramForm] = useState({
+    id: '',
     name: '',
     description: '',
     category: '',
     difficultyLevel: '',
     durationPerSession: '',
-    sessionsPerWeek: 3,
-    assignedFaculty: '',
+    sessionsPerWeek: '3',
+    assignedFaculty: [] as MultiSelectOption[],
     workingHours: '',
     isActive: true,
     goals: '',
     exercises: [{ name: '', sets: 3, reps: '' }],
+  });
+  const [companies, setCompanies] = useState([]);
+  const [companySearchForm, setCompanySearchForm] = useState({
+    company_no: "",
+    company_name: "",
+    city: "",
+    state: "",
+    pincode: "",
+    country: "",
+    gst_no: "",
+    status: "",
+  });
+
+  const [programSearchForm, setProgramSearchForm] = useState({
+    id: '',
+    name: '',
+    description: '',
+    category: '',
+    difficultyLevel: '',
+    durationPerSession: '',
+    sessionsPerWeek: '',
+    assignedFaculty: [] as MultiSelectOption[],
+    workingHours: '',
+    isActive: '',
+    goals: '',
+    exercisesName: '',
+    exercisesCount: '',
+    exercisesReps: '',
   });
 
   // Package Dialog States
@@ -367,13 +366,14 @@ const WorkoutProgramManagement = () => {
   const handleAddProgram = () => {
     setEditingProgram(null);
     setProgramForm({
+      id: '',
       name: '',
       description: '',
       category: '',
       difficultyLevel: '',
       durationPerSession: '',
-      sessionsPerWeek: 3,
-      assignedFaculty: '',
+      sessionsPerWeek: '3',
+      assignedFaculty: [],
       workingHours: '',
       isActive: true,
       goals: '',
@@ -383,15 +383,26 @@ const WorkoutProgramManagement = () => {
   };
 
   const handleEditProgram = (program: WorkoutProgram) => {
+
     setEditingProgram(program);
+    const selectedFaculty = trainers
+      .filter((trainer: any) =>
+        program.assignedFaculty.includes(trainer.TrainerID)
+      )
+      .map((trainer: any) => ({
+        value: trainer.TrainerID,
+        label: `${trainer.TrainerID} - ${trainer.FullName}`,
+      }));
+
     setProgramForm({
+      id: program.id,
       name: program.name,
       description: program.description,
       category: program.category,
       difficultyLevel: program.difficultyLevel,
       durationPerSession: program.durationPerSession,
       sessionsPerWeek: program.sessionsPerWeek,
-      assignedFaculty: program.assignedFaculty,
+      assignedFaculty: selectedFaculty,
       workingHours: program.workingHours,
       isActive: program.isActive,
       goals: program.goals.join(', '),
@@ -400,47 +411,319 @@ const WorkoutProgramManagement = () => {
     setIsProgramDialogOpen(true);
   };
 
-  const handleSaveProgram = () => {
-    const faculty = sampleFaculty.find(f => f.id === programForm.assignedFaculty);
+  const validateProgram = () => {
 
-    if (editingProgram) {
-      setPrograms(programs.map(p =>
-        p.id === editingProgram.id
-          ? {
-            ...p,
-            ...programForm,
-            goals: programForm.goals.split(',').map(g => g.trim()).filter(Boolean),
-            facultyName: faculty?.name || '',
-          }
-          : p
-      ));
-      toast({ title: "Program Updated", description: "Workout program has been updated successfully." });
-    } else {
-      const newProgram: WorkoutProgram = {
-        id: `PRG${String(programs.length + 1).padStart(3, '0')}`,
-        name: programForm.name,
-        description: programForm.description,
-        category: programForm.category,
-        difficultyLevel: programForm.difficultyLevel,
-        goals: programForm.goals.split(',').map(g => g.trim()).filter(Boolean),
-        exercises: programForm.exercises.filter(e => e.name),
-        durationPerSession: programForm.durationPerSession,
-        sessionsPerWeek: programForm.sessionsPerWeek,
-        assignedFaculty: programForm.assignedFaculty,
-        facultyName: faculty?.name || '',
-        workingHours: programForm.workingHours,
-        isActive: programForm.isActive,
-        createdDate: new Date().toISOString().split('T')[0],
-      };
-      setPrograms([...programs, newProgram]);
-      toast({ title: "Program Added", description: "New workout program has been created successfully." });
+    if (
+      !programForm.name.trim() ||
+      !programForm.category.trim() ||
+      !programForm.difficultyLevel.trim() ||
+      !programForm.durationPerSession.trim() ||
+      !programForm.workingHours ||
+      !programForm.goals.trim() ||
+      programForm.assignedFaculty.length === 0 ||
+      programForm.exercises.length === 0 ||
+      programForm.exercises.some(
+        (exercise) =>
+          !exercise.name.trim() ||
+          !exercise.sets ||
+          !exercise.reps
+      )
+    ) {
+      toast({
+        title: "Required Fields",
+        description: "Please fill all required fields.",
+        variant: "destructive",
+      });
+
+      setSubmittedPrograms(true);
+
+      return false;
     }
-    setIsProgramDialogOpen(false);
+
+    return true;
+  };
+
+  const handleSaveProgram = async () => {
+    if (!validateProgram()) return;
+
+    try {
+      const facultyIds = programForm.assignedFaculty.map((item) => item.value);
+
+      const programPayload = {
+        ProgramID: editingProgram?.id ?? "",
+        ProgramName: programForm.name,
+        Description: programForm.description,
+        Category: programForm.category,
+        Difficulty_level: programForm.difficultyLevel,
+        Goals: programForm.goals,
+        Duration_per_session: programForm.durationPerSession,
+        Sessions_per_week: programForm.sessionsPerWeek,
+        Working_hours: Number(programForm.workingHours),
+        is_active: programForm.isActive ? "Active" : "Close",
+        Company_code: "YJK",
+        Location_code: "LOC001",
+        created_by: "admin",
+        modified_by: "admin",
+      };
+
+      if (editingProgram) {
+
+        // =====================
+        // UPDATE PROGRAM HEADER
+        // =====================
+        const updateResponse = await fetch(`${BASE_URL}/programUpdateData`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(programPayload),
+        });
+
+        const updateResult = await updateResponse.json();
+
+        if (!updateResponse.ok) {
+          toast({
+            title: "Error",
+            description: updateResult.message || "Program update failed.",
+            variant: "destructive",
+          });
+          return;
+        }
+
+        // =====================
+        // DELETE OLD FACULTY
+        // =====================
+        await fetch(`${BASE_URL}/programFacultyDeleteData`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            ProgramFacultys: [editingProgram.id],
+          }),
+        });
+
+        // =====================
+        // INSERT NEW FACULTY
+        // =====================
+        for (const faculty of facultyIds) {
+          await fetch(`${BASE_URL}/programFacultyInsertData`, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              Assigned_FacultyID: faculty,
+              ProgramID: editingProgram.id,
+              is_active: programPayload.is_active,
+              Company_code: "YJK",
+              Location_code: "LOC001",
+              created_by: "admin",
+            }),
+          });
+        }
+
+        // =====================
+        // DELETE OLD EXERCISES
+        // =====================
+        await fetch(`${BASE_URL}/programExerciseDeleteData`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            ProgramExercises: [editingProgram.id],
+          }),
+        });
+
+        // =====================
+        // INSERT NEW EXERCISES
+        // =====================
+        for (let i = 0; i < programForm.exercises.length; i++) {
+          const exercise = programForm.exercises[i];
+
+          await fetch(`${BASE_URL}/programExerciseInsertData`, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              ProgramID: editingProgram.id,
+              ExercisesID: i + 1,
+              Exercises_Name: exercise.name,
+              Exercises_Count: exercise.sets,
+              Exercises_Repetitions: exercise.reps,
+              is_active: programPayload.is_active,
+              Company_code: "YJK",
+              Location_code: "LOC001",
+              created_by: "admin",
+            }),
+          });
+        }
+
+        toast({
+          title: "Program Updated",
+          description: "Workout Program Updated Successfully",
+          variant: "success",
+        });
+
+        setSubmittedPrograms(false);
+
+      } else {
+
+        // =====================
+        // INSERT PROGRAM HEADER
+        // =====================
+        const response = await fetch(`${BASE_URL}/programInsertData`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(programPayload),
+        });
+
+        const result = await response.json();
+
+        if (!response.ok) {
+          toast({
+            title: "Error",
+            description: result.message || "Program insert failed.",
+            variant: "destructive",
+          });
+          return;
+        }
+
+        const programId = result.ProgramID;
+
+        setProgramForm((prev) => ({
+          ...prev,
+          id: programId,
+        }));
+
+        // =====================
+        // INSERT FACULTIES
+        // =====================
+        for (const faculty of facultyIds) {
+          await fetch(`${BASE_URL}/programFacultyInsertData`, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              Assigned_FacultyID: faculty,
+              ProgramID: programId,
+              is_active: programPayload.is_active,
+              Company_code: "YJK",
+              Location_code: "LOC001",
+              created_by: "admin",
+            }),
+          });
+        }
+
+        // =====================
+        // INSERT EXERCISES
+        // =====================
+        for (let i = 0; i < programForm.exercises.length; i++) {
+          const exercise = programForm.exercises[i];
+
+          await fetch(`${BASE_URL}/programExerciseInsertData`, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              ProgramID: programId,
+              ExercisesID: i + 1,
+              Exercises_Name: exercise.name,
+              Exercises_Count: exercise.sets,
+              Exercises_Repetitions: exercise.reps,
+              is_active: programPayload.is_active,
+              Company_code: "YJK",
+              Location_code: "LOC001",
+              created_by: "admin",
+            }),
+          });
+        }
+
+        toast({
+          title: "Program Added",
+          description: "Workout Program Added Successfully",
+          variant: "success",
+        });
+
+        setSubmittedPrograms(false);
+      }
+
+      setIsProgramDialogOpen(false);
+
+    } catch (err: any) {
+      console.error(err);
+      toast({
+        title: "Error",
+        description: err.message || "Something went wrong.",
+        variant: "destructive",
+      });
+    }
   };
 
   const handleDeleteProgram = (id: string) => {
     setPrograms(programs.filter(p => p.id !== id));
     toast({ title: "Program Deleted", description: "Workout program has been removed.", variant: "destructive" });
+  };
+
+  const handleCompanySearch = async () => {
+    try {
+      const response = await fetch(`${BASE_URL}/companysearchcriteria`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          company_no: companySearchForm.company_no,
+          company_name: companySearchForm.company_name,
+          city: companySearchForm.city,
+          state: companySearchForm.state,
+          pincode: companySearchForm.pincode,
+          country: companySearchForm.country,
+          company_gst_no: companySearchForm.gst_no,
+          status: companySearchForm.status,
+        }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        setCompanies(data);
+      } else if (response.status === 404) {
+        setCompanies([]);
+
+        toast({
+          title: "Data Not Found",
+          description: data?.message || "No matching companies found.",
+          variant: "destructive",
+        });
+      } else {
+        setCompanies([]);
+
+        toast({
+          title: "Search Failed",
+          description: data?.message || "Something went wrong while searching.",
+          variant: "destructive",
+        });
+      }
+    } catch (error: any) {
+      console.error("Search Error:", error);
+
+      setCompanies([]);
+
+      toast({
+        title: "Server Error",
+        description:
+          error?.message ||
+          "Unable to connect to the server. Please try again later.",
+        variant: "destructive",
+      });
+    }
   };
 
   // Package CRUD Functions
@@ -534,12 +817,6 @@ const WorkoutProgramManagement = () => {
     setProgramForm({ ...programForm, exercises: newExercises });
   };
 
-  const filteredPrograms = programs.filter(p =>
-    p.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    p.category.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    p.facultyName.toLowerCase().includes(searchTerm.toLowerCase())
-  );
-
   const filteredPackages = packages.filter(p =>
     p.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
     p.programName.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -560,6 +837,371 @@ const WorkoutProgramManagement = () => {
       ...programForm,
       exercises: programForm.exercises.filter((_, index) => index !== indexToRemove),
     });
+  };
+
+  const renderProgramSearch = () => (
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-x-4 gap-y-6">
+
+      <div className="space-y-2">
+        <Label>Program ID</Label>
+        <TooltipProvider>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Input
+                placeholder="Enter Program ID"
+                value={programSearchForm.id}
+                onChange={(e) => setProgramSearchForm({ ...programSearchForm, id: e.target.value, })} />
+            </TooltipTrigger>
+
+            <TooltipContent>
+              <p>Enter Program ID</p>
+            </TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
+      </div>
+
+      <div className="space-y-2">
+        <Label>Program Name</Label>
+        <TooltipProvider>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Input
+                placeholder="Enter Program Name"
+                value={programSearchForm.name}
+                onChange={(e) => setProgramSearchForm({ ...programSearchForm, name: e.target.value, })} />
+            </TooltipTrigger>
+
+            <TooltipContent>
+              <p>Enter Program Name</p>
+            </TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
+      </div>
+
+      <div className="space-y-2">
+        <Label htmlFor="category">Category</Label>
+        <TooltipProvider>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <div>
+                <Select value={programSearchForm.category} onValueChange={(value) => setProgramSearchForm({ ...programSearchForm, category: value })}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select Category" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {category.map((category: any) => (
+                      <SelectItem
+                        key={category.attributedetails_name}
+                        value={category.attributedetails_name}
+                      >
+                        {category.attributedetails_name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+            </TooltipTrigger>
+
+            <TooltipContent>
+              <p>Select Category</p>
+            </TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
+      </div>
+
+      <div className="space-y-2">
+        <Label htmlFor="difficulty">Difficulty Level</Label>
+        <TooltipProvider>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <div>
+                <Select value={programSearchForm.difficultyLevel} onValueChange={(value) => setProgramSearchForm({ ...programSearchForm, difficultyLevel: value })}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select Difficulty" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {difficultyLevel.map((difficultyLevel: any) => (
+                      <SelectItem
+                        key={difficultyLevel.attributedetails_name}
+                        value={difficultyLevel.attributedetails_name}
+                      >
+                        {difficultyLevel.attributedetails_name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+            </TooltipTrigger>
+
+            <TooltipContent>
+              <p>Select Difficulty Level</p>
+            </TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
+      </div>
+
+      <div className="space-y-2">
+        <Label htmlFor="goals">Goals (comma-separated)</Label>
+        <TooltipProvider>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Input
+                id="goals"
+                value={programSearchForm.goals}
+                onChange={(e) => setProgramSearchForm({ ...programSearchForm, goals: e.target.value })}
+                placeholder="Enter Goals (comma-separated)"
+              />
+            </TooltipTrigger>
+
+            <TooltipContent>
+              <p>Enter Goals (comma-separated)</p>
+            </TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
+      </div>
+
+      <div className="space-y-2">
+        <Label>Description</Label>
+        <TooltipProvider>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Input
+                placeholder="Enter Description"
+                value={programSearchForm.description}
+                onChange={(e) => setProgramSearchForm({ ...programSearchForm, description: e.target.value, })} />
+            </TooltipTrigger>
+
+            <TooltipContent>
+              <p>Enter Description</p>
+            </TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
+      </div>
+
+      <div className="space-y-2">
+        <Label htmlFor="faculty">Assigned Faculty</Label>
+        <TooltipProvider>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <div>
+                <ReactMultiSelect
+                  options={trainerOptions}
+                  value={programSearchForm.assignedFaculty}
+                  placeholder="Select Assigned Faculty"
+                  onChange={(selected) =>
+                    setProgramSearchForm({
+                      ...programSearchForm,
+                      assignedFaculty: selected,
+                    })
+                  }
+                />
+              </div>
+            </TooltipTrigger>
+
+            <TooltipContent>
+              <p>Select Assigned Faculty</p>
+            </TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
+      </div>
+
+      <div className="space-y-2">
+        <Label>Status</Label>
+
+        <TooltipProvider>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <div>
+                <Select
+                  value={programSearchForm.isActive}
+                  onValueChange={(value) => setProgramSearchForm({ ...programSearchForm, isActive: value, })}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select Status" />
+                  </SelectTrigger>
+
+                  <SelectContent>
+                    {status.map((item: any) => (
+                      <SelectItem
+                        key={item.attributedetails_name}
+                        value={item.attributedetails_name}
+                      >
+                        {item.attributedetails_name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+            </TooltipTrigger>
+
+            <TooltipContent>
+              <p>Select Status</p>
+            </TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
+      </div>
+
+      <div className="space-y-2">
+        <Label htmlFor="duration">Duration Per Session</Label>
+        <TooltipProvider>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Input
+                id="duration"
+                value={programSearchForm.durationPerSession}
+                onChange={(e) => setProgramSearchForm({ ...programSearchForm, durationPerSession: e.target.value })}
+                placeholder="Enter Duration Per Session"
+              />
+            </TooltipTrigger>
+
+            <TooltipContent>
+              <p>Enter Duration Per Session</p>
+            </TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
+      </div>
+
+      <div className="space-y-2">
+        <Label htmlFor="sessions">Sessions Per Week</Label>
+        <TooltipProvider>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Input
+                id="sessions"
+                type="text"
+                min={1}
+                max={7}
+                placeholder="Enter Sessions Per Week"
+                value={programSearchForm.sessionsPerWeek}
+                onChange={(e) => setProgramSearchForm({ ...programSearchForm, sessionsPerWeek: e.target.value })}
+              />
+            </TooltipTrigger>
+
+            <TooltipContent>
+              <p>Enter Sessions Per Week</p>
+            </TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
+      </div>
+
+      <div className="space-y-2">
+        <Label htmlFor="workingHours">Working Hours</Label>
+        <TooltipProvider>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Input
+                id="workingHours"
+                value={programSearchForm.workingHours}
+                onChange={(e) => setProgramSearchForm({ ...programSearchForm, workingHours: e.target.value })}
+                placeholder="Enter Working Hours"
+              />
+            </TooltipTrigger>
+
+            <TooltipContent>
+              <p>Enter Working Hours</p>
+            </TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
+      </div>
+      
+      <div className="space-y-2">
+        <Label htmlFor="exerciseName">Exercises Name</Label>
+        <TooltipProvider>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Input
+                id="exerciseName"
+                value={programSearchForm.exercisesName}
+                onChange={(e) => setProgramSearchForm({ ...programSearchForm, exercisesName: e.target.value })}
+                placeholder="Enter Exercises Name"
+              />
+            </TooltipTrigger>
+
+            <TooltipContent>
+              <p>Enter Exercises Name</p>
+            </TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
+      </div>
+
+      <div className="space-y-2">
+        <Label htmlFor="exercisesCount">Exercises Count</Label>
+        <TooltipProvider>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Input
+                id="exercisesCount"
+                value={programSearchForm.exercisesCount}
+                onChange={(e) => setProgramSearchForm({ ...programSearchForm, exercisesCount: e.target.value })}
+                placeholder="Enter Exercises Count"
+              />
+            </TooltipTrigger>
+
+            <TooltipContent>
+              <p>Enter Exercises Count</p>
+            </TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
+      </div>
+
+      <div className="space-y-2">
+        <Label htmlFor="exercisesReps">Exercises Repetitions</Label>
+        <TooltipProvider>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Input
+                id="exercisesReps"
+                value={programSearchForm.exercisesReps}
+                onChange={(e) => setProgramSearchForm({ ...programSearchForm, exercisesReps: e.target.value })}
+                placeholder="Enter Exercises Repetitions"
+              />
+            </TooltipTrigger>
+
+            <TooltipContent>
+              <p>Enter Exercises Repetitions</p>
+            </TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
+      </div>
+
+    </div>
+  );
+
+  const handleSearch = () => {
+    switch (activeTab) {
+      case "programs":
+        handleCompanySearch();
+        break;
+
+      default:
+        break;
+    }
+  };
+
+  const handleReset = () => {
+    switch (activeTab) {
+      case "programs":
+        setProgramSearchForm({
+          id: '',
+          name: '',
+          description: '',
+          category: '',
+          difficultyLevel: '',
+          durationPerSession: '',
+          sessionsPerWeek: '',
+          assignedFaculty: [] as MultiSelectOption[],
+          workingHours: '',
+          isActive: '',
+          goals: '',
+          exercisesName: '',
+          exercisesCount: '',
+          exercisesReps: '',
+        });
+        setPrograms([]);
+        break;
+
+      default:
+        break;
+    }
   };
 
   return (
@@ -600,21 +1242,52 @@ const WorkoutProgramManagement = () => {
         </div> */}
 
         {/* Search and Add */}
-        {/* <Card className="mb-6">
-          <CardContent className="p-4">
-            <div className="flex flex-col sm:flex-row gap-4 justify-between">
-              <div className="relative flex-1">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
-                <Input
-                  placeholder="Search programs, packages, or faculty..."
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                  className="pl-10"
-                />
-              </div>
+        <Card className="mb-6">
+          <CardContent className="p-6">
+
+            {activeTab === "programs" && renderProgramSearch()}
+
+            <div className="flex justify-end gap-4 mt-6">
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Button
+                      size="icon"
+                      className="rounded-full"
+                      onClick={handleSearch}
+                    >
+                      <Search className="h-5 w-5" />
+                    </Button>
+                  </TooltipTrigger>
+
+                  <TooltipContent>
+                    <p>Search</p>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Button
+                      size="icon"
+                      variant="secondary"
+                      className="rounded-full"
+                      onClick={handleReset}
+                    >
+                      <RotateCcw className="h-5 w-5" />
+                    </Button>
+                  </TooltipTrigger>
+
+                  <TooltipContent>
+                    <p>Reload</p>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
             </div>
+
           </CardContent>
-        </Card> */}
+        </Card>
 
         {/* Tabs for Programs and Packages */}
         <Tabs value={activeTab} onValueChange={setActiveTab}>
@@ -636,7 +1309,7 @@ const WorkoutProgramManagement = () => {
           </div>
 
           {/* Programs Tab */}
-          <TabsContent value="programs">
+          {/* <TabsContent value="programs">
             <Card>
               <CardHeader>
                 <CardTitle>Workout Programs</CardTitle>
@@ -697,7 +1370,7 @@ const WorkoutProgramManagement = () => {
                 </Table>
               </CardContent>
             </Card>
-          </TabsContent>
+          </TabsContent> */}
 
           {/* Packages Tab */}
           <TabsContent value="packages">
@@ -756,7 +1429,12 @@ const WorkoutProgramManagement = () => {
         </Tabs>
 
         {/* Add/Edit Program Dialog */}
-        <Dialog open={isProgramDialogOpen} onOpenChange={setIsProgramDialogOpen}>
+        <Dialog open={isProgramDialogOpen} onOpenChange={(open) => {
+          if (!open) {
+            setSubmittedPrograms(false);
+          }
+          setIsProgramDialogOpen(open);
+        }}>
           <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
             <DialogHeader>
               <DialogTitle>{editingProgram ? 'Edit Program' : 'Add New Program'}</DialogTitle>
@@ -765,223 +1443,386 @@ const WorkoutProgramManagement = () => {
               </DialogDescription>
             </DialogHeader>
             <div className="grid gap-6 py-4">
+
+              {/* Faculty Assignment */}
+              <div className="space-y-4">
+                <div className="space-y-2">
+                  <Label htmlFor="faculty">Program ID</Label>
+                  <TooltipProvider>
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <Input
+                          id="name"
+                          value={programForm.id}
+                          readOnly
+                          className="bg-gray-100 cursor-not-allowed"
+                          // onChange={(e) => setProgramForm({ ...programForm, id: e.target.value })}
+                          placeholder="Auto Generated"
+                        />
+                      </TooltipTrigger>
+
+                      <TooltipContent>
+                        <p>Program ID is Auto Generated</p>
+                      </TooltipContent>
+                    </Tooltip>
+                  </TooltipProvider>
+                </div>
+              </div>
+
               {/* Program Details */}
               <div className="space-y-4">
                 <h4 className="font-medium text-sm text-gray-700">Program Details</h4>
                 <div className="grid grid-cols-2 gap-4">
+
                   <div className="space-y-2">
-                    <Label htmlFor="name">Program Name</Label>
-                    <Input
-                      id="name"
-                      value={programForm.name}
-                      onChange={(e) => setProgramForm({ ...programForm, name: e.target.value })}
-                      placeholder="e.g., Weight Loss Transformation"
-                    />
+                    <Label htmlFor="name" className={submittedPrograms && !programForm.name ? "text-red-500" : ""}>Program Name*</Label>
+                    <TooltipProvider>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <Input
+                            id="name"
+                            value={programForm.name}
+                            onChange={(e) => setProgramForm({ ...programForm, name: e.target.value })}
+                            placeholder="e.g., Weight Loss Transformation"
+                          />
+                        </TooltipTrigger>
+
+                        <TooltipContent>
+                          <p>Enter Program Name</p>
+                        </TooltipContent>
+                      </Tooltip>
+                    </TooltipProvider>
                   </div>
+
                   <div className="space-y-2">
-                    <Label htmlFor="category">Category</Label>
-                    <Select value={programForm.category} onValueChange={(value) => setProgramForm({ ...programForm, category: value })}>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select category" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {category.map((category: any) => (
-                          <SelectItem
-                            key={category.attributedetails_name}
-                            value={category.attributedetails_name}
-                          >
-                            {category.attributedetails_name}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
+                    <Label htmlFor="category" className={submittedPrograms && !programForm.category ? "text-red-500" : ""}>Category*</Label>
+                    <TooltipProvider>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <div>
+                            <Select value={programForm.category} onValueChange={(value) => setProgramForm({ ...programForm, category: value })}>
+                              <SelectTrigger>
+                                <SelectValue placeholder="Select category" />
+                              </SelectTrigger>
+                              <SelectContent>
+                                {category.map((category: any) => (
+                                  <SelectItem
+                                    key={category.attributedetails_name}
+                                    value={category.attributedetails_name}
+                                  >
+                                    {category.attributedetails_name}
+                                  </SelectItem>
+                                ))}
+                              </SelectContent>
+                            </Select>
+                          </div>
+                        </TooltipTrigger>
+
+                        <TooltipContent>
+                          <p>Select Category</p>
+                        </TooltipContent>
+                      </Tooltip>
+                    </TooltipProvider>
                   </div>
+
                 </div>
                 <div className="grid grid-cols-2 gap-4">
+
                   <div className="space-y-2">
-                    <Label htmlFor="difficulty">Difficulty Level</Label>
-                    <Select value={programForm.difficultyLevel} onValueChange={(value) => setProgramForm({ ...programForm, difficultyLevel: value })}>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select difficulty" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {difficultyLevel.map((difficultyLevel: any) => (
-                          <SelectItem
-                            key={difficultyLevel.attributedetails_name}
-                            value={difficultyLevel.attributedetails_name}
-                          >
-                            {difficultyLevel.attributedetails_name}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
+                    <Label htmlFor="difficulty" className={submittedPrograms && !programForm.difficultyLevel ? "text-red-500" : ""}>Difficulty Level*</Label>
+                    <TooltipProvider>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <div>
+                            <Select value={programForm.difficultyLevel} onValueChange={(value) => setProgramForm({ ...programForm, difficultyLevel: value })}>
+                              <SelectTrigger>
+                                <SelectValue placeholder="Select difficulty" />
+                              </SelectTrigger>
+                              <SelectContent>
+                                {difficultyLevel.map((difficultyLevel: any) => (
+                                  <SelectItem
+                                    key={difficultyLevel.attributedetails_name}
+                                    value={difficultyLevel.attributedetails_name}
+                                  >
+                                    {difficultyLevel.attributedetails_name}
+                                  </SelectItem>
+                                ))}
+                              </SelectContent>
+                            </Select>
+                          </div>
+                        </TooltipTrigger>
+
+                        <TooltipContent>
+                          <p>Select Difficulty Level</p>
+                        </TooltipContent>
+                      </Tooltip>
+                    </TooltipProvider>
                   </div>
+
                   <div className="space-y-2">
                     <Label htmlFor="goals">Goals (comma-separated)</Label>
-                    <Input
-                      id="goals"
-                      value={programForm.goals}
-                      onChange={(e) => setProgramForm({ ...programForm, goals: e.target.value })}
-                      placeholder="e.g., Weight Loss, Endurance"
-                    />
+                    <TooltipProvider>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <Input
+                            id="goals"
+                            value={programForm.goals}
+                            onChange={(e) => setProgramForm({ ...programForm, goals: e.target.value })}
+                            placeholder="e.g., Weight Loss, Endurance"
+                          />
+                        </TooltipTrigger>
+
+                        <TooltipContent>
+                          <p>Enter Goals (comma-separated)</p>
+                        </TooltipContent>
+                      </Tooltip>
+                    </TooltipProvider>
                   </div>
+
                 </div>
+
                 <div className="space-y-2">
                   <Label htmlFor="description">Description</Label>
-                  <Textarea
-                    id="description"
-                    value={programForm.description}
-                    onChange={(e) => setProgramForm({ ...programForm, description: e.target.value })}
-                    placeholder="Describe the program..."
-                  />
+                  <TooltipProvider>
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <Textarea
+                          id="description"
+                          value={programForm.description}
+                          onChange={(e) => setProgramForm({ ...programForm, description: e.target.value })}
+                          placeholder="Describe the program..."
+                        />
+                      </TooltipTrigger>
+
+                      <TooltipContent>
+                        <p>Enter Description</p>
+                      </TooltipContent>
+                    </Tooltip>
+                  </TooltipProvider>
                 </div>
+
               </div>
 
               {/* Schedule Section */}
               <div className="space-y-4">
                 <h4 className="font-medium text-sm text-gray-700">Schedule</h4>
                 <div className="grid grid-cols-3 gap-4">
+
                   <div className="space-y-2">
-                    <Label htmlFor="duration">Duration Per Session</Label>
-                    <Input
-                      id="duration"
-                      value={programForm.durationPerSession}
-                      onChange={(e) => setProgramForm({ ...programForm, durationPerSession: e.target.value })}
-                      placeholder="e.g., 45 minutes"
-                    />
+                    <Label htmlFor="duration" className={submittedPrograms && !programForm.durationPerSession ? "text-red-500" : ""}>Duration Per Session</Label>
+                    <TooltipProvider>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <Input
+                            id="duration"
+                            value={programForm.durationPerSession}
+                            onChange={(e) => setProgramForm({ ...programForm, durationPerSession: e.target.value })}
+                            placeholder="e.g., 45 minutes"
+                          />
+                        </TooltipTrigger>
+
+                        <TooltipContent>
+                          <p>Enter Duration Per Session</p>
+                        </TooltipContent>
+                      </Tooltip>
+                    </TooltipProvider>
                   </div>
+
                   <div className="space-y-2">
-                    <Label htmlFor="sessions">Sessions Per Week</Label>
-                    <Input
-                      id="sessions"
-                      type="number"
-                      min={1}
-                      max={7}
-                      value={programForm.sessionsPerWeek}
-                      onChange={(e) => setProgramForm({ ...programForm, sessionsPerWeek: parseInt(e.target.value) || 1 })}
-                    />
+                    <Label htmlFor="sessions" className={submittedPrograms && !programForm.sessionsPerWeek ? "text-red-500" : ""}>Sessions Per Week</Label>
+                    <TooltipProvider>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <Input
+                            id="sessions"
+                            type="number"
+                            min={1}
+                            max={7}
+                            value={programForm.sessionsPerWeek}
+                            onChange={(e) => setProgramForm({ ...programForm, sessionsPerWeek: e.target.value })}
+                          />
+                        </TooltipTrigger>
+
+                        <TooltipContent>
+                          <p>Enter Sessions Per Week</p>
+                        </TooltipContent>
+                      </Tooltip>
+                    </TooltipProvider>
                   </div>
+
                   <div className="space-y-2">
-                    <Label htmlFor="workingHours">Working Hours</Label>
-                    <Input
-                      id="workingHours"
-                      value={programForm.workingHours}
-                      onChange={(e) => setProgramForm({ ...programForm, workingHours: e.target.value })}
-                      placeholder="e.g., 6AM-10AM, 5PM-9PM"
-                    />
+                    <Label htmlFor="workingHours" className={submittedPrograms && !programForm.workingHours ? "text-red-500" : ""}>Working Hours</Label>
+                    <TooltipProvider>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <Input
+                            id="workingHours"
+                            value={programForm.workingHours}
+                            onChange={(e) => setProgramForm({ ...programForm, workingHours: e.target.value })}
+                            placeholder="e.g., 6AM-10AM, 5PM-9PM"
+                          />
+                        </TooltipTrigger>
+
+                        <TooltipContent>
+                          <p>Enter Working Hours</p>
+                        </TooltipContent>
+                      </Tooltip>
+                    </TooltipProvider>
                   </div>
+
                 </div>
               </div>
 
               {/* Faculty Assignment */}
               <div className="space-y-4">
-                <h4 className="font-medium text-sm text-gray-700">Faculty Assignment</h4>
-                <div className="space-y-2">
-                  <Label htmlFor="faculty">Assigned Faculty</Label>
-                  <Select value={programForm.assignedFaculty} onValueChange={(value) => setProgramForm({ ...programForm, assignedFaculty: value })}>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select trainer" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {trainers.map((trainers: any) => (
-                        <SelectItem
-                          key={trainers.TrainerID}
-                          value={trainers.TrainerID}
-                        >
-                          {trainers.TrainerID} - {trainers.FullName}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-              </div>
+                <h4 className="font-medium text-sm text-gray-700">
+                  Faculty Assignment
+                </h4>
 
-              {/* Exercises */}
-              {/* <div className="space-y-4">
-                <div className="flex justify-between items-center">
-                  <h4 className="font-medium text-sm text-gray-700">Exercises</h4>
-                  <Button type="button" variant="outline" size="sm" onClick={addExerciseField}>
-                    <Plus className="h-4 w-4 mr-1" /> Add Exercise
-                  </Button>
+                <div className="space-y-2">
+                  <Label htmlFor="faculty" className={submittedPrograms && programForm.assignedFaculty.length === 0 ? "text-red-500" : ""}>Assigned Faculty*</Label>
+                  <TooltipProvider>
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <div>
+                          <ReactMultiSelect
+                            options={trainerOptions}
+                            value={programForm.assignedFaculty}
+                            placeholder="Select assigned faculty"
+                            onChange={(selected) =>
+                              setProgramForm({
+                                ...programForm,
+                                assignedFaculty: selected,
+                              })
+                            }
+                          />
+                        </div>
+                      </TooltipTrigger>
+
+                      <TooltipContent>
+                        <p>Select Assigned Faculty</p>
+                      </TooltipContent>
+                    </Tooltip>
+                  </TooltipProvider>
                 </div>
-                {programForm.exercises.map((exercise, index) => (
-                  <div key={index} className="grid grid-cols-3 gap-2">
-                    <Input
-                      placeholder="Exercise name"
-                      value={exercise.name}
-                      onChange={(e) => updateExercise(index, 'name', e.target.value)}
-                    />
-                    <Input
-                      type="number"
-                      placeholder="Sets"
-                      value={exercise.sets}
-                      onChange={(e) => updateExercise(index, 'sets', parseInt(e.target.value) || 0)}
-                    />
-                    <Input
-                      placeholder="Reps (e.g., 10-12)"
-                      value={exercise.reps}
-                      onChange={(e) => updateExercise(index, 'reps', e.target.value)}
-                    />
-                  </div>
-                ))}
-              </div> */}
+
+              </div>
 
               {/* Exercises Section */}
               <div className="space-y-4">
                 <div className="flex justify-between items-center">
-                  <h4 className="font-medium text-sm text-gray-700">Exercises</h4>
+                  <h4 className={`font-medium text-sm text-gray-700 ${submittedPrograms &&
+                    programForm.exercises.some(
+                      (e) => !e.name.trim() || !e.sets || !e.reps
+                    )
+                    ? "text-red-500"
+                    : "text-gray-700"
+                    }`}>Exercises*</h4>
                 </div>
 
                 <div className="space-y-3">
                   {programForm.exercises.map((exercise, index) => (
                     <div key={index} className="flex items-center gap-3">
-                      {/* Inputs Layout Grid */}
+
                       <div className="grid grid-cols-3 gap-2 flex-1">
-                        <Input
-                          placeholder="Exercise name"
-                          value={exercise.name}
-                          onChange={(e) => updateExercise(index, 'name', e.target.value)}
-                          className="bg-white"
-                        />
-                        <Input
-                          type="number"
-                          placeholder="Sets"
-                          value={exercise.sets}
-                          onChange={(e) => updateExercise(index, 'sets', parseInt(e.target.value) || 0)}
-                          className="bg-white"
-                        />
-                        <Input
-                          placeholder="Reps (e.g., 10-12)"
-                          value={exercise.reps}
-                          onChange={(e) => updateExercise(index, 'reps', e.target.value)}
-                          className="bg-white"
-                        />
+
+                        <TooltipProvider>
+                          <Tooltip>
+                            <TooltipTrigger asChild>
+                              <Input
+                                placeholder="Exercise name"
+                                value={exercise.name}
+                                onChange={(e) => updateExercise(index, 'name', e.target.value)}
+                                className="bg-white"
+                              />
+                            </TooltipTrigger>
+
+                            <TooltipContent>
+                              <p>Enter Exercise Name</p>
+                            </TooltipContent>
+                          </Tooltip>
+                        </TooltipProvider>
+
+                        <TooltipProvider>
+                          <Tooltip>
+                            <TooltipTrigger asChild>
+                              <Input
+                                type="number"
+                                placeholder="Sets"
+                                value={exercise.sets}
+                                onChange={(e) => updateExercise(index, 'sets', parseInt(e.target.value) || 0)}
+                                className="bg-white"
+                              />
+                            </TooltipTrigger>
+
+                            <TooltipContent>
+                              <p>Enter Sets</p>
+                            </TooltipContent>
+                          </Tooltip>
+                        </TooltipProvider>
+
+                        <TooltipProvider>
+                          <Tooltip>
+                            <Tooltip>
+                              <TooltipTrigger asChild>
+                                <Input
+                                  placeholder="Reps (e.g., 10-12)"
+                                  value={exercise.reps}
+                                  onChange={(e) => updateExercise(index, 'reps', e.target.value)}
+                                  className="bg-white"
+                                />
+                              </TooltipTrigger>
+
+                              <TooltipContent>
+                                <p>Enter Repetitions</p>
+                              </TooltipContent>
+                            </Tooltip>
+                          </Tooltip>
+                        </TooltipProvider>
+
                       </div>
 
-                      {/* Row Actions (+ / -) */}
                       <div className="flex items-center gap-1.5 shrink-0">
-                        <Button
-                          type="button"
-                          variant="ghost"
-                          size="icon"
-                          onClick={addExerciseField}
-                          className="h-9 w-9 text-blue-600 hover:text-blue-700 hover:bg-blue-50 border border-gray-200 rounded-md"
-                          title="Add new row"
-                        >
-                          <Plus className="h-4 w-4 font-bold" />
-                        </Button>
+                        <TooltipProvider>
+                          <Tooltip>
+                            <TooltipTrigger asChild>
+                              <Button
+                                type="button"
+                                variant="ghost"
+                                size="icon"
+                                onClick={addExerciseField}
+                                className="h-9 w-9 text-blue-600 hover:text-blue-700 hover:bg-blue-50 border border-gray-200 rounded-md"
+                              >
+                                <Plus className="h-4 w-4 font-bold" />
+                              </Button>
+                            </TooltipTrigger>
 
-                        <Button
-                          type="button"
-                          variant="ghost"
-                          size="icon"
-                          onClick={() => removeExerciseField(index)}
-                          className="h-9 w-9 text-red-500 hover:text-red-600 hover:bg-red-50 border border-gray-200 rounded-md"
-                          title="Remove row"
-                        >
-                          {/* Using a simple custom minus line divider/icon or Lucide Trash2/Minus */}
-                          <span className="text-lg font-bold leading-none select-none">-</span>
-                        </Button>
+                            <TooltipContent>
+                              <p>Add new row</p>
+                            </TooltipContent>
+                          </Tooltip>
+                        </TooltipProvider>
+
+                        <TooltipProvider>
+                          <Tooltip>
+                            <TooltipTrigger asChild>
+                              <Button
+                                type="button"
+                                variant="ghost"
+                                size="icon"
+                                onClick={() => removeExerciseField(index)}
+                                className="h-9 w-9 text-red-500 hover:text-red-600 hover:bg-red-50 border border-gray-200 rounded-md"
+                              >
+                                <Minus className="h-4 w-4 font-bold" />
+                              </Button>
+                            </TooltipTrigger>
+
+                            <TooltipContent>
+                              <p>Remove row</p>
+                            </TooltipContent>
+                          </Tooltip>
+                        </TooltipProvider>
+
                       </div>
                     </div>
                   ))}
@@ -997,16 +1838,45 @@ const WorkoutProgramManagement = () => {
                 />
                 <Label htmlFor="isActive">Active Program</Label>
               </div>
+
             </div>
             <DialogFooter>
-              <Button variant="outline" onClick={() => setIsProgramDialogOpen(false)}>Cancel</Button>
-              <Button onClick={handleSaveProgram}>{editingProgram ? 'Update' : 'Create'} Program</Button>
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Button variant="outline" onClick={() => {
+                      setIsProgramDialogOpen(false);
+                      setSubmittedPrograms(false);
+                    }}>Cancel</Button>
+                  </TooltipTrigger>
+
+                  <TooltipContent>
+                    <p>Cancel without saving changes.</p>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Button onClick={handleSaveProgram}>{editingProgram ? 'Update' : 'Create'} Program</Button>
+                  </TooltipTrigger>
+
+                  <TooltipContent>
+                    <p>
+                      {editingProgram
+                        ? "Update program"
+                        : "Create a program"}
+                    </p>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
             </DialogFooter>
-          </DialogContent>
-        </Dialog>
+          </DialogContent >
+        </Dialog >
 
         {/* Add/Edit Package Dialog */}
-        <Dialog open={isPackageDialogOpen} onOpenChange={setIsPackageDialogOpen}>
+        <Dialog open={isPackageDialogOpen} onOpenChange={setIsPackageDialogOpen} >
           <DialogContent className="max-w-lg">
             <DialogHeader>
               <DialogTitle>{editingPackage ? 'Edit Package' : 'Add New Package'}</DialogTitle>
@@ -1122,9 +1992,9 @@ const WorkoutProgramManagement = () => {
               <Button onClick={handleSavePackage}>{editingPackage ? 'Update' : 'Create'} Package</Button>
             </DialogFooter>
           </DialogContent>
-        </Dialog>
-      </main>
-    </div>
+        </Dialog >
+      </main >
+    </div >
   );
 };
 

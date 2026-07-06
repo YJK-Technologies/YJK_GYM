@@ -1779,6 +1779,7 @@ const WorkoutProgramManagement = () => {
         toast({
           title: "Success",
           description: data.message || "Company created successfully.",
+          variant: "success",
         });
 
         handleCompanySearch();
@@ -1864,6 +1865,7 @@ const WorkoutProgramManagement = () => {
         toast({
           title: "Success",
           description: data.message || "Company updated successfully.",
+          variant: "success",
         });
 
         handleCompanySearch();
@@ -1917,6 +1919,7 @@ const WorkoutProgramManagement = () => {
         toast({
           title: "Success",
           description: data.message || "Company deleted successfully.",
+          variant: "success",
         });
 
         handleCompanySearch();
@@ -2111,6 +2114,7 @@ const WorkoutProgramManagement = () => {
         toast({
           title: "Success",
           description: data.message || "Company mapping created successfully.",
+          variant: "success",
         });
 
         handleCompanyMappingSearch();
@@ -2164,6 +2168,7 @@ const WorkoutProgramManagement = () => {
         toast({
           title: "Success",
           description: data.message || "Company mapping updated successfully.",
+          variant: "success",
         });
 
         handleCompanyMappingSearch();
@@ -2216,8 +2221,8 @@ const WorkoutProgramManagement = () => {
       if (response.ok) {
         toast({
           title: "Success",
-          description:
-            data.message || "Company mapping deleted successfully.",
+          description: data.message || "Company mapping deleted successfully.",
+          variant: "success",
         });
 
         handleCompanyMappingSearch();
@@ -2402,6 +2407,7 @@ const WorkoutProgramManagement = () => {
         toast({
           title: "Success",
           description: data.message || "Location created successfully.",
+          variant: "success",
         });
 
         handleLocationSearch();
@@ -2455,6 +2461,7 @@ const WorkoutProgramManagement = () => {
         toast({
           title: "Success",
           description: data.message || data || "Location updated successfully.",
+          variant: "success",
         });
 
         handleLocationSearch();
@@ -2508,6 +2515,7 @@ const WorkoutProgramManagement = () => {
         toast({
           title: "Success",
           description: data.message || "Location deleted successfully.",
+          variant: "success",
         });
 
         handleLocationSearch();
@@ -2665,6 +2673,7 @@ const WorkoutProgramManagement = () => {
         toast({
           title: "Success",
           description: data.message || "Role created successfully.",
+          variant: "success",
         });
 
         handleRoleSearch();
@@ -2716,6 +2725,7 @@ const WorkoutProgramManagement = () => {
         toast({
           title: "Success",
           description: data.message || "Role updated successfully.",
+          variant: "success",
         });
 
         handleRoleSearch();
@@ -2768,6 +2778,7 @@ const WorkoutProgramManagement = () => {
         toast({
           title: "Success",
           description: data.message || "Role deleted successfully.",
+          variant: "success",
         });
 
         handleRoleSearch();
@@ -2912,6 +2923,7 @@ const WorkoutProgramManagement = () => {
         toast({
           title: "Success",
           description: data.message || "Role mapping created successfully.",
+          variant: "success",
         });
 
         handleRoleMappingSearch();
@@ -2963,6 +2975,7 @@ const WorkoutProgramManagement = () => {
         toast({
           title: "Success",
           description: data.message || "Role mapping updated successfully.",
+          variant: "success",
         });
 
         handleRoleMappingSearch();
@@ -3015,6 +3028,7 @@ const WorkoutProgramManagement = () => {
         toast({
           title: "Success",
           description: data.message || "Role mapping deleted successfully.",
+          variant: "success",
         });
 
         handleRoleMappingSearch();
@@ -3165,6 +3179,7 @@ const WorkoutProgramManagement = () => {
         toast({
           title: "Success",
           description: data.message || "Role rights created successfully.",
+          variant: "success",
         });
 
         handleRoleRightsSearch();
@@ -3216,6 +3231,7 @@ const WorkoutProgramManagement = () => {
         toast({
           title: "Success",
           description: data.message || "Role rights updated successfully.",
+          variant: "success",
         });
 
         handleRoleRightsSearch();
@@ -3267,6 +3283,7 @@ const WorkoutProgramManagement = () => {
         toast({
           title: "Success",
           description: data.message || "Role rights deleted successfully.",
+          variant: "success",
         });
 
         handleRoleRightsSearch();
@@ -3491,6 +3508,7 @@ const WorkoutProgramManagement = () => {
         toast({
           title: "Success",
           description: data.message || "User created successfully.",
+          variant: "success",
         });
 
         setIsUserDialogOpen(false);
@@ -3588,6 +3606,7 @@ const WorkoutProgramManagement = () => {
         toast({
           title: "Success",
           description: data.message || "User updated successfully.",
+          variant: "success",
         });
 
         setEditingUser(null);
@@ -3641,6 +3660,7 @@ const WorkoutProgramManagement = () => {
         toast({
           title: "Success",
           description: data.message || "User deleted successfully.",
+          variant: "success",
         });
 
         handleUserSearch();
@@ -3813,6 +3833,7 @@ const WorkoutProgramManagement = () => {
           title: "Success",
           description:
             data.message || "Attribute details created successfully.",
+            variant: "success",
         });
 
         handleAttributeSearch();
@@ -3864,8 +3885,8 @@ const WorkoutProgramManagement = () => {
       if (response.ok) {
         toast({
           title: "Success",
-          description:
-            data.message || data || "Attribute details updated successfully.",
+          description: data.message || data || "Attribute details updated successfully.",
+          variant: "success",
         });
 
         handleAttributeSearch();
@@ -3921,8 +3942,8 @@ const WorkoutProgramManagement = () => {
       if (response.ok) {
         toast({
           title: "Success",
-          description:
-            data.message || data || "Attribute details deleted successfully.",
+          description: data.message || data || "Attribute details deleted successfully.",
+          variant: "success",
         });
 
         handleAttributeSearch();
@@ -4080,8 +4101,8 @@ const WorkoutProgramManagement = () => {
       if (response.ok) {
         toast({
           title: "Success",
-          description:
-            data.message || "Attribute header created successfully.",
+          description: data.message || "Attribute header created successfully.",
+          variant: "success",
         });
         setIsAttributeHdrDialogOpen(false);
         setSubmittedAttributeHdr(false);
@@ -4172,6 +4193,7 @@ const WorkoutProgramManagement = () => {
         toast({
           title: "Success",
           description: data.message || "Number Series created successfully.",
+          variant: "success",
         });
 
         handleSearchNumberSeries();
@@ -4226,6 +4248,7 @@ const WorkoutProgramManagement = () => {
         toast({
           title: "Success",
           description: data.message || "NumberSeries updated successfully.",
+          variant: "success",
         });
 
         handleSearchNumberSeries();
@@ -4281,14 +4304,11 @@ const WorkoutProgramManagement = () => {
 
       const data = await response.json();
 
-      console.log("Response Status:", response.status);
-      console.log("Response Data:", data);
-
-
       if (response.ok) {
         toast({
           title: "Number series deleted successfully",
           description: data.message,
+          variant: "success",
         });
 
         handleSearchNumberSeries();
