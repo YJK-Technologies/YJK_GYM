@@ -13,7 +13,7 @@ import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, D
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useNavigate } from 'react-router-dom';
 import { useToast } from '@/hooks/use-toast';
-import { ArrowLeft, Plus, Minus, Search, RotateCcw, Dumbbell, Package, Users, Clock, Edit, Trash2, Eye, Calendar, DollarSign, CheckCircle, XCircle } from 'lucide-react';
+import { ArrowLeft, Plus, Minus, Search, Phone, Mail, TrendingUp, RotateCcw, Dumbbell, Package, Users, Clock, Edit, Trash2, Eye, Calendar, DollarSign, CheckCircle, XCircle } from 'lucide-react';
 import { BASE_URL } from '../ApiConfig';
 import ReactMultiSelect, { MultiSelectOption } from "@/components/ui/react-multi-select";
 import AgGridTable from "@/components/ui/ag-grid-table";
@@ -38,6 +38,7 @@ interface WorkoutProgram {
   assignedFaculty: string[];
   workingHours: string;
   isActive: boolean;
+  Keyfield: string;
   createdDate: string;
 }
 
@@ -278,17 +279,7 @@ const WorkoutProgramManagement = () => {
     isActive: true,
     goals: '',
     exercises: [{ name: '', sets: 3, reps: '' }],
-  });
-  const [companies, setCompanies] = useState([]);
-  const [companySearchForm, setCompanySearchForm] = useState({
-    company_no: "",
-    company_name: "",
-    city: "",
-    state: "",
-    pincode: "",
-    country: "",
-    gst_no: "",
-    status: "",
+    Keyfield:''
   });
 
   const [programSearchForm, setProgramSearchForm] = useState({
@@ -299,7 +290,7 @@ const WorkoutProgramManagement = () => {
     difficultyLevel: '',
     durationPerSession: '',
     sessionsPerWeek: '',
-    assignedFaculty: [] as MultiSelectOption[],
+    assignedFaculty: '',
     workingHours: '',
     isActive: '',
     goals: '',
@@ -378,36 +369,50 @@ const WorkoutProgramManagement = () => {
       isActive: true,
       goals: '',
       exercises: [{ name: '', sets: 3, reps: '' }],
+      Keyfield:''
     });
     setIsProgramDialogOpen(true);
   };
 
-  const handleEditProgram = (program: WorkoutProgram) => {
-
+  const handleEditProgram = (program: any) => {
     setEditingProgram(program);
+
+    // Faculty MultiSelect
     const selectedFaculty = trainers
       .filter((trainer: any) =>
-        program.assignedFaculty.includes(trainer.TrainerID)
+        program.Faculty.includes(trainer.TrainerID)
       )
       .map((trainer: any) => ({
         value: trainer.TrainerID,
         label: `${trainer.TrainerID} - ${trainer.FullName}`,
       }));
 
+    // Exercise Mapping
+    const selectedExercises =
+      program.Exercises.length > 0
+        ? program.Exercises.map((exercise: any) => ({
+          name: exercise.Exercises_Name,
+          sets: exercise.Exercises_Count,
+          reps: exercise.Exercises_Repetitions,
+        }))
+        : [{ name: "", sets: 3, reps: "" }];
+
     setProgramForm({
-      id: program.id,
-      name: program.name,
-      description: program.description,
-      category: program.category,
-      difficultyLevel: program.difficultyLevel,
-      durationPerSession: program.durationPerSession,
-      sessionsPerWeek: program.sessionsPerWeek,
+      id: program.ProgramID,
+      name: program.ProgramName,
+      description: program.Description,
+      category: program.Category,
+      difficultyLevel: program.Difficulty_level,
+      durationPerSession: program.Duration_per_session,
+      sessionsPerWeek: program.Sessions_per_week,
+      workingHours: program.Working_hours,
+      isActive: program.is_active,
+      goals: program.Goals,
       assignedFaculty: selectedFaculty,
-      workingHours: program.workingHours,
-      isActive: program.isActive,
-      goals: program.goals.join(', '),
-      exercises: program.exercises.length > 0 ? program.exercises : [{ name: '', sets: 3, reps: '' }],
+      exercises: selectedExercises,
+      Keyfield: program.Keyfield,
     });
+
     setIsProgramDialogOpen(true);
   };
 
@@ -450,7 +455,8 @@ const WorkoutProgramManagement = () => {
       const facultyIds = programForm.assignedFaculty.map((item) => item.value);
 
       const programPayload = {
-        ProgramID: editingProgram?.id ?? "",
+        Keyfield: editingProgram.Keyfield,
+        ProgramID: programForm.id,
         ProgramName: programForm.name,
         Description: programForm.description,
         Category: programForm.category,
@@ -458,7 +464,7 @@ const WorkoutProgramManagement = () => {
         Goals: programForm.goals,
         Duration_per_session: programForm.durationPerSession,
         Sessions_per_week: programForm.sessionsPerWeek,
-        Working_hours: Number(programForm.workingHours),
+        Working_hours: programForm.workingHours,
         is_active: programForm.isActive ? "Active" : "Close",
         Company_code: "YJK",
         Location_code: "LOC001",
@@ -671,39 +677,57 @@ const WorkoutProgramManagement = () => {
     toast({ title: "Program Deleted", description: "Workout program has been removed.", variant: "destructive" });
   };
 
-  const handleCompanySearch = async () => {
+  const handleProgramSearch = async () => {
     try {
-      const response = await fetch(`${BASE_URL}/companysearchcriteria`, {
+      const response = await fetch(`${BASE_URL}/programSearchData`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          company_no: companySearchForm.company_no,
-          company_name: companySearchForm.company_name,
-          city: companySearchForm.city,
-          state: companySearchForm.state,
-          pincode: companySearchForm.pincode,
-          country: companySearchForm.country,
-          company_gst_no: companySearchForm.gst_no,
-          status: companySearchForm.status,
+          ProgramID: programSearchForm.id,
+          ProgramName: programSearchForm.name,
+          Description: programSearchForm.description,
+          Category: programSearchForm.category,
+          Difficulty_level: programSearchForm.difficultyLevel,
+          Goals: programSearchForm.goals,
+          Duration_per_session: programSearchForm.durationPerSession,
+          Sessions_per_week: programSearchForm.sessionsPerWeek,
+          Working_hours: programSearchForm.workingHours,
+          is_active: programSearchForm.isActive,
+          Assigned_Faculty: programSearchForm.assignedFaculty,
+          Exercises_Name: programSearchForm.exercisesName,
+          Exercises_Count: programSearchForm.exercisesCount,
+          Exercises_Repetitions: programSearchForm.exercisesReps,
+          Company_code: "YJK",
+          Location_code: "LOC001",
         }),
       });
 
       const data = await response.json();
 
       if (response.ok) {
-        setCompanies(data);
+        const formattedPrograms = data.map((program: any) => ({
+          ...program,
+          Exercises: program.Exercises
+            ? JSON.parse(program.Exercises)
+            : [],
+          Faculty: program.Faculty
+            ? program.Faculty.split(",")
+            : [],
+        }));
+
+        setPrograms(formattedPrograms);
       } else if (response.status === 404) {
-        setCompanies([]);
+        setPrograms([]);
 
         toast({
           title: "Data Not Found",
-          description: data?.message || "No matching companies found.",
+          description: data?.message || "No matching programs found.",
           variant: "destructive",
         });
       } else {
-        setCompanies([]);
+        setPrograms([]);
 
         toast({
           title: "Search Failed",
@@ -714,7 +738,7 @@ const WorkoutProgramManagement = () => {
     } catch (error: any) {
       console.error("Search Error:", error);
 
-      setCompanies([]);
+      setPrograms([]);
 
       toast({
         title: "Server Error",
@@ -978,7 +1002,7 @@ const WorkoutProgramManagement = () => {
         </TooltipProvider>
       </div>
 
-      <div className="space-y-2">
+      {/* <div className="space-y-2">
         <Label htmlFor="faculty">Assigned Faculty</Label>
         <TooltipProvider>
           <Tooltip>
@@ -995,6 +1019,40 @@ const WorkoutProgramManagement = () => {
                     })
                   }
                 />
+              </div>
+            </TooltipTrigger>
+
+            <TooltipContent>
+              <p>Select Assigned Faculty</p>
+            </TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
+      </div> */}
+
+      <div className="space-y-2">
+        <Label htmlFor="faculty">Assigned Faculty</Label>
+        <TooltipProvider>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <div>
+                <Select
+                  value={programSearchForm.assignedFaculty}
+                  onValueChange={(value) => setProgramSearchForm({ ...programSearchForm, assignedFaculty: value, })}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select Assigned Faculty" />
+                  </SelectTrigger>
+
+                  <SelectContent>
+                    {trainers.map((trainers: any) => (
+                      <SelectItem
+                        key={trainers.TrainerID}
+                        value={trainers.TrainerID}
+                      >
+                        {trainers.TrainerID} - {trainers.FullName}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
               </div>
             </TooltipTrigger>
 
@@ -1102,7 +1160,7 @@ const WorkoutProgramManagement = () => {
           </Tooltip>
         </TooltipProvider>
       </div>
-      
+
       <div className="space-y-2">
         <Label htmlFor="exerciseName">Exercises Name</Label>
         <TooltipProvider>
@@ -1169,7 +1227,7 @@ const WorkoutProgramManagement = () => {
   const handleSearch = () => {
     switch (activeTab) {
       case "programs":
-        handleCompanySearch();
+        handleProgramSearch();
         break;
 
       default:
@@ -1188,7 +1246,7 @@ const WorkoutProgramManagement = () => {
           difficultyLevel: '',
           durationPerSession: '',
           sessionsPerWeek: '',
-          assignedFaculty: [] as MultiSelectOption[],
+          assignedFaculty: '',
           workingHours: '',
           isActive: '',
           goals: '',
@@ -1206,6 +1264,7 @@ const WorkoutProgramManagement = () => {
 
   return (
     <div className="min-h-screen bg-gray-50">
+
       <header className="bg-white shadow-sm border-b">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center py-4">
@@ -1309,68 +1368,182 @@ const WorkoutProgramManagement = () => {
           </div>
 
           {/* Programs Tab */}
-          {/* <TabsContent value="programs">
+          <TabsContent value="programs">
             <Card>
               <CardHeader>
                 <CardTitle>Workout Programs</CardTitle>
-                <CardDescription>Manage all workout programs and their details</CardDescription>
+                <CardDescription>
+                  Manage all workout programs and their details
+                </CardDescription>
               </CardHeader>
+
               <CardContent>
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead>Program Name</TableHead>
-                      <TableHead>Category</TableHead>
-                      <TableHead>Difficulty</TableHead>
-                      <TableHead>Sessions/Week</TableHead>
-                      <TableHead>Faculty</TableHead>
-                      <TableHead>Working Hours</TableHead>
-                      <TableHead>Status</TableHead>
-                      <TableHead className="text-right">Actions</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {filteredPrograms.map((program) => (
-                      <TableRow key={program.id}>
-                        <TableCell className="font-medium">{program.name}</TableCell>
-                        <TableCell>
-                          <Badge variant="outline">{program.category}</Badge>
-                        </TableCell>
-                        <TableCell>
-                          <Badge variant={
-                            program.difficultyLevel === 'Beginner' ? 'secondary' :
-                              program.difficultyLevel === 'Intermediate' ? 'default' : 'destructive'
-                          }>
-                            {program.difficultyLevel}
-                          </Badge>
-                        </TableCell>
-                        <TableCell>{program.sessionsPerWeek}x/week</TableCell>
-                        <TableCell>{program.facultyName}</TableCell>
-                        <TableCell className="text-sm text-gray-600">{program.workingHours}</TableCell>
-                        <TableCell>
-                          {program.isActive ? (
-                            <Badge className="bg-green-500"><CheckCircle className="h-3 w-3 mr-1" />Active</Badge>
-                          ) : (
-                            <Badge variant="secondary"><XCircle className="h-3 w-3 mr-1" />Inactive</Badge>
-                          )}
-                        </TableCell>
-                        <TableCell className="text-right">
-                          <div className="flex justify-end gap-2">
-                            <Button variant="ghost" size="sm" onClick={() => handleEditProgram(program)}>
-                              <Edit className="h-4 w-4" />
-                            </Button>
-                            <Button variant="ghost" size="sm" onClick={() => handleDeleteProgram(program.id)}>
-                              <Trash2 className="h-4 w-4 text-red-500" />
-                            </Button>
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                  {programs.map((program: any) => {
+                    const isActive = program.is_active === "Active";
+                    const statusBadgeColor = isActive
+                      ? "bg-green-50 text-green-700 border-green-200"
+                      : "bg-gray-100 text-gray-600 border-gray-200";
+
+                    return (
+                      <Card key={program.Keyfield} className="overflow-hidden border-t-4 border-t-violet-600 hover:shadow-xl transition-all duration-300 bg-white">
+                        <CardContent className="p-6 space-y-5">
+
+                          <div className="flex justify-between items-start pb-3 border-b border-gray-100">
+                            <div className="space-y-1">
+                              <h3 className="text-xl font-bold text-slate-900 tracking-tight">
+                                {program.ProgramName}
+                              </h3>
+                              <p className="text-xs font-mono text-gray-500 flex items-center gap-1">
+                                <span className="font-semibold text-slate-700">Program ID:</span> {program.ProgramID || "N/A"}
+                              </p>
+                            </div>
+
+                            <div className="flex gap-1 bg-slate-50 p-1 rounded-lg border border-gray-100">
+                              <Button
+                                variant="ghost"
+                                size="icon"
+                                className="h-8 w-8 text-gray-600 hover:text-violet-600 hover:bg-violet-50"
+                                onClick={() => handleEditProgram(program)}
+                              >
+                                <Edit className="h-4 w-4" />
+                              </Button>
+                              <Button
+                                variant="ghost"
+                                size="icon"
+                                className="h-8 w-8 text-red-500 hover:text-red-700 hover:bg-red-50"
+                                onClick={() => handleDeleteProgram(program)}
+                              >
+                                <Trash2 className="h-4 w-4" />
+                              </Button>
+                            </div>
                           </div>
-                        </TableCell>
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
+
+                          <div className="flex items-center justify-between bg-violet-50/40 px-4 py-2.5 rounded-lg border border-violet-50">
+                            <div className="flex items-center space-x-2">
+                              <TrendingUp className="w-4 h-4 text-violet-600" />
+                              <span className="text-xs text-gray-500 font-medium">Goal:</span>
+                              <span className="text-sm font-semibold text-slate-800">{program.Goals}</span>
+                            </div>
+
+                            <Badge variant="outline" className={`font-medium text-xs ${statusBadgeColor}`}>
+                              <span className={`w-1.5 h-1.5 rounded-full mr-1.5 ${isActive ? "bg-green-500" : "bg-gray-400"}`}></span>
+                              {program.is_active || "Close"}
+                            </Badge>
+                          </div>
+
+                          <div className="grid grid-cols-3 gap-2 bg-slate-50 p-3 rounded-xl border border-slate-100 text-center sm:text-left">
+                            <div className="space-y-0.5 border-r border-gray-200 last:border-none px-2">
+                              <p className="text-[11px] text-gray-400 uppercase tracking-wider font-semibold">Category</p>
+                              <p className="text-xs font-bold text-slate-800 truncate" title={program.Category}>
+                                {program.Category}
+                              </p>
+                            </div>
+                            <div className="space-y-0.5 border-r border-gray-200 last:border-none px-2">
+                              <p className="text-[11px] text-gray-400 uppercase tracking-wider font-semibold flex items-center justify-center sm:justify-start gap-1">
+                                <Dumbbell className="w-3 h-3 text-slate-400" /> Difficulty
+                              </p>
+                              <p className="text-xs font-bold text-violet-600">
+                                {program.Difficulty_level}
+                              </p>
+                            </div>
+                            <div className="space-y-0.5 px-2">
+                              <p className="text-[11px] text-gray-400 uppercase tracking-wider font-semibold flex items-center justify-center sm:justify-start gap-1">
+                                <Calendar className="w-3 h-3 text-slate-400" /> Session / Wk
+                              </p>
+                              <p className="text-xs font-bold text-slate-800">
+                                {program.Sessions_per_week} Sessions
+                              </p>
+                            </div>
+                          </div>
+
+                          <div className="space-y-1 px-2">
+                            <p className="text-[11px] text-gray-400 uppercase tracking-wider font-semibold flex items-center justify-center sm:justify-start gap-1">
+                              <Clock className="w-3 h-3 text-slate-400" /> Working Hours
+                            </p>
+                            <div className="flex flex-wrap justify-center sm:justify-start gap-1">
+                              {program.Working_hours ? (
+                                (typeof program.Working_hours === 'string'
+                                  ? program.Working_hours.split(',')
+                                  : Array.isArray(program.Working_hours) ? program.Working_hours : []
+                                ).map((timeSlot: string, idx: number) => timeSlot.trim() && (
+                                  <Badge
+                                    key={idx}
+                                    variant="secondary"
+                                    className="bg-purple-50 text-purple-700 border border-purple-100 px-1.5 py-0 text-[10px] font-medium rounded shadow-sm"
+                                  >
+                                    {timeSlot.trim()}
+                                  </Badge>
+                                ))
+                              ) : (
+                                <span className="text-[11px] text-gray-400 italic">No Slots</span>
+                              )}
+                            </div>
+                          </div>
+
+                          <div className="space-y-1.5">
+                            <p className="text-xs font-bold text-gray-400 uppercase tracking-wider flex items-center">
+                              <Users className="w-3.5 h-3.5 mr-1.5 text-slate-500" /> Faculty Details
+                            </p>
+                            <div className="flex flex-wrap gap-1.5">
+                              {program.Faculty && program.Faculty.length > 0 ? (
+                                program.Faculty.map((faculty: string, idx: number) => (
+                                  <Badge key={idx} variant="secondary" className="bg-slate-100 text-slate-700 border border-slate-200 px-2.5 py-0.5 text-xs rounded-md">
+                                    {faculty}
+                                  </Badge>
+                                ))
+                              ) : (
+                                <span className="text-xs text-gray-400 italic">No faculty assigned</span>
+                              )}
+                            </div>
+                          </div>
+
+                          <div className="space-y-2">
+                            <p className="text-xs font-bold text-slate-400 uppercase tracking-wider flex items-center border-b border-slate-100 pb-1.5">
+                              <CheckCircle className="w-3.5 h-3.5 mr-1.5 text-emerald-500" /> Exercises Details
+                            </p>
+
+                            <div className="grid grid-cols-12 gap-2 px-3 py-1 bg-slate-100 rounded text-[11px] font-bold text-gray-500 uppercase tracking-wider">
+                              <div className="col-span-6">Name</div>
+                              <div className="col-span-3 text-center">Count / Sets</div>
+                              <div className="col-span-3 text-center">Reps</div>
+                            </div>
+
+                            <div className="space-y-1 max-h-[140px] overflow-y-auto pr-1 custom-scrollbar">
+                              {program.Exercises && program.Exercises.map((exercise: any, idx: number) => (
+                                <div
+                                  key={idx}
+                                  className="grid grid-cols-12 gap-2 px-3 py-2 bg-white border border-gray-100 rounded-lg shadow-sm items-center hover:bg-slate-50 transition-colors"
+                                >
+                                  <div className="col-span-6 text-xs font-medium text-slate-700 truncate">
+                                    {exercise.Exercises_Name}
+                                  </div>
+                                  <div className="col-span-3 text-center text-xs text-slate-600 bg-slate-50 py-0.5 rounded border border-slate-100">
+                                    <b className="text-slate-900">{exercise.Exercises_Count}</b>
+                                  </div>
+                                  <div className="col-span-3 text-center text-xs text-slate-600 bg-slate-50 py-0.5 rounded border border-slate-100">
+                                    <b className="text-slate-900">{exercise.Exercises_Repetitions}</b>
+                                  </div>
+                                </div>
+                              ))}
+                            </div>
+                          </div>
+
+                          <div className="pt-3 border-t border-gray-100 space-y-1">
+                            <p className="text-xs font-bold text-gray-400 uppercase tracking-wider">Description</p>
+                            <p className="text-sm text-gray-600 leading-relaxed bg-slate-50/60 p-2.5 rounded-lg border border-slate-100/50">
+                              {program.Description || "No custom description available for this workout program."}
+                            </p>
+                          </div>
+
+                        </CardContent>
+                      </Card>
+                    );
+                  })}
+                </div>
               </CardContent>
             </Card>
-          </TabsContent> */}
+          </TabsContent>
 
           {/* Packages Tab */}
           <TabsContent value="packages">

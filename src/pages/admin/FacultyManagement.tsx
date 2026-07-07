@@ -53,16 +53,16 @@ const FacultyManagement = () => {
     return `data:${mimeType};base64,${window.btoa(binary)}`;
   };
 
-//Trainer Dialog States
-const [gender, setGender] = useState<any[]>([]);
+  //Trainer Dialog States
+  const [gender, setGender] = useState<any[]>([]);
 
-const [submittedTrainer, setSubmittedTrainer] = useState(false);
-const [Trainers, setTrainers] = useState([]);
-const [editingTrainer, setEditingTrainer] = useState<any>(null);
-const [isTrainerDialogOpen, setIsTrainerDialogOpen] = useState(false);
-const [showPassword, setShowPassword] = useState(false);
-const [status, setStatus] = useState<any[]>([]);
-const [TrainerForm, setTrainerForm] = useState({
+  const [submittedTrainer, setSubmittedTrainer] = useState(false);
+  const [Trainers, setTrainers] = useState([]);
+  const [editingTrainer, setEditingTrainer] = useState<any>(null);
+  const [isTrainerDialogOpen, setIsTrainerDialogOpen] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+  const [status, setStatus] = useState<any[]>([]);
+  const [TrainerForm, setTrainerForm] = useState({
     company_code: "YJK",
     Location_Code: "LOC001",
     TrainerID: "",
@@ -96,7 +96,7 @@ const [TrainerForm, setTrainerForm] = useState({
   };
 
   // Trainer
-    const handleTrainerFiles = async (files: (File | null)[]) => {
+  const handleTrainerFiles = async (files: (File | null)[]) => {
     const convertedImages = await Promise.all(
       files.map((file, index) => {
         return new Promise<string | null>((resolve) => {
@@ -121,208 +121,208 @@ const [TrainerForm, setTrainerForm] = useState({
 
     setTrainerImages(convertedImages);
   };
-  
-    //Trainers Search States
-    const [TrainersSearchForm, setTrainersSearchForm] = useState({
-      company_code: "YJK",
-      Location_Code: "001",
-        TrainerID: "",
-        FullName: "",
-        Email: "",
-        age_from: "",
-        age_to: "",
-        DOB: "",
-        Mobile: "",
-        experience_from: "",
-        experience_to: "",
-        Experience: "",
-        Gender: "",
-        Specializations: "",
-        WorkingSchedule: "",
-        Is_Active: "",
 
-    });
-  
+  //Trainers Search States
+  const [TrainersSearchForm, setTrainersSearchForm] = useState({
+    company_code: "YJK",
+    Location_Code: "001",
+    TrainerID: "",
+    FullName: "",
+    Email: "",
+    age_from: "",
+    age_to: "",
+    DOB: "",
+    Mobile: "",
+    experience_from: "",
+    experience_to: "",
+    Experience: "",
+    Gender: "",
+    Specializations: "",
+    WorkingSchedule: "",
+    Is_Active: "",
+
+  });
+
   // Gender DropDown
   const fetchGender = async () => {
-      try {
-        const response = await fetch(`${BASE_URL}/gender`, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            company_code: "YJK",
-          }),
-        });
-  
-        const data = await response.json();
-  
-        if (response.ok) {
-          setGender(data);
-        } else {
-          console.error("Failed to fetch gender");
-        }
-      } catch (error) {
-        console.error("Error fetching status:", error);
-      }
-    };
+    try {
+      const response = await fetch(`${BASE_URL}/gender`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          company_code: "YJK",
+        }),
+      });
 
-    // Status DropDown
-    const fetchStatus = async () => {
-      try {
-        const response = await fetch(`${BASE_URL}/status`, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            company_code: "YJK",
-          }),
-        });
-  
-        const data = await response.json();
-  
-        if (response.ok) {
-          setStatus(data);
-        } else {
-          console.error("Failed to fetch status");
-        }
-      } catch (error) {
-        console.error("Error fetching status:", error);
+      const data = await response.json();
+
+      if (response.ok) {
+        setGender(data);
+      } else {
+        console.error("Failed to fetch gender");
       }
-    };
+    } catch (error) {
+      console.error("Error fetching status:", error);
+    }
+  };
+
+  // Status DropDown
+  const fetchStatus = async () => {
+    try {
+      const response = await fetch(`${BASE_URL}/status`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          company_code: "YJK",
+        }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        setStatus(data);
+      } else {
+        console.error("Failed to fetch status");
+      }
+    } catch (error) {
+      console.error("Error fetching status:", error);
+    }
+  };
 
   useEffect(() => {
-      const loadData = async () => {
-        await Promise.all([
-          fetchGender(),
-          fetchStatus()
-        ]);
-      };
-  
-      loadData();
-    }, []);
+    const loadData = async () => {
+      await Promise.all([
+        fetchGender(),
+        fetchStatus()
+      ]);
+    };
 
-    useEffect(() => {
-  handleTrainerSearch();
-}, []);
+    loadData();
+  }, []);
+
+  useEffect(() => {
+    handleTrainerSearch();
+  }, []);
 
   //Trainer CRUD Functions
   const handleAddTrainer = () => {
-      setEditingTrainer(null);
-      setTrainerForm({
-        company_code: "YJK",
-        Location_Code: "LOC001",
-        TrainerID: "",
-        KeyField: "",
-        FullName: "",
-        Email: "",
-        Password: "",
-        DOB: "",
-        Gender: "",
-        Mobile: "",
-        Experience: "",
-        Certifications: "",
-        Specializations: "",
-        WorkingSchedule: "",
-        Biography: "",
-        Is_Active: "Close",
-        created_by: "admin",
-        modified_by: "admin",
+    setEditingTrainer(null);
+    setTrainerForm({
+      company_code: "YJK",
+      Location_Code: "LOC001",
+      TrainerID: "",
+      KeyField: "",
+      FullName: "",
+      Email: "",
+      Password: "",
+      DOB: "",
+      Gender: "",
+      Mobile: "",
+      Experience: "",
+      Certifications: "",
+      Specializations: "",
+      WorkingSchedule: "",
+      Biography: "",
+      Is_Active: "Close",
+      created_by: "admin",
+      modified_by: "admin",
+    });
+    setTrainerImages([null]);
+    setIsTrainerDialogOpen(true);
+  };
+
+  const validateTrainer = () => {
+    if (
+      !TrainerForm.company_code ||
+      !TrainerForm.FullName ||
+      !TrainerForm.Email ||
+      !TrainerForm.Password ||
+      !TrainerForm.DOB ||
+      !TrainerForm.Gender ||
+      !TrainerForm.Mobile ||
+      !TrainerForm.Experience ||
+      !TrainerForm.Specializations ||
+      !TrainerForm.WorkingSchedule
+    ) {
+      toast({
+        title: "Required Fields",
+        description: "Please fill all required fields.",
+        variant: "destructive",
       });
-      setTrainerImages([null]);
-      setIsTrainerDialogOpen(true);
-    };
-  
-    const validateTrainer = () => {
-      if (
-        !TrainerForm.company_code ||
-        !TrainerForm.FullName ||
-        !TrainerForm.Email ||
-        !TrainerForm.Password ||
-        !TrainerForm.DOB ||
-        !TrainerForm.Gender ||
-        !TrainerForm.Mobile ||
-        !TrainerForm.Experience ||
-        !TrainerForm.Specializations ||
-        !TrainerForm.WorkingSchedule
-      ) {
-        toast({
-          title: "Required Fields",
-          description: "Please fill all required fields.",
-          variant: "destructive",
-        });
-        return false;
-        
-      }
-  
-      // Email validation
-      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-  
-      if (!emailRegex.test(TrainerForm.Email)) {
-        toast({
-          title: "Invalid Email",
-          description: "Please enter a valid email address.",
-          variant: "destructive",
-        });
-        return false;
-      }
+      return false;
 
-      if (Number(TrainerForm.Experience) <= 0) {
-        toast({
-          title: "Invalid Experience",
-          description: "Experience must be greater than 0.",
-          variant: "destructive",
-        });
-        return false;
-      }
-      
-      return true;
-    };
+    }
 
-    const isValidPhoneNumber = (Mobile: string) => {
+    // Email validation
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+    if (!emailRegex.test(TrainerForm.Email)) {
+      toast({
+        title: "Invalid Email",
+        description: "Please enter a valid email address.",
+        variant: "destructive",
+      });
+      return false;
+    }
+
+    if (Number(TrainerForm.Experience) <= 0) {
+      toast({
+        title: "Invalid Experience",
+        description: "Experience must be greater than 0.",
+        variant: "destructive",
+      });
+      return false;
+    }
+
+    return true;
+  };
+
+  const isValidPhoneNumber = (Mobile: string) => {
     return /^\d{8,15}$/.test(Mobile);
   };
-  
-    const handleCreateTrainer = async () => {
-      setSubmittedTrainer(true);
-  
-      if (!validateTrainer()) return;
 
-      if (!isValidPhoneNumber(TrainerForm.Mobile)) {
-        toast({
-          title: "Invalid Mobile Number",
-          description: "Mobile number must contain only digits and be between 8 and 15 digits.",
-          variant: "destructive",
-        });
-        return false;
-      }
+  const handleCreateTrainer = async () => {
+    setSubmittedTrainer(true);
 
-      if (!TrainerForm.Password || TrainerForm.Password.length < 8) {
-        toast({
-          title: "Invalid Password",
-          description: "Password must contain at least 8 characters.",
-          variant: "destructive",
-        });
-        return false;
-      }
-  
-      try {
-        const formData = new FormData();
-  
-        Object.entries(TrainerForm).forEach(([key, value]) => {
-          formData.append(key, value as string);
-        });
-        // Object.entries(TrainerForm).forEach(([key, value]) => {
-        //   if (key === "super_admin") {
-        //     formData.append("super_admin", value ? "Yes" : "No");
-        //   } else {
-        //     formData.append(key, String(value ?? ""));
-        //   }
-        // });
+    if (!validateTrainer()) return;
 
-        TrainerImages.forEach((img, index) => {
+    if (!isValidPhoneNumber(TrainerForm.Mobile)) {
+      toast({
+        title: "Invalid Mobile Number",
+        description: "Mobile number must contain only digits and be between 8 and 15 digits.",
+        variant: "destructive",
+      });
+      return false;
+    }
+
+    if (!TrainerForm.Password || TrainerForm.Password.length < 8) {
+      toast({
+        title: "Invalid Password",
+        description: "Password must contain at least 8 characters.",
+        variant: "destructive",
+      });
+      return false;
+    }
+
+    try {
+      const formData = new FormData();
+
+      Object.entries(TrainerForm).forEach(([key, value]) => {
+        formData.append(key, value as string);
+      });
+      // Object.entries(TrainerForm).forEach(([key, value]) => {
+      //   if (key === "super_admin") {
+      //     formData.append("super_admin", value ? "Yes" : "No");
+      //   } else {
+      //     formData.append(key, String(value ?? ""));
+      //   }
+      // });
+
+      TrainerImages.forEach((img, index) => {
         if (!img) return;
 
         // Extract mime type from base64 string
@@ -352,376 +352,376 @@ const [TrainerForm, setTrainerForm] = useState({
           );
         }
       });
-  
-        const response = await fetch(`${BASE_URL}/GYM_TrainerInsert`, {
-          method: "POST",
-          body: formData,
+
+      const response = await fetch(`${BASE_URL}/GYM_TrainerInsert`, {
+        method: "POST",
+        body: formData,
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        toast({
+          title: "Success",
+          description: data.message || "Trainer created successfully.",
         });
-  
-        const data = await response.json();
-  
-        if (response.ok) {
-          toast({
-            title: "Success",
-            description: data.message || "Trainer created successfully.",
-          });
-  
-          setIsTrainerDialogOpen(false);
-          setSubmittedTrainer(false);
-  
-          handleTrainerSearch();
-        } else {
-          toast({
-            title: "Error",
-            description: data.message || "Failed to create Trainer.",
-            variant: "destructive",
-          });
-        }
-      } catch (err) {
-        console.error(err);
-  
+
+        setIsTrainerDialogOpen(false);
+        setSubmittedTrainer(false);
+
+        handleTrainerSearch();
+      } else {
         toast({
           title: "Error",
-          description: "Something went wrong. Please try again.",
+          description: data.message || "Failed to create Trainer.",
           variant: "destructive",
         });
       }
-    };
+    } catch (err) {
+      console.error(err);
 
-    const handleUpdateTrainer = () => {
-  showConfirmToast({
-    title: "Update Trainer",
-    description: "Do you want to update these changes?",
-    onConfirm: updateTrainer,
-  });
-};
-
-const updateTrainer = async () => {
-  setSubmittedTrainer(true);
-
-  if (!validateTrainer()) return;
-
-  if (!isValidPhoneNumber(TrainerForm.Mobile)) {
-    toast({
-      title: "Invalid Mobile Number",
-      description: "Mobile number must contain only digits and be between 8 and 15 digits.",
-      variant: "destructive",
-    });
-    return false;
-  }
-
-  if (!TrainerForm.Password || TrainerForm.Password.length < 8) {
-    toast({
-      title: "Invalid Password",
-      description: "Password must contain at least 8 characters.",
-      variant: "destructive",
-    });
-    return false;
-  }
-
-  try {
-    const formData = new FormData();
-
-    Object.entries(TrainerForm).forEach(([key, value]) => {
-      if (key === "super_admin") {
-        formData.append("super_admin", value ? "Yes" : "No");
-      } else {
-        formData.append(key, String(value ?? ""));
-      }
-    });
-
-    TrainerImages.forEach((img, index) => {
-      if (!img) return;
-
-      const mimeType = img.match(/data:(.*?);base64/)?.[1] || "image/png";
-
-      const base64 = img.split(",")[1];
-      const byteCharacters = atob(base64);
-
-      const byteNumbers = Array.from(byteCharacters, (char) =>
-        char.charCodeAt(0)
-      );
-
-      const byteArray = new Uint8Array(byteNumbers);
-
-      const blob = new Blob([byteArray], {
-        type: mimeType,
-      });
-
-      const extension = mimeType.split("/")[1] || "png";
-
-      if (index === 0) {
-        formData.append(
-          "Photo",
-          blob,
-          `Photo.${extension}`
-        );
-      }
-    });
-
-    const response = await fetch(`${BASE_URL}/GYM_TrainerUpdate`, {
-      method: "POST",
-      body: formData,
-    });
-
-    const data = await response.json();
-
-    if (response.ok) {
-      toast({
-        title: "Success",
-        description: data.message || "Trainer updated successfully.",
-      });
-
-      setEditingTrainer(null);
-      setIsTrainerDialogOpen(false);
-      setSubmittedTrainer(false);
-
-      handleTrainerSearch();
-    } else {
       toast({
         title: "Error",
-        description: data.message || "Failed to update Trainer.",
+        description: "Something went wrong. Please try again.",
         variant: "destructive",
       });
     }
-  } catch (err: any) {
-    console.error(err);
+  };
 
-    toast({
-      title: "Server Error",
-      description: err.message || "Something went wrong.",
-      variant: "destructive",
+  const handleUpdateTrainer = () => {
+    showConfirmToast({
+      title: "Update Trainer",
+      description: "Do you want to update these changes?",
+      onConfirm: updateTrainer,
     });
-  }
-};
+  };
 
-//     const handleDeleteTrainer = async (trainer: any) => {
+  const updateTrainer = async () => {
+    setSubmittedTrainer(true);
 
-//   const confirmDelete = window.confirm(
-//     `Are you sure you want to delete ${trainer.FullName}?`
-//   );
+    if (!validateTrainer()) return;
 
-//   if (!confirmDelete) return;
+    if (!isValidPhoneNumber(TrainerForm.Mobile)) {
+      toast({
+        title: "Invalid Mobile Number",
+        description: "Mobile number must contain only digits and be between 8 and 15 digits.",
+        variant: "destructive",
+      });
+      return false;
+    }
 
-//   try {
-//     const response = await fetch(`${BASE_URL}/GYM_TrainerDelete`, {
-//       method: "POST",
-//       headers: {
-//         "Content-Type": "application/json",
-//       },
-//       body: JSON.stringify({
-//         company_code: trainer.company_code,
-//         Location_Code: trainer.Location_Code,
-//         TrainerID: trainer.TrainerID,
-//         KeyField: trainer.KeyField,
-//         modified_by: "admin",
-//       }),
-//     });
+    if (!TrainerForm.Password || TrainerForm.Password.length < 8) {
+      toast({
+        title: "Invalid Password",
+        description: "Password must contain at least 8 characters.",
+        variant: "destructive",
+      });
+      return false;
+    }
 
-//     const data = await response.json();
+    try {
+      const formData = new FormData();
 
-//     if (response.ok) {
-//       toast({
-//         title: "Success",
-//         description: data.message || "Trainer deleted successfully.",
-//       });
-
-//       handleTrainerSearch();
-//     } else {
-//       toast({
-//         title: "Error",
-//         description: data.message || "Failed to delete trainer.",
-//         variant: "destructive",
-//       });
-//     }
-//   } catch (err: any) {
-//     console.error(err);
-
-//     toast({
-//       title: "Server Error",
-//       description: err.message,
-//       variant: "destructive",
-//     });
-//   }
-// };
-
-const handleDeleteTrainer = (trainer: any) => {
-  showConfirmToast({
-    title: "Delete Trainer",
-    description: `Are you sure you want to delete ${trainer.FullName}?`,
-    onConfirm: async () => {
-      try {
-        const response = await fetch(`${BASE_URL}/GYM_TrainerDelete`, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            company_code: trainer.company_code,
-            Location_Code: trainer.Location_Code,
-            TrainerID: trainer.TrainerID,
-            KeyField: trainer.KeyField,
-            modified_by: "admin",
-          }),
-        });
-
-        const data = await response.json();
-
-        if (response.ok) {
-          toast({
-            title: "Success",
-            description: data.message || "Trainer deleted successfully.",
-          });
-
-          handleTrainerSearch();
+      Object.entries(TrainerForm).forEach(([key, value]) => {
+        if (key === "super_admin") {
+          formData.append("super_admin", value ? "Yes" : "No");
         } else {
-          toast({
-            title: "Error",
-            description: data.message || "Failed to delete trainer.",
-            variant: "destructive",
-          });
+          formData.append(key, String(value ?? ""));
         }
-      } catch (err: any) {
-        console.error(err);
-
-        toast({
-          title: "Server Error",
-          description: err.message,
-          variant: "destructive",
-        });
-      }
-    },
-  });
-};
-  
-    const handleSaveTrainer = async () => {
-      if (editingTrainer) {
-        await handleUpdateTrainer();
-      } else {
-        await handleCreateTrainer();
-      }
-    };
-  
-    const handleTrainerSearch = async () => {
-      try {
-        const response = await fetch(`${BASE_URL}/getTrainerSC`, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            company_code: "YJK",
-            Location_Code: "LOC001",
-            TrainerID: TrainersSearchForm.TrainerID,
-            FullName: TrainersSearchForm.FullName,
-            Email: TrainersSearchForm.Email,
-            DOB: TrainersSearchForm.DOB,
-            Gender: TrainersSearchForm.Gender,
-            Mobile: TrainersSearchForm.Mobile,
-            Experience: TrainersSearchForm.Experience,
-            Specializations: TrainersSearchForm.Specializations,
-            WorkingSchedule: TrainersSearchForm.WorkingSchedule,
-            age_from: TrainersSearchForm.age_from,
-            age_to: TrainersSearchForm.age_to,
-            experience_from: TrainersSearchForm.experience_from,
-            experience_to: TrainersSearchForm.experience_to,
-            Is_Active: TrainersSearchForm.Is_Active,
-          }),
-        });
-  
-        const data = await response.json();
-        console.log(data);
-        if (response.ok) {
-          setTrainers(data);
-        } else if (response.status === 404) {
-          setTrainers([]);
-  
-          toast({
-            title: "Data Not Found",
-            description: data?.message || "No matching attributes found.",
-            variant: "destructive",
-          });
-        } else {
-          setTrainers([]);
-  
-          toast({
-            title: "Search Failed",
-            description: data?.message || "Something went wrong while searching.",
-            variant: "destructive",
-          });
-        }
-      } catch (error: any) {
-        console.error("Search Error:", error);
-  
-        setTrainers([]);
-  
-        toast({
-          title: "Server Error",
-          description:
-            error?.message ||
-            "Unable to connect to the server. Please try again later.",
-          variant: "destructive",
-        });
-      }
-    };
-  
-    const handleEditTrainer = (Trainer: any) => {
-      setEditingTrainer(Trainer);
-      // console.log(Trainer);
-  
-      setTrainerForm({
-        company_code: Trainer.company_code,
-        Location_Code: Trainer.Location_Code,
-        TrainerID: Trainer.TrainerID,
-        KeyField: Trainer.KeyField,
-        FullName: Trainer.FullName,
-        Email: Trainer.Email,
-        Password: Trainer.Password,
-        DOB: Trainer.DOB ? new Date(Trainer.DOB).toISOString().split("T")[0] : "",
-        Gender: Trainer.Gender,
-        Mobile: Trainer.Mobile,
-        Experience: Trainer.Experience,
-        Certifications: Trainer.Certifications,
-        Specializations: Trainer.Specializations,
-        WorkingSchedule: Trainer.WorkingSchedule,
-        Biography: Trainer.Biography,
-        Is_Active: Trainer.Is_Active,
-        created_by: Trainer.created_by,
-        modified_by: Trainer.modified_by,
       });
 
-      const userLogo =
+      TrainerImages.forEach((img, index) => {
+        if (!img) return;
+
+        const mimeType = img.match(/data:(.*?);base64/)?.[1] || "image/png";
+
+        const base64 = img.split(",")[1];
+        const byteCharacters = atob(base64);
+
+        const byteNumbers = Array.from(byteCharacters, (char) =>
+          char.charCodeAt(0)
+        );
+
+        const byteArray = new Uint8Array(byteNumbers);
+
+        const blob = new Blob([byteArray], {
+          type: mimeType,
+        });
+
+        const extension = mimeType.split("/")[1] || "png";
+
+        if (index === 0) {
+          formData.append(
+            "Photo",
+            blob,
+            `Photo.${extension}`
+          );
+        }
+      });
+
+      const response = await fetch(`${BASE_URL}/GYM_TrainerUpdate`, {
+        method: "POST",
+        body: formData,
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        toast({
+          title: "Success",
+          description: data.message || "Trainer updated successfully.",
+        });
+
+        setEditingTrainer(null);
+        setIsTrainerDialogOpen(false);
+        setSubmittedTrainer(false);
+
+        handleTrainerSearch();
+      } else {
+        toast({
+          title: "Error",
+          description: data.message || "Failed to update Trainer.",
+          variant: "destructive",
+        });
+      }
+    } catch (err: any) {
+      console.error(err);
+
+      toast({
+        title: "Server Error",
+        description: err.message || "Something went wrong.",
+        variant: "destructive",
+      });
+    }
+  };
+
+  //     const handleDeleteTrainer = async (trainer: any) => {
+
+  //   const confirmDelete = window.confirm(
+  //     `Are you sure you want to delete ${trainer.FullName}?`
+  //   );
+
+  //   if (!confirmDelete) return;
+
+  //   try {
+  //     const response = await fetch(`${BASE_URL}/GYM_TrainerDelete`, {
+  //       method: "POST",
+  //       headers: {
+  //         "Content-Type": "application/json",
+  //       },
+  //       body: JSON.stringify({
+  //         company_code: trainer.company_code,
+  //         Location_Code: trainer.Location_Code,
+  //         TrainerID: trainer.TrainerID,
+  //         KeyField: trainer.KeyField,
+  //         modified_by: "admin",
+  //       }),
+  //     });
+
+  //     const data = await response.json();
+
+  //     if (response.ok) {
+  //       toast({
+  //         title: "Success",
+  //         description: data.message || "Trainer deleted successfully.",
+  //       });
+
+  //       handleTrainerSearch();
+  //     } else {
+  //       toast({
+  //         title: "Error",
+  //         description: data.message || "Failed to delete trainer.",
+  //         variant: "destructive",
+  //       });
+  //     }
+  //   } catch (err: any) {
+  //     console.error(err);
+
+  //     toast({
+  //       title: "Server Error",
+  //       description: err.message,
+  //       variant: "destructive",
+  //     });
+  //   }
+  // };
+
+  const handleDeleteTrainer = (trainer: any) => {
+    showConfirmToast({
+      title: "Delete Trainer",
+      description: `Are you sure you want to delete ${trainer.FullName}?`,
+      onConfirm: async () => {
+        try {
+          const response = await fetch(`${BASE_URL}/GYM_TrainerDelete`, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              company_code: trainer.company_code,
+              Location_Code: trainer.Location_Code,
+              TrainerID: trainer.TrainerID,
+              KeyField: trainer.KeyField,
+              modified_by: "admin",
+            }),
+          });
+
+          const data = await response.json();
+
+          if (response.ok) {
+            toast({
+              title: "Success",
+              description: data.message || "Trainer deleted successfully.",
+            });
+
+            handleTrainerSearch();
+          } else {
+            toast({
+              title: "Error",
+              description: data.message || "Failed to delete trainer.",
+              variant: "destructive",
+            });
+          }
+        } catch (err: any) {
+          console.error(err);
+
+          toast({
+            title: "Server Error",
+            description: err.message,
+            variant: "destructive",
+          });
+        }
+      },
+    });
+  };
+
+  const handleSaveTrainer = async () => {
+    if (editingTrainer) {
+      await handleUpdateTrainer();
+    } else {
+      await handleCreateTrainer();
+    }
+  };
+
+  const handleTrainerSearch = async () => {
+    try {
+      const response = await fetch(`${BASE_URL}/getTrainerSC`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          company_code: "YJK",
+          Location_Code: "LOC001",
+          TrainerID: TrainersSearchForm.TrainerID,
+          FullName: TrainersSearchForm.FullName,
+          Email: TrainersSearchForm.Email,
+          DOB: TrainersSearchForm.DOB,
+          Gender: TrainersSearchForm.Gender,
+          Mobile: TrainersSearchForm.Mobile,
+          Experience: TrainersSearchForm.Experience,
+          Specializations: TrainersSearchForm.Specializations,
+          WorkingSchedule: TrainersSearchForm.WorkingSchedule,
+          age_from: TrainersSearchForm.age_from,
+          age_to: TrainersSearchForm.age_to,
+          experience_from: TrainersSearchForm.experience_from,
+          experience_to: TrainersSearchForm.experience_to,
+          Is_Active: TrainersSearchForm.Is_Active,
+        }),
+      });
+
+      const data = await response.json();
+      console.log(data);
+      if (response.ok) {
+        setTrainers(data);
+      } else if (response.status === 404) {
+        setTrainers([]);
+
+        toast({
+          title: "Data Not Found",
+          description: data?.message || "No matching attributes found.",
+          variant: "destructive",
+        });
+      } else {
+        setTrainers([]);
+
+        toast({
+          title: "Search Failed",
+          description: data?.message || "Something went wrong while searching.",
+          variant: "destructive",
+        });
+      }
+    } catch (error: any) {
+      console.error("Search Error:", error);
+
+      setTrainers([]);
+
+      toast({
+        title: "Server Error",
+        description:
+          error?.message ||
+          "Unable to connect to the server. Please try again later.",
+        variant: "destructive",
+      });
+    }
+  };
+
+  const handleEditTrainer = (Trainer: any) => {
+    setEditingTrainer(Trainer);
+    // console.log(Trainer);
+
+    setTrainerForm({
+      company_code: Trainer.company_code,
+      Location_Code: Trainer.Location_Code,
+      TrainerID: Trainer.TrainerID,
+      KeyField: Trainer.KeyField,
+      FullName: Trainer.FullName,
+      Email: Trainer.Email,
+      Password: Trainer.Password,
+      DOB: Trainer.DOB ? new Date(Trainer.DOB).toISOString().split("T")[0] : "",
+      Gender: Trainer.Gender,
+      Mobile: Trainer.Mobile,
+      Experience: Trainer.Experience,
+      Certifications: Trainer.Certifications,
+      Specializations: Trainer.Specializations,
+      WorkingSchedule: Trainer.WorkingSchedule,
+      Biography: Trainer.Biography,
+      Is_Active: Trainer.Is_Active,
+      created_by: Trainer.created_by,
+      modified_by: Trainer.modified_by,
+    });
+
+    const userLogo =
       Trainer.Photo?.data &&
         Array.isArray(Trainer.Photo.data)
         ? bufferToBase64(Trainer.Photo.data)
         : null;
 
     setTrainerImages([userLogo]);
-  
-      setIsTrainerDialogOpen(true);
-    };
 
-    const handleReset = () => {
-        setTrainersSearchForm({
-          company_code: "YJK",
-          Location_Code: "001",
-          TrainerID: "",
-          FullName: "",
-          Email: "",
-          age_from: "",
-          age_to: "",
-          DOB: "",
-          Mobile: "",
-          experience_from: "",
-          experience_to: "",
-          Experience: "",
-          Gender: "",
-          Specializations: "",
-          WorkingSchedule: "",
-          Is_Active: "",
-        });
-        setTrainers([]);
-      };
+    setIsTrainerDialogOpen(true);
+  };
+
+  const handleReset = () => {
+    setTrainersSearchForm({
+      company_code: "YJK",
+      Location_Code: "001",
+      TrainerID: "",
+      FullName: "",
+      Email: "",
+      age_from: "",
+      age_to: "",
+      DOB: "",
+      Mobile: "",
+      experience_from: "",
+      experience_to: "",
+      Experience: "",
+      Gender: "",
+      Specializations: "",
+      WorkingSchedule: "",
+      Is_Active: "",
+    });
+    setTrainers([]);
+  };
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -738,32 +738,32 @@ const handleDeleteTrainer = (trainer: any) => {
             <div className="flex items-center space-x-4">
               <Badge variant="secondary">Admin</Badge>
               <Dialog
-                  open={isTrainerDialogOpen}
-                  onOpenChange={setIsTrainerDialogOpen}
-                >
-                  <TooltipProvider>
-                    <Tooltip>
-                      <TooltipTrigger asChild>
-                  <Button onClick={handleAddTrainer}>
-                    <Plus className="h-4 w-4 mr-2" />
-                    Add Trainer
-                  </Button>
-                  </TooltipTrigger>
-
-                      <TooltipContent>
+                open={isTrainerDialogOpen}
+                onOpenChange={setIsTrainerDialogOpen}
+              >
+                <TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Button onClick={handleAddTrainer}>
+                        <Plus className="h-4 w-4 mr-2" />
                         Add Trainer
-                      </TooltipContent>
-                    </Tooltip>
-                  </TooltipProvider>
+                      </Button>
+                    </TooltipTrigger>
+
+                    <TooltipContent>
+                      Add Trainer
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
                 <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
                   <DialogHeader>
                     <DialogTitle>
-                        {editingTrainer ? "Edit Trainer" : "Add New Trainer"}
+                      {editingTrainer ? "Edit Trainer" : "Add New Trainer"}
                     </DialogTitle>
                     <DialogDescription>
-                        {editingTrainer
-                            ? "Update trainer details."
-                            : "Enter the details for the new personal trainer."}
+                      {editingTrainer
+                        ? "Update trainer details."
+                        : "Enter the details for the new personal trainer."}
                     </DialogDescription>
                   </DialogHeader>
 
@@ -772,110 +772,110 @@ const handleDeleteTrainer = (trainer: any) => {
 
                       <div className="space-y-2">
                         <Label htmlFor="name" className={submittedTrainer && !TrainerForm.FullName ? "text-red-500" : ""}>Full Name*</Label>
-                                            <TooltipProvider>
-                                              <Tooltip>
-                                                <TooltipTrigger asChild>
-                                            <Input
-                                              id="Email"
-                                              maxLength={100}
-                                              value={TrainerForm.FullName}
-                                              onChange={(e) => setTrainerForm({ ...TrainerForm, FullName: e.target.value })}
-                                              placeholder="e.g., Full Name"
-                                            />
-                                            </TooltipTrigger>
-                        
-                                                <TooltipContent>
-                                                  <p>Enter Full Name</p>
-                                                </TooltipContent>
-                                              </Tooltip>
-                                            </TooltipProvider>
+                        <TooltipProvider>
+                          <Tooltip>
+                            <TooltipTrigger asChild>
+                              <Input
+                                id="Email"
+                                maxLength={100}
+                                value={TrainerForm.FullName}
+                                onChange={(e) => setTrainerForm({ ...TrainerForm, FullName: e.target.value })}
+                                placeholder="e.g., Full Name"
+                              />
+                            </TooltipTrigger>
+
+                            <TooltipContent>
+                              <p>Enter Full Name</p>
+                            </TooltipContent>
+                          </Tooltip>
+                        </TooltipProvider>
                       </div>
 
                       <div className="space-y-2">
                         {/* <Label htmlFor="email">Email*</Label>
                         <Input id="email" type="email" placeholder="trainer@ruw.edu.bh" /> */}
                         <Label htmlFor="name" className={submittedTrainer && !TrainerForm.Email ? "text-red-500" : ""}>Email*</Label>
-                                            <TooltipProvider>
-                                              <Tooltip>
-                                                <TooltipTrigger asChild>
-                                            <Input
-                                              id="Email"
-                                              maxLength={255}
-                                              value={TrainerForm.Email}
-                                              onChange={(e) => setTrainerForm({ ...TrainerForm, Email: e.target.value })}
-                                              placeholder="e.g., Email"
-                                            />
-                                            </TooltipTrigger>
-                        
-                                                <TooltipContent>
-                                                  <p>Enter Email</p>
-                                                </TooltipContent>
-                                              </Tooltip>
-                                            </TooltipProvider>
-                      </div>
-                      
-                      {/* Newly Added Field */}
-                            <div className="space-y-2">
-                          <Label htmlFor="name" className={submittedTrainer && !TrainerForm.Password ? "text-red-500" : ""}>Password*</Label>
-                          <TooltipProvider>
-                            <Tooltip>
-                              <TooltipTrigger asChild>
-                          <div className="relative">
-                            <Input
-                              id="Password"
-                              maxLength={50}
-                              type={showPassword ? "text" : "password"}
-                              value={TrainerForm.Password}
-                              onChange={(e) =>
-                                setTrainerForm({
-                                  ...TrainerForm,
-                                  Password: e.target.value,
-                                })
-                              }
-                              placeholder="e.g., Password"
-                              className="pr-10"
-                            />
+                        <TooltipProvider>
+                          <Tooltip>
+                            <TooltipTrigger asChild>
+                              <Input
+                                id="Email"
+                                maxLength={255}
+                                value={TrainerForm.Email}
+                                onChange={(e) => setTrainerForm({ ...TrainerForm, Email: e.target.value })}
+                                placeholder="e.g., Email"
+                              />
+                            </TooltipTrigger>
 
-                            <button
-                              type="button"
-                              onClick={() => setShowPassword(!showPassword)}
-                              className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700"
-                            >
-                              {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
-                            </button>
-                          </div>
-                          </TooltipTrigger>
-                            
-                              <TooltipContent>
-                                <p>Enter Password</p>
-                              </TooltipContent>
-                            </Tooltip>
-                          </TooltipProvider>
-                        </div>
+                            <TooltipContent>
+                              <p>Enter Email</p>
+                            </TooltipContent>
+                          </Tooltip>
+                        </TooltipProvider>
+                      </div>
+
+                      {/* Newly Added Field */}
+                      <div className="space-y-2">
+                        <Label htmlFor="name" className={submittedTrainer && !TrainerForm.Password ? "text-red-500" : ""}>Password*</Label>
+                        <TooltipProvider>
+                          <Tooltip>
+                            <TooltipTrigger asChild>
+                              <div className="relative">
+                                <Input
+                                  id="Password"
+                                  maxLength={50}
+                                  type={showPassword ? "text" : "password"}
+                                  value={TrainerForm.Password}
+                                  onChange={(e) =>
+                                    setTrainerForm({
+                                      ...TrainerForm,
+                                      Password: e.target.value,
+                                    })
+                                  }
+                                  placeholder="e.g., Password"
+                                  className="pr-10"
+                                />
+
+                                <button
+                                  type="button"
+                                  onClick={() => setShowPassword(!showPassword)}
+                                  className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700"
+                                >
+                                  {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                                </button>
+                              </div>
+                            </TooltipTrigger>
+
+                            <TooltipContent>
+                              <p>Enter Password</p>
+                            </TooltipContent>
+                          </Tooltip>
+                        </TooltipProvider>
+                      </div>
 
                       {/* Newly Added Field */}
                       <div className="space-y-2">
                         {/* <Label htmlFor="email">Date of Birth*</Label>
                         <Input id="email" type="date" placeholder="trainer@ruw.edu.bh" /> */}
                         <Label htmlFor="name" className={submittedTrainer && !TrainerForm.DOB ? "text-red-500" : ""}>DOB*</Label>
-                                            <TooltipProvider>
-                                              <Tooltip>
-                                                <TooltipTrigger asChild>
-                                            <Input
-                                              id="DOB"
-                                              type='date'
-                                              value={TrainerForm.DOB}
-                                              max={maxDOB.toISOString().split("T")[0]}
-                                              onChange={(e) => setTrainerForm({ ...TrainerForm, DOB: e.target.value })}
-                                              placeholder="e.g., DOB"
-                                            />
-                                            </TooltipTrigger>
-                        
-                                                <TooltipContent>
-                                                  <p>Select DOB</p>
-                                                </TooltipContent>
-                                              </Tooltip>
-                                            </TooltipProvider>
+                        <TooltipProvider>
+                          <Tooltip>
+                            <TooltipTrigger asChild>
+                              <Input
+                                id="DOB"
+                                type='date'
+                                value={TrainerForm.DOB}
+                                max={maxDOB.toISOString().split("T")[0]}
+                                onChange={(e) => setTrainerForm({ ...TrainerForm, DOB: e.target.value })}
+                                placeholder="e.g., DOB"
+                              />
+                            </TooltipTrigger>
+
+                            <TooltipContent>
+                              <p>Select DOB</p>
+                            </TooltipContent>
+                          </Tooltip>
+                        </TooltipProvider>
                       </div>
 
                       {/* Newly Added Field */}
@@ -894,14 +894,14 @@ const handleDeleteTrainer = (trainer: any) => {
                                 <SelectTrigger>
                                   <SelectValue placeholder="Select Gender" />
                                 </SelectTrigger>
-                                </TooltipTrigger>
-                        
+                              </TooltipTrigger>
+
                               <TooltipContent>
                                 <p>Select Gender</p>
                               </TooltipContent>
                             </Tooltip>
-                            </TooltipProvider>
-                        
+                          </TooltipProvider>
+
                           <SelectContent>
                             {gender.map((status: any) => (
                               <SelectItem
@@ -914,183 +914,183 @@ const handleDeleteTrainer = (trainer: any) => {
                           </SelectContent>
                         </Select>
                       </div>
-                    {/* </div> */}
+                      {/* </div> */}
 
-                    {/* <div className="grid grid-cols-2 gap-4"> */}
+                      {/* <div className="grid grid-cols-2 gap-4"> */}
                       <div className="space-y-2">
                         <Label htmlFor="name" className={submittedTrainer && !TrainerForm.Mobile ? "text-red-500" : ""}>Phone*</Label>
-                                            <TooltipProvider>
-                                              <Tooltip>
-                                                <TooltipTrigger asChild>
-                                            <Input
-                                              id="Email"
-                                              
-                                              value={TrainerForm.Mobile}
-                                              onChange={(e) => handlePhoneNumberChange(e, "Mobile")}
-                                              inputMode="numeric"
-                                              maxLength={15}
-                                              placeholder="e.g., +973 XXXX XXXX"
-                                            />
-                                            </TooltipTrigger>
-                        
-                                                <TooltipContent>
-                                                  <p>Enter Phone</p>
-                                                </TooltipContent>
-                                              </Tooltip>
-                                            </TooltipProvider>
+                        <TooltipProvider>
+                          <Tooltip>
+                            <TooltipTrigger asChild>
+                              <Input
+                                id="Email"
+
+                                value={TrainerForm.Mobile}
+                                onChange={(e) => handlePhoneNumberChange(e, "Mobile")}
+                                inputMode="numeric"
+                                maxLength={15}
+                                placeholder="e.g., +973 XXXX XXXX"
+                              />
+                            </TooltipTrigger>
+
+                            <TooltipContent>
+                              <p>Enter Phone</p>
+                            </TooltipContent>
+                          </Tooltip>
+                        </TooltipProvider>
                       </div>
                       <div className="space-y-2">
                         <Label htmlFor="name" className={submittedTrainer && !TrainerForm.Experience ? "text-red-500" : ""}>Years of Experience*</Label>
-                                            <TooltipProvider>
-                                              <Tooltip>
-                                                <TooltipTrigger asChild>
-                                            <Input
-                                              id="Experience"
-                                              type="text"
-                                              inputMode="numeric"
-                                              maxLength={2}
-                                              value={TrainerForm.Experience}
-                                              onChange={(e) => {
-                                                const value = e.target.value.replace(/\D/g, ""); // Allow digits only
-                                              
-                                                setTrainerForm({
-                                                  ...TrainerForm,
-                                                  Experience: value,
-                                                });
-                                              }}
-                                              placeholder="e.g., 5"
-                                            />
-                                            </TooltipTrigger>
-                        
-                                                <TooltipContent>
-                                                  <p>Enter Years of Experience</p>
-                                                </TooltipContent>
-                                              </Tooltip>
-                                            </TooltipProvider>
+                        <TooltipProvider>
+                          <Tooltip>
+                            <TooltipTrigger asChild>
+                              <Input
+                                id="Experience"
+                                type="text"
+                                inputMode="numeric"
+                                maxLength={2}
+                                value={TrainerForm.Experience}
+                                onChange={(e) => {
+                                  const value = e.target.value.replace(/\D/g, ""); // Allow digits only
+
+                                  setTrainerForm({
+                                    ...TrainerForm,
+                                    Experience: value,
+                                  });
+                                }}
+                                placeholder="e.g., 5"
+                              />
+                            </TooltipTrigger>
+
+                            <TooltipContent>
+                              <p>Enter Years of Experience</p>
+                            </TooltipContent>
+                          </Tooltip>
+                        </TooltipProvider>
                       </div>
 
                       <div className="space-y-2">
-                    <Label>Status</Label>
-                    <div className="flex items-center space-x-2 pt-2">
-                      <Switch
-                        checked={TrainerForm.Is_Active === "Active"}
-                        onCheckedChange={(checked) =>
-                          setTrainerForm({
-                            ...TrainerForm,
-                            Is_Active: checked ? "Active" : "Close",
-                          })
-                        }
-                      />
-                      <Label>
-                        {TrainerForm.Is_Active}
-                      </Label>
-                    </div>
-                  </div>
+                        <Label>Status</Label>
+                        <div className="flex items-center space-x-2 pt-2">
+                          <Switch
+                            checked={TrainerForm.Is_Active === "Active"}
+                            onCheckedChange={(checked) =>
+                              setTrainerForm({
+                                ...TrainerForm,
+                                Is_Active: checked ? "Active" : "Close",
+                              })
+                            }
+                          />
+                          <Label>
+                            {TrainerForm.Is_Active}
+                          </Label>
+                        </div>
+                      </div>
                     </div>
 
                     <div className="space-y-2">
                       <Label htmlFor="certifications">Certifications (comma-separated)</Label>
                       <TooltipProvider>
-                                              <Tooltip>
-                                                <TooltipTrigger asChild>
-                                            <Input
-                                              id="Email"
-                                              value={TrainerForm.Certifications}
-                                              maxLength={500}
-                                              onChange={(e) => setTrainerForm({ ...TrainerForm, Certifications: e.target.value })}
-                                              placeholder="e.g., NASM CPT, ACE Fitness..."
-                                            />
-                                            </TooltipTrigger>
-                        
-                                                <TooltipContent>
-                                                  <p>Enter Certifications</p>
-                                                </TooltipContent>
-                                              </Tooltip>
-                                            </TooltipProvider>
+                        <Tooltip>
+                          <TooltipTrigger asChild>
+                            <Input
+                              id="Email"
+                              value={TrainerForm.Certifications}
+                              maxLength={500}
+                              onChange={(e) => setTrainerForm({ ...TrainerForm, Certifications: e.target.value })}
+                              placeholder="e.g., NASM CPT, ACE Fitness..."
+                            />
+                          </TooltipTrigger>
+
+                          <TooltipContent>
+                            <p>Enter Certifications</p>
+                          </TooltipContent>
+                        </Tooltip>
+                      </TooltipProvider>
                     </div>
                     <div className="space-y-2">
                       <Label htmlFor="name" className={submittedTrainer && !TrainerForm.Specializations ? "text-red-500" : ""}>Specializations* (comma-separated)</Label>
-                                            <TooltipProvider>
-                                              <Tooltip>
-                                                <TooltipTrigger asChild>
-                                            <Input
-                                              id="Email"
-                                              value={TrainerForm.Specializations}
-                                              maxLength={500}
-                                              onChange={(e) => setTrainerForm({ ...TrainerForm, Specializations: e.target.value })}
-                                              placeholder="e.g., Weight Loss, Strength Training..."
-                                            />
-                                            </TooltipTrigger>
-                        
-                                                <TooltipContent>
-                                                  <p>Enter Specializations</p>
-                                                </TooltipContent>
-                                              </Tooltip>
-                                            </TooltipProvider>
+                      <TooltipProvider>
+                        <Tooltip>
+                          <TooltipTrigger asChild>
+                            <Input
+                              id="Email"
+                              value={TrainerForm.Specializations}
+                              maxLength={500}
+                              onChange={(e) => setTrainerForm({ ...TrainerForm, Specializations: e.target.value })}
+                              placeholder="e.g., Weight Loss, Strength Training..."
+                            />
+                          </TooltipTrigger>
+
+                          <TooltipContent>
+                            <p>Enter Specializations</p>
+                          </TooltipContent>
+                        </Tooltip>
+                      </TooltipProvider>
                     </div>
                     <div className="space-y-2">
                       <Label htmlFor="name" className={submittedTrainer && !TrainerForm.WorkingSchedule ? "text-red-500" : ""}>Working Schedule*</Label>
-                                            <TooltipProvider>
-                                              <Tooltip>
-                                                <TooltipTrigger asChild>
-                                            <Input
-                                              id="Email"
-                                              value={TrainerForm.WorkingSchedule}
-                                              maxLength={500}
-                                              onChange={(e) => setTrainerForm({ ...TrainerForm, WorkingSchedule: e.target.value })}
-                                              placeholder="e.g., Sun-Thu: 6AM-2PM"
-                                            />
-                                            </TooltipTrigger>
-                        
-                                                <TooltipContent>
-                                                  <p>Enter Working Schedule</p>
-                                                </TooltipContent>
-                                              </Tooltip>
-                                            </TooltipProvider>
+                      <TooltipProvider>
+                        <Tooltip>
+                          <TooltipTrigger asChild>
+                            <Input
+                              id="Email"
+                              value={TrainerForm.WorkingSchedule}
+                              maxLength={500}
+                              onChange={(e) => setTrainerForm({ ...TrainerForm, WorkingSchedule: e.target.value })}
+                              placeholder="e.g., Sun-Thu: 6AM-2PM"
+                            />
+                          </TooltipTrigger>
+
+                          <TooltipContent>
+                            <p>Enter Working Schedule</p>
+                          </TooltipContent>
+                        </Tooltip>
+                      </TooltipProvider>
                     </div>
                     <div className="space-y-2">
                       <Label htmlFor="bio">Biography</Label>
                       <TooltipProvider>
-                                              <Tooltip>
-                                                <TooltipTrigger asChild>
-                                            <Textarea
-                                              id="Email"
-                                              value={TrainerForm.Biography}
-                                              maxLength={1000}
-                                              onChange={(e) => setTrainerForm({ ...TrainerForm, Biography: e.target.value })}
-                                              placeholder="e.g., Brief description about the trainer..."
-                                            />
-                                            </TooltipTrigger>
-                        
-                                                <TooltipContent>
-                                                  <p>Enter Biography</p>
-                                                </TooltipContent>
-                                              </Tooltip>
-                                            </TooltipProvider>
+                        <Tooltip>
+                          <TooltipTrigger asChild>
+                            <Textarea
+                              id="Email"
+                              value={TrainerForm.Biography}
+                              maxLength={1000}
+                              onChange={(e) => setTrainerForm({ ...TrainerForm, Biography: e.target.value })}
+                              placeholder="e.g., Brief description about the trainer..."
+                            />
+                          </TooltipTrigger>
+
+                          <TooltipContent>
+                            <p>Enter Biography</p>
+                          </TooltipContent>
+                        </Tooltip>
+                      </TooltipProvider>
                     </div>
 
                     <ImageUpload
-                label="Trainer Image"
-                images={TrainerImages}
-                onImagesChange={setTrainerImages}
-                onFilesChange={handleTrainerFiles}
-                maxImages={1}
-              />
+                      label="Trainer Image"
+                      images={TrainerImages}
+                      onImagesChange={setTrainerImages}
+                      onFilesChange={handleTrainerFiles}
+                      maxImages={1}
+                    />
                   </div>
                   <div className="flex justify-end gap-2">
                     <TooltipProvider>
                       <Tooltip>
                         <TooltipTrigger asChild>
-                    <Button
-                        variant="outline"
-                        onClick={() => {
-                            setIsTrainerDialogOpen(false);
-                            setEditingTrainer(null);
-                        }}
-                    >
-                        Cancel
-                    </Button>
-                    </TooltipTrigger>
+                          <Button
+                            variant="outline"
+                            onClick={() => {
+                              setIsTrainerDialogOpen(false);
+                              setEditingTrainer(null);
+                            }}
+                          >
+                            Cancel
+                          </Button>
+                        </TooltipTrigger>
 
                         <TooltipContent>
                           Cancel without saving changes.
@@ -1156,13 +1156,13 @@ const handleDeleteTrainer = (trainer: any) => {
                 <div>
                   <p className="text-sm font-medium text-gray-600">Avg. Experience</p>
                   <p className="text-2xl font-bold text-gray-900">{Trainers.length > 0
-  ? Math.round(
-      Trainers.reduce(
-        (sum: number, t: any) => sum + Number(t.Experience || 0),
-        0
-      ) / Trainers.length
-    )
-  : 0} yrs</p>
+                    ? Math.round(
+                      Trainers.reduce(
+                        (sum: number, t: any) => sum + Number(t.Experience || 0),
+                        0
+                      ) / Trainers.length
+                    )
+                    : 0} yrs</p>
                 </div>
               </div>
             </CardContent>
@@ -1185,277 +1185,277 @@ const handleDeleteTrainer = (trainer: any) => {
         {/* For Search Input Fields */}
         <Card className="mb-6">
           <CardContent className="p-6">
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-    
-          <div className="space-y-2">
-            <Label>Trainer ID</Label>
-    
-            <TooltipProvider>
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <Input
-                    maxLength={100}
-                    placeholder="Enter Full Name"
-                    value={TrainersSearchForm.TrainerID}
-                    onChange={(e) =>
-                      setTrainersSearchForm({
-                        ...TrainersSearchForm,
-                        TrainerID: e.target.value,
-                      })
-                    }
-                  />
-                </TooltipTrigger>
-                  
-                <TooltipContent>
-                  <p>Enter Full Name</p>
-                </TooltipContent>
-              </Tooltip>
-            </TooltipProvider>
-          </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
 
-          <div className="space-y-2">
+              <div className="space-y-2">
+                <Label>Trainer ID</Label>
 
-            <Label>Full Name</Label>
-    
-            <TooltipProvider>
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <Input
-                    maxLength={100}
-                    placeholder="Enter Full Name"
-                    value={TrainersSearchForm.FullName}
-                    onChange={(e) =>
-                      setTrainersSearchForm({
-                        ...TrainersSearchForm,
-                        FullName: e.target.value,
-                      })
-                    }
-                  />
-                </TooltipTrigger>
-                  
-                <TooltipContent>
-                  <p>Enter Full Name</p>
-                </TooltipContent>
-              </Tooltip>
-            </TooltipProvider>
-          </div>
-    
-          <div className="space-y-2">
-            <Label>Email</Label>
-    
-            <TooltipProvider>
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <Input
-                    maxLength={255}
-                    placeholder="Enter Email"
-                    value={TrainersSearchForm.Email}
-                    onChange={(e) =>
-                      setTrainersSearchForm({
-                        ...TrainersSearchForm,
-                        Email: e.target.value,
-                      })
-                    }
-                  />
-                </TooltipTrigger>
-                  
-                <TooltipContent>
-                  <p>Enter Email</p>
-                </TooltipContent>
-              </Tooltip>
-            </TooltipProvider>
-          </div>
+                <TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Input
+                        maxLength={100}
+                        placeholder="Enter Full Name"
+                        value={TrainersSearchForm.TrainerID}
+                        onChange={(e) =>
+                          setTrainersSearchForm({
+                            ...TrainersSearchForm,
+                            TrainerID: e.target.value,
+                          })
+                        }
+                      />
+                    </TooltipTrigger>
 
-          <div className="space-y-2">
-            <Label>Phone</Label>
-            <TooltipProvider>
-              <Tooltip>
-                <TooltipTrigger asChild>
-            <Input
-              placeholder="Enter Phone"
-              value={TrainersSearchForm.Mobile}
-              inputMode="numeric"
-              maxLength={15}
-              onChange={(e) => setTrainersSearchForm({ ...TrainersSearchForm, Mobile: e.target.value.replace(/\D/g, ""), })} />
-              </TooltipTrigger>
-                  
-                <TooltipContent>
-                  <p>Enter Phone</p>
-                </TooltipContent>
-              </Tooltip>
-            </TooltipProvider>
-          </div>
-    
-          <div className="space-y-2">
-            <Label>Age From</Label>
-            <TooltipProvider>
-              <Tooltip>
-                <TooltipTrigger asChild>
-            <Input
-              type="text"
-              inputMode="numeric"
-              maxLength={3}
-              placeholder="Enter Age From"
-              value={TrainersSearchForm.age_from}
-              onChange={(e) =>
-                setTrainersSearchForm({
-                  ...TrainersSearchForm,
-                  age_from: e.target.value.replace(/\D/g, ""), // Numbers only
-                })
-              }
-            />
-              </TooltipTrigger>
-                  
-                <TooltipContent>
-                  <p>Enter Age From</p>
-                </TooltipContent>
-              </Tooltip>
-            </TooltipProvider>
-          </div>
+                    <TooltipContent>
+                      <p>Enter Full Name</p>
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
+              </div>
 
-          <div className="space-y-2">
-            <Label>Age To</Label>
-            <TooltipProvider>
-              <Tooltip>
-                <TooltipTrigger asChild>
-            <Input
-              type="text"
-              inputMode="numeric"
-              maxLength={3}
-              placeholder="Enter Age To"
-              value={TrainersSearchForm.age_to}
-              onChange={(e) => setTrainersSearchForm({ ...TrainersSearchForm, age_to: e.target.value.replace(/\D/g, ""), })} />
-              </TooltipTrigger>
-                  
-                <TooltipContent>
-                  <p>Enter Age To</p>
-                </TooltipContent>
-              </Tooltip>
-            </TooltipProvider>
-          </div>
-    
-          <div className="space-y-2">
-            <Label>Years of Experience From</Label>
-            <TooltipProvider>
-              <Tooltip>
-                <TooltipTrigger asChild>
-            <Input
-              placeholder="Enter Years of Experience From"
-              value={TrainersSearchForm.experience_from}
-              inputMode="numeric"
-              maxLength={2}
-              onChange={(e) => setTrainersSearchForm({ ...TrainersSearchForm, experience_from: e.target.value.replace(/\D/g, ""), })} />
-              </TooltipTrigger>
-                  
-                <TooltipContent>
-                  <p>Enter Years of Experience</p>
-                </TooltipContent>
-              </Tooltip>
-            </TooltipProvider>
-          </div>
+              <div className="space-y-2">
 
-          <div className="space-y-2">
-            <Label>Years of Experience To</Label>
-            <TooltipProvider>
-              <Tooltip>
-                <TooltipTrigger asChild>
-            <Input
-              placeholder="Enter Years of Experience To"
-              value={TrainersSearchForm.experience_to}
-              inputMode="numeric"
-              maxLength={2}
-              onChange={(e) => setTrainersSearchForm({ ...TrainersSearchForm, experience_to: e.target.value.replace(/\D/g, ""), })} />
-              </TooltipTrigger>
-                  
-                <TooltipContent>
-                  <p>Enter Years of Experience</p>
-                </TooltipContent>
-              </Tooltip>
-            </TooltipProvider>
-          </div>
-    
-        <div className="space-y-2">
-          <Label>Gender</Label>
+                <Label>Full Name</Label>
 
-          <Select
-            value={TrainersSearchForm.Gender}
-            onValueChange={(value) =>
-              setTrainersSearchForm({
-                ...TrainersSearchForm,
-                Gender: value,
-              })
-            }
-          >
-            <TooltipProvider>
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select Gender" />
-                  </SelectTrigger>
-                </TooltipTrigger>
-          
-                <TooltipContent>
-                  <p>Select Gender</p>
-                </TooltipContent>
-              </Tooltip>
-            </TooltipProvider>
-          
-            <SelectContent>
-              {gender.map((gender: any) => (
-                <SelectItem
-                  key={gender.attributedetails_code}
-                  value={gender.attributedetails_code}
+                <TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Input
+                        maxLength={100}
+                        placeholder="Enter Full Name"
+                        value={TrainersSearchForm.FullName}
+                        onChange={(e) =>
+                          setTrainersSearchForm({
+                            ...TrainersSearchForm,
+                            FullName: e.target.value,
+                          })
+                        }
+                      />
+                    </TooltipTrigger>
+
+                    <TooltipContent>
+                      <p>Enter Full Name</p>
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
+              </div>
+
+              <div className="space-y-2">
+                <Label>Email</Label>
+
+                <TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Input
+                        maxLength={255}
+                        placeholder="Enter Email"
+                        value={TrainersSearchForm.Email}
+                        onChange={(e) =>
+                          setTrainersSearchForm({
+                            ...TrainersSearchForm,
+                            Email: e.target.value,
+                          })
+                        }
+                      />
+                    </TooltipTrigger>
+
+                    <TooltipContent>
+                      <p>Enter Email</p>
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
+              </div>
+
+              <div className="space-y-2">
+                <Label>Phone</Label>
+                <TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Input
+                        placeholder="Enter Phone"
+                        value={TrainersSearchForm.Mobile}
+                        inputMode="numeric"
+                        maxLength={15}
+                        onChange={(e) => setTrainersSearchForm({ ...TrainersSearchForm, Mobile: e.target.value.replace(/\D/g, ""), })} />
+                    </TooltipTrigger>
+
+                    <TooltipContent>
+                      <p>Enter Phone</p>
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
+              </div>
+
+              <div className="space-y-2">
+                <Label>Age From</Label>
+                <TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Input
+                        type="text"
+                        inputMode="numeric"
+                        maxLength={3}
+                        placeholder="Enter Age From"
+                        value={TrainersSearchForm.age_from}
+                        onChange={(e) =>
+                          setTrainersSearchForm({
+                            ...TrainersSearchForm,
+                            age_from: e.target.value.replace(/\D/g, ""), // Numbers only
+                          })
+                        }
+                      />
+                    </TooltipTrigger>
+
+                    <TooltipContent>
+                      <p>Enter Age From</p>
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
+              </div>
+
+              <div className="space-y-2">
+                <Label>Age To</Label>
+                <TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Input
+                        type="text"
+                        inputMode="numeric"
+                        maxLength={3}
+                        placeholder="Enter Age To"
+                        value={TrainersSearchForm.age_to}
+                        onChange={(e) => setTrainersSearchForm({ ...TrainersSearchForm, age_to: e.target.value.replace(/\D/g, ""), })} />
+                    </TooltipTrigger>
+
+                    <TooltipContent>
+                      <p>Enter Age To</p>
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
+              </div>
+
+              <div className="space-y-2">
+                <Label>Years of Experience From</Label>
+                <TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Input
+                        placeholder="Enter Years of Experience From"
+                        value={TrainersSearchForm.experience_from}
+                        inputMode="numeric"
+                        maxLength={2}
+                        onChange={(e) => setTrainersSearchForm({ ...TrainersSearchForm, experience_from: e.target.value.replace(/\D/g, ""), })} />
+                    </TooltipTrigger>
+
+                    <TooltipContent>
+                      <p>Enter Years of Experience</p>
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
+              </div>
+
+              <div className="space-y-2">
+                <Label>Years of Experience To</Label>
+                <TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Input
+                        placeholder="Enter Years of Experience To"
+                        value={TrainersSearchForm.experience_to}
+                        inputMode="numeric"
+                        maxLength={2}
+                        onChange={(e) => setTrainersSearchForm({ ...TrainersSearchForm, experience_to: e.target.value.replace(/\D/g, ""), })} />
+                    </TooltipTrigger>
+
+                    <TooltipContent>
+                      <p>Enter Years of Experience</p>
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
+              </div>
+
+              <div className="space-y-2">
+                <Label>Gender</Label>
+
+                <Select
+                  value={TrainersSearchForm.Gender}
+                  onValueChange={(value) =>
+                    setTrainersSearchForm({
+                      ...TrainersSearchForm,
+                      Gender: value,
+                    })
+                  }
                 >
-                  {gender.attributedetails_name}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        </div>
+                  <TooltipProvider>
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select Gender" />
+                        </SelectTrigger>
+                      </TooltipTrigger>
 
-        <div className="space-y-2">
-                      <Label htmlFor="specializations">Specializations</Label>
-                                            <TooltipProvider>
-                                              <Tooltip>
-                                                <TooltipTrigger asChild>
-                                            <Input
-                                              id="Email"
-                                              value={TrainersSearchForm.Specializations}
-                                              maxLength={500}
-                                              onChange={(e) => setTrainersSearchForm({ ...TrainersSearchForm, Specializations: e.target.value })}
-                                              placeholder="e.g., Weight Loss, Strength Training..."
-                                            />
-                                            </TooltipTrigger>
-                        
-                                                <TooltipContent>
-                                                  <p>Enter Specializations</p>
-                                                </TooltipContent>
-                                              </Tooltip>
-                                            </TooltipProvider>
-                    </div>
+                      <TooltipContent>
+                        <p>Select Gender</p>
+                      </TooltipContent>
+                    </Tooltip>
+                  </TooltipProvider>
 
-                    <div className="space-y-2">
-                      <Label htmlFor="schedule">Working Schedule</Label>
-                                            <TooltipProvider>
-                                              <Tooltip>
-                                                <TooltipTrigger asChild>
-                                            <Input
-                                              id="Email"
-                                              value={TrainersSearchForm.WorkingSchedule}
-                                              maxLength={500}
-                                              onChange={(e) => setTrainersSearchForm({ ...TrainersSearchForm, WorkingSchedule: e.target.value })}
-                                              placeholder="e.g., Sun-Thu: 6AM-2PM"
-                                            />
-                                            </TooltipTrigger>
-                        
-                                                <TooltipContent>
-                                                  <p>Enter Working Schedule</p>
-                                                </TooltipContent>
-                                              </Tooltip>
-                                            </TooltipProvider>
-                    </div>
+                  <SelectContent>
+                    {gender.map((gender: any) => (
+                      <SelectItem
+                        key={gender.attributedetails_code}
+                        value={gender.attributedetails_code}
+                      >
+                        {gender.attributedetails_name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
 
-                    <div className="space-y-2">
+              <div className="space-y-2">
+                <Label htmlFor="specializations">Specializations</Label>
+                <TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Input
+                        id="Email"
+                        value={TrainersSearchForm.Specializations}
+                        maxLength={500}
+                        onChange={(e) => setTrainersSearchForm({ ...TrainersSearchForm, Specializations: e.target.value })}
+                        placeholder="e.g., Weight Loss, Strength Training..."
+                      />
+                    </TooltipTrigger>
+
+                    <TooltipContent>
+                      <p>Enter Specializations</p>
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="schedule">Working Schedule</Label>
+                <TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Input
+                        id="Email"
+                        value={TrainersSearchForm.WorkingSchedule}
+                        maxLength={500}
+                        onChange={(e) => setTrainersSearchForm({ ...TrainersSearchForm, WorkingSchedule: e.target.value })}
+                        placeholder="e.g., Sun-Thu: 6AM-2PM"
+                      />
+                    </TooltipTrigger>
+
+                    <TooltipContent>
+                      <p>Enter Working Schedule</p>
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
+              </div>
+
+              <div className="space-y-2">
                 <Label>Status</Label>
                 <TooltipProvider>
                   <Tooltip>
@@ -1490,45 +1490,45 @@ const handleDeleteTrainer = (trainer: any) => {
               </div>
 
               <div className="col-span-full flex justify-end gap-4 mt-6">
-              <TooltipProvider>
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <Button
-                      size="icon"
-                      className="rounded-full"
-                      onClick={handleTrainerSearch}
-                    >
-                      <Search className="h-5 w-5" />
-                    </Button>
-                  </TooltipTrigger>
+                <TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Button
+                        size="icon"
+                        className="rounded-full"
+                        onClick={handleTrainerSearch}
+                      >
+                        <Search className="h-5 w-5" />
+                      </Button>
+                    </TooltipTrigger>
 
-                  <TooltipContent>
-                    <p>Search</p>
-                  </TooltipContent>
-                </Tooltip>
-              </TooltipProvider>
+                    <TooltipContent>
+                      <p>Search</p>
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
 
-              <TooltipProvider>
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <Button
-                      size="icon"
-                      variant="secondary"
-                      className="rounded-full"
-                      onClick={handleReset}
-                    >
-                      <RotateCcw className="h-5 w-5" />
-                    </Button>
-                  </TooltipTrigger>
+                <TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Button
+                        size="icon"
+                        variant="secondary"
+                        className="rounded-full"
+                        onClick={handleReset}
+                      >
+                        <RotateCcw className="h-5 w-5" />
+                      </Button>
+                    </TooltipTrigger>
 
-                  <TooltipContent>
-                    <p>Reload</p>
-                  </TooltipContent>
-                </Tooltip>
-              </TooltipProvider>
+                    <TooltipContent>
+                      <p>Reload</p>
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
+              </div>
             </div>
-        </div>
-        </CardContent>
+          </CardContent>
         </Card>
 
         {/* Trainers Grid */}
@@ -1561,11 +1561,11 @@ const handleDeleteTrainer = (trainer: any) => {
                       </div>
                       <div className="flex gap-2">
                         <Button
-                            variant="ghost"
-                            size="icon"
-                            onClick={() => handleEditTrainer(trainer)}
+                          variant="ghost"
+                          size="icon"
+                          onClick={() => handleEditTrainer(trainer)}
                         >
-                            <Edit className="h-4 w-4" />
+                          <Edit className="h-4 w-4" />
                         </Button>
                         <Button
                           variant="ghost"
@@ -1578,7 +1578,7 @@ const handleDeleteTrainer = (trainer: any) => {
                       </div>
                     </div>
 
-                    
+
 
                     <div className="space-y-3">
                       <div className="flex items-center text-sm text-gray-600">
@@ -1599,24 +1599,24 @@ const handleDeleteTrainer = (trainer: any) => {
                       </div>
                     </div>
 
-                    
+
                     <div className="mt-4">
                       <p className="text-sm font-medium text-gray-700 mb-2">Specializations:</p>
                       <div className="flex flex-wrap gap-2">
                         {console.log("Trainer:", trainer)}
                         {typeof trainer.Specializations === "string"
                           ? trainer.Specializations.split(",").map((spec: string, index: number) => (
-                              <Badge key={index} variant="outline">
-                                {spec.trim()}
-                              </Badge>
-                            ))
+                            <Badge key={index} variant="outline">
+                              {spec.trim()}
+                            </Badge>
+                          ))
                           : Array.isArray(trainer.Specializations)
-                          ? trainer.Specializations.map((spec: string, index: number) => (
+                            ? trainer.Specializations.map((spec: string, index: number) => (
                               <Badge key={index} variant="outline">
                                 {spec}
                               </Badge>
                             ))
-                          : null}
+                            : null}
                       </div>
                     </div>
 
@@ -1625,17 +1625,17 @@ const handleDeleteTrainer = (trainer: any) => {
                       <div className="flex flex-wrap gap-2">
                         {typeof trainer.Certifications === "string"
                           ? trainer.Certifications.split(",").map((cert: string, index: number) => (
-                              <Badge key={index} variant="secondary" className="text-xs">
-                                {cert.trim()}
-                              </Badge>
-                            ))
+                            <Badge key={index} variant="secondary" className="text-xs">
+                              {cert.trim()}
+                            </Badge>
+                          ))
                           : Array.isArray(trainer.Certifications)
-                          ? trainer.Certifications.map((cert: string, index: number) => (
+                            ? trainer.Certifications.map((cert: string, index: number) => (
                               <Badge key={index} variant="secondary" className="text-xs">
                                 {cert}
                               </Badge>
                             ))
-                          : null}
+                            : null}
                       </div>
                     </div>
                     <p className="text-gray-600 text-sm mb-4 line-clamp-2">{trainer.Biography}</p>

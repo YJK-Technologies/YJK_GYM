@@ -3443,13 +3443,13 @@ const programInsertData = async (req, res) => {
       .input("Exercises", sql.NVarChar, Exercises)
       .input("Duration_per_session", sql.NVarChar, Duration_per_session)
       .input("Sessions_per_week", sql.NVarChar, Sessions_per_week)
-      .input("Working_hours", sql.Int, Working_hours)
+      .input("Working_hours", sql.NVarChar, Working_hours)
       .input("is_active", sql.NVarChar, is_active)
       .input("Company_code", sql.NVarChar, Company_code)
       .input("Location_code", sql.NVarChar, Location_code)
       .input("created_by", sql.NVarChar, created_by)
-      .query(`EXEC sp_Program_Hdr @mode,'',@ProgramName,@Description,@Category,@Difficulty_level,@Goals,@Exercises,
-@Duration_per_session,@Sessions_per_week,@Working_hours,@is_active,@Company_code,@Location_code,'',@created_by,''`);
+      .query(`EXEC sp_Program_Hdr_Ramya @mode,'',@ProgramName,@Description,@Category,@Difficulty_level,@Goals,@Exercises,
+@Duration_per_session,@Sessions_per_week,@Working_hours,@is_active,'','',0,0,@Company_code,@Location_code,'',@created_by,''`);
 
     res.status(200).json({
       message: "program data saved successfully",
@@ -3483,14 +3483,14 @@ const programUpdateData = async (req, res) => {
       .input("Exercises", sql.NVarChar, Exercises)
       .input("Duration_per_session", sql.NVarChar, Duration_per_session)
       .input("Sessions_per_week", sql.NVarChar, Sessions_per_week)
-      .input("Working_hours", sql.Int, Working_hours)
+      .input("Working_hours", sql.NVarChar, Working_hours)
       .input("is_active", sql.NVarChar, is_active)
       .input("Company_code", sql.NVarChar, Company_code)
       .input("Location_code", sql.NVarChar, Location_code)
       .input("Keyfield", sql.NVarChar, Keyfield)
       .input("modified_by", sql.NVarChar, modified_by)
-      .query(`EXEC sp_Program_Hdr @mode,@ProgramID,@ProgramName,@Description,@Category,@Difficulty_level,@Goals,@Exercises,
-@Duration_per_session,@Sessions_per_week,@Working_hours,@is_active,@Company_code,@Location_code,@Keyfield,'',@modified_by`);
+      .query(`EXEC sp_Program_Hdr_Ramya @mode,@ProgramID,@ProgramName,@Description,@Category,@Difficulty_level,@Goals,@Exercises,
+@Duration_per_session,@Sessions_per_week,@Working_hours,@is_active,'','',0,0,@Company_code,@Location_code,@Keyfield,'',@modified_by`);
 
     res.status(200).json("program data updated successfully");
   } catch (err) {
@@ -3519,7 +3519,7 @@ const programDeleteData = async (req, res) => {
         .input("ProgramID", sql.NVarChar, ProgramID)
         .input("Company_code", sql.NVarChar, req.headers["company_code"])
         .input("Location_code", sql.NVarChar, req.headers["location_code"])
-        .query(`EXEC sp_Program_Hdr @mode,@ProgramID,'','','','','','','','',0,'',@Company_code,@Location_code,'','',''`);
+        .query(`EXEC sp_Program_Hdr_Ramya @mode,@ProgramID,'','','','','','','','','','','','',0,0,@Company_code,@Location_code,'','',''`);
     }
 
     res.status(200).json("program deleted successfully");
@@ -3722,6 +3722,49 @@ const getMemberCardData = async (req, res) => {
 }
 //Code Ended by Pavun on 04-07-2026
 
+//Code Added by Pavun on 07-07-2026
+const programSearchData = async (req, res) => {
+  const { ProgramID, ProgramName, Description, Category, Difficulty_level, Goals, Exercises, Duration_per_session, Sessions_per_week, Working_hours, is_active, Company_code,
+    Location_code, Assigned_Faculty, Exercises_Name, Exercises_Count, Exercises_Repetitions } = req.body;
+
+  try {
+    const pool = await connection.connectToDatabase();
+    const result = await pool
+      .request()
+      .input("mode", sql.NVarChar, "SC")
+      .input("ProgramID", sql.NVarChar, ProgramID)
+      .input("ProgramName", sql.NVarChar, ProgramName)
+      .input("Description", sql.NVarChar, Description)
+      .input("Category", sql.NVarChar, Category)
+      .input("Difficulty_level", sql.NVarChar, Difficulty_level)
+      .input("Goals", sql.NVarChar, Goals)
+      .input("Duration_per_session", sql.NVarChar, Duration_per_session)
+      .input("Sessions_per_week", sql.NVarChar, Sessions_per_week)
+      .input("Working_hours", sql.NVarChar, Working_hours)
+      .input("is_active", sql.NVarChar, is_active)
+      .input("Assigned_Faculty", sql.NVarChar, Assigned_Faculty)
+      .input("Exercises_Name", sql.NVarChar, Exercises_Name)
+      .input("Exercises_Count", sql.NVarChar, Exercises_Count)
+      .input("Exercises_Repetitions", sql.NVarChar, Exercises_Repetitions)
+      .input("Company_code", sql.NVarChar, Company_code)
+      .input("Location_code", sql.NVarChar, Location_code)
+      .query(`EXEC sp_Program_Hdr_Ramya @mode,@ProgramID,@ProgramName,@Description,@Category,@Difficulty_level,@Goals,'',
+@Duration_per_session,@Sessions_per_week,@Working_hours,@is_active,@Assigned_Faculty,@Exercises_Name,@Exercises_Count,@Exercises_Repetitions,@Company_code,@Location_code,'','',''`);
+
+    if (result.recordset.length > 0) {
+      res.status(200).json(result.recordset);
+    } else {
+      res.status(404).json("Data not found");
+    }
+  } catch (err) {
+    console.error("Error", err.message);
+    return res
+      .status(500)
+      .json({ message: err.message || "Internal Server Error" });
+  }
+};
+//Code Ended by Pavun on 07-07-2026
+
 module.exports = {
   getCompanyno,
   getsearchdata,
@@ -3837,7 +3880,8 @@ module.exports = {
   programExerciseInsertData,
   programExerciseUpdateData,
   programExerciseDeleteData,
-  getMemberCardData
+  getMemberCardData,
+  programSearchData
 
 
 };
