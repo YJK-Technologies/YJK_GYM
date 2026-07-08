@@ -1842,7 +1842,7 @@ const WorkoutProgramManagement = () => {
                         <TableCell>{pkg.facultyName}</TableCell>
                         <TableCell>
                           {pkg.isActive ? (
-                            <Badge className="bg-green-500"><CheckCircle className="h-3 w-3 mr-1" />Active</Badge>
+                            <Badge className="default"><CheckCircle className="h-3 w-3 mr-1" />Active</Badge>
                           ) : (
                             <Badge variant="secondary"><XCircle className="h-3 w-3 mr-1" />Inactive</Badge>
                           )}
