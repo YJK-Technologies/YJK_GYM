@@ -4419,7 +4419,6 @@ const WorkoutProgramManagement = () => {
     user: "User",
     attribute: "Attribute",
     NumberSeries: "NumberSeries",
-
   };
 
   const handleAdd = () => {
