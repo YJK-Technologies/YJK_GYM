@@ -23,6 +23,7 @@ import WorkoutPrograms from "./pages/member/WorkoutPrograms";
 import NotFound from "./pages/NotFound";
 import Quotation from "./pages/Quotation";
 import CompaniesList from "./pages/admin/CompaniesList";
+import SettingScreen from "./pages/admin/Settings";
 
 const queryClient = new QueryClient();
 
@@ -207,6 +208,15 @@ const App = () => (
               <PermissionRoute
                 screenType="AdminCompanies"
                 element={<CompaniesList />}
+              />
+            }
+          />
+          <Route
+            path="/admin/settings"
+            element={
+              <PermissionRoute
+                screenType="AdminCompanies"
+                element={<SettingScreen />}
               />
             }
           />
