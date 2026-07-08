@@ -142,6 +142,8 @@ router.post("/programExerciseUpdateData",dataController.programExerciseUpdateDat
 router.post("/programExerciseDeleteData",dataController.programExerciseDeleteData)
 router.post("/getMemberCardData",dataController.getMemberCardData)
 router.post("/programSearchData",dataController.programSearchData)
+router.post("/settingSaveData", dataController.settingSaveData)
+router.post("/getSettingScreenData", dataController.getSettingScreenData)
 
 
 
