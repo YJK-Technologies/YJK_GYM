@@ -3764,6 +3764,57 @@ const programSearchData = async (req, res) => {
   }
 };
 //Code Ended by Pavun on 07-07-2026
+//Code Added by Ramya on 08-07-2026
+const settingSaveData = async (req, res) => {
+  const {
+    NumberGeneration,
+    MemberExpiredSoon,
+    Company_code,
+    Location_code,
+    created_by
+  } = req.body;
+
+  try {
+    const pool = await connection.connectToDatabase();
+
+    const result = await pool
+      .request()
+      .input("mode", sql.NVarChar, "I")
+      .input("NumberGeneration", sql.NVarChar, NumberGeneration)
+      .input("MemberExpiredSoon", sql.Int, MemberExpiredSoon)
+      .input("Company_code", sql.NVarChar, Company_code)
+      .input("Location_code", sql.NVarChar, Location_code)
+      .input("keyfield_header", sql.NVarChar, "")
+      .input("created_by", sql.NVarChar, created_by)
+      .input("modified_by", sql.NVarChar, created_by)
+      .query(`
+        EXEC sp_Setting
+        @mode,
+        @NumberGeneration,
+        @MemberExpiredSoon,
+        @Company_code,
+        @Location_code,
+        @keyfield_header,
+        @created_by,
+        @modified_by
+      `);
+
+    res.status(200).json({
+      message: result.recordset[0].Message,
+      status: result.recordset[0].Status
+    });
+
+  } catch (err) {
+    console.error("Error", err.message);
+    return res.status(500).json({
+      message: err.message || "Internal Server Error"
+    });
+  }
+};
+
+
+
+//Code Ended by Ramya on 08-07-2026
 
 module.exports = {
   getCompanyno,
@@ -3881,7 +3932,8 @@ module.exports = {
   programExerciseUpdateData,
   programExerciseDeleteData,
   getMemberCardData,
-  programSearchData
+  programSearchData,
+  settingSaveData
 
 
 };
