@@ -3764,15 +3764,10 @@ const programSearchData = async (req, res) => {
   }
 };
 //Code Ended by Pavun on 07-07-2026
+
 //Code Added by Ramya on 08-07-2026
 const settingSaveData = async (req, res) => {
-  const {
-    NumberGeneration,
-    MemberExpiredSoon,
-    Company_code,
-    Location_code,
-    created_by
-  } = req.body;
+  const { NumberGeneration, MemberExpiredSoon, companyCode, locationCode, created_by } = req.body;
 
   try {
     const pool = await connection.connectToDatabase();
@@ -3782,8 +3777,8 @@ const settingSaveData = async (req, res) => {
       .input("mode", sql.NVarChar, "I")
       .input("NumberGeneration", sql.NVarChar, NumberGeneration)
       .input("MemberExpiredSoon", sql.Int, MemberExpiredSoon)
-      .input("Company_code", sql.NVarChar, Company_code)
-      .input("Location_code", sql.NVarChar, Location_code)
+      .input("Company_code", sql.NVarChar, companyCode)
+      .input("Location_code", sql.NVarChar, locationCode)
       .input("keyfield_header", sql.NVarChar, "")
       .input("created_by", sql.NVarChar, created_by)
       .input("modified_by", sql.NVarChar, created_by)
@@ -3801,10 +3796,31 @@ const settingSaveData = async (req, res) => {
     });
   }
 };
-
-
-
 //Code Ended by Ramya on 08-07-2026
+
+//Code Added by Dinesh Gokul on 08-07-2026
+const getSettingScreenData = async (req, res) => {
+  const { Company_code, Location_code } = req.body;
+  try {
+    const pool = await connection.connectToDatabase();
+    const result = await pool
+      .request()
+      .input("mode", sql.NVarChar, "SS")
+      .input("Company_code", sql.NVarChar, Company_code)
+      .input("Location_code", sql.NVarChar, Location_code)
+      .query(`EXEC sp_Setting @mode, '', '', @Company_code, @Location_code, '', '', ''`);
+
+    if (result.recordset.length > 0) {
+      res.status(200).json(result.recordset);
+    } else {
+      res.status(404).json("Data not found");
+    }
+  } catch (err) {
+    console.error("Error", err);
+    res.status(500).json({ message: err.message || "Internal Server Error" });
+  }
+}
+//Code Ended by Dinesh Gokul on 08-07-2026
 
 module.exports = {
   getCompanyno,
@@ -3923,7 +3939,8 @@ module.exports = {
   programExerciseDeleteData,
   getMemberCardData,
   programSearchData,
-  settingSaveData
+  settingSaveData,
+  getSettingScreenData
 
 
 };

@@ -18,10 +18,10 @@ const SettingScreen = () => {
     const [currentContext, setCurrentContext] = useState({
         userCode: "JK",
         userName: "JaiKrishnan",
-        companyCode: "AKPON007",
-        companyName: "YJK Technologies USA",
-        locationCode: "North Zoon",
-        locationName: "North Zoon",
+        companyCode: "YJK",
+        companyName: "YJK Technologies",
+        locationCode: "LOC001",
+        locationName: "Main Branch",
     });
 
     useEffect(() => {
@@ -54,11 +54,11 @@ const SettingScreen = () => {
                     "Content-Type": "application/json",
                 },
                 body: JSON.stringify({
-                    // user_code: currentContext.userCode,
-                    company_code: currentContext.companyCode,
-                    Location_code: currentContext.locationCode,
+                    companyCode: currentContext.companyCode,
+                    locationCode: currentContext.locationCode,
                     NumberGeneration: numberGeneration,
                     MemberExpiredSoon: expiringDays,
+                    created_by: sessionStorage.getItem("user_code")
                 }),
             });
 
