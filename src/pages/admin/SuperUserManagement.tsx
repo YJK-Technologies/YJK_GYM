@@ -1608,6 +1608,15 @@ const WorkoutProgramManagement = () => {
       headerName: "Status",
       field: "Status",
       minWidth: 150,
+      cellRenderer: (params: any) => {
+        const status = params.value?.toString().toLowerCase();
+
+        return (
+          <Badge variant={status === "active" ? "default" : "secondary"}>
+            {params.value}
+          </Badge>
+        );
+      },
     },
     {
       headerName: "Bill Format",
