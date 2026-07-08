@@ -1348,7 +1348,7 @@ const FacultyManagement = () => {
                     </TooltipTrigger>
 
                     <TooltipContent>
-                      <p>Enter Years of Experience</p>
+                      <p>Enter Years of Experience From</p>
                     </TooltipContent>
                   </Tooltip>
                 </TooltipProvider>
@@ -1368,7 +1368,7 @@ const FacultyManagement = () => {
                     </TooltipTrigger>
 
                     <TooltipContent>
-                      <p>Enter Years of Experience</p>
+                      <p>Enter Years of Experience To</p>
                     </TooltipContent>
                   </Tooltip>
                 </TooltipProvider>
