@@ -73,6 +73,13 @@ const emptyMember: Member = {
   modified_by: 'admin'
 };
 
+interface MemberStats {
+  TotalMembers: number;
+  ActiveMembers: number;
+  InactiveMembers: number;
+  ExpiringSoonMembers: number;
+}
+
 const MemberManagement = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
@@ -80,6 +87,13 @@ const MemberManagement = () => {
   const [membershipType, setMembershipType] = useState<any[]>([]);
   const [relationship, setRelationship] = useState<any[]>([]);
   const [status, setStatus] = useState<any[]>([]);
+  const [statsData, setStatsData] = useState<MemberStats>({
+    TotalMembers: 0,
+    ActiveMembers: 0,
+    InactiveMembers: 0,
+    ExpiringSoonMembers: 0,
+  });
+
   const maxDOB = new Date();
   maxDOB.setFullYear(maxDOB.getFullYear() - 18);
 
@@ -157,7 +171,7 @@ const MemberManagement = () => {
 
   const fetchMembersData = async () => {
     try {
-      const response = await fetch(`${BASE_URL}/getAllmemberData`, {
+      const response = await fetch(`${BASE_URL}/getMemberCardData`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -171,7 +185,7 @@ const MemberManagement = () => {
       const data = await response.json();
 
       if (response.ok) {
-        setMembers(data);
+        setStatsData(data);
 
         console.log(data)
       } else {
@@ -339,21 +353,29 @@ const MemberManagement = () => {
       headerName: "Receive Promotions",
       field: "Receive_promotions",
       minWidth: 170,
-      cellRenderer: (params: any) => (
-        <Badge variant={params.value ? "default" : "secondary"}>
-          {params.value ? "Yes" : "No"}
-        </Badge>
-      ),
+      cellRenderer: (params: any) => {
+        const isYes = params.value === "Yes";
+
+        return (
+          <Badge variant={isYes ? "default" : "secondary"}>
+            {isYes ? "Yes" : "No"}
+          </Badge>
+        );
+      },
     },
     {
       headerName: "Receive Notifications",
       field: "Receive_notifications",
       minWidth: 180,
-      cellRenderer: (params: any) => (
-        <Badge variant={params.value ? "default" : "secondary"}>
-          {params.value ? "Yes" : "No"}
-        </Badge>
-      ),
+      cellRenderer: (params: any) => {
+        const isYes = params.value === "Yes";
+
+        return (
+          <Badge variant={isYes ? "default" : "secondary"}>
+            {isYes ? "Yes" : "No"}
+          </Badge>
+        );
+      },
     },
     {
       headerName: "Joined Date",
@@ -447,44 +469,25 @@ const MemberManagement = () => {
   const stats = [
     {
       title: "Total Members",
-      value: members?.length ?? 0,
+      value: statsData[0]?.TotalMembers ?? 0,
       icon: Users,
       color: "bg-blue-500",
     },
     {
       title: "Active",
-      value: members?.filter(
-        (m: any) => String(m.is_active).toLowerCase() === "active"
-      ).length ?? 0,
+      value: statsData[0]?.ActiveMembers ?? 0,
       icon: UserCheck,
       color: "bg-green-500",
     },
     {
       title: "Inactive",
-      value: members?.filter(
-        (m: any) => String(m.is_active).toLowerCase() === "close"
-      ).length ?? 0,
+      value: statsData[0]?.InactiveMembers ?? 0,
       icon: UserX,
       color: "bg-red-500",
     },
     {
       title: "Expiring Soon",
-      value:
-        members?.filter((m: any) => {
-          if (!m.Plan_expiry_date) return false;
-
-          const today = new Date();
-          today.setHours(0, 0, 0, 0);
-
-          const expiry = new Date(m.Plan_expiry_date);
-          expiry.setHours(0, 0, 0, 0);
-
-          const diffDays = Math.ceil(
-            (expiry.getTime() - today.getTime()) / (1000 * 60 * 60 * 24)
-          );
-
-          return diffDays >= 0 && diffDays <= 30;
-        }).length ?? 0,
+      value: statsData[0]?.ExpiringSoonMembers ?? 0,
       icon: Clock,
       color: "bg-orange-500",
     },
@@ -493,7 +496,17 @@ const MemberManagement = () => {
   const handleAddMember = () => {
     setEditingMember(null);
     setFormData(emptyMember as Member);
+
+    // Clear previously loaded image
+    setMemberImages([null, null]);
     setIsDialogOpen(true);
+  };
+
+  // Added for date fetiching in update screen
+  const formatDateForInput = (date: any) => {
+    if (!date) return "";
+
+    return new Date(date).toISOString().split("T")[0];
   };
 
   const handleEditMember = (member: any) => {
@@ -501,6 +514,11 @@ const MemberManagement = () => {
     setFormData({
       ...member,
       modified_by: member.modified_by ?? "admin",
+
+      // Added for date fetiching in update screen
+      Joined_date: formatDateForInput(member.Joined_date),
+      Plan_expiry_date: formatDateForInput(member.Plan_expiry_date),
+
       Receive_promotions:
         member.Receive_promotions === "Yes" ||
         member.Receive_promotions === true,
@@ -566,6 +584,7 @@ const MemberManagement = () => {
         toast({
           title: "Success",
           description: data || "Member deleted successfully.",
+          variant: "success",
         });
 
         handleMemberSearch();
@@ -755,10 +774,14 @@ const MemberManagement = () => {
         toast({
           title: "Success",
           description: data.message || "Member created successfully.",
+          variant: "success",
         });
 
         setIsDialogOpen(false);
         setSubmittedMember(false);
+
+        // Clear previously loaded image
+        setMemberImages([null, null]);
 
         handleMemberSearch();
       } else {
@@ -906,11 +929,15 @@ const MemberManagement = () => {
         toast({
           title: "Success",
           description: data.message || "Member updated successfully.",
+          variant: "success",
         });
 
         setEditingMember(null);
         setIsDialogOpen(false);
         setSubmittedMember(false);
+
+        // Clear previously loaded image
+        setMemberImages([null, null]);
 
         handleMemberSearch();
       } else {
@@ -973,6 +1000,24 @@ const MemberManagement = () => {
   };
 
   const validateEmail = () => {
+    if (!formData.Email) return true;
+
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+    if (!emailRegex.test(formData.Email)) {
+      toast({
+        title: "Invalid Email",
+        description: "Please enter a valid email address.",
+        variant: "destructive",
+      });
+      return false;
+    }
+
+    return true;
+  };
+
+  // For search form validation - Email
+  const validateSearchEmail = () => {
     if (!memberSearchForm.Email) return true;
 
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -1084,7 +1129,7 @@ const MemberManagement = () => {
 
   const handleMemberSearch = async () => {
 
-    if (!validateEmail()) return;
+    if (!validateSearchEmail()) return;
 
     if (!validatePhoneNumbers()) return;
 
@@ -1131,7 +1176,7 @@ const MemberManagement = () => {
         setMembers([]);
         toast({
           title: "Data Not Found",
-          description: data?.message || "No matching roles found.",
+          description: data?.message || "No matching members found.",
           variant: "destructive",
         });
       } else {
@@ -1173,7 +1218,7 @@ const MemberManagement = () => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center py-4">
             <div className="flex items-center space-x-4">
-              <Button variant="ghost" onClick={() => navigate('/admin')}>
+              <Button variant="ghost" onClick={() => navigate('/AdminDashboard')}>
                 <ArrowLeft className="h-4 w-4 mr-2" />
                 Back
               </Button>
@@ -1442,41 +1487,6 @@ const MemberManagement = () => {
               </div>
 
               <div className="space-y-2">
-                <Label>Status</Label>
-
-                <TooltipProvider>
-                  <Tooltip>
-                    <TooltipTrigger asChild>
-                      <div>
-                        <Select
-                          value={memberSearchForm.is_active}
-                          onValueChange={(value) => setMemberSearchForm({ ...memberSearchForm, is_active: value, })}>
-                          <SelectTrigger>
-                            <SelectValue placeholder="Select Status" />
-                          </SelectTrigger>
-
-                          <SelectContent>
-                            {status.map((item: any) => (
-                              <SelectItem
-                                key={item.attributedetails_name}
-                                value={item.attributedetails_name}
-                              >
-                                {item.attributedetails_name}
-                              </SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
-                      </div>
-                    </TooltipTrigger>
-
-                    <TooltipContent>
-                      <p>Select Status</p>
-                    </TooltipContent>
-                  </Tooltip>
-                </TooltipProvider>
-              </div>
-
-              <div className="space-y-2">
                 <Label>Join Date From</Label>
                 <TooltipProvider>
                   <Tooltip>
@@ -1543,6 +1553,41 @@ const MemberManagement = () => {
 
                     <TooltipContent>
                       <p>Select Plan Expiry To</p>
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
+              </div>
+
+              <div className="space-y-2">
+                <Label>Status</Label>
+
+                <TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <div>
+                        <Select
+                          value={memberSearchForm.is_active}
+                          onValueChange={(value) => setMemberSearchForm({ ...memberSearchForm, is_active: value, })}>
+                          <SelectTrigger>
+                            <SelectValue placeholder="Select Status" />
+                          </SelectTrigger>
+
+                          <SelectContent>
+                            {status.map((item: any) => (
+                              <SelectItem
+                                key={item.attributedetails_name}
+                                value={item.attributedetails_name}
+                              >
+                                {item.attributedetails_name}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      </div>
+                    </TooltipTrigger>
+
+                    <TooltipContent>
+                      <p>Select Status</p>
                     </TooltipContent>
                   </Tooltip>
                 </TooltipProvider>
@@ -1994,7 +2039,7 @@ const MemberManagement = () => {
                             id="DOB"
                             type='date'
                             value={formData.Joined_date}
-                            max={new Date().toISOString().split("T")[0]} 
+                            max={new Date().toISOString().split("T")[0]}
                             onChange={(e) => setFormData({ ...formData, Joined_date: e.target.value })}
                             placeholder="Select joined date"
                           />

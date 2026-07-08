@@ -6,22 +6,234 @@ import { Label } from '@/components/ui/label';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useNavigate } from 'react-router-dom';
 import ruwLogo from '@/assets/ruw-logo-full.png';
+import CryptoJS from "crypto-js";
+
+import { BASE_URL } from './ApiConfig';
+
 
 const Login = () => {
   const [email, setEmail] = useState('');
+  const [userCode, setUserCode] = useState("");
   const [password, setPassword] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [loginError, setLoginError] = useState("");
+  const secretKey = "yjk26012024";
   const navigate = useNavigate();
 
-  const handleLogin = (role: 'admin' | 'member') => {
-    // TODO: Implement actual authentication with Supabase
-    console.log('Login attempt:', { email, password, role });
-    
-    // Temporary navigation for demo
-    if (role === 'admin') {
-      navigate('/admin');
-    } else {
-      navigate('/member');
+  //   const handleLogin = async (role: "admin" | "member") => {
+  //   setLoading(true);
+  //   setLoginError("");
+
+  //   if (!userCode.trim()) {
+  //   setLoginError("User Code is required.");
+  //   setLoading(false);
+  //   return;
+  // }
+
+  // if (!password.trim()) {
+  //   setLoginError("Password is required.");
+  //   setLoading(false);
+  //   return;
+  // }
+
+  //   try {
+  //     const encryptedUserCode = CryptoJS.AES.encrypt(userCode,secretKey).toString();
+  //     const encryptedPassword = CryptoJS.AES.encrypt(password,secretKey).toString();
+
+  //     const response = await fetch(`${BASE_URL}/login`, {
+  //       method: "POST",
+  //       headers: {
+  //         "Content-Type": "application/json",
+  //       },
+  //       body: JSON.stringify({
+  //         user_code: encryptedUserCode,
+  //         user_password: encryptedPassword,
+  //       }),
+  //     });
+
+  //     const data = await response.json();
+
+  //     // if (response.ok) {
+  //     // if (data.length > 0) {
+  //     //   const user = data[0];
+
+  //     //   sessionStorage.setItem("isLoggedIn", "true"); sessionStorage.setItem("user_code", user.user_code); sessionStorage.setItem("user_name", user.user_name); sessionStorage.setItem("role_id", user.role_id);
+
+  //     //   await UserPermission(user.role_id);
+  //     //   await fetchUserData(user.user_code);
+
+  //     //   if (role === "admin") {
+  //     //     navigate("/AdminDashboard");
+  //     //   } else {
+  //     //     navigate("/Member");
+  //     //   }
+  //     // }
+  //     // } else {
+  //     //   setLoginError(data.message || "Invalid User Code or Password");
+  //     // }
+  //     if (response.ok) {
+  //   if (Array.isArray(data) && data.length > 0) {
+  //     const user = data[0];
+
+  //     sessionStorage.setItem("isLoggedIn", "true");
+  //     sessionStorage.setItem("user_code", user.user_code);
+  //     sessionStorage.setItem("user_name", user.user_name);
+  //     sessionStorage.setItem("role_id", user.role_id);
+
+  //     await UserPermission(user.role_id);
+  //     await fetchUserData(user.user_code);
+
+  //     if (role === "admin") {
+  //       navigate("/AdminDashboard");
+  //     } else {
+  //       navigate("/Member");
+  //     }
+  //   } else {
+  //     // Backend returned success but no user found
+  //     setLoginError(data.message || "Invalid User Code or Password.");
+  //   }
+  //   } else {
+  //     // Backend returned an error response
+  //     setLoginError(data.message || "Invalid User Code or Password.");
+  //   }
+  //   } catch (err: any) {
+  //     console.error(err);
+  //     setLoginError(err.message || "Something went wrong.");
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // };
+
+  const handleLogin = async (role: "admin" | "member") => {
+    setLoading(true);
+    setLoginError("");
+
+    if (!email.trim()) {
+      setLoginError("Email ID is required.");
+      setLoading(false);
+      return;
     }
+
+    if (!password.trim()) {
+      setLoginError("Password is required.");
+      setLoading(false);
+      return;
+    }
+
+    try {
+      const encryptedEmail = CryptoJS.AES.encrypt(
+        email,
+        secretKey
+      ).toString();
+
+      const encryptedPassword = CryptoJS.AES.encrypt(
+        password,
+        secretKey
+      ).toString();
+
+      const response = await fetch(`${BASE_URL}/login`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          email_id: encryptedEmail,
+          user_password: encryptedPassword,
+        }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        if (Array.isArray(data) && data.length > 0) {
+          const user = data[0];
+
+          sessionStorage.setItem("isLoggedIn", "true");
+          sessionStorage.setItem("user_code", user.user_code);
+          sessionStorage.setItem("user_name", user.user_name);
+          sessionStorage.setItem("role_id", user.role_id);
+
+          await UserPermission(user.role_id);
+          await fetchUserData(user.user_code);
+
+          if (role === "admin") {
+            navigate("/AdminDashboard");
+          } else {
+            navigate("/Member");
+          }
+        } else {
+          setLoginError(data.message || "Invalid Email ID or Password.");
+        }
+      } else {
+        setLoginError(data.message || "Invalid Email ID or Password.");
+      }
+    } catch (err: any) {
+      console.error(err);
+      setLoginError(err.message || "Something went wrong.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const UserPermission = async (role_id: any) => {
+    try {
+      const response = await fetch(`${BASE_URL}/getUserPermission`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ role_id }),
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        console.log(data);
+        sessionStorage.setItem("permissions", JSON.stringify(data));
+
+        window.dispatchEvent(new Event("permissionsUpdated"));
+      }
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  const fetchUserData = async (userCode: string) => {
+    try {
+      const response = await fetch(`${BASE_URL}/getusercompany`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          user_code: userCode,
+        }),
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+
+        if (data.length > 0) {
+          handleSave(data[0]);
+
+          // Change the page if needed
+          navigate("/AccountInformation");
+        }
+      }
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  const handleSave = (data: any) => {
+    if (!data) return;
+
+    sessionStorage.setItem("selectedCompanyCode", data.company_no);
+    sessionStorage.setItem("selectedCompanyName", data.company_name);
+    sessionStorage.setItem("selectedLocationCode", data.location_no);
+    sessionStorage.setItem("selectedLocationName", data.location_name);
+    sessionStorage.setItem("selectedShortName", data.short_name);
+    sessionStorage.setItem("selectedUserName", data.user_name);
+    sessionStorage.setItem("selectedUserCode", data.user_code);
   };
 
   return (
@@ -39,66 +251,108 @@ const Login = () => {
               <TabsTrigger value="member">Member</TabsTrigger>
               <TabsTrigger value="admin">Admin</TabsTrigger>
             </TabsList>
-            
+
             <TabsContent value="member" className="space-y-4">
               <div className="space-y-4">
-                <div>
-                  <Label htmlFor="member-email">Email</Label>
+                {/* <div>
+                  <Label htmlFor="member-Code">User Code</Label>
+                  <Input
+                    id="member-Code"
+                    type="Text"
+                    placeholder="Enter your userCode"
+                    value={userCode}
+                    // onChange={(e) => setUserCode(e.target.value)}
+                    onChange={(e) => { setUserCode(e.target.value); setLoginError("");}}
+                  />
+                </div> */}
+                <div className="space-y-2">
+                  <Label htmlFor="member-email">Email ID</Label>
                   <Input
                     id="member-email"
                     type="email"
-                    placeholder="Enter your email"
+                    placeholder="Enter your Email ID"
                     value={email}
-                    onChange={(e) => setEmail(e.target.value)}
+                    onChange={(e) => {
+                      setEmail(e.target.value);
+                      setLoginError("");
+                    }}
                   />
                 </div>
-                <div>
+                <div className="space-y-2">
                   <Label htmlFor="member-password">Password</Label>
                   <Input
                     id="member-password"
                     type="password"
                     placeholder="Enter your password"
                     value={password}
-                    onChange={(e) => setPassword(e.target.value)}
+                    // onChange={(e) => setPassword(e.target.value)}
+                    onChange={(e) => { setPassword(e.target.value); setLoginError(""); }}
                   />
                 </div>
-                <Button 
-                  className="w-full" 
-                  onClick={() => handleLogin('member')}
+                {loginError && (
+                  <p className="text-red-500 text-sm">
+                    {loginError}
+                  </p>
+                )}
+                <Button
+                  className="w-full"
+                  disabled={loading}
+                  onClick={() => handleLogin("member")}
                 >
-                  Sign In as Member
+                  {loading ? "Signing In..." : "Sign In as Member"}
                 </Button>
               </div>
             </TabsContent>
-            
+
             <TabsContent value="admin" className="space-y-4">
               <div className="space-y-4">
-                <div>
-                  <Label htmlFor="admin-email">Admin Email</Label>
+                {/* <div>
+                  <Label htmlFor="admin-Code">Admin Code</Label>
+                  <Input
+                    id="admin-Code"
+                    type="Text"
+                    placeholder="Enter Admin Code"
+                    value={userCode}
+                    // onChange={(e) => setUserCode(e.target.value)}
+                    onChange={(e) => { setUserCode(e.target.value); setLoginError("");}}
+                  />
+                </div> */}
+                <div className="space-y-2">
+                  <Label htmlFor="admin-email">Email ID</Label>
                   <Input
                     id="admin-email"
                     type="email"
-                    placeholder="Enter admin email"
+                    placeholder="Enter Admin Email ID"
                     value={email}
-                    onChange={(e) => setEmail(e.target.value)}
+                    onChange={(e) => {
+                      setEmail(e.target.value);
+                      setLoginError("");
+                    }}
                   />
                 </div>
-                <div>
+                <div className="space-y-2">
                   <Label htmlFor="admin-password">Admin Password</Label>
                   <Input
                     id="admin-password"
                     type="password"
                     placeholder="Enter admin password"
                     value={password}
-                    onChange={(e) => setPassword(e.target.value)}
+                    // onChange={(e) => setPassword(e.target.value)}
+                    onChange={(e) => { setPassword(e.target.value); setLoginError(""); }}
                   />
                 </div>
-                <Button 
-                  className="w-full" 
+                {loginError && (
+                  <p className="text-red-500 text-sm">
+                    {loginError}
+                  </p>
+                )}
+                <Button
+                  className="w-full"
                   variant="destructive"
-                  onClick={() => handleLogin('admin')}
+                  disabled={loading}
+                  onClick={() => handleLogin("admin")}
                 >
-                  Sign In as Admin
+                  {loading ? "Signing In..." : "Sign In as Admin"}
                 </Button>
               </div>
             </TabsContent>
