@@ -3787,17 +3787,7 @@ const settingSaveData = async (req, res) => {
       .input("keyfield_header", sql.NVarChar, "")
       .input("created_by", sql.NVarChar, created_by)
       .input("modified_by", sql.NVarChar, created_by)
-      .query(`
-        EXEC sp_Setting
-        @mode,
-        @NumberGeneration,
-        @MemberExpiredSoon,
-        @Company_code,
-        @Location_code,
-        @keyfield_header,
-        @created_by,
-        @modified_by
-      `);
+      .query(`EXEC sp_Setting @mode, @NumberGeneration, @MemberExpiredSoon, @Company_code, @Location_code, @keyfield_header, @created_by, @modified_by`);
 
     res.status(200).json({
       message: result.recordset[0].Message,
