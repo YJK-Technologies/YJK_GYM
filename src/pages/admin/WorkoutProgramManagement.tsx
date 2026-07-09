@@ -16,8 +16,8 @@ import { useToast } from '@/hooks/use-toast';
 import { ArrowLeft, Plus, Minus, Search, Phone, Mail, TrendingUp, RotateCcw, Dumbbell, Package, Users, Clock, Edit, Trash2, Eye, Calendar, DollarSign, CheckCircle, XCircle } from 'lucide-react';
 import { BASE_URL } from '../ApiConfig';
 import ReactMultiSelect, { MultiSelectOption } from "@/components/ui/react-multi-select";
-import AgGridTable from "@/components/ui/ag-grid-table";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import { showConfirmToast } from '../../components/ui/show-confirm-toast';
 
 interface Exercise {
   name: string;
@@ -540,13 +540,130 @@ const WorkoutProgramManagement = () => {
   };
 
   const handleSaveProgram = async () => {
+    if (editingProgram) {
+      await handleUpdateProgram();
+    } else {
+      await handleCreateProgram();
+    }
+  };
+
+  const handleCreateProgram = async () => {
     if (!validateProgram()) return;
 
     try {
       const facultyIds = programForm.assignedFaculty.map((item) => item.value);
 
       const programPayload = {
-        Keyfield: editingProgram?.Keyfield ?? "",
+        ProgramID: programForm.id,
+        ProgramName: programForm.name,
+        Description: programForm.description,
+        Category: programForm.category,
+        Difficulty_level: programForm.difficultyLevel,
+        Goals: programForm.goals,
+        Duration_per_session: programForm.durationPerSession,
+        Sessions_per_week: programForm.sessionsPerWeek,
+        Working_hours: programForm.workingHours,
+        is_active: programForm.isActive ? "Active" : "Close",
+        Company_code: "YJK",
+        Location_code: "LOC001",
+        created_by: "admin",
+      };
+
+      // Insert Program Header
+      const response = await fetch(`${BASE_URL}/programInsertData`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(programPayload),
+      });
+
+      const result = await response.json();
+
+      if (!response.ok) {
+        throw new Error(result.message || "Program insert failed.");
+      }
+
+      const programId = result.ProgramID;
+
+      // Insert Faculties
+      for (const faculty of facultyIds) {
+        await fetch(`${BASE_URL}/programFacultyInsertData`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            Assigned_FacultyID: faculty,
+            ProgramID: programId,
+            is_active: programPayload.is_active,
+            Company_code: "YJK",
+            Location_code: "LOC001",
+            created_by: "admin",
+          }),
+        });
+      }
+
+      // Insert Exercises
+      for (let i = 0; i < programForm.exercises.length; i++) {
+        const exercise = programForm.exercises[i];
+
+        await fetch(`${BASE_URL}/programExerciseInsertData`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            ProgramID: programId,
+            ExercisesID: i + 1,
+            Exercises_Name: exercise.name,
+            Exercises_Count: exercise.sets,
+            Exercises_Repetitions: exercise.reps,
+            is_active: programPayload.is_active,
+            Company_code: "YJK",
+            Location_code: "LOC001",
+            created_by: "admin",
+          }),
+        });
+      }
+
+      toast({
+        title: "Program Added",
+        description: "Workout Program Added Successfully",
+        variant: "success",
+      });
+
+      handleProgramSearch();
+      fetchWorkoutData();
+      setSubmittedPrograms(false);
+      setIsProgramDialogOpen(false);
+    } catch (err: any) {
+      toast({
+        title: "Error",
+        description: err.message,
+        variant: "destructive",
+      });
+    }
+  };
+
+  const handleUpdateProgram = () => {
+    showConfirmToast({
+      title: "Update Program",
+      description: `Are you sure you want to update "${programForm.name}"?`,
+      onConfirm: updateProgram,
+    });
+  };
+
+  const updateProgram = async () => {
+    if (!editingProgram) return;
+
+    if (!validateProgram()) return;
+
+    try {
+      const facultyIds = programForm.assignedFaculty.map((item) => item.value);
+
+      const programPayload = {
+        Keyfield: editingProgram.Keyfield,
         ProgramID: programForm.id,
         ProgramName: programForm.name,
         Description: programForm.description,
@@ -563,218 +680,354 @@ const WorkoutProgramManagement = () => {
         modified_by: "admin",
       };
 
-      if (editingProgram) {
+      // Update Header
+      const response = await fetch(`${BASE_URL}/programUpdateData`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(programPayload),
+      });
 
-        // =====================
-        // UPDATE PROGRAM HEADER
-        // =====================
-        const updateResponse = await fetch(`${BASE_URL}/programUpdateData`, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(programPayload),
-        });
+      const result = await response.json();
 
-        const updateResult = await updateResponse.json();
-
-        if (!updateResponse.ok) {
-          toast({
-            title: "Error",
-            description: updateResult.message || "Program update failed.",
-            variant: "destructive",
-          });
-          return;
-        }
-
-        // =====================
-        // DELETE OLD FACULTY
-        // =====================
-        await fetch(`${BASE_URL}/programFacultyDeleteData`, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            "company_code": "YJK",
-            "location_code": "LOC001",
-          },
-          body: JSON.stringify({
-            ProgramFacultys: [editingProgram.Keyfield],
-          }),
-        });
-
-        // =====================
-        // INSERT NEW FACULTY
-        // =====================
-        for (const faculty of facultyIds) {
-          await fetch(`${BASE_URL}/programFacultyInsertData`, {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-              Assigned_FacultyID: faculty,
-              ProgramID: programForm.id,
-              is_active: programPayload.is_active,
-              Company_code: "YJK",
-              Location_code: "LOC001",
-              created_by: "admin",
-            }),
-          });
-        }
-
-        // =====================
-        // DELETE OLD EXERCISES
-        // =====================
-        await fetch(`${BASE_URL}/programExerciseDeleteData`, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            "company_code": "YJK",
-            "location_code": "LOC001",
-          },
-          body: JSON.stringify({
-            ProgramExercises: [editingProgram.Keyfield],
-          }),
-        });
-
-        // =====================
-        // INSERT NEW EXERCISES
-        // =====================
-        for (let i = 0; i < programForm.exercises.length; i++) {
-          const exercise = programForm.exercises[i];
-
-          await fetch(`${BASE_URL}/programExerciseInsertData`, {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-              ProgramID: programForm.id,
-              ExercisesID: i + 1,
-              Exercises_Name: exercise.name,
-              Exercises_Count: exercise.sets,
-              Exercises_Repetitions: exercise.reps,
-              is_active: programPayload.is_active,
-              Company_code: "YJK",
-              Location_code: "LOC001",
-              created_by: "admin",
-            }),
-          });
-        }
-
-        toast({
-          title: "Program Updated",
-          description: "Workout Program Updated Successfully",
-          variant: "success",
-        });
-
-        handleProgramSearch();
-        setSubmittedPrograms(false);
-
-      } else {
-
-        // =====================
-        // INSERT PROGRAM HEADER
-        // =====================
-        const response = await fetch(`${BASE_URL}/programInsertData`, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(programPayload),
-        });
-
-        const result = await response.json();
-
-        if (!response.ok) {
-          toast({
-            title: "Error",
-            description: result.message || "Program insert failed.",
-            variant: "destructive",
-          });
-          return;
-        }
-
-        const programId = result.ProgramID;
-
-        setProgramForm((prev) => ({
-          ...prev,
-          id: programId,
-        }));
-
-        // =====================
-        // INSERT FACULTIES
-        // =====================
-        for (const faculty of facultyIds) {
-          await fetch(`${BASE_URL}/programFacultyInsertData`, {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-              Assigned_FacultyID: faculty,
-              ProgramID: programId,
-              is_active: programPayload.is_active,
-              Company_code: "YJK",
-              Location_code: "LOC001",
-              created_by: "admin",
-            }),
-          });
-        }
-
-        // =====================
-        // INSERT EXERCISES
-        // =====================
-        for (let i = 0; i < programForm.exercises.length; i++) {
-          const exercise = programForm.exercises[i];
-
-          await fetch(`${BASE_URL}/programExerciseInsertData`, {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-              ProgramID: programId,
-              ExercisesID: i + 1,
-              Exercises_Name: exercise.name,
-              Exercises_Count: exercise.sets,
-              Exercises_Repetitions: exercise.reps,
-              is_active: programPayload.is_active,
-              Company_code: "YJK",
-              Location_code: "LOC001",
-              created_by: "admin",
-            }),
-          });
-        }
-
-        toast({
-          title: "Program Added",
-          description: "Workout Program Added Successfully",
-          variant: "success",
-        });
-
-        setSubmittedPrograms(false);
+      if (!response.ok) {
+        throw new Error(result.message || "Program update failed.");
       }
 
-      handleProgramSearch();
-      setIsProgramDialogOpen(false);
+      // Delete Faculty
+      await fetch(`${BASE_URL}/programFacultyDeleteData`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          company_code: "YJK",
+          location_code: "LOC001",
+          modified_by: "admin",
+          "programid": programForm.id,
+        },
+        body: JSON.stringify({
+          ProgramFacultys: [editingProgram.Keyfield],
+        }),
+      });
 
+      // Insert Faculty
+      for (const faculty of facultyIds) {
+        await fetch(`${BASE_URL}/programFacultyInsertData`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            Assigned_FacultyID: faculty,
+            ProgramID: programForm.id,
+            is_active: programPayload.is_active,
+            Company_code: "YJK",
+            Location_code: "LOC001",
+            created_by: "admin",
+          }),
+        });
+      }
+
+      // Delete Exercises
+      await fetch(`${BASE_URL}/programExerciseDeleteData`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          company_code: "YJK",
+          location_code: "LOC001",
+          modified_by: "admin",
+          "programid": programForm.id,
+        },
+        body: JSON.stringify({
+          ProgramExercises: [editingProgram.Keyfield],
+        }),
+      });
+
+      // Insert Exercises
+      for (let i = 0; i < programForm.exercises.length; i++) {
+        const exercise = programForm.exercises[i];
+
+        await fetch(`${BASE_URL}/programExerciseInsertData`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            ProgramID: programForm.id,
+            ExercisesID: i + 1,
+            Exercises_Name: exercise.name,
+            Exercises_Count: exercise.sets,
+            Exercises_Repetitions: exercise.reps,
+            is_active: programPayload.is_active,
+            Company_code: "YJK",
+            Location_code: "LOC001",
+            created_by: "admin",
+          }),
+        });
+      }
+
+      toast({
+        title: "Program Updated",
+        description: "Workout Program Updated Successfully",
+        variant: "success",
+      });
+
+      handleProgramSearch();
+      fetchWorkoutData();
+      setSubmittedPrograms(false);
+      setIsProgramDialogOpen(false);
     } catch (err: any) {
-      console.error(err);
       toast({
         title: "Error",
-        description: err.message || "Something went wrong.",
+        description: err.message,
         variant: "destructive",
       });
     }
   };
 
-  const handleDeleteProgram = async (program: any) => {
-    const confirmDelete = window.confirm(
-      `Are you sure you want to delete "${program.ProgramName}"?`
-    );
+  // const handleSaveProgram = async () => {
+  //   if (!validateProgram()) return;
 
-    if (!confirmDelete) return;
+  //   try {
+  //     const facultyIds = programForm.assignedFaculty.map((item) => item.value);
+
+  //     const programPayload = {
+  //       Keyfield: editingProgram?.Keyfield ?? "",
+  //       ProgramID: programForm.id,
+  //       ProgramName: programForm.name,
+  //       Description: programForm.description,
+  //       Category: programForm.category,
+  //       Difficulty_level: programForm.difficultyLevel,
+  //       Goals: programForm.goals,
+  //       Duration_per_session: programForm.durationPerSession,
+  //       Sessions_per_week: programForm.sessionsPerWeek,
+  //       Working_hours: programForm.workingHours,
+  //       is_active: programForm.isActive ? "Active" : "Close",
+  //       Company_code: "YJK",
+  //       Location_code: "LOC001",
+  //       created_by: "admin",
+  //       modified_by: "admin",
+  //     };
+
+  //     if (editingProgram) {
+
+  //       // =====================
+  //       // UPDATE PROGRAM HEADER
+  //       // =====================
+  //       const updateResponse = await fetch(`${BASE_URL}/programUpdateData`, {
+  //         method: "POST",
+  //         headers: {
+  //           "Content-Type": "application/json",
+  //         },
+  //         body: JSON.stringify(programPayload),
+  //       });
+
+  //       const updateResult = await updateResponse.json();
+
+  //       if (!updateResponse.ok) {
+  //         toast({
+  //           title: "Error",
+  //           description: updateResult.message || "Program update failed.",
+  //           variant: "destructive",
+  //         });
+  //         return;
+  //       }
+
+  //       // =====================
+  //       // DELETE OLD FACULTY
+  //       // =====================
+  //       await fetch(`${BASE_URL}/programFacultyDeleteData`, {
+  //         method: "POST",
+  //         headers: {
+  //           "Content-Type": "application/json",
+  //           "company_code": "YJK",
+  //           "location_code": "LOC001",
+  //           "modified_by": "admin",
+  //         },
+  //         body: JSON.stringify({
+  //           ProgramFacultys: [editingProgram.Keyfield],
+  //         }),
+  //       });
+
+  //       // =====================
+  //       // INSERT NEW FACULTY
+  //       // =====================
+  //       for (const faculty of facultyIds) {
+  //         await fetch(`${BASE_URL}/programFacultyInsertData`, {
+  //           method: "POST",
+  //           headers: {
+  //             "Content-Type": "application/json",
+  //           },
+  //           body: JSON.stringify({
+  //             Assigned_FacultyID: faculty,
+  //             ProgramID: programForm.id,
+  //             is_active: programPayload.is_active,
+  //             Company_code: "YJK",
+  //             Location_code: "LOC001",
+  //             created_by: "admin",
+  //           }),
+  //         });
+  //       }
+
+  //       // =====================
+  //       // DELETE OLD EXERCISES
+  //       // =====================
+  //       await fetch(`${BASE_URL}/programExerciseDeleteData`, {
+  //         method: "POST",
+  //         headers: {
+  //           "Content-Type": "application/json",
+  //           "company_code": "YJK",
+  //           "location_code": "LOC001",
+  //           "modified_by": "admin",
+  //         },
+  //         body: JSON.stringify({
+  //           ProgramExercises: [editingProgram.Keyfield],
+  //         }),
+  //       });
+
+  //       // =====================
+  //       // INSERT NEW EXERCISES
+  //       // =====================
+  //       for (let i = 0; i < programForm.exercises.length; i++) {
+  //         const exercise = programForm.exercises[i];
+
+  //         await fetch(`${BASE_URL}/programExerciseInsertData`, {
+  //           method: "POST",
+  //           headers: {
+  //             "Content-Type": "application/json",
+  //           },
+  //           body: JSON.stringify({
+  //             ProgramID: programForm.id,
+  //             ExercisesID: i + 1,
+  //             Exercises_Name: exercise.name,
+  //             Exercises_Count: exercise.sets,
+  //             Exercises_Repetitions: exercise.reps,
+  //             is_active: programPayload.is_active,
+  //             Company_code: "YJK",
+  //             Location_code: "LOC001",
+  //             created_by: "admin",
+  //           }),
+  //         });
+  //       }
+
+  //       toast({
+  //         title: "Program Updated",
+  //         description: "Workout Program Updated Successfully",
+  //         variant: "success",
+  //       });
+
+  //       handleProgramSearch();
+  //       fetchWorkoutData();
+  //       setSubmittedPrograms(false);
+
+  //     } else {
+
+  //       // =====================
+  //       // INSERT PROGRAM HEADER
+  //       // =====================
+  //       const response = await fetch(`${BASE_URL}/programInsertData`, {
+  //         method: "POST",
+  //         headers: {
+  //           "Content-Type": "application/json",
+  //         },
+  //         body: JSON.stringify(programPayload),
+  //       });
+
+  //       const result = await response.json();
+
+  //       if (!response.ok) {
+  //         toast({
+  //           title: "Error",
+  //           description: result.message || "Program insert failed.",
+  //           variant: "destructive",
+  //         });
+  //         return;
+  //       }
+
+  //       const programId = result.ProgramID;
+
+  //       setProgramForm((prev) => ({
+  //         ...prev,
+  //         id: programId,
+  //       }));
+
+  //       // =====================
+  //       // INSERT FACULTIES
+  //       // =====================
+  //       for (const faculty of facultyIds) {
+  //         await fetch(`${BASE_URL}/programFacultyInsertData`, {
+  //           method: "POST",
+  //           headers: {
+  //             "Content-Type": "application/json",
+  //           },
+  //           body: JSON.stringify({
+  //             Assigned_FacultyID: faculty,
+  //             ProgramID: programId,
+  //             is_active: programPayload.is_active,
+  //             Company_code: "YJK",
+  //             Location_code: "LOC001",
+  //             created_by: "admin",
+  //           }),
+  //         });
+  //       }
+
+  //       // =====================
+  //       // INSERT EXERCISES
+  //       // =====================
+  //       for (let i = 0; i < programForm.exercises.length; i++) {
+  //         const exercise = programForm.exercises[i];
+
+  //         await fetch(`${BASE_URL}/programExerciseInsertData`, {
+  //           method: "POST",
+  //           headers: {
+  //             "Content-Type": "application/json",
+  //           },
+  //           body: JSON.stringify({
+  //             ProgramID: programId,
+  //             ExercisesID: i + 1,
+  //             Exercises_Name: exercise.name,
+  //             Exercises_Count: exercise.sets,
+  //             Exercises_Repetitions: exercise.reps,
+  //             is_active: programPayload.is_active,
+  //             Company_code: "YJK",
+  //             Location_code: "LOC001",
+  //             created_by: "admin",
+  //           }),
+  //         });
+  //       }
+
+  //       toast({
+  //         title: "Program Added",
+  //         description: "Workout Program Added Successfully",
+  //         variant: "success",
+  //       });
+
+  //       setSubmittedPrograms(false);
+  //     }
+
+  //     handleProgramSearch();
+  //     fetchWorkoutData();
+  //     setIsProgramDialogOpen(false);
+
+  //   } catch (err: any) {
+  //     console.error(err);
+  //     toast({
+  //       title: "Error",
+  //       description: err.message || "Something went wrong.",
+  //       variant: "destructive",
+  //     });
+  //   }
+  // };
+
+  const handleDeleteProgram = (program: any) => {
+    showConfirmToast({
+      title: "Delete Program",
+      description: `Are you sure you want to delete "${program.ProgramName}"?`,
+      onConfirm: () => deleteProgram(program),
+    });
+  };
+
+  const deleteProgram = async (program: any) => {
 
     try {
       // -----------------------------
@@ -786,6 +1039,8 @@ const WorkoutProgramManagement = () => {
           "Content-Type": "application/json",
           company_code: "YJK",
           location_code: "LOC001",
+          "modified_by": "admin",
+          "programid": program.ProgramID,
         },
         body: JSON.stringify({
           ProgramExercises: [program.Keyfield],
@@ -801,6 +1056,8 @@ const WorkoutProgramManagement = () => {
           "Content-Type": "application/json",
           company_code: "YJK",
           location_code: "LOC001",
+          "modified_by": "admin",
+          "programid": program.ProgramID,
         },
         body: JSON.stringify({
           ProgramFacultys: [program.Keyfield],
@@ -816,6 +1073,8 @@ const WorkoutProgramManagement = () => {
           "Content-Type": "application/json",
           company_code: "YJK",
           location_code: "LOC001",
+          "modified_by": "admin",
+          "programid": program.ProgramID,
         },
         body: JSON.stringify({
           ProgramIDs: [program.Keyfield],
@@ -832,6 +1091,9 @@ const WorkoutProgramManagement = () => {
       setPrograms((prev) =>
         prev.filter((item) => item.Keyfield !== program.Keyfield)
       );
+
+      handleProgramSearch();
+      fetchWorkoutData();
 
       toast({
         title: "Program Deleted",
