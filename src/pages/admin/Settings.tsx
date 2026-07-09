@@ -5,6 +5,7 @@ import { useNavigate } from 'react-router-dom';
 import { useToast } from '@/hooks/use-toast';
 import { BASE_URL } from '../ApiConfig';
 import { ArrowLeft, Settings, User, Building2, MapPin } from 'lucide-react';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 
 const SettingScreen = () => {
     const navigate = useNavigate();
@@ -25,25 +26,63 @@ const SettingScreen = () => {
     });
 
     useEffect(() => {
-        // Retrieve codes from sessionStorage exactly like the reference component
-        const savedCompanyCode = sessionStorage.getItem("selectedCompanyCode");
-        const savedCompanyName = sessionStorage.getItem("selectedCompanyName");
-        const savedLocationCode = sessionStorage.getItem("selectedLocationCode");
-        const savedLocationName = sessionStorage.getItem("selectedLocationName");
-        const savedUserCode = sessionStorage.getItem("selectedUserCode") || sessionStorage.getItem("user_code");
-        const savedUserName = sessionStorage.getItem("selectedUserName");
+    const savedCompanyCode = sessionStorage.getItem("selectedCompanyCode");
+    const savedCompanyName = sessionStorage.getItem("selectedCompanyName");
+    const savedLocationCode = sessionStorage.getItem("selectedLocationCode");
+    const savedLocationName = sessionStorage.getItem("selectedLocationName");
+    const savedUserCode =
+        sessionStorage.getItem("selectedUserCode") ||
+        sessionStorage.getItem("user_code");
+    const savedUserName = sessionStorage.getItem("selectedUserName");
 
-        if (savedCompanyCode) {
-            setCurrentContext({
-                userCode: savedUserCode || "JK",
-                userName: savedUserName || "JaiKrishnan",
-                companyCode: savedCompanyCode,
-                companyName: savedCompanyName || "",
-                locationCode: savedLocationCode || "",
-                locationName: savedLocationName || "",
-            });
+    if (savedCompanyCode) {
+
+        const context = {
+            userCode: savedUserCode || "JK",
+            userName: savedUserName || "JaiKrishnan",
+            companyCode: savedCompanyCode,
+            companyName: savedCompanyName || "",
+            locationCode: savedLocationCode || "",
+            locationName: savedLocationName || "",
+        };
+
+        setCurrentContext(context);
+
+        console.log("Selected Company:", savedCompanyCode);
+console.log("Selected Location:", savedLocationCode);
+console.log("Context:", context);
+
+        getSettingData(context);
+    }
+}, []);
+
+    const getSettingData = async (context: any) => {
+    try {
+        const response = await fetch(`${BASE_URL}/getSettingScreenData`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+                Company_code: context.companyCode,
+                Location_code: context.locationCode,
+            }),
+        });
+
+        if (response.ok) {
+            const data = await response.json();
+            console.log(data);
+            console.log("NumberGeneration:", data[0].NumberGeneration);
+
+            if (data.length > 0) {
+                setNumberGeneration(data[0].NumberGeneration || "Auto");
+                setExpiringDays(data[0].MemberExpiredSoon?.toString() || "");
+            }
         }
-    }, []);
+    } catch (err) {
+        console.error(err);
+    }
+};
 
     const handleSave = async () => {
         try {
@@ -182,7 +221,8 @@ const SettingScreen = () => {
 
                 {/* Configuration Settings Form */}
                 <Card className="border border-gray-200 shadow-sm bg-white p-8">
-                    <div className="max-w-2xl space-y-8">
+                    <div className="w-full min-h-[100px] flex flex-col">
+                        <div className="flex-1 space-y-8">
                         
                         {/* Number Generation Field */}
                         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 items-center">
@@ -205,12 +245,12 @@ const SettingScreen = () => {
                                     <input
                                         type="radio"
                                         name="numberGeneration"
-                                        value="Manuals"
-                                        checked={numberGeneration === "Manuals"}
+                                        value="Manual"
+                                        checked={numberGeneration === "Manual"}
                                         onChange={(e) => setNumberGeneration(e.target.value)}
                                         className="h-4 w-4 text-purple-600 border-gray-300 focus:ring-purple-500 accent-purple-600"
                                     />
-                                    <span>Manuals</span>
+                                    <span>Manual</span>
                                 </label>
                             </div>
                         </div>
@@ -220,19 +260,37 @@ const SettingScreen = () => {
                             <label className="text-sm font-bold text-gray-900">
                                 Member Expiring Soon
                             </label>
-                            <div className="sm:col-span-2">
+                            <div className="sm:col-span-2 flex items-center space-x-8">
+                                <TooltipProvider>
+                              <Tooltip>
+                                <TooltipTrigger asChild>   
                                 <input
                                     type="text"
+                                    inputMode="numeric"
+                                    pattern="[0-9]*"
+                                    maxLength={4}
                                     value={expiringDays}
-                                    onChange={(e) => setExpiringDays(e.target.value)}
+                                    onChange={(e) => {
+                                        const value = e.target.value.replace(/\D/g, "");
+                                        setExpiringDays(value);
+                                    }}
                                     placeholder="Enter how many days"
                                     className="w-full max-w-xs px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-1 focus:ring-purple-500 focus:border-purple-500 text-sm"
                                 />
+                                </TooltipTrigger>
+                                <TooltipContent>
+                                  <p>Enter how many days before expiration</p>
+                                </TooltipContent>
+                              </Tooltip>
+                            </TooltipProvider>
                             </div>
                         </div>
 
                         {/* Action Footer Controls */}
-                        <div className="pt-6 flex justify-end items-center space-x-3 border-t border-gray-100">
+                        <div className="mt-auto pt-6 flex justify-end items-center gap-3 border-t border-gray-100">
+                            <TooltipProvider>
+                              <Tooltip>
+                                <TooltipTrigger asChild>
                             <Button
                                 type="button"
                                 variant="outline"
@@ -241,13 +299,30 @@ const SettingScreen = () => {
                             >
                                 Cancel
                             </Button>
+                            </TooltipTrigger>
+                                <TooltipContent>
+                                  <p>Cancel changes and return to Dashboard</p>
+                                </TooltipContent>
+                              </Tooltip>
+                            </TooltipProvider>
+
+                            <TooltipProvider>
+                              <Tooltip>
+                                <TooltipTrigger asChild>                  
                             <Button
                                 type="button"
                                 onClick={handleSave}
-                                className="px-6 py-2 bg-purple-600 hover:bg-purple-700 text-white font-semibold shadow-sm transition-all duration-200 rounded-lg active:scale-[0.98]"
+                                className="px-6 py-2 bg-purple-600 hover:bg-purple-700 text-white font-semibold shadow-sm rounded-lg"
                             >
                                 Save
                             </Button>
+                            </TooltipTrigger>
+                                <TooltipContent>
+                                  <p>Save the current settings</p>
+                                </TooltipContent>
+                              </Tooltip>
+                            </TooltipProvider>
+                        </div>
                         </div>
 
                     </div>
