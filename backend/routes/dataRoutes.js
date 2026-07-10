@@ -145,6 +145,7 @@ router.post("/programSearchData",dataController.programSearchData)
 router.post("/programCardData",dataController.programCardData)
 router.post("/settingSaveData", dataController.settingSaveData)
 router.post("/getSettingScreenData", dataController.getSettingScreenData)
+router.post("/getTrainerCardData", dataController.getTrainerCardData)
 
 
 
