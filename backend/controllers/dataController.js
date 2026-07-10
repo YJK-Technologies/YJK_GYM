@@ -3853,6 +3853,31 @@ const programCardData = async (req, res) => {
 
 //Code Ended by Pavun on 08-07-2026
 
+//Code Added by Dinesh Gokul on 10-07-2026
+const getTrainerCardData = async (req, res) => {
+  const { Company_code, Location_code } = req.body;
+  try {
+    const pool = await connection.connectToDatabase();
+    const result = await pool
+      .request()
+      .input("mode", sql.NVarChar, "ST")
+      .input("Company_code", sql.NVarChar, Company_code)
+      .input("Location_code", sql.NVarChar, Location_code)
+      .query(`EXEC sp_GYM_Trainer @mode, '', '', '', '', '', '', Null, 
+        '', '', '', '', '', '', '', @Location_Code, '', @company_code,  0, 0, 0, 0, '', '', '', ''`);
+
+    if (result.recordset.length > 0) {
+      res.status(200).json(result.recordset);
+    } else {
+      res.status(404).json("Data not found");
+    }
+  } catch (err) {
+    console.error("Error", err);
+    res.status(500).json({ message: err.message || "Internal Server Error" });
+  }
+}
+//Code Ended by Dinesh Gokul on 10-07-2026
+
 module.exports = {
   getCompanyno,
   getsearchdata,
@@ -3972,7 +3997,8 @@ module.exports = {
   programSearchData,
   settingSaveData,
   getSettingScreenData,
-  programCardData
+  programCardData,
+  getTrainerCardData
 
 
 };
