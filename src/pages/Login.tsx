@@ -175,6 +175,16 @@ const Login = () => {
     }
   };
 
+  // Handle Enter key press for both email and password fields
+  const handleEnterKey = (
+  e: React.KeyboardEvent<HTMLInputElement>,
+  role: "admin" | "member"
+) => {
+  if (e.key === "Enter" && !loading) {
+    handleLogin(role);
+  }
+};
+
   const UserPermission = async (role_id: any) => {
     try {
       const response = await fetch(`${BASE_URL}/getUserPermission`, {
@@ -276,6 +286,7 @@ const Login = () => {
                       setEmail(e.target.value);
                       setLoginError("");
                     }}
+                    onKeyDown={(e) => handleEnterKey(e, "member")}
                   />
                 </div>
                 <div className="space-y-2">
@@ -287,6 +298,7 @@ const Login = () => {
                     value={password}
                     // onChange={(e) => setPassword(e.target.value)}
                     onChange={(e) => { setPassword(e.target.value); setLoginError(""); }}
+                    onKeyDown={(e) => handleEnterKey(e, "member")}
                   />
                 </div>
                 {loginError && (
@@ -328,6 +340,7 @@ const Login = () => {
                       setEmail(e.target.value);
                       setLoginError("");
                     }}
+                    onKeyDown={(e) => handleEnterKey(e, "admin")}
                   />
                 </div>
                 <div className="space-y-2">
@@ -339,6 +352,7 @@ const Login = () => {
                     value={password}
                     // onChange={(e) => setPassword(e.target.value)}
                     onChange={(e) => { setPassword(e.target.value); setLoginError(""); }}
+                    onKeyDown={(e) => handleEnterKey(e, "admin")}
                   />
                 </div>
                 {loginError && (
