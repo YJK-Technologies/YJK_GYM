@@ -1,108 +1,31 @@
-import React, { useState } from 'react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { useNavigate } from 'react-router-dom';
-import ruwLogo from '@/assets/ruw-logo-full.png';
+import React, { useState } from "react";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { useNavigate } from "react-router-dom";
+import ruwLogo from "@/assets/ruw-logo-full.png";
 import CryptoJS from "crypto-js";
-
-import { BASE_URL } from './ApiConfig';
-
+import { BASE_URL } from "./ApiConfig";
+import { useCompany } from "./CompanyContext";
 
 const Login = () => {
-  const [email, setEmail] = useState('');
+  const { setCompanyData } = useCompany();
+
+  const [email, setEmail] = useState("");
   const [userCode, setUserCode] = useState("");
-  const [password, setPassword] = useState('');
+  const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [loginError, setLoginError] = useState("");
   const secretKey = "yjk26012024";
   const navigate = useNavigate();
-
-  //   const handleLogin = async (role: "admin" | "member") => {
-  //   setLoading(true);
-  //   setLoginError("");
-
-  //   if (!userCode.trim()) {
-  //   setLoginError("User Code is required.");
-  //   setLoading(false);
-  //   return;
-  // }
-
-  // if (!password.trim()) {
-  //   setLoginError("Password is required.");
-  //   setLoading(false);
-  //   return;
-  // }
-
-  //   try {
-  //     const encryptedUserCode = CryptoJS.AES.encrypt(userCode,secretKey).toString();
-  //     const encryptedPassword = CryptoJS.AES.encrypt(password,secretKey).toString();
-
-  //     const response = await fetch(`${BASE_URL}/login`, {
-  //       method: "POST",
-  //       headers: {
-  //         "Content-Type": "application/json",
-  //       },
-  //       body: JSON.stringify({
-  //         user_code: encryptedUserCode,
-  //         user_password: encryptedPassword,
-  //       }),
-  //     });
-
-  //     const data = await response.json();
-
-  //     // if (response.ok) {
-  //     // if (data.length > 0) {
-  //     //   const user = data[0];
-
-  //     //   sessionStorage.setItem("isLoggedIn", "true"); sessionStorage.setItem("user_code", user.user_code); sessionStorage.setItem("user_name", user.user_name); sessionStorage.setItem("role_id", user.role_id);
-
-  //     //   await UserPermission(user.role_id);
-  //     //   await fetchUserData(user.user_code);
-
-  //     //   if (role === "admin") {
-  //     //     navigate("/AdminDashboard");
-  //     //   } else {
-  //     //     navigate("/Member");
-  //     //   }
-  //     // }
-  //     // } else {
-  //     //   setLoginError(data.message || "Invalid User Code or Password");
-  //     // }
-  //     if (response.ok) {
-  //   if (Array.isArray(data) && data.length > 0) {
-  //     const user = data[0];
-
-  //     sessionStorage.setItem("isLoggedIn", "true");
-  //     sessionStorage.setItem("user_code", user.user_code);
-  //     sessionStorage.setItem("user_name", user.user_name);
-  //     sessionStorage.setItem("role_id", user.role_id);
-
-  //     await UserPermission(user.role_id);
-  //     await fetchUserData(user.user_code);
-
-  //     if (role === "admin") {
-  //       navigate("/AdminDashboard");
-  //     } else {
-  //       navigate("/Member");
-  //     }
-  //   } else {
-  //     // Backend returned success but no user found
-  //     setLoginError(data.message || "Invalid User Code or Password.");
-  //   }
-  //   } else {
-  //     // Backend returned an error response
-  //     setLoginError(data.message || "Invalid User Code or Password.");
-  //   }
-  //   } catch (err: any) {
-  //     console.error(err);
-  //     setLoginError(err.message || "Something went wrong.");
-  //   } finally {
-  //     setLoading(false);
-  //   }
-  // };
 
   const handleLogin = async (role: "admin" | "member") => {
     setLoading(true);
@@ -121,14 +44,11 @@ const Login = () => {
     }
 
     try {
-      const encryptedEmail = CryptoJS.AES.encrypt(
-        email,
-        secretKey
-      ).toString();
+      const encryptedEmail = CryptoJS.AES.encrypt(email, secretKey).toString();
 
       const encryptedPassword = CryptoJS.AES.encrypt(
         password,
-        secretKey
+        secretKey,
       ).toString();
 
       const response = await fetch(`${BASE_URL}/login`, {
@@ -175,6 +95,16 @@ const Login = () => {
     }
   };
 
+  // Handle Enter key press for both email and password fields
+  const handleEnterKey = (
+  e: React.KeyboardEvent<HTMLInputElement>,
+  role: "admin" | "member"
+) => {
+  if (e.key === "Enter" && !loading) {
+    handleLogin(role);
+  }
+};
+
   const UserPermission = async (role_id: any) => {
     try {
       const response = await fetch(`${BASE_URL}/getUserPermission`, {
@@ -213,9 +143,20 @@ const Login = () => {
         const data = await response.json();
 
         if (data.length > 0) {
-          handleSave(data[0]);
+          const company = data[0];
 
-          // Change the page if needed
+          setCompanyData({
+            companyCode: company.company_no,
+            companyName: company.company_name,
+            locationCode: company.location_no,
+            locationName: company.location_name,
+            userCode: company.user_code,
+            userName: company.user_name,
+            shortName: company.short_name
+          });
+
+          handleSave(company);
+
           navigate("/AccountInformation");
         }
       }
@@ -241,7 +182,11 @@ const Login = () => {
       <Card className="w-full max-w-md">
         <CardHeader className="text-center">
           <div className="flex items-center justify-center mb-4">
-            <img src={ruwLogo} alt="Royal University for Women Logo" className="h-20" />
+            <img
+              src={ruwLogo}
+              alt="Royal University for Women Logo"
+              className="h-20"
+            />
           </div>
           <CardTitle className="text-2xl font-bold">RUW FitnessPro</CardTitle>
         </CardHeader>
@@ -254,17 +199,6 @@ const Login = () => {
 
             <TabsContent value="member" className="space-y-4">
               <div className="space-y-4">
-                {/* <div>
-                  <Label htmlFor="member-Code">User Code</Label>
-                  <Input
-                    id="member-Code"
-                    type="Text"
-                    placeholder="Enter your userCode"
-                    value={userCode}
-                    // onChange={(e) => setUserCode(e.target.value)}
-                    onChange={(e) => { setUserCode(e.target.value); setLoginError("");}}
-                  />
-                </div> */}
                 <div className="space-y-2">
                   <Label htmlFor="member-email">Email ID</Label>
                   <Input
@@ -276,6 +210,7 @@ const Login = () => {
                       setEmail(e.target.value);
                       setLoginError("");
                     }}
+                    onKeyDown={(e) => handleEnterKey(e, "member")}
                   />
                 </div>
                 <div className="space-y-2">
@@ -285,14 +220,15 @@ const Login = () => {
                     type="password"
                     placeholder="Enter your password"
                     value={password}
-                    // onChange={(e) => setPassword(e.target.value)}
-                    onChange={(e) => { setPassword(e.target.value); setLoginError(""); }}
+                    onChange={(e) => {
+                      setPassword(e.target.value);
+                      setLoginError("");
+                    }}
+                    onKeyDown={(e) => handleEnterKey(e, "member")}
                   />
                 </div>
                 {loginError && (
-                  <p className="text-red-500 text-sm">
-                    {loginError}
-                  </p>
+                  <p className="text-red-500 text-sm">{loginError}</p>
                 )}
                 <Button
                   className="w-full"
@@ -306,17 +242,6 @@ const Login = () => {
 
             <TabsContent value="admin" className="space-y-4">
               <div className="space-y-4">
-                {/* <div>
-                  <Label htmlFor="admin-Code">Admin Code</Label>
-                  <Input
-                    id="admin-Code"
-                    type="Text"
-                    placeholder="Enter Admin Code"
-                    value={userCode}
-                    // onChange={(e) => setUserCode(e.target.value)}
-                    onChange={(e) => { setUserCode(e.target.value); setLoginError("");}}
-                  />
-                </div> */}
                 <div className="space-y-2">
                   <Label htmlFor="admin-email">Email ID</Label>
                   <Input
@@ -328,6 +253,7 @@ const Login = () => {
                       setEmail(e.target.value);
                       setLoginError("");
                     }}
+                    onKeyDown={(e) => handleEnterKey(e, "admin")}
                   />
                 </div>
                 <div className="space-y-2">
@@ -337,14 +263,15 @@ const Login = () => {
                     type="password"
                     placeholder="Enter admin password"
                     value={password}
-                    // onChange={(e) => setPassword(e.target.value)}
-                    onChange={(e) => { setPassword(e.target.value); setLoginError(""); }}
+                    onChange={(e) => {
+                      setPassword(e.target.value);
+                      setLoginError("");
+                    }}
+                    onKeyDown={(e) => handleEnterKey(e, "admin")}
                   />
                 </div>
                 {loginError && (
-                  <p className="text-red-500 text-sm">
-                    {loginError}
-                  </p>
+                  <p className="text-red-500 text-sm">{loginError}</p>
                 )}
                 <Button
                   className="w-full"
