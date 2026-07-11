@@ -1395,7 +1395,7 @@ const WorkoutProgramManagement = () => {
 
   //users Search States
   const [usersSearchForm, setusersSearchForm] = useState({
-    company_code: "YJK",
+    company_code: companyCode,
     user_code: "",
     user_name: "",
     first_name: "",
@@ -1403,7 +1403,7 @@ const WorkoutProgramManagement = () => {
     user_status: "",
     dob: "",
     gender: "",
-    created_by: "JK",
+    created_by: userCode,
   });
 
   //User Ag Grid
@@ -1602,7 +1602,7 @@ const WorkoutProgramManagement = () => {
   const [isAttributeHdrDialogOpen, setIsAttributeHdrDialogOpen] =
     useState(false);
   const [attributeHdrForm, setAttributeHdrForm] = useState({
-    company_code: "YJK",
+    company_code: companyCode,
     attributeheader_code: "",
     attributeheader_name: "",
     status: "Active",
@@ -1617,7 +1617,7 @@ const WorkoutProgramManagement = () => {
   const [editingNumberSeries, setEditingNumberSeries] = useState<any>(null);
   const [numberSeries, setNumberSeries] = useState([]);
   const [numberSeriesForm, setNumberSeriesForm] = useState({
-    company_code: "YJK",
+    company_code: companyCode,
     Screen_Type: "",
     Start_Year: "",
     End_Year: "",
@@ -1628,8 +1628,8 @@ const WorkoutProgramManagement = () => {
     number_prefix: "0",
     Status: "Active",
     bill_format: "",
-    created_by: "admin",
-    modified_by: "admin",
+    created_by: userCode,
+    modified_by: userCode,
   });
 
   useEffect(() => {
@@ -1997,7 +1997,7 @@ const WorkoutProgramManagement = () => {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          "modified-by": "admin",
+          "modified-by": userCode,
         },
         body: JSON.stringify({
           company_nos: [companyNo],
@@ -2297,7 +2297,7 @@ const WorkoutProgramManagement = () => {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          "modified-by": "admin",
+          "modified-by": userCode,
         },
         body: JSON.stringify({
           keyfiels: [keyfiels],
@@ -2585,7 +2585,7 @@ const WorkoutProgramManagement = () => {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          "modified-by": "admin",
+          "modified-by": userCode,
         },
         body: JSON.stringify({
           location_nos: [location_no],
@@ -2844,7 +2844,7 @@ const WorkoutProgramManagement = () => {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          "modified-by": "admin",
+          "modified-by": userCode,
           company_code: companyCode,
         },
         body: JSON.stringify({
