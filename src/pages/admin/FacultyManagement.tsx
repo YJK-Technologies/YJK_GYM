@@ -1,21 +1,62 @@
-
-import React, { useState, useEffect } from 'react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Textarea } from '@/components/ui/textarea';
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
-import { useNavigate } from 'react-router-dom';
-import { ArrowLeft, Plus, Edit, Trash2, GraduationCap, Mail, Search, RotateCcw, Phone, Clock, Award, Users, Eye, EyeOff, } from 'lucide-react';
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { BASE_URL } from '../ApiConfig';
-import { useToast } from '@/hooks/use-toast';
+import React, { useState, useEffect } from "react";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import { useNavigate } from "react-router-dom";
+import {
+  ArrowLeft,
+  Plus,
+  Edit,
+  Trash2,
+  GraduationCap,
+  Mail,
+  Search,
+  RotateCcw,
+  Phone,
+  Clock,
+  Award,
+  Users,
+  Eye,
+  EyeOff,
+} from "lucide-react";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { BASE_URL } from "../ApiConfig";
+import { useToast } from "@/hooks/use-toast";
 import ImageUpload from "../ImageUpload";
-import { showConfirmToast } from '../../components/ui/show-confirm-toast';
-import { Switch } from '@/components/ui/switch';
+import { showConfirmToast } from "../../components/ui/show-confirm-toast";
+import { Switch } from "@/components/ui/switch";
+import { useCompany } from "../CompanyContext";
+
+const { companyCode, locationCode, userCode } = useCompany();
 
 interface Trainer {
   id: string;
@@ -38,7 +79,10 @@ const FacultyManagement = () => {
 
   const { toast } = useToast();
 
-  const [TrainerImages, setTrainerImages] = useState<(string | null)[]>([null, null]);
+  const [TrainerImages, setTrainerImages] = useState<(string | null)[]>([
+    null,
+    null,
+  ]);
 
   const maxDOB = new Date();
   maxDOB.setFullYear(maxDOB.getFullYear() - 18);
@@ -63,13 +107,13 @@ const FacultyManagement = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [status, setStatus] = useState<any[]>([]);
   const [trainerCardData, setTrainerCardData] = useState({
-  TotalTrainers: 0,
-  AvgExperience: 0,
-  ActiveTrainers: 0,
-});
+    TotalTrainers: 0,
+    AvgExperience: 0,
+    ActiveTrainers: 0,
+  });
   const [TrainerForm, setTrainerForm] = useState({
-    company_code: "YJK",
-    Location_Code: "LOC001",
+    company_code: "",
+    Location_Code: "",
     TrainerID: "",
     KeyField: "",
     FullName: "",
@@ -84,13 +128,13 @@ const FacultyManagement = () => {
     WorkingSchedule: "",
     Biography: "",
     Is_Active: "Close",
-    created_by: "admin",
-    modified_by: "admin",
+    created_by: "",
+    modified_by: "",
   });
 
   const handlePhoneNumberChange = (
     e: React.ChangeEvent<HTMLInputElement>,
-    field: keyof typeof TrainerForm
+    field: keyof typeof TrainerForm,
   ) => {
     const value = e.target.value.replace(/\D/g, "").slice(0, 15);
 
@@ -121,7 +165,7 @@ const FacultyManagement = () => {
 
           reader.readAsDataURL(file);
         });
-      })
+      }),
     );
 
     setTrainerImages(convertedImages);
@@ -129,8 +173,8 @@ const FacultyManagement = () => {
 
   //Trainers Search States
   const [TrainersSearchForm, setTrainersSearchForm] = useState({
-    company_code: "YJK",
-    Location_Code: "001",
+    company_code: companyCode,
+    Location_Code: locationCode,
     TrainerID: "",
     FullName: "",
     Email: "",
@@ -145,7 +189,6 @@ const FacultyManagement = () => {
     Specializations: "",
     WorkingSchedule: "",
     Is_Active: "",
-
   });
 
   // Gender DropDown
@@ -157,7 +200,7 @@ const FacultyManagement = () => {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          company_code: "YJK",
+          company_code: companyCode,
         }),
       });
 
@@ -182,7 +225,7 @@ const FacultyManagement = () => {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          company_code: "YJK",
+          company_code: companyCode,
         }),
       });
 
@@ -200,10 +243,7 @@ const FacultyManagement = () => {
 
   useEffect(() => {
     const loadData = async () => {
-      await Promise.all([
-        fetchGender(),
-        fetchStatus()
-      ]);
+      await Promise.all([fetchGender(), fetchStatus()]);
     };
 
     loadData();
@@ -218,8 +258,8 @@ const FacultyManagement = () => {
   const handleAddTrainer = () => {
     setEditingTrainer(null);
     setTrainerForm({
-      company_code: "YJK",
-      Location_Code: "LOC001",
+      company_code: companyCode,
+      Location_Code: locationCode,
       TrainerID: "",
       KeyField: "",
       FullName: "",
@@ -234,8 +274,8 @@ const FacultyManagement = () => {
       WorkingSchedule: "",
       Biography: "",
       Is_Active: "Close",
-      created_by: "admin",
-      modified_by: "admin",
+      created_by: userCode,
+      modified_by: userCode,
     });
     setTrainerImages([null]);
     setIsTrainerDialogOpen(true);
@@ -260,7 +300,6 @@ const FacultyManagement = () => {
         variant: "destructive",
       });
       return false;
-
     }
 
     // Email validation
@@ -299,7 +338,8 @@ const FacultyManagement = () => {
     if (!isValidPhoneNumber(TrainerForm.Mobile)) {
       toast({
         title: "Invalid Mobile Number",
-        description: "Mobile number must contain only digits and be between 8 and 15 digits.",
+        description:
+          "Mobile number must contain only digits and be between 8 and 15 digits.",
         variant: "destructive",
       });
       return false;
@@ -338,7 +378,7 @@ const FacultyManagement = () => {
         const byteCharacters = atob(base64);
 
         const byteNumbers = Array.from(byteCharacters, (char) =>
-          char.charCodeAt(0)
+          char.charCodeAt(0),
         );
 
         const byteArray = new Uint8Array(byteNumbers);
@@ -351,11 +391,7 @@ const FacultyManagement = () => {
         const extension = mimeType.split("/")[1] || "png";
 
         if (index === 0) {
-          formData.append(
-            "Photo",
-            blob,
-            `Photo.${extension}`
-          );
+          formData.append("Photo", blob, `Photo.${extension}`);
         }
       });
 
@@ -411,7 +447,8 @@ const FacultyManagement = () => {
     if (!isValidPhoneNumber(TrainerForm.Mobile)) {
       toast({
         title: "Invalid Mobile Number",
-        description: "Mobile number must contain only digits and be between 8 and 15 digits.",
+        description:
+          "Mobile number must contain only digits and be between 8 and 15 digits.",
         variant: "destructive",
       });
       return false;
@@ -446,7 +483,7 @@ const FacultyManagement = () => {
         const byteCharacters = atob(base64);
 
         const byteNumbers = Array.from(byteCharacters, (char) =>
-          char.charCodeAt(0)
+          char.charCodeAt(0),
         );
 
         const byteArray = new Uint8Array(byteNumbers);
@@ -458,11 +495,7 @@ const FacultyManagement = () => {
         const extension = mimeType.split("/")[1] || "png";
 
         if (index === 0) {
-          formData.append(
-            "Photo",
-            blob,
-            `Photo.${extension}`
-          );
+          formData.append("Photo", blob, `Photo.${extension}`);
         }
       });
 
@@ -503,56 +536,6 @@ const FacultyManagement = () => {
     }
   };
 
-  //     const handleDeleteTrainer = async (trainer: any) => {
-
-  //   const confirmDelete = window.confirm(
-  //     `Are you sure you want to delete ${trainer.FullName}?`
-  //   );
-
-  //   if (!confirmDelete) return;
-
-  //   try {
-  //     const response = await fetch(`${BASE_URL}/GYM_TrainerDelete`, {
-  //       method: "POST",
-  //       headers: {
-  //         "Content-Type": "application/json",
-  //       },
-  //       body: JSON.stringify({
-  //         company_code: trainer.company_code,
-  //         Location_Code: trainer.Location_Code,
-  //         TrainerID: trainer.TrainerID,
-  //         KeyField: trainer.KeyField,
-  //         modified_by: "admin",
-  //       }),
-  //     });
-
-  //     const data = await response.json();
-
-  //     if (response.ok) {
-  //       toast({
-  //         title: "Success",
-  //         description: data.message || "Trainer deleted successfully.",
-  //       });
-
-  //       handleTrainerSearch();
-  //     } else {
-  //       toast({
-  //         title: "Error",
-  //         description: data.message || "Failed to delete trainer.",
-  //         variant: "destructive",
-  //       });
-  //     }
-  //   } catch (err: any) {
-  //     console.error(err);
-
-  //     toast({
-  //       title: "Server Error",
-  //       description: err.message,
-  //       variant: "destructive",
-  //     });
-  //   }
-  // };
-
   const handleDeleteTrainer = (trainer: any) => {
     showConfirmToast({
       title: "Delete Trainer",
@@ -565,11 +548,11 @@ const FacultyManagement = () => {
               "Content-Type": "application/json",
             },
             body: JSON.stringify({
-              company_code: trainer.company_code,
-              Location_Code: trainer.Location_Code,
+              company_code: companyCode,
+              Location_Code: locationCode,
               TrainerID: trainer.TrainerID,
               KeyField: trainer.KeyField,
-              modified_by: "admin",
+              modified_by: userCode,
             }),
           });
 
@@ -619,8 +602,8 @@ const FacultyManagement = () => {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          company_code: "YJK",
-          Location_Code: "LOC001",
+          company_code: companyCode,
+          Location_Code: locationCode,
           TrainerID: TrainersSearchForm.TrainerID,
           FullName: TrainersSearchForm.FullName,
           Email: TrainersSearchForm.Email,
@@ -675,47 +658,47 @@ const FacultyManagement = () => {
   };
 
   const getTrainerCardData = async () => {
-  try {
-    const response = await fetch(`${BASE_URL}/getTrainerCardData`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        Company_code: "YJK",
-        Location_code: "LOC001",
-      }),
-    });
+    try {
+      const response = await fetch(`${BASE_URL}/getTrainerCardData`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          Company_code: companyCode,
+          Location_code: locationCode,
+        }),
+      });
 
-    const data = await response.json();
+      const data = await response.json();
 
-    if (response.ok && data.length > 0) {
-      setTrainerCardData(data[0]);
-    } else {
+      if (response.ok && data.length > 0) {
+        setTrainerCardData(data[0]);
+      } else {
+        setTrainerCardData({
+          TotalTrainers: 0,
+          AvgExperience: 0,
+          ActiveTrainers: 0,
+        });
+      }
+    } catch (err) {
+      console.error("Trainer Card Error:", err);
+
       setTrainerCardData({
         TotalTrainers: 0,
         AvgExperience: 0,
         ActiveTrainers: 0,
       });
     }
-  } catch (err) {
-    console.error("Trainer Card Error:", err);
-
-    setTrainerCardData({
-      TotalTrainers: 0,
-      AvgExperience: 0,
-      ActiveTrainers: 0,
-    });
-  }
-};
+  };
 
   const handleEditTrainer = (Trainer: any) => {
     setEditingTrainer(Trainer);
     // console.log(Trainer);
 
     setTrainerForm({
-      company_code: Trainer.company_code,
-      Location_Code: Trainer.Location_Code,
+      company_code: companyCode,
+      Location_Code: locationCode,
       TrainerID: Trainer.TrainerID,
       KeyField: Trainer.KeyField,
       FullName: Trainer.FullName,
@@ -735,8 +718,7 @@ const FacultyManagement = () => {
     });
 
     const userLogo =
-      Trainer.Photo?.data &&
-        Array.isArray(Trainer.Photo.data)
+      Trainer.Photo?.data && Array.isArray(Trainer.Photo.data)
         ? bufferToBase64(Trainer.Photo.data)
         : null;
 
@@ -747,8 +729,8 @@ const FacultyManagement = () => {
 
   const handleReset = () => {
     setTrainersSearchForm({
-      company_code: "YJK",
-      Location_Code: "001",
+      company_code: companyCode,
+      Location_Code: locationCode,
       TrainerID: "",
       FullName: "",
       Email: "",
@@ -773,14 +755,20 @@ const FacultyManagement = () => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center py-4">
             <div className="flex items-center">
-              <Button variant="ghost" onClick={() => navigate('/AdminDashboard')} className="mr-4">
+              <Button
+                variant="ghost"
+                onClick={() => navigate("/AdminDashboard")}
+                className="flex items-center px-2 sm:px-4"
+              >
                 <ArrowLeft className="h-4 w-4 mr-2" />
-                Back
+                <span className="hidden sm:inline ml-2">Back</span>
               </Button>
-              <h1 className="text-2xl font-bold text-gray-900">Faculty Management</h1>
+              <h1 className="text-lg sm:text-xl lg:text-2xl font-bold text-gray-900 truncate">
+                Faculty Management
+              </h1>
             </div>
             <div className="flex items-center space-x-4">
-              <Badge variant="secondary">Admin</Badge>
+              {/* <Badge variant="secondary">Admin</Badge> */}
               <Dialog
                 open={isTrainerDialogOpen}
                 onOpenChange={setIsTrainerDialogOpen}
@@ -788,15 +776,16 @@ const FacultyManagement = () => {
                 <TooltipProvider>
                   <Tooltip>
                     <TooltipTrigger asChild>
-                      <Button onClick={handleAddTrainer}>
-                        <Plus className="h-4 w-4 mr-2" />
-                        Add Trainer
+                      <Button
+                        onClick={handleAddTrainer}
+                        className="shrink-0 px-2 sm:px-4"
+                      >
+                        <Plus className="h-4 w-4 sm:mr-2" />
+                        <span className="hidden sm:inline">Add Trainer</span>
                       </Button>
                     </TooltipTrigger>
 
-                    <TooltipContent>
-                      Add Trainer
-                    </TooltipContent>
+                    <TooltipContent>Add Trainer</TooltipContent>
                   </Tooltip>
                 </TooltipProvider>
                 <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
@@ -813,9 +802,17 @@ const FacultyManagement = () => {
 
                   <div className="grid gap-4 py-4">
                     <div className="grid grid-cols-2 gap-4">
-
                       <div className="space-y-2">
-                        <Label htmlFor="name" className={submittedTrainer && !TrainerForm.FullName ? "text-red-500" : ""}>Full Name*</Label>
+                        <Label
+                          htmlFor="name"
+                          className={
+                            submittedTrainer && !TrainerForm.FullName
+                              ? "text-red-500"
+                              : ""
+                          }
+                        >
+                          Full Name*
+                        </Label>
                         <TooltipProvider>
                           <Tooltip>
                             <TooltipTrigger asChild>
@@ -823,7 +820,12 @@ const FacultyManagement = () => {
                                 id="Email"
                                 maxLength={100}
                                 value={TrainerForm.FullName}
-                                onChange={(e) => setTrainerForm({ ...TrainerForm, FullName: e.target.value })}
+                                onChange={(e) =>
+                                  setTrainerForm({
+                                    ...TrainerForm,
+                                    FullName: e.target.value,
+                                  })
+                                }
                                 placeholder="e.g., Full Name"
                               />
                             </TooltipTrigger>
@@ -838,7 +840,16 @@ const FacultyManagement = () => {
                       <div className="space-y-2">
                         {/* <Label htmlFor="email">Email*</Label>
                         <Input id="email" type="email" placeholder="trainer@ruw.edu.bh" /> */}
-                        <Label htmlFor="name" className={submittedTrainer && !TrainerForm.Email ? "text-red-500" : ""}>Email*</Label>
+                        <Label
+                          htmlFor="name"
+                          className={
+                            submittedTrainer && !TrainerForm.Email
+                              ? "text-red-500"
+                              : ""
+                          }
+                        >
+                          Email*
+                        </Label>
                         <TooltipProvider>
                           <Tooltip>
                             <TooltipTrigger asChild>
@@ -846,7 +857,12 @@ const FacultyManagement = () => {
                                 id="Email"
                                 maxLength={255}
                                 value={TrainerForm.Email}
-                                onChange={(e) => setTrainerForm({ ...TrainerForm, Email: e.target.value })}
+                                onChange={(e) =>
+                                  setTrainerForm({
+                                    ...TrainerForm,
+                                    Email: e.target.value,
+                                  })
+                                }
                                 placeholder="e.g., Email"
                               />
                             </TooltipTrigger>
@@ -860,7 +876,16 @@ const FacultyManagement = () => {
 
                       {/* Newly Added Field */}
                       <div className="space-y-2">
-                        <Label htmlFor="name" className={submittedTrainer && !TrainerForm.Password ? "text-red-500" : ""}>Password*</Label>
+                        <Label
+                          htmlFor="name"
+                          className={
+                            submittedTrainer && !TrainerForm.Password
+                              ? "text-red-500"
+                              : ""
+                          }
+                        >
+                          Password*
+                        </Label>
                         <TooltipProvider>
                           <Tooltip>
                             <TooltipTrigger asChild>
@@ -885,7 +910,11 @@ const FacultyManagement = () => {
                                   onClick={() => setShowPassword(!showPassword)}
                                   className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700"
                                 >
-                                  {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                                  {showPassword ? (
+                                    <EyeOff size={18} />
+                                  ) : (
+                                    <Eye size={18} />
+                                  )}
                                 </button>
                               </div>
                             </TooltipTrigger>
@@ -901,16 +930,30 @@ const FacultyManagement = () => {
                       <div className="space-y-2">
                         {/* <Label htmlFor="email">Date of Birth*</Label>
                         <Input id="email" type="date" placeholder="trainer@ruw.edu.bh" /> */}
-                        <Label htmlFor="name" className={submittedTrainer && !TrainerForm.DOB ? "text-red-500" : ""}>DOB*</Label>
+                        <Label
+                          htmlFor="name"
+                          className={
+                            submittedTrainer && !TrainerForm.DOB
+                              ? "text-red-500"
+                              : ""
+                          }
+                        >
+                          DOB*
+                        </Label>
                         <TooltipProvider>
                           <Tooltip>
                             <TooltipTrigger asChild>
                               <Input
                                 id="DOB"
-                                type='date'
+                                type="date"
                                 value={TrainerForm.DOB}
                                 max={maxDOB.toISOString().split("T")[0]}
-                                onChange={(e) => setTrainerForm({ ...TrainerForm, DOB: e.target.value })}
+                                onChange={(e) =>
+                                  setTrainerForm({
+                                    ...TrainerForm,
+                                    DOB: e.target.value,
+                                  })
+                                }
                                 placeholder="e.g., DOB"
                               />
                             </TooltipTrigger>
@@ -925,7 +968,16 @@ const FacultyManagement = () => {
                       {/* Newly Added Field */}
                       <div className="space-y-2">
                         {/* <Label htmlFor="email">Gender*</Label> */}
-                        <Label htmlFor="name" className={submittedTrainer && !TrainerForm.Gender ? "text-red-500" : ""}>Gender*</Label>
+                        <Label
+                          htmlFor="name"
+                          className={
+                            submittedTrainer && !TrainerForm.Gender
+                              ? "text-red-500"
+                              : ""
+                          }
+                        >
+                          Gender*
+                        </Label>
                         <Select
                           value={TrainerForm.Gender}
                           onValueChange={(value) =>
@@ -962,15 +1014,25 @@ const FacultyManagement = () => {
 
                       {/* <div className="grid grid-cols-2 gap-4"> */}
                       <div className="space-y-2">
-                        <Label htmlFor="name" className={submittedTrainer && !TrainerForm.Mobile ? "text-red-500" : ""}>Phone*</Label>
+                        <Label
+                          htmlFor="name"
+                          className={
+                            submittedTrainer && !TrainerForm.Mobile
+                              ? "text-red-500"
+                              : ""
+                          }
+                        >
+                          Phone*
+                        </Label>
                         <TooltipProvider>
                           <Tooltip>
                             <TooltipTrigger asChild>
                               <Input
                                 id="Email"
-
                                 value={TrainerForm.Mobile}
-                                onChange={(e) => handlePhoneNumberChange(e, "Mobile")}
+                                onChange={(e) =>
+                                  handlePhoneNumberChange(e, "Mobile")
+                                }
                                 inputMode="numeric"
                                 maxLength={15}
                                 placeholder="e.g., +973 XXXX XXXX"
@@ -984,7 +1046,16 @@ const FacultyManagement = () => {
                         </TooltipProvider>
                       </div>
                       <div className="space-y-2">
-                        <Label htmlFor="name" className={submittedTrainer && !TrainerForm.Experience ? "text-red-500" : ""}>Years of Experience*</Label>
+                        <Label
+                          htmlFor="name"
+                          className={
+                            submittedTrainer && !TrainerForm.Experience
+                              ? "text-red-500"
+                              : ""
+                          }
+                        >
+                          Years of Experience*
+                        </Label>
                         <TooltipProvider>
                           <Tooltip>
                             <TooltipTrigger asChild>
@@ -995,7 +1066,10 @@ const FacultyManagement = () => {
                                 maxLength={2}
                                 value={TrainerForm.Experience}
                                 onChange={(e) => {
-                                  const value = e.target.value.replace(/\D/g, ""); // Allow digits only
+                                  const value = e.target.value.replace(
+                                    /\D/g,
+                                    "",
+                                  ); // Allow digits only
 
                                   setTrainerForm({
                                     ...TrainerForm,
@@ -1025,15 +1099,15 @@ const FacultyManagement = () => {
                               })
                             }
                           />
-                          <Label>
-                            {TrainerForm.Is_Active}
-                          </Label>
+                          <Label>{TrainerForm.Is_Active}</Label>
                         </div>
                       </div>
                     </div>
 
                     <div className="space-y-2">
-                      <Label htmlFor="certifications">Certifications (comma-separated)</Label>
+                      <Label htmlFor="certifications">
+                        Certifications (comma-separated)
+                      </Label>
                       <TooltipProvider>
                         <Tooltip>
                           <TooltipTrigger asChild>
@@ -1041,7 +1115,12 @@ const FacultyManagement = () => {
                               id="Email"
                               value={TrainerForm.Certifications}
                               maxLength={500}
-                              onChange={(e) => setTrainerForm({ ...TrainerForm, Certifications: e.target.value })}
+                              onChange={(e) =>
+                                setTrainerForm({
+                                  ...TrainerForm,
+                                  Certifications: e.target.value,
+                                })
+                              }
                               placeholder="e.g., NASM CPT, ACE Fitness..."
                             />
                           </TooltipTrigger>
@@ -1053,7 +1132,16 @@ const FacultyManagement = () => {
                       </TooltipProvider>
                     </div>
                     <div className="space-y-2">
-                      <Label htmlFor="name" className={submittedTrainer && !TrainerForm.Specializations ? "text-red-500" : ""}>Specializations* (comma-separated)</Label>
+                      <Label
+                        htmlFor="name"
+                        className={
+                          submittedTrainer && !TrainerForm.Specializations
+                            ? "text-red-500"
+                            : ""
+                        }
+                      >
+                        Specializations* (comma-separated)
+                      </Label>
                       <TooltipProvider>
                         <Tooltip>
                           <TooltipTrigger asChild>
@@ -1061,7 +1149,12 @@ const FacultyManagement = () => {
                               id="Email"
                               value={TrainerForm.Specializations}
                               maxLength={500}
-                              onChange={(e) => setTrainerForm({ ...TrainerForm, Specializations: e.target.value })}
+                              onChange={(e) =>
+                                setTrainerForm({
+                                  ...TrainerForm,
+                                  Specializations: e.target.value,
+                                })
+                              }
                               placeholder="e.g., Weight Loss, Strength Training..."
                             />
                           </TooltipTrigger>
@@ -1073,7 +1166,16 @@ const FacultyManagement = () => {
                       </TooltipProvider>
                     </div>
                     <div className="space-y-2">
-                      <Label htmlFor="name" className={submittedTrainer && !TrainerForm.WorkingSchedule ? "text-red-500" : ""}>Working Schedule*</Label>
+                      <Label
+                        htmlFor="name"
+                        className={
+                          submittedTrainer && !TrainerForm.WorkingSchedule
+                            ? "text-red-500"
+                            : ""
+                        }
+                      >
+                        Working Schedule*
+                      </Label>
                       <TooltipProvider>
                         <Tooltip>
                           <TooltipTrigger asChild>
@@ -1081,7 +1183,12 @@ const FacultyManagement = () => {
                               id="Email"
                               value={TrainerForm.WorkingSchedule}
                               maxLength={500}
-                              onChange={(e) => setTrainerForm({ ...TrainerForm, WorkingSchedule: e.target.value })}
+                              onChange={(e) =>
+                                setTrainerForm({
+                                  ...TrainerForm,
+                                  WorkingSchedule: e.target.value,
+                                })
+                              }
                               placeholder="e.g., Sun-Thu: 6AM-2PM"
                             />
                           </TooltipTrigger>
@@ -1101,7 +1208,12 @@ const FacultyManagement = () => {
                               id="Email"
                               value={TrainerForm.Biography}
                               maxLength={1000}
-                              onChange={(e) => setTrainerForm({ ...TrainerForm, Biography: e.target.value })}
+                              onChange={(e) =>
+                                setTrainerForm({
+                                  ...TrainerForm,
+                                  Biography: e.target.value,
+                                })
+                              }
                               placeholder="e.g., Brief description about the trainer..."
                             />
                           </TooltipTrigger>
@@ -1150,7 +1262,11 @@ const FacultyManagement = () => {
                         </TooltipTrigger>
 
                         <TooltipContent>
-                          <p>{editingTrainer ? "Update a Trainer" : "Add a Trainer"}</p>
+                          <p>
+                            {editingTrainer
+                              ? "Update a Trainer"
+                              : "Add a Trainer"}
+                          </p>
                         </TooltipContent>
                       </Tooltip>
                     </TooltipProvider>
@@ -1172,8 +1288,12 @@ const FacultyManagement = () => {
                   <GraduationCap className="h-6 w-6" />
                 </div>
                 <div>
-                  <p className="text-sm font-medium text-gray-600">Total Trainers</p>
-                  <p className="text-2xl font-bold text-gray-900">{trainerCardData.TotalTrainers}</p>
+                  <p className="text-sm font-medium text-gray-600">
+                    Total Trainers
+                  </p>
+                  <p className="text-2xl font-bold text-gray-900">
+                    {trainerCardData.TotalTrainers}
+                  </p>
                 </div>
               </div>
             </CardContent>
@@ -1185,8 +1305,12 @@ const FacultyManagement = () => {
                   <Users className="h-6 w-6" />
                 </div>
                 <div>
-                  <p className="text-sm font-medium text-gray-600">Assigned Members</p>
-                  <p className="text-2xl font-bold text-gray-900">{Trainers.reduce((sum, t) => sum + t.assignedMembers, 0)}</p>
+                  <p className="text-sm font-medium text-gray-600">
+                    Assigned Members
+                  </p>
+                  <p className="text-2xl font-bold text-gray-900">
+                    {Trainers.reduce((sum, t) => sum + t.assignedMembers, 0)}
+                  </p>
                 </div>
               </div>
             </CardContent>
@@ -1198,8 +1322,12 @@ const FacultyManagement = () => {
                   <Award className="h-6 w-6" />
                 </div>
                 <div>
-                  <p className="text-sm font-medium text-gray-600">Avg. Experience</p>
-                  <p className="text-2xl font-bold text-gray-900">{Math.round(Number(trainerCardData.AvgExperience))} yrs</p>
+                  <p className="text-sm font-medium text-gray-600">
+                    Avg. Experience
+                  </p>
+                  <p className="text-2xl font-bold text-gray-900">
+                    {Math.round(Number(trainerCardData.AvgExperience))} yrs
+                  </p>
                 </div>
               </div>
             </CardContent>
@@ -1211,8 +1339,12 @@ const FacultyManagement = () => {
                   <Clock className="h-6 w-6" />
                 </div>
                 <div>
-                  <p className="text-sm font-medium text-gray-600">Active Now</p>
-                  <p className="text-2xl font-bold text-gray-900">{trainerCardData.ActiveTrainers}</p>
+                  <p className="text-sm font-medium text-gray-600">
+                    Active Now
+                  </p>
+                  <p className="text-2xl font-bold text-gray-900">
+                    {trainerCardData.ActiveTrainers}
+                  </p>
                 </div>
               </div>
             </CardContent>
@@ -1223,7 +1355,6 @@ const FacultyManagement = () => {
         <Card className="mb-6">
           <CardContent className="p-6">
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-
               <div className="space-y-2">
                 <Label>Trainer ID</Label>
 
@@ -1251,7 +1382,6 @@ const FacultyManagement = () => {
               </div>
 
               <div className="space-y-2">
-
                 <Label>Full Name</Label>
 
                 <TooltipProvider>
@@ -1313,7 +1443,13 @@ const FacultyManagement = () => {
                         value={TrainersSearchForm.Mobile}
                         inputMode="numeric"
                         maxLength={15}
-                        onChange={(e) => setTrainersSearchForm({ ...TrainersSearchForm, Mobile: e.target.value.replace(/\D/g, ""), })} />
+                        onChange={(e) =>
+                          setTrainersSearchForm({
+                            ...TrainersSearchForm,
+                            Mobile: e.target.value.replace(/\D/g, ""),
+                          })
+                        }
+                      />
                     </TooltipTrigger>
 
                     <TooltipContent>
@@ -1361,7 +1497,13 @@ const FacultyManagement = () => {
                         maxLength={3}
                         placeholder="Enter Age To"
                         value={TrainersSearchForm.age_to}
-                        onChange={(e) => setTrainersSearchForm({ ...TrainersSearchForm, age_to: e.target.value.replace(/\D/g, ""), })} />
+                        onChange={(e) =>
+                          setTrainersSearchForm({
+                            ...TrainersSearchForm,
+                            age_to: e.target.value.replace(/\D/g, ""),
+                          })
+                        }
+                      />
                     </TooltipTrigger>
 
                     <TooltipContent>
@@ -1381,7 +1523,13 @@ const FacultyManagement = () => {
                         value={TrainersSearchForm.experience_from}
                         inputMode="numeric"
                         maxLength={2}
-                        onChange={(e) => setTrainersSearchForm({ ...TrainersSearchForm, experience_from: e.target.value.replace(/\D/g, ""), })} />
+                        onChange={(e) =>
+                          setTrainersSearchForm({
+                            ...TrainersSearchForm,
+                            experience_from: e.target.value.replace(/\D/g, ""),
+                          })
+                        }
+                      />
                     </TooltipTrigger>
 
                     <TooltipContent>
@@ -1401,7 +1549,13 @@ const FacultyManagement = () => {
                         value={TrainersSearchForm.experience_to}
                         inputMode="numeric"
                         maxLength={2}
-                        onChange={(e) => setTrainersSearchForm({ ...TrainersSearchForm, experience_to: e.target.value.replace(/\D/g, ""), })} />
+                        onChange={(e) =>
+                          setTrainersSearchForm({
+                            ...TrainersSearchForm,
+                            experience_to: e.target.value.replace(/\D/g, ""),
+                          })
+                        }
+                      />
                     </TooltipTrigger>
 
                     <TooltipContent>
@@ -1459,7 +1613,12 @@ const FacultyManagement = () => {
                         id="Email"
                         value={TrainersSearchForm.Specializations}
                         maxLength={500}
-                        onChange={(e) => setTrainersSearchForm({ ...TrainersSearchForm, Specializations: e.target.value })}
+                        onChange={(e) =>
+                          setTrainersSearchForm({
+                            ...TrainersSearchForm,
+                            Specializations: e.target.value,
+                          })
+                        }
                         placeholder="e.g., Weight Loss, Strength Training..."
                       />
                     </TooltipTrigger>
@@ -1480,7 +1639,12 @@ const FacultyManagement = () => {
                         id="Email"
                         value={TrainersSearchForm.WorkingSchedule}
                         maxLength={500}
-                        onChange={(e) => setTrainersSearchForm({ ...TrainersSearchForm, WorkingSchedule: e.target.value })}
+                        onChange={(e) =>
+                          setTrainersSearchForm({
+                            ...TrainersSearchForm,
+                            WorkingSchedule: e.target.value,
+                          })
+                        }
                         placeholder="e.g., Sun-Thu: 6AM-2PM"
                       />
                     </TooltipTrigger>
@@ -1500,7 +1664,13 @@ const FacultyManagement = () => {
                       <div>
                         <Select
                           value={TrainersSearchForm.Is_Active}
-                          onValueChange={(value) => setTrainersSearchForm({ ...TrainersSearchForm, Is_Active: value, })}>
+                          onValueChange={(value) =>
+                            setTrainersSearchForm({
+                              ...TrainersSearchForm,
+                              Is_Active: value,
+                            })
+                          }
+                        >
                           <SelectTrigger>
                             <SelectValue placeholder="Select Status" />
                           </SelectTrigger>
@@ -1572,12 +1742,17 @@ const FacultyManagement = () => {
         <Card>
           <CardHeader>
             <CardTitle>Personal Trainers</CardTitle>
-            <CardDescription>Manage your gym's personal training staff</CardDescription>
+            <CardDescription>
+              Manage your gym's personal training staff
+            </CardDescription>
           </CardHeader>
           <CardContent>
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
               {Trainers.map((trainer: any) => (
-                <Card key={trainer.id} className="hover:shadow-md transition-shadow">
+                <Card
+                  key={trainer.id}
+                  className="hover:shadow-md transition-shadow"
+                >
                   <CardContent className="p-6">
                     <div className="flex items-start justify-between mb-4">
                       <div className="flex items-center">
@@ -1585,14 +1760,26 @@ const FacultyManagement = () => {
                           <GraduationCap className="h-8 w-8 text-purple-600" />
                         </div>
                         <div>
-                          <h3 className="font-semibold text-lg">{trainer.FullName}</h3>
-                          <p className="text-sm text-gray-500">{trainer.TrainerID}</p>
-                          <p className="text-sm text-gray-500">{trainer.Experience} years experience</p>
+                          <h3 className="font-semibold text-lg">
+                            {trainer.FullName}
+                          </h3>
+                          <p className="text-sm text-gray-500">
+                            {trainer.TrainerID}
+                          </p>
+                          <p className="text-sm text-gray-500">
+                            {trainer.Experience} years experience
+                          </p>
                           <Badge
-                            variant={trainer.Is_Active === "Active" ? "default" : "secondary"}
+                            variant={
+                              trainer.Is_Active === "Active"
+                                ? "default"
+                                : "secondary"
+                            }
                             className="mt-1"
                           >
-                            {trainer.Is_Active === "Active" ? "Active" : "Closed"}
+                            {trainer.Is_Active === "Active"
+                              ? "Active"
+                              : "Closed"}
                           </Badge>
                         </div>
                       </div>
@@ -1615,8 +1802,6 @@ const FacultyManagement = () => {
                       </div>
                     </div>
 
-
-
                     <div className="space-y-3">
                       <div className="flex items-center text-sm text-gray-600">
                         <Mail className="h-4 w-4 mr-2" />
@@ -1636,46 +1821,67 @@ const FacultyManagement = () => {
                       </div>
                     </div>
 
-
                     <div className="mt-4">
-                      <p className="text-sm font-medium text-gray-700 mb-2">Specializations:</p>
+                      <p className="text-sm font-medium text-gray-700 mb-2">
+                        Specializations:
+                      </p>
                       <div className="flex flex-wrap gap-2">
                         {console.log("Trainer:", trainer)}
                         {typeof trainer.Specializations === "string"
-                          ? trainer.Specializations.split(",").map((spec: string, index: number) => (
-                            <Badge key={index} variant="outline">
-                              {spec.trim()}
-                            </Badge>
-                          ))
+                          ? trainer.Specializations.split(",").map(
+                              (spec: string, index: number) => (
+                                <Badge key={index} variant="outline">
+                                  {spec.trim()}
+                                </Badge>
+                              ),
+                            )
                           : Array.isArray(trainer.Specializations)
-                            ? trainer.Specializations.map((spec: string, index: number) => (
-                              <Badge key={index} variant="outline">
-                                {spec}
-                              </Badge>
-                            ))
+                            ? trainer.Specializations.map(
+                                (spec: string, index: number) => (
+                                  <Badge key={index} variant="outline">
+                                    {spec}
+                                  </Badge>
+                                ),
+                              )
                             : null}
                       </div>
                     </div>
 
                     <div className="mt-4">
-                      <p className="text-sm font-medium text-gray-700 mb-2">Certifications:</p>
+                      <p className="text-sm font-medium text-gray-700 mb-2">
+                        Certifications:
+                      </p>
                       <div className="flex flex-wrap gap-2">
                         {typeof trainer.Certifications === "string"
-                          ? trainer.Certifications.split(",").map((cert: string, index: number) => (
-                            <Badge key={index} variant="secondary" className="text-xs">
-                              {cert.trim()}
-                            </Badge>
-                          ))
+                          ? trainer.Certifications.split(",").map(
+                              (cert: string, index: number) => (
+                                <Badge
+                                  key={index}
+                                  variant="secondary"
+                                  className="text-xs"
+                                >
+                                  {cert.trim()}
+                                </Badge>
+                              ),
+                            )
                           : Array.isArray(trainer.Certifications)
-                            ? trainer.Certifications.map((cert: string, index: number) => (
-                              <Badge key={index} variant="secondary" className="text-xs">
-                                {cert}
-                              </Badge>
-                            ))
+                            ? trainer.Certifications.map(
+                                (cert: string, index: number) => (
+                                  <Badge
+                                    key={index}
+                                    variant="secondary"
+                                    className="text-xs"
+                                  >
+                                    {cert}
+                                  </Badge>
+                                ),
+                              )
                             : null}
                       </div>
                     </div>
-                    <p className="text-gray-600 text-sm mb-4 line-clamp-2">{trainer.Biography}</p>
+                    <p className="text-gray-600 text-sm mb-4 line-clamp-2">
+                      {trainer.Biography}
+                    </p>
                   </CardContent>
                 </Card>
               ))}
