@@ -2978,7 +2978,7 @@ const GYM_TrainerInsert = async (req, res) => {
       .input("created_date", sql.DateTime, created_date)
       .input("modified_by", sql.NVarChar, modified_by)
       .input("modified_date", sql.DateTime, modified_date)
-      .query(`EXEC sp_GYM_Trainer @mode, @TrainerID, @FullName, @Email, @Password, @Gender, @Mobile, @Photo, @Certifications, @Specializations, @Experience, @WorkingSchedule, @DOB, @Biography, @Is_Active, @Location_Code, @KeyField, @company_code, 0, 0, '', '',@created_by, @created_date, @modified_by, @modified_date`);
+      .query(`EXEC sp_GYM_Trainer_Test @mode, @TrainerID, @FullName, @Email, @Password, @Gender, @Mobile, @Photo, @Certifications, @Specializations, @Experience, @WorkingSchedule, @DOB, @Biography, @Is_Active, @Location_Code, @KeyField, @company_code, 0, 0, '', '',@created_by, @created_date, @modified_by, @modified_date`);
 
     res.status(200).json({ success: true, message: "Data inserted successfully" });
   } catch (err) {
@@ -3024,7 +3024,7 @@ const GYM_TrainerUpdate = async (req, res) => {
       .input("created_date", sql.DateTime, created_date)
       .input("modified_by", sql.NVarChar, modified_by)
       .input("modified_date", sql.DateTime, modified_date)
-      .query(`EXEC sp_GYM_Trainer @mode, @TrainerID, @FullName, @Email, @Password, @Gender, @Mobile, @Photo, @Certifications, @Specializations, @Experience, @WorkingSchedule, @DOB, @Biography, @Is_Active, @Location_Code, @KeyField, @company_code,   0, 0, 0, 0,@created_by, @created_date, @modified_by, @modified_date`);
+      .query(`EXEC sp_GYM_Trainer_Test @mode, @TrainerID, @FullName, @Email, @Password, @Gender, @Mobile, @Photo, @Certifications, @Specializations, @Experience, @WorkingSchedule, @DOB, @Biography, @Is_Active, @Location_Code, @KeyField, @company_code,   0, 0, 0, 0,@created_by, @created_date, @modified_by, @modified_date`);
 
     res.status(200).json({ success: true, message: "Data updated successfully" });
   } catch (err) {
@@ -3048,7 +3048,7 @@ const GYM_TrainerDelete = async (req, res) => {
       .input("KeyField", sql.NVarChar, KeyField)
       .input("company_code", sql.NVarChar, company_code)
       .input("modified_by", sql.NVarChar, modified_by)
-      .query(`EXEC sp_GYM_Trainer @mode, @TrainerID, '', '', '', '', '', Null, '', '', '', '', '', '', '', @Location_Code, @KeyField, @company_code,  0, 0, '', '', '' ,'', '', ''`);
+      .query(`EXEC sp_GYM_Trainer_Test @mode, @TrainerID, '', '', '', '', '', Null, '', '', '', '', '', '', '', @Location_Code, @KeyField, @company_code,  0, 0, '', '', '' ,'', '', ''`);
 
     res.status(200).json({ success: true, message: "Data deleted successfully" });
   } catch (err) {
@@ -3087,7 +3087,7 @@ const getTrainerSC = async (req, res) => {
       .input("age_to", sql.Int, age_to)
       .input("experience_from", sql.Int, experience_from)
       .input("experience_to", sql.Int, experience_to)
-      .query(`EXEC sp_GYM_Trainer @mode, @TrainerID, @FullName, @Email, '', @Gender, @Mobile, Null, 
+      .query(`EXEC sp_GYM_Trainer_Test @mode, @TrainerID, @FullName, @Email, '', @Gender, @Mobile, Null, 
         '', @Specializations, @Experience, @WorkingSchedule, @DOB, '', @Is_Active, 
         @Location_Code, '', @company_code,  @age_from, @age_to, @experience_from, @experience_to, '', '', '', ''`);
 
@@ -3410,7 +3410,7 @@ const getTrainers = async (req, res) => {
       .input("mode", sql.NVarChar, "FT")
       .input("company_code", sql.NVarChar, company_code)
       .input("Location_Code", sql.NVarChar, Location_Code)
-      .query(`EXEC sp_GYM_Trainer @mode, '', '', '', '', '', '', Null, 
+      .query(`EXEC sp_GYM_Trainer_Test @mode, '', '', '', '', '', '', Null, 
         '', '', '', '', '', '', '', @Location_Code, '', @company_code,  0, 0, 0, 0, '', '', '', ''`);
 
     if (result.recordset.length > 0) {
