@@ -27,6 +27,14 @@ const Login = () => {
   const secretKey = "yjk26012024";
   const navigate = useNavigate();
 
+  const arrayBufferToBase64 = (buf) => {
+    let binary = "";
+    const bytes = new Uint8Array(buf);
+    for (let i = 0; i < bytes.byteLength; i++)
+      binary += String.fromCharCode(bytes[i]);
+    return window.btoa(binary);
+  };
+
   const handleLogin = async (role: "admin" | "member") => {
     setLoading(true);
     setLoginError("");
@@ -65,27 +73,29 @@ const Login = () => {
       const data = await response.json();
 
       if (response.ok) {
-        if (Array.isArray(data) && data.length > 0) {
-          const user = data[0];
+        const [{ user_code, role_id, user_images }] = data;
 
-          sessionStorage.setItem("isLoggedIn", "true");
-          sessionStorage.setItem("user_code", user.user_code);
-          sessionStorage.setItem("user_name", user.user_name);
-          sessionStorage.setItem("role_id", user.role_id);
+        if (user_images?.data) {
+          sessionStorage.setItem(
+            "user_image",
+            arrayBufferToBase64(user_images.data),
+          );
+        }
 
-          await UserPermission(user.role_id);
-          await fetchUserData(user.user_code);
+        sessionStorage.setItem("isLoggedIn", "true");
+        sessionStorage.setItem("user_code", user_code);
+        sessionStorage.setItem("role_id", role_id);
 
-          if (role === "admin") {
-            navigate("/AdminDashboard");
-          } else {
-            navigate("/Member");
-          }
+        await UserPermission(role_id);
+        await fetchUserData(user_code);
+
+        if (role === "admin") {
+          navigate("/AdminDashboard");
         } else {
-          setLoginError(data.message || "Invalid Email ID or Password.");
+          navigate("/Member");
         }
       } else {
-        setLoginError(data.message || "Invalid Email ID or Password.");
+        setLoginError(data.message || "Invalid Email ID or Password");
       }
     } catch (err: any) {
       console.error(err);
@@ -152,7 +162,7 @@ const Login = () => {
             locationName: company.location_name,
             userCode: company.user_code,
             userName: company.user_name,
-            shortName: company.short_name
+            shortName: company.short_name,
           });
 
           handleSave(company);

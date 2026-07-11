@@ -20,6 +20,9 @@ import AgGridTable from "@/components/ui/ag-grid-table";
 import ImageUpload from "../ImageUpload";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { showConfirmToast } from '../../components/ui/show-confirm-toast';
+import { useCompany } from "../CompanyContext";
+
+const { companyCode, locationCode, userCode } = useCompany();
 
 interface Member {
   MemberID: string;
@@ -67,10 +70,10 @@ const emptyMember: Member = {
   is_active: false,
   Receive_promotions: false,
   Receive_notifications: false,
-  Company_code: 'YJK',
-  Location_code: 'LOC001',
-  created_by: 'admin',
-  modified_by: 'admin'
+  Company_code: companyCode,
+  Location_code: locationCode,
+  created_by: userCode,
+  modified_by: userCode
 };
 
 interface MemberStats {
@@ -105,7 +108,7 @@ const MemberManagement = () => {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          company_code: "YJK",
+          company_code: companyCode,
         }),
       });
 
@@ -129,7 +132,7 @@ const MemberManagement = () => {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          company_code: "YJK",
+          company_code: companyCode,
         }),
       });
 
@@ -153,7 +156,7 @@ const MemberManagement = () => {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          company_code: "YJK",
+          company_code: companyCode,
         }),
       });
 
@@ -177,8 +180,8 @@ const MemberManagement = () => {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          Company_code: "YJK",
-          Location_code: "LOC001",
+          Company_code: companyCode,
+          Location_code: locationCode,
         }),
       });
 
@@ -204,7 +207,7 @@ const MemberManagement = () => {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          company_code: "YJK",
+          company_code: companyCode,
         }),
       });
 
@@ -569,9 +572,9 @@ const MemberManagement = () => {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          company_code: "YJK",
-          location_code: "LOC001",
-          "modified-by": "admin",
+          company_code: companyCode,
+          location_code: locationCode,
+          "modified-by": userCode,
         },
         body: JSON.stringify({
           MemberIDs: [memberID],
@@ -1148,8 +1151,8 @@ const MemberManagement = () => {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          Company_code: "YJK",
-          Location_code: "LOC001",
+          Company_code: companyCode,
+          Location_code: locationCode,
           MemberID: memberSearchForm.MemberID,
           Identity_No: memberSearchForm.Identity_No,
           Full_name: memberSearchForm.Full_name,

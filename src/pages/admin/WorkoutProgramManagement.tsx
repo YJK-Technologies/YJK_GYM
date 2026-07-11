@@ -71,6 +71,9 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { showConfirmToast } from "../../components/ui/show-confirm-toast";
+import { useCompany } from "../CompanyContext";
+
+const { companyCode, locationCode, userCode } = useCompany();
 
 interface Exercise {
   name: string;
@@ -254,8 +257,7 @@ const WorkoutProgramManagement = () => {
           </h2>
 
           <p className="mt-2 text-gray-500">
-            You don't have permission to access any module in Super User
-            Management.
+            You don't have permission to access any module in Workout Programs Management.
           </p>
 
           <Button className="mt-6" onClick={() => navigate("/AdminDashboard")}>
@@ -287,7 +289,7 @@ const WorkoutProgramManagement = () => {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          company_code: "YJK",
+          company_code: companyCode,
         }),
       });
 
@@ -311,7 +313,7 @@ const WorkoutProgramManagement = () => {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          company_code: "YJK",
+          company_code: companyCode,
         }),
       });
 
@@ -335,8 +337,8 @@ const WorkoutProgramManagement = () => {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          company_code: "YJK",
-          Location_Code: "LOC001",
+          company_code: companyCode,
+          Location_Code: locationCode,
         }),
       });
 
@@ -365,7 +367,7 @@ const WorkoutProgramManagement = () => {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          company_code: "YJK",
+          company_code: companyCode,
         }),
       });
 
@@ -389,8 +391,8 @@ const WorkoutProgramManagement = () => {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          Company_code: "YJK",
-          Location_code: "LOC001",
+          Company_code: companyCode,
+          Location_code: locationCode,
         }),
       });
 
@@ -714,9 +716,9 @@ const WorkoutProgramManagement = () => {
         Sessions_per_week: programForm.sessionsPerWeek,
         Working_hours: programForm.workingHours,
         is_active: programForm.isActive ? "Active" : "Close",
-        Company_code: "YJK",
-        Location_code: "LOC001",
-        created_by: "admin",
+        Company_code: companyCode,
+        Location_code: locationCode,
+        created_by: userCode,
       };
 
       // Insert Program Header
@@ -747,9 +749,9 @@ const WorkoutProgramManagement = () => {
             Assigned_FacultyID: faculty,
             ProgramID: programId,
             is_active: programPayload.is_active,
-            Company_code: "YJK",
-            Location_code: "LOC001",
-            created_by: "admin",
+            Company_code: companyCode,
+            Location_code: locationCode,
+            created_by: userCode,
           }),
         });
       }
@@ -770,9 +772,9 @@ const WorkoutProgramManagement = () => {
             Exercises_Count: exercise.sets,
             Exercises_Repetitions: exercise.reps,
             is_active: programPayload.is_active,
-            Company_code: "YJK",
-            Location_code: "LOC001",
-            created_by: "admin",
+            Company_code: companyCode,
+            Location_code: locationCode,
+            created_by: userCode,
           }),
         });
       }
@@ -824,10 +826,10 @@ const WorkoutProgramManagement = () => {
         Sessions_per_week: programForm.sessionsPerWeek,
         Working_hours: programForm.workingHours,
         is_active: programForm.isActive ? "Active" : "Close",
-        Company_code: "YJK",
-        Location_code: "LOC001",
-        created_by: "admin",
-        modified_by: "admin",
+        Company_code: companyCode,
+        Location_code: locationCode,
+        created_by: userCode,
+        modified_by: userCode,
       };
 
       // Update Header
@@ -850,9 +852,9 @@ const WorkoutProgramManagement = () => {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          company_code: "YJK",
-          location_code: "LOC001",
-          modified_by: "admin",
+          company_code: companyCode,
+          location_code: locationCode,
+          modified_by: userCode,
           programid: programForm.id,
         },
         body: JSON.stringify({
@@ -871,9 +873,9 @@ const WorkoutProgramManagement = () => {
             Assigned_FacultyID: faculty,
             ProgramID: programForm.id,
             is_active: programPayload.is_active,
-            Company_code: "YJK",
-            Location_code: "LOC001",
-            created_by: "admin",
+            Company_code: companyCode,
+            Location_code: locationCode,
+            created_by: userCode,
           }),
         });
       }
@@ -883,9 +885,9 @@ const WorkoutProgramManagement = () => {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          company_code: "YJK",
-          location_code: "LOC001",
-          modified_by: "admin",
+          company_code: companyCode,
+          location_code: locationCode,
+          modified_by: userCode,
           programid: programForm.id,
         },
         body: JSON.stringify({
@@ -909,9 +911,9 @@ const WorkoutProgramManagement = () => {
             Exercises_Count: exercise.sets,
             Exercises_Repetitions: exercise.reps,
             is_active: programPayload.is_active,
-            Company_code: "YJK",
-            Location_code: "LOC001",
-            created_by: "admin",
+            Company_code: companyCode,
+            Location_code: locationCode,
+            created_by: userCode,
           }),
         });
       }
@@ -1186,9 +1188,9 @@ const WorkoutProgramManagement = () => {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          company_code: "YJK",
-          location_code: "LOC001",
-          modified_by: "admin",
+          company_code: companyCode,
+          location_code: locationCode,
+          modified_by: userCode,
           programid: program.ProgramID,
         },
         body: JSON.stringify({
@@ -1203,9 +1205,9 @@ const WorkoutProgramManagement = () => {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          company_code: "YJK",
-          location_code: "LOC001",
-          modified_by: "admin",
+          company_code: companyCode,
+          location_code: locationCode,
+          modified_by: userCode,
           programid: program.ProgramID,
         },
         body: JSON.stringify({
@@ -1220,9 +1222,9 @@ const WorkoutProgramManagement = () => {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          company_code: "YJK",
-          location_code: "LOC001",
-          modified_by: "admin",
+          company_code: companyCode,
+          location_code: locationCode,
+          modified_by: userCode,
           programid: program.ProgramID,
         },
         body: JSON.stringify({
@@ -1282,8 +1284,8 @@ const WorkoutProgramManagement = () => {
           Exercises_Name: programSearchForm.exercisesName,
           Exercises_Count: programSearchForm.exercisesCount,
           Exercises_Repetitions: programSearchForm.exercisesReps,
-          Company_code: "YJK",
-          Location_code: "LOC001",
+          Company_code: companyCode,
+          Location_code: locationCode,
         }),
       });
 
