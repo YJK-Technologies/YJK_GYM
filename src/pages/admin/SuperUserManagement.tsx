@@ -1395,7 +1395,7 @@ const WorkoutProgramManagement = () => {
 
   //users Search States
   const [usersSearchForm, setusersSearchForm] = useState({
-    company_code: "YJK",
+    company_code: companyCode,
     user_code: "",
     user_name: "",
     first_name: "",
@@ -1403,7 +1403,7 @@ const WorkoutProgramManagement = () => {
     user_status: "",
     dob: "",
     gender: "",
-    created_by: "JK",
+    created_by: userCode,
   });
 
   //User Ag Grid
