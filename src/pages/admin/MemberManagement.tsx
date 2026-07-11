@@ -22,7 +22,7 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/comp
 import { showConfirmToast } from '../../components/ui/show-confirm-toast';
 import { useCompany } from "../CompanyContext";
 
-const { companyCode, locationCode, userCode } = useCompany();
+
 
 interface Member {
   MemberID: string;
@@ -50,7 +50,17 @@ interface Member {
   modified_by: string;
 }
 
-const emptyMember: Member = {
+interface MemberStats {
+  TotalMembers: number;
+  ActiveMembers: number;
+  InactiveMembers: number;
+  ExpiringSoonMembers: number;
+}
+
+const MemberManagement = () => {
+  const { companyCode, locationCode, userCode } = useCompany();
+  
+  const emptyMember: Member = {
   MemberID: '',
   Identity_No: '',
   Full_name: '',
@@ -76,14 +86,6 @@ const emptyMember: Member = {
   modified_by: userCode
 };
 
-interface MemberStats {
-  TotalMembers: number;
-  ActiveMembers: number;
-  InactiveMembers: number;
-  ExpiringSoonMembers: number;
-}
-
-const MemberManagement = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
   const [gender, setGender] = useState<any[]>([]);

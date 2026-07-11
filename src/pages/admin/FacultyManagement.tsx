@@ -56,7 +56,6 @@ import { showConfirmToast } from "../../components/ui/show-confirm-toast";
 import { Switch } from "@/components/ui/switch";
 import { useCompany } from "../CompanyContext";
 
-const { companyCode, locationCode, userCode } = useCompany();
 
 interface Trainer {
   id: string;
@@ -75,6 +74,8 @@ interface Trainer {
 
 const FacultyManagement = () => {
   const navigate = useNavigate();
+  const { companyCode, locationCode, userCode } = useCompany();
+  
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
 
   const { toast } = useToast();
