@@ -73,8 +73,6 @@ import {
 import { showConfirmToast } from "../../components/ui/show-confirm-toast";
 import { useCompany } from "../CompanyContext";
 
-const { companyCode, locationCode, userCode } = useCompany();
-
 interface Exercise {
   name: string;
   sets: number;
@@ -206,6 +204,8 @@ interface Stats {
 }
 
 const WorkoutProgramManagement = () => {
+  const { companyCode, locationCode, userCode } = useCompany();
+  
   const navigate = useNavigate();
   const { toast } = useToast();
 
