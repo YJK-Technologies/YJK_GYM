@@ -3863,7 +3863,7 @@ const getTrainerCardData = async (req, res) => {
       .input("mode", sql.NVarChar, "ST")
       .input("Company_code", sql.NVarChar, Company_code)
       .input("Location_code", sql.NVarChar, Location_code)
-      .query(`EXEC sp_GYM_Trainer @mode, '', '', '', '', '', '', Null, 
+      .query(`EXEC sp_GYM_Trainer_Test @mode, '', '', '', '', '', '', Null, 
         '', '', '', '', '', '', '', @Location_Code, '', @company_code,  0, 0, 0, 0, '', '', '', ''`);
 
     if (result.recordset.length > 0) {
