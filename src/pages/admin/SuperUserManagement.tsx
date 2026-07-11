@@ -1602,7 +1602,7 @@ const WorkoutProgramManagement = () => {
   const [isAttributeHdrDialogOpen, setIsAttributeHdrDialogOpen] =
     useState(false);
   const [attributeHdrForm, setAttributeHdrForm] = useState({
-    company_code: "YJK",
+    company_code: "",
     attributeheader_code: "",
     attributeheader_name: "",
     status: "Active",
@@ -1617,7 +1617,7 @@ const WorkoutProgramManagement = () => {
   const [editingNumberSeries, setEditingNumberSeries] = useState<any>(null);
   const [numberSeries, setNumberSeries] = useState([]);
   const [numberSeriesForm, setNumberSeriesForm] = useState({
-    company_code: "YJK",
+    company_code: "",
     Screen_Type: "",
     Start_Year: "",
     End_Year: "",
@@ -1628,8 +1628,8 @@ const WorkoutProgramManagement = () => {
     number_prefix: "0",
     Status: "Active",
     bill_format: "",
-    created_by: "admin",
-    modified_by: "admin",
+    created_by: "",
+    modified_by: "",
   });
 
   useEffect(() => {
@@ -1997,7 +1997,7 @@ const WorkoutProgramManagement = () => {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          "modified-by": "admin",
+          "modified-by": userCode,
         },
         body: JSON.stringify({
           company_nos: [companyNo],
@@ -2297,7 +2297,7 @@ const WorkoutProgramManagement = () => {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          "modified-by": "admin",
+          "modified-by": userCode,
         },
         body: JSON.stringify({
           keyfiels: [keyfiels],
@@ -2585,7 +2585,7 @@ const WorkoutProgramManagement = () => {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          "modified-by": "admin",
+          "modified-by": userCode,
         },
         body: JSON.stringify({
           location_nos: [location_no],
@@ -2844,7 +2844,7 @@ const WorkoutProgramManagement = () => {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          "modified-by": "admin",
+          "modified-by": userCode,
           company_code: companyCode,
         },
         body: JSON.stringify({
@@ -5757,6 +5757,7 @@ const WorkoutProgramManagement = () => {
 
   return (
     <div className="min-h-screen bg-gray-50">
+      
       <header className="bg-white shadow-sm border-b">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center py-4">
