@@ -1214,21 +1214,32 @@ const MemberManagement = () => {
 
   return (
     <div className="min-h-screen bg-gray-50">
+
       <header className="bg-white shadow-sm border-b">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center py-4">
-            <div className="flex items-center space-x-4">
-              <Button variant="ghost" onClick={() => navigate('/AdminDashboard')}>
+            <div className="flex items-center gap-2 sm:gap-4 min-w-0">
+              <Button 
+                variant="ghost" 
+                onClick={() => navigate('/AdminDashboard')}
+                className="flex items-center px-2 sm:px-4"
+              >
                 <ArrowLeft className="h-4 w-4 mr-2" />
-                Back
+                <span className="hidden sm:inline ml-2">Back</span>
               </Button>
-              <h1 className="text-2xl font-bold text-gray-900">Member Management</h1>
+              <h1 className="text-lg sm:text-xl lg:text-2xl font-bold text-gray-900 truncate">Member Management</h1>
             </div>
+
             <Tooltip>
               <TooltipTrigger asChild>
-                <Button onClick={handleAddMember}>
-                  <Plus className="h-4 w-4 mr-2" />
-                  Add Member
+                <Button 
+                  onClick={handleAddMember}
+                  className="shrink-0 px-2 sm:px-4"
+                >
+                  <Plus className="h-4 w-4 sm:mr-2" />
+                  <span className="hidden sm:inline">
+                    Add Member
+                  </span>
                 </Button>
               </TooltipTrigger>
               <TooltipContent>Add Member</TooltipContent>
