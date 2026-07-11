@@ -62,6 +62,11 @@ const FacultyManagement = () => {
   const [isTrainerDialogOpen, setIsTrainerDialogOpen] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [status, setStatus] = useState<any[]>([]);
+  const [trainerCardData, setTrainerCardData] = useState({
+  TotalTrainers: 0,
+  AvgExperience: 0,
+  ActiveTrainers: 0,
+});
   const [TrainerForm, setTrainerForm] = useState({
     company_code: "YJK",
     Location_Code: "LOC001",
@@ -206,6 +211,7 @@ const FacultyManagement = () => {
 
   useEffect(() => {
     handleTrainerSearch();
+    getTrainerCardData();
   }, []);
 
   //Trainer CRUD Functions
@@ -370,6 +376,7 @@ const FacultyManagement = () => {
         setSubmittedTrainer(false);
 
         handleTrainerSearch();
+        getTrainerCardData();
       } else {
         toast({
           title: "Error",
@@ -477,6 +484,7 @@ const FacultyManagement = () => {
         setSubmittedTrainer(false);
 
         handleTrainerSearch();
+        getTrainerCardData();
       } else {
         toast({
           title: "Error",
@@ -574,6 +582,7 @@ const FacultyManagement = () => {
             });
 
             handleTrainerSearch();
+            getTrainerCardData();
           } else {
             toast({
               title: "Error",
@@ -664,6 +673,41 @@ const FacultyManagement = () => {
       });
     }
   };
+
+  const getTrainerCardData = async () => {
+  try {
+    const response = await fetch(`${BASE_URL}/getTrainerCardData`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        Company_code: "YJK",
+        Location_code: "LOC001",
+      }),
+    });
+
+    const data = await response.json();
+
+    if (response.ok && data.length > 0) {
+      setTrainerCardData(data[0]);
+    } else {
+      setTrainerCardData({
+        TotalTrainers: 0,
+        AvgExperience: 0,
+        ActiveTrainers: 0,
+      });
+    }
+  } catch (err) {
+    console.error("Trainer Card Error:", err);
+
+    setTrainerCardData({
+      TotalTrainers: 0,
+      AvgExperience: 0,
+      ActiveTrainers: 0,
+    });
+  }
+};
 
   const handleEditTrainer = (Trainer: any) => {
     setEditingTrainer(Trainer);
@@ -1129,7 +1173,7 @@ const FacultyManagement = () => {
                 </div>
                 <div>
                   <p className="text-sm font-medium text-gray-600">Total Trainers</p>
-                  <p className="text-2xl font-bold text-gray-900">{Trainers.length}</p>
+                  <p className="text-2xl font-bold text-gray-900">{trainerCardData.TotalTrainers}</p>
                 </div>
               </div>
             </CardContent>
@@ -1155,14 +1199,7 @@ const FacultyManagement = () => {
                 </div>
                 <div>
                   <p className="text-sm font-medium text-gray-600">Avg. Experience</p>
-                  <p className="text-2xl font-bold text-gray-900">{Trainers.length > 0
-                    ? Math.round(
-                      Trainers.reduce(
-                        (sum: number, t: any) => sum + Number(t.Experience || 0),
-                        0
-                      ) / Trainers.length
-                    )
-                    : 0} yrs</p>
+                  <p className="text-2xl font-bold text-gray-900">{Math.round(Number(trainerCardData.AvgExperience))} yrs</p>
                 </div>
               </div>
             </CardContent>
@@ -1175,7 +1212,7 @@ const FacultyManagement = () => {
                 </div>
                 <div>
                   <p className="text-sm font-medium text-gray-600">Active Now</p>
-                  <p className="text-2xl font-bold text-gray-900">{Trainers.filter((t: any) => t.Is_Active === "Active").length}</p>
+                  <p className="text-2xl font-bold text-gray-900">{trainerCardData.ActiveTrainers}</p>
                 </div>
               </div>
             </CardContent>

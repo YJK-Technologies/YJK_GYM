@@ -33,6 +33,10 @@ const WorkoutProgramManagement = () => {
   const [company, setCompany] = useState<any[]>([]);
   const [role, setRole] = useState<any[]>([]);
 
+  // Set max DOB to 18 years ago from today
+  const maxDOB = new Date();
+  maxDOB.setFullYear(maxDOB.getFullYear() - 18);
+
   //Role Rights Screen
   const [permission, setPermission] = useState<any[]>([]);
   const [screen, setScreen] = useState<any[]>([]);
@@ -1521,7 +1525,7 @@ const WorkoutProgramManagement = () => {
     tempstr3: "", tempstr4: "", datetime1: "", datetime2: "", datetime3: "", datetime4: "",
   });
 
-  //Nunmber Series 
+  //Number Series 
   const [submittedNumberSeries, setSubmittedNumberSeries] = useState(false);
   const [isNumberSeriesDialogOpen, setIsNumberSeriesDialogOpen] = useState(false);
   const [editingNumberSeries, setEditingNumberSeries] = useState<any>(null);
@@ -1669,6 +1673,11 @@ const WorkoutProgramManagement = () => {
 
   //Company CRUD Functions
   const handleAddCompany = () => {
+    fetchCities(),
+    fetchStates(),
+    fetchCountries(),
+    fetchStatus(),
+    fetchLocation(),
     setEditingCompany(null);
     setCompanyForm({
       company_no: "",
@@ -2068,6 +2077,10 @@ const WorkoutProgramManagement = () => {
 
   //Company Mapping CRUD Functions
   const handleAddCompanyMapping = () => {
+    fetchStatus(),
+    fetchLocation(),
+    fetchUsers(),
+    fetchCompanies(),
     setEditingCompanyMapping(null);
     setCompanyMappingForm({
       company_code: "YJK",
@@ -2336,6 +2349,10 @@ const WorkoutProgramManagement = () => {
 
   // Location CRUD Functions
   const handleAddLocation = () => {
+    fetchCities(),
+    fetchStates(),
+    fetchCountries(),
+    fetchStatus(),
     setEditingLocation(null);
     setLocationForm({
       location_no: "",
@@ -2884,6 +2901,8 @@ const WorkoutProgramManagement = () => {
 
   //Role Mapping CRUD Functions
   const handleAddRoleMapping = () => {
+    fetchUsers(),
+    fetchRole(),
     setEditingRoleMapping(null);
     setRoleMappingForm({
       company_code: "YJK",
@@ -3138,6 +3157,9 @@ const WorkoutProgramManagement = () => {
 
   //Role Rights CRUD Functions
   const handleAddRoleRights = () => {
+    fetchRole(),
+    fetchPermission(),
+    fetchScreenType(),
     setEditingRoleRight(null);
     setRoleRightsForm({
       company_code: "YJK",
@@ -3393,6 +3415,9 @@ const WorkoutProgramManagement = () => {
 
   //User CRUD Functions
   const handleAddUser = () => {
+    fetchStatus(),
+    fetchGender(),
+    fetchRole(),
     setEditingUser(null);
     setUserForm({
       company_code: "YJK",
@@ -3791,6 +3816,7 @@ const WorkoutProgramManagement = () => {
 
   //Attribute Detail CRUD Functions
   const handleAddAttribute = () => {
+    fetchAttributeHdr(),
     setEditingAttribute(null);
     setAttributeForm({
       company_code: "YJK",
@@ -4053,6 +4079,7 @@ const WorkoutProgramManagement = () => {
 
   //add Attribute CRUD Functions
   const handleAddAttributeHdr = () => {
+    fetchStatus(),
     setAttributeHdrForm({
       company_code: "YJK",
       attributeheader_code: "",
@@ -4136,6 +4163,10 @@ const WorkoutProgramManagement = () => {
 
   // NumberSeries CRUD Functions  
   const handleAddNumberSeries = () => {
+    fetchStatus(),
+    fetchScreenType(),
+    fetchNumberPrefix(),
+    fetchBillFormat()
     setEditingNumberSeries(null);
     setNumberSeriesForm({
       company_code: "YJK",
@@ -4428,7 +4459,6 @@ const WorkoutProgramManagement = () => {
     user: "User",
     attribute: "Attribute",
     NumberSeries: "NumberSeries",
-
   };
 
   const handleAdd = () => {
@@ -7570,7 +7600,6 @@ const WorkoutProgramManagement = () => {
                   </div>
 
                   <div className="space-y-2">
-                    {/* <Label htmlFor="DOB">DOB*</Label> */}
                     <Label htmlFor="name" className={submittedUser && !userForm.dob ? "text-red-500" : ""}>DOB*</Label>
                     <TooltipProvider>
                       <Tooltip>
@@ -7579,6 +7608,7 @@ const WorkoutProgramManagement = () => {
                             id="DOB"
                             type='date'
                             value={userForm.dob}
+                            max={maxDOB.toISOString().split("T")[0]}
                             onChange={(e) => setUserForm({ ...userForm, dob: e.target.value })}
                             placeholder="e.g., DOB"
                           />
@@ -7985,14 +8015,14 @@ const WorkoutProgramManagement = () => {
         }}>
           <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
             <DialogHeader>
-              <DialogTitle>{editingNumberSeries ? 'Edit Nunmber Series ' : 'Add Nunmber Series '}</DialogTitle>
+              <DialogTitle>{editingNumberSeries ? 'Edit Number Series ' : 'Add Number Series '}</DialogTitle>
               <DialogDescription>
-                {editingNumberSeries ? 'Update the Nunmber Series  details' : 'Create a new Nunmber Series '}
+                {editingNumberSeries ? 'Update the Number Series  details' : 'Create a new Number Series '}
               </DialogDescription>
             </DialogHeader>
             <div className="grid gap-6 py-4">
               <div className="space-y-4">
-                <h4 className="font-medium text-sm text-gray-700">Nunmber Series Details</h4>
+                <h4 className="font-medium text-sm text-gray-700">Number Series Details</h4>
                 <div className="grid grid-cols-2 gap-4">
 
                   <div className="space-y-2">
@@ -8271,14 +8301,14 @@ const WorkoutProgramManagement = () => {
               <TooltipProvider>
                 <Tooltip>
                   <TooltipTrigger asChild>
-                    <Button onClick={handleSaveNumberSeries}>{editingNumberSeries ? 'Update' : 'Create'} Nunmber Series</Button>
+                    <Button onClick={handleSaveNumberSeries}>{editingNumberSeries ? 'Update' : 'Create'} Number Series</Button>
                   </TooltipTrigger>
 
                   <TooltipContent>
                     <p>
                       {editingNumberSeries
-                        ? "Update Nunmber Series"
-                        : "Create a Nunmber Series"}
+                        ? "Update Number Series"
+                        : "Create a Number Series"}
                     </p>
                   </TooltipContent>
                 </Tooltip>

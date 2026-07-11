@@ -16,13 +16,13 @@ import { useToast } from '@/hooks/use-toast';
 import { ArrowLeft, Plus, Minus, Search, Phone, Mail, TrendingUp, RotateCcw, Dumbbell, Package, Users, Clock, Edit, Trash2, Eye, Calendar, DollarSign, CheckCircle, XCircle } from 'lucide-react';
 import { BASE_URL } from '../ApiConfig';
 import ReactMultiSelect, { MultiSelectOption } from "@/components/ui/react-multi-select";
-import AgGridTable from "@/components/ui/ag-grid-table";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import { showConfirmToast } from '../../components/ui/show-confirm-toast';
 
 interface Exercise {
   name: string;
   sets: number;
-  reps: string;
+  reps: number;
 }
 
 interface WorkoutProgram {
@@ -130,6 +130,13 @@ const samplePackages: WorkoutPackage[] = [
   },
 ];
 
+interface Stats {
+  TotalPrograms: number;
+  ActivePrograms: number;
+  TotalPackages: number;
+  ActivePackages: number;
+}
+
 const WorkoutProgramManagement = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
@@ -140,6 +147,12 @@ const WorkoutProgramManagement = () => {
   const [difficultyLevel, setDifficultyLevel] = useState<any[]>([]);
   const [trainers, setTrainers] = useState<any[]>([]);
   const [status, setStatus] = useState<any[]>([]);
+  const [statsData, setStatsData] = useState<Stats>({
+    TotalPrograms: 0,
+    ActivePrograms: 0,
+    TotalPackages: 0,
+    ActivePackages: 0,
+  });
 
   const fetchCategory = async () => {
     try {
@@ -248,13 +261,41 @@ const WorkoutProgramManagement = () => {
     }
   };
 
+  const fetchWorkoutData = async () => {
+    try {
+      const response = await fetch(`${BASE_URL}/programCardData`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          Company_code: "YJK",
+          Location_code: "LOC001",
+        }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        setStatsData(data);
+
+        console.log(data)
+      } else {
+        console.error("Failed to fetch status");
+      }
+    } catch (error) {
+      console.error("Error fetching status:", error);
+    }
+  };
+
   useEffect(() => {
     const loadData = async () => {
       await Promise.all([
         fetchCategory(),
         fetchDifficultyLevel(),
         fetchTrainers(),
-        fetchStatus()
+        fetchStatus(),
+        fetchWorkoutData()
       ]);
     };
 
@@ -278,8 +319,8 @@ const WorkoutProgramManagement = () => {
     workingHours: '',
     isActive: true,
     goals: '',
-    exercises: [{ name: '', sets: 3, reps: '' }],
-    Keyfield:''
+    exercises: [{ name: '', sets: 3, reps: 10 }],
+    Keyfield: ''
   });
 
   const [programSearchForm, setProgramSearchForm] = useState({
@@ -314,12 +355,12 @@ const WorkoutProgramManagement = () => {
     features: '',
   });
 
-  // const stats = [
-  //   { title: 'Total Programs', value: programs.length.toString(), icon: Dumbbell, color: 'bg-purple-500' },
-  //   { title: 'Active Programs', value: programs.filter(p => p.isActive).length.toString(), icon: CheckCircle, color: 'bg-green-500' },
-  //   { title: 'Total Packages', value: packages.length.toString(), icon: Package, color: 'bg-purple-500' },
-  //   { title: 'Active Packages', value: packages.filter(p => p.isActive).length.toString(), icon: Calendar, color: 'bg-orange-500' },
-  // ];
+  const stats = [
+    { title: 'Total Programs', value: statsData[0]?.TotalPrograms ?? 0, icon: Dumbbell, color: 'bg-purple-500' },
+    { title: 'Active Programs', value: statsData[0]?.ActivePrograms ?? 0, icon: CheckCircle, color: 'bg-green-500' },
+    { title: 'Total Packages', value: packages.length.toString(), icon: Package, color: 'bg-purple-500' },
+    { title: 'Active Packages', value: packages.filter(p => p.isActive).length.toString(), icon: Calendar, color: 'bg-orange-500' },
+  ];
 
   const getDurationDays = (type: string): number => {
     switch (type) {
@@ -368,8 +409,8 @@ const WorkoutProgramManagement = () => {
       workingHours: '',
       isActive: true,
       goals: '',
-      exercises: [{ name: '', sets: 3, reps: '' }],
-      Keyfield:''
+      exercises: [{ name: '', sets: 3, reps: 10 }],
+      Keyfield: ''
     });
     setIsProgramDialogOpen(true);
   };
@@ -406,7 +447,7 @@ const WorkoutProgramManagement = () => {
       durationPerSession: program.Duration_per_session,
       sessionsPerWeek: program.Sessions_per_week,
       workingHours: program.Working_hours,
-      isActive: program.is_active,
+      isActive: program.is_active === "Active",
       goals: program.Goals,
       assignedFaculty: selectedFaculty,
       exercises: selectedExercises,
@@ -445,10 +486,177 @@ const WorkoutProgramManagement = () => {
       return false;
     }
 
+    // Duplicate Exercise validation
+    const exerciseNames = programForm.exercises
+      .map((exercise) => exercise.name.trim().toLowerCase())
+      .filter((name) => name !== "");
+
+    const duplicateExercise = exerciseNames.some(
+      (name, index) => exerciseNames.indexOf(name) !== index
+    );
+
+    if (duplicateExercise) {
+      toast({
+        title: "Duplicate Exercise",
+        description: "Duplicate Exercise Name is not allowed.",
+        variant: "destructive",
+      });
+
+      setSubmittedPrograms(true);
+      return false;
+    }
+
+    // Exercise Count Validation
+    const invalidSets = programForm.exercises.find(
+      ex => Number(ex.sets) <= 0
+    );
+
+    if (invalidSets) {
+      toast({
+        title: "Invalid Exercise Count",
+        description: "Exercise Count must be greater than zero.",
+        variant: "destructive",
+      });
+
+      return false;
+    }
+
+    // Exercise Repetitions Validation
+    const invalidReps = programForm.exercises.find(
+      ex => Number(ex.reps) <= 0
+    );
+
+    if (invalidReps) {
+      toast({
+        title: "Invalid Exercise Repetitions",
+        description: "Exercise Repetitions must be greater than zero.",
+        variant: "destructive",
+      });
+
+      return false;
+    }
+
     return true;
   };
 
   const handleSaveProgram = async () => {
+    if (editingProgram) {
+      await handleUpdateProgram();
+    } else {
+      await handleCreateProgram();
+    }
+  };
+
+  const handleCreateProgram = async () => {
+    if (!validateProgram()) return;
+
+    try {
+      const facultyIds = programForm.assignedFaculty.map((item) => item.value);
+
+      const programPayload = {
+        ProgramID: programForm.id,
+        ProgramName: programForm.name,
+        Description: programForm.description,
+        Category: programForm.category,
+        Difficulty_level: programForm.difficultyLevel,
+        Goals: programForm.goals,
+        Duration_per_session: programForm.durationPerSession,
+        Sessions_per_week: programForm.sessionsPerWeek,
+        Working_hours: programForm.workingHours,
+        is_active: programForm.isActive ? "Active" : "Close",
+        Company_code: "YJK",
+        Location_code: "LOC001",
+        created_by: "admin",
+      };
+
+      // Insert Program Header
+      const response = await fetch(`${BASE_URL}/programInsertData`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(programPayload),
+      });
+
+      const result = await response.json();
+
+      if (!response.ok) {
+        throw new Error(result.message || "Program insert failed.");
+      }
+
+      const programId = result.ProgramID;
+
+      // Insert Faculties
+      for (const faculty of facultyIds) {
+        await fetch(`${BASE_URL}/programFacultyInsertData`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            Assigned_FacultyID: faculty,
+            ProgramID: programId,
+            is_active: programPayload.is_active,
+            Company_code: "YJK",
+            Location_code: "LOC001",
+            created_by: "admin",
+          }),
+        });
+      }
+
+      // Insert Exercises
+      for (let i = 0; i < programForm.exercises.length; i++) {
+        const exercise = programForm.exercises[i];
+
+        await fetch(`${BASE_URL}/programExerciseInsertData`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            ProgramID: programId,
+            ExercisesID: i + 1,
+            Exercises_Name: exercise.name,
+            Exercises_Count: exercise.sets,
+            Exercises_Repetitions: exercise.reps,
+            is_active: programPayload.is_active,
+            Company_code: "YJK",
+            Location_code: "LOC001",
+            created_by: "admin",
+          }),
+        });
+      }
+
+      toast({
+        title: "Program Added",
+        description: "Workout Program Added Successfully",
+        variant: "success",
+      });
+
+      handleProgramSearch();
+      fetchWorkoutData();
+      setSubmittedPrograms(false);
+      setIsProgramDialogOpen(false);
+    } catch (err: any) {
+      toast({
+        title: "Error",
+        description: err.message,
+        variant: "destructive",
+      });
+    }
+  };
+
+  const handleUpdateProgram = () => {
+    showConfirmToast({
+      title: "Update Program",
+      description: `Are you sure you want to update "${programForm.name}"?`,
+      onConfirm: updateProgram,
+    });
+  };
+
+  const updateProgram = async () => {
+    if (!editingProgram) return;
+
     if (!validateProgram()) return;
 
     try {
@@ -472,209 +680,436 @@ const WorkoutProgramManagement = () => {
         modified_by: "admin",
       };
 
-      if (editingProgram) {
+      // Update Header
+      const response = await fetch(`${BASE_URL}/programUpdateData`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(programPayload),
+      });
 
-        // =====================
-        // UPDATE PROGRAM HEADER
-        // =====================
-        const updateResponse = await fetch(`${BASE_URL}/programUpdateData`, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(programPayload),
-        });
+      const result = await response.json();
 
-        const updateResult = await updateResponse.json();
-
-        if (!updateResponse.ok) {
-          toast({
-            title: "Error",
-            description: updateResult.message || "Program update failed.",
-            variant: "destructive",
-          });
-          return;
-        }
-
-        // =====================
-        // DELETE OLD FACULTY
-        // =====================
-        await fetch(`${BASE_URL}/programFacultyDeleteData`, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            ProgramFacultys: [editingProgram.id],
-          }),
-        });
-
-        // =====================
-        // INSERT NEW FACULTY
-        // =====================
-        for (const faculty of facultyIds) {
-          await fetch(`${BASE_URL}/programFacultyInsertData`, {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-              Assigned_FacultyID: faculty,
-              ProgramID: editingProgram.id,
-              is_active: programPayload.is_active,
-              Company_code: "YJK",
-              Location_code: "LOC001",
-              created_by: "admin",
-            }),
-          });
-        }
-
-        // =====================
-        // DELETE OLD EXERCISES
-        // =====================
-        await fetch(`${BASE_URL}/programExerciseDeleteData`, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            ProgramExercises: [editingProgram.id],
-          }),
-        });
-
-        // =====================
-        // INSERT NEW EXERCISES
-        // =====================
-        for (let i = 0; i < programForm.exercises.length; i++) {
-          const exercise = programForm.exercises[i];
-
-          await fetch(`${BASE_URL}/programExerciseInsertData`, {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-              ProgramID: editingProgram.id,
-              ExercisesID: i + 1,
-              Exercises_Name: exercise.name,
-              Exercises_Count: exercise.sets,
-              Exercises_Repetitions: exercise.reps,
-              is_active: programPayload.is_active,
-              Company_code: "YJK",
-              Location_code: "LOC001",
-              created_by: "admin",
-            }),
-          });
-        }
-
-        toast({
-          title: "Program Updated",
-          description: "Workout Program Updated Successfully",
-          variant: "success",
-        });
-
-        setSubmittedPrograms(false);
-
-      } else {
-
-        // =====================
-        // INSERT PROGRAM HEADER
-        // =====================
-        const response = await fetch(`${BASE_URL}/programInsertData`, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(programPayload),
-        });
-
-        const result = await response.json();
-
-        if (!response.ok) {
-          toast({
-            title: "Error",
-            description: result.message || "Program insert failed.",
-            variant: "destructive",
-          });
-          return;
-        }
-
-        const programId = result.ProgramID;
-
-        setProgramForm((prev) => ({
-          ...prev,
-          id: programId,
-        }));
-
-        // =====================
-        // INSERT FACULTIES
-        // =====================
-        for (const faculty of facultyIds) {
-          await fetch(`${BASE_URL}/programFacultyInsertData`, {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-              Assigned_FacultyID: faculty,
-              ProgramID: programId,
-              is_active: programPayload.is_active,
-              Company_code: "YJK",
-              Location_code: "LOC001",
-              created_by: "admin",
-            }),
-          });
-        }
-
-        // =====================
-        // INSERT EXERCISES
-        // =====================
-        for (let i = 0; i < programForm.exercises.length; i++) {
-          const exercise = programForm.exercises[i];
-
-          await fetch(`${BASE_URL}/programExerciseInsertData`, {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-              ProgramID: programId,
-              ExercisesID: i + 1,
-              Exercises_Name: exercise.name,
-              Exercises_Count: exercise.sets,
-              Exercises_Repetitions: exercise.reps,
-              is_active: programPayload.is_active,
-              Company_code: "YJK",
-              Location_code: "LOC001",
-              created_by: "admin",
-            }),
-          });
-        }
-
-        toast({
-          title: "Program Added",
-          description: "Workout Program Added Successfully",
-          variant: "success",
-        });
-
-        setSubmittedPrograms(false);
+      if (!response.ok) {
+        throw new Error(result.message || "Program update failed.");
       }
 
-      setIsProgramDialogOpen(false);
+      // Delete Faculty
+      await fetch(`${BASE_URL}/programFacultyDeleteData`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          company_code: "YJK",
+          location_code: "LOC001",
+          modified_by: "admin",
+          "programid": programForm.id,
+        },
+        body: JSON.stringify({
+          ProgramFacultys: [editingProgram.Keyfield],
+        }),
+      });
 
+      // Insert Faculty
+      for (const faculty of facultyIds) {
+        await fetch(`${BASE_URL}/programFacultyInsertData`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            Assigned_FacultyID: faculty,
+            ProgramID: programForm.id,
+            is_active: programPayload.is_active,
+            Company_code: "YJK",
+            Location_code: "LOC001",
+            created_by: "admin",
+          }),
+        });
+      }
+
+      // Delete Exercises
+      await fetch(`${BASE_URL}/programExerciseDeleteData`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          company_code: "YJK",
+          location_code: "LOC001",
+          modified_by: "admin",
+          "programid": programForm.id,
+        },
+        body: JSON.stringify({
+          ProgramExercises: [editingProgram.Keyfield],
+        }),
+      });
+
+      // Insert Exercises
+      for (let i = 0; i < programForm.exercises.length; i++) {
+        const exercise = programForm.exercises[i];
+
+        await fetch(`${BASE_URL}/programExerciseInsertData`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            ProgramID: programForm.id,
+            ExercisesID: i + 1,
+            Exercises_Name: exercise.name,
+            Exercises_Count: exercise.sets,
+            Exercises_Repetitions: exercise.reps,
+            is_active: programPayload.is_active,
+            Company_code: "YJK",
+            Location_code: "LOC001",
+            created_by: "admin",
+          }),
+        });
+      }
+
+      toast({
+        title: "Program Updated",
+        description: "Workout Program Updated Successfully",
+        variant: "success",
+      });
+
+      handleProgramSearch();
+      fetchWorkoutData();
+      setSubmittedPrograms(false);
+      setIsProgramDialogOpen(false);
     } catch (err: any) {
-      console.error(err);
       toast({
         title: "Error",
-        description: err.message || "Something went wrong.",
+        description: err.message,
         variant: "destructive",
       });
     }
   };
 
-  const handleDeleteProgram = (id: string) => {
-    setPrograms(programs.filter(p => p.id !== id));
-    toast({ title: "Program Deleted", description: "Workout program has been removed.", variant: "destructive" });
+  // const handleSaveProgram = async () => {
+  //   if (!validateProgram()) return;
+
+  //   try {
+  //     const facultyIds = programForm.assignedFaculty.map((item) => item.value);
+
+  //     const programPayload = {
+  //       Keyfield: editingProgram?.Keyfield ?? "",
+  //       ProgramID: programForm.id,
+  //       ProgramName: programForm.name,
+  //       Description: programForm.description,
+  //       Category: programForm.category,
+  //       Difficulty_level: programForm.difficultyLevel,
+  //       Goals: programForm.goals,
+  //       Duration_per_session: programForm.durationPerSession,
+  //       Sessions_per_week: programForm.sessionsPerWeek,
+  //       Working_hours: programForm.workingHours,
+  //       is_active: programForm.isActive ? "Active" : "Close",
+  //       Company_code: "YJK",
+  //       Location_code: "LOC001",
+  //       created_by: "admin",
+  //       modified_by: "admin",
+  //     };
+
+  //     if (editingProgram) {
+
+  //       // =====================
+  //       // UPDATE PROGRAM HEADER
+  //       // =====================
+  //       const updateResponse = await fetch(`${BASE_URL}/programUpdateData`, {
+  //         method: "POST",
+  //         headers: {
+  //           "Content-Type": "application/json",
+  //         },
+  //         body: JSON.stringify(programPayload),
+  //       });
+
+  //       const updateResult = await updateResponse.json();
+
+  //       if (!updateResponse.ok) {
+  //         toast({
+  //           title: "Error",
+  //           description: updateResult.message || "Program update failed.",
+  //           variant: "destructive",
+  //         });
+  //         return;
+  //       }
+
+  //       // =====================
+  //       // DELETE OLD FACULTY
+  //       // =====================
+  //       await fetch(`${BASE_URL}/programFacultyDeleteData`, {
+  //         method: "POST",
+  //         headers: {
+  //           "Content-Type": "application/json",
+  //           "company_code": "YJK",
+  //           "location_code": "LOC001",
+  //           "modified_by": "admin",
+  //         },
+  //         body: JSON.stringify({
+  //           ProgramFacultys: [editingProgram.Keyfield],
+  //         }),
+  //       });
+
+  //       // =====================
+  //       // INSERT NEW FACULTY
+  //       // =====================
+  //       for (const faculty of facultyIds) {
+  //         await fetch(`${BASE_URL}/programFacultyInsertData`, {
+  //           method: "POST",
+  //           headers: {
+  //             "Content-Type": "application/json",
+  //           },
+  //           body: JSON.stringify({
+  //             Assigned_FacultyID: faculty,
+  //             ProgramID: programForm.id,
+  //             is_active: programPayload.is_active,
+  //             Company_code: "YJK",
+  //             Location_code: "LOC001",
+  //             created_by: "admin",
+  //           }),
+  //         });
+  //       }
+
+  //       // =====================
+  //       // DELETE OLD EXERCISES
+  //       // =====================
+  //       await fetch(`${BASE_URL}/programExerciseDeleteData`, {
+  //         method: "POST",
+  //         headers: {
+  //           "Content-Type": "application/json",
+  //           "company_code": "YJK",
+  //           "location_code": "LOC001",
+  //           "modified_by": "admin",
+  //         },
+  //         body: JSON.stringify({
+  //           ProgramExercises: [editingProgram.Keyfield],
+  //         }),
+  //       });
+
+  //       // =====================
+  //       // INSERT NEW EXERCISES
+  //       // =====================
+  //       for (let i = 0; i < programForm.exercises.length; i++) {
+  //         const exercise = programForm.exercises[i];
+
+  //         await fetch(`${BASE_URL}/programExerciseInsertData`, {
+  //           method: "POST",
+  //           headers: {
+  //             "Content-Type": "application/json",
+  //           },
+  //           body: JSON.stringify({
+  //             ProgramID: programForm.id,
+  //             ExercisesID: i + 1,
+  //             Exercises_Name: exercise.name,
+  //             Exercises_Count: exercise.sets,
+  //             Exercises_Repetitions: exercise.reps,
+  //             is_active: programPayload.is_active,
+  //             Company_code: "YJK",
+  //             Location_code: "LOC001",
+  //             created_by: "admin",
+  //           }),
+  //         });
+  //       }
+
+  //       toast({
+  //         title: "Program Updated",
+  //         description: "Workout Program Updated Successfully",
+  //         variant: "success",
+  //       });
+
+  //       handleProgramSearch();
+  //       fetchWorkoutData();
+  //       setSubmittedPrograms(false);
+
+  //     } else {
+
+  //       // =====================
+  //       // INSERT PROGRAM HEADER
+  //       // =====================
+  //       const response = await fetch(`${BASE_URL}/programInsertData`, {
+  //         method: "POST",
+  //         headers: {
+  //           "Content-Type": "application/json",
+  //         },
+  //         body: JSON.stringify(programPayload),
+  //       });
+
+  //       const result = await response.json();
+
+  //       if (!response.ok) {
+  //         toast({
+  //           title: "Error",
+  //           description: result.message || "Program insert failed.",
+  //           variant: "destructive",
+  //         });
+  //         return;
+  //       }
+
+  //       const programId = result.ProgramID;
+
+  //       setProgramForm((prev) => ({
+  //         ...prev,
+  //         id: programId,
+  //       }));
+
+  //       // =====================
+  //       // INSERT FACULTIES
+  //       // =====================
+  //       for (const faculty of facultyIds) {
+  //         await fetch(`${BASE_URL}/programFacultyInsertData`, {
+  //           method: "POST",
+  //           headers: {
+  //             "Content-Type": "application/json",
+  //           },
+  //           body: JSON.stringify({
+  //             Assigned_FacultyID: faculty,
+  //             ProgramID: programId,
+  //             is_active: programPayload.is_active,
+  //             Company_code: "YJK",
+  //             Location_code: "LOC001",
+  //             created_by: "admin",
+  //           }),
+  //         });
+  //       }
+
+  //       // =====================
+  //       // INSERT EXERCISES
+  //       // =====================
+  //       for (let i = 0; i < programForm.exercises.length; i++) {
+  //         const exercise = programForm.exercises[i];
+
+  //         await fetch(`${BASE_URL}/programExerciseInsertData`, {
+  //           method: "POST",
+  //           headers: {
+  //             "Content-Type": "application/json",
+  //           },
+  //           body: JSON.stringify({
+  //             ProgramID: programId,
+  //             ExercisesID: i + 1,
+  //             Exercises_Name: exercise.name,
+  //             Exercises_Count: exercise.sets,
+  //             Exercises_Repetitions: exercise.reps,
+  //             is_active: programPayload.is_active,
+  //             Company_code: "YJK",
+  //             Location_code: "LOC001",
+  //             created_by: "admin",
+  //           }),
+  //         });
+  //       }
+
+  //       toast({
+  //         title: "Program Added",
+  //         description: "Workout Program Added Successfully",
+  //         variant: "success",
+  //       });
+
+  //       setSubmittedPrograms(false);
+  //     }
+
+  //     handleProgramSearch();
+  //     fetchWorkoutData();
+  //     setIsProgramDialogOpen(false);
+
+  //   } catch (err: any) {
+  //     console.error(err);
+  //     toast({
+  //       title: "Error",
+  //       description: err.message || "Something went wrong.",
+  //       variant: "destructive",
+  //     });
+  //   }
+  // };
+
+  const handleDeleteProgram = (program: any) => {
+    showConfirmToast({
+      title: "Delete Program",
+      description: `Are you sure you want to delete "${program.ProgramName}"?`,
+      onConfirm: () => deleteProgram(program),
+    });
+  };
+
+  const deleteProgram = async (program: any) => {
+
+    try {
+      // -----------------------------
+      // Delete Program Exercises
+      // -----------------------------
+      await fetch(`${BASE_URL}/programExerciseDeleteData`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          company_code: "YJK",
+          location_code: "LOC001",
+          "modified_by": "admin",
+          "programid": program.ProgramID,
+        },
+        body: JSON.stringify({
+          ProgramExercises: [program.Keyfield],
+        }),
+      });
+
+      // -----------------------------
+      // Delete Program Faculty
+      // -----------------------------
+      await fetch(`${BASE_URL}/programFacultyDeleteData`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          company_code: "YJK",
+          location_code: "LOC001",
+          "modified_by": "admin",
+          "programid": program.ProgramID,
+        },
+        body: JSON.stringify({
+          ProgramFacultys: [program.Keyfield],
+        }),
+      });
+
+      // -----------------------------
+      // Delete Program Header
+      // -----------------------------
+      const response = await fetch(`${BASE_URL}/programDeleteData`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          company_code: "YJK",
+          location_code: "LOC001",
+          "modified_by": "admin",
+          "programid": program.ProgramID,
+        },
+        body: JSON.stringify({
+          ProgramIDs: [program.Keyfield],
+        }),
+      });
+
+      const result = await response.json();
+
+      if (!response.ok) {
+        throw new Error(result.message || "Delete failed");
+      }
+
+      // Remove from UI
+      setPrograms((prev) =>
+        prev.filter((item) => item.Keyfield !== program.Keyfield)
+      );
+
+      handleProgramSearch();
+      fetchWorkoutData();
+
+      toast({
+        title: "Program Deleted",
+        description: "Workout Program deleted successfully.",
+        variant: "success",
+      });
+
+    } catch (error: any) {
+      console.error(error);
+
+      toast({
+        title: "Delete Failed",
+        description: error.message || "Something went wrong.",
+        variant: "destructive",
+      });
+    }
   };
 
   const handleProgramSearch = async () => {
@@ -831,7 +1266,7 @@ const WorkoutProgramManagement = () => {
   const addExerciseField = () => {
     setProgramForm({
       ...programForm,
-      exercises: [...programForm.exercises, { name: '', sets: 3, reps: '' }],
+      exercises: [...programForm.exercises, { name: '', sets: 3, reps: 10 }],
     });
   };
 
@@ -852,7 +1287,7 @@ const WorkoutProgramManagement = () => {
     if (programForm.exercises.length <= 1) {
       setProgramForm({
         ...programForm,
-        exercises: [{ name: '', sets: 3, reps: '' }]
+        exercises: [{ name: '', sets: 3, reps: 10 }]
       });
       return;
     }
@@ -874,6 +1309,7 @@ const WorkoutProgramManagement = () => {
               <Input
                 placeholder="Enter Program ID"
                 value={programSearchForm.id}
+                maxLength={30}
                 onChange={(e) => setProgramSearchForm({ ...programSearchForm, id: e.target.value, })} />
             </TooltipTrigger>
 
@@ -891,8 +1327,9 @@ const WorkoutProgramManagement = () => {
             <TooltipTrigger asChild>
               <Input
                 placeholder="Enter Program Name"
+                maxLength={100}
                 value={programSearchForm.name}
-                onChange={(e) => setProgramSearchForm({ ...programSearchForm, name: e.target.value, })} />
+                onChange={(e) => { const value = e.target.value.replace(/[^a-zA-Z0-9 ]/g, ""); setProgramSearchForm({ ...programSearchForm, name: value, }) }} />
             </TooltipTrigger>
 
             <TooltipContent>
@@ -972,6 +1409,7 @@ const WorkoutProgramManagement = () => {
               <Input
                 id="goals"
                 value={programSearchForm.goals}
+                maxLength={250}
                 onChange={(e) => setProgramSearchForm({ ...programSearchForm, goals: e.target.value })}
                 placeholder="Enter Goals (comma-separated)"
               />
@@ -992,6 +1430,7 @@ const WorkoutProgramManagement = () => {
               <Input
                 placeholder="Enter Description"
                 value={programSearchForm.description}
+                maxLength={250}
                 onChange={(e) => setProgramSearchForm({ ...programSearchForm, description: e.target.value, })} />
             </TooltipTrigger>
 
@@ -1105,6 +1544,7 @@ const WorkoutProgramManagement = () => {
             <TooltipTrigger asChild>
               <Input
                 id="duration"
+                maxLength={20}
                 value={programSearchForm.durationPerSession}
                 onChange={(e) => setProgramSearchForm({ ...programSearchForm, durationPerSession: e.target.value })}
                 placeholder="Enter Duration Per Session"
@@ -1126,11 +1566,20 @@ const WorkoutProgramManagement = () => {
               <Input
                 id="sessions"
                 type="text"
-                min={1}
-                max={7}
+                inputMode="numeric"
+                maxLength={1}
                 placeholder="Enter Sessions Per Week"
                 value={programSearchForm.sessionsPerWeek}
-                onChange={(e) => setProgramSearchForm({ ...programSearchForm, sessionsPerWeek: e.target.value })}
+                onChange={(e) => {
+                  const value = e.target.value.replace(/\D/g, "");
+
+                  if (value === "" || (Number(value) >= 1 && Number(value) <= 7)) {
+                    setProgramSearchForm({
+                      ...programSearchForm,
+                      sessionsPerWeek: value,
+                    });
+                  }
+                }}
               />
             </TooltipTrigger>
 
@@ -1148,6 +1597,7 @@ const WorkoutProgramManagement = () => {
             <TooltipTrigger asChild>
               <Input
                 id="workingHours"
+                maxLength={50}
                 value={programSearchForm.workingHours}
                 onChange={(e) => setProgramSearchForm({ ...programSearchForm, workingHours: e.target.value })}
                 placeholder="Enter Working Hours"
@@ -1168,6 +1618,7 @@ const WorkoutProgramManagement = () => {
             <TooltipTrigger asChild>
               <Input
                 id="exerciseName"
+                maxLength={100}
                 value={programSearchForm.exercisesName}
                 onChange={(e) => setProgramSearchForm({ ...programSearchForm, exercisesName: e.target.value })}
                 placeholder="Enter Exercises Name"
@@ -1188,9 +1639,22 @@ const WorkoutProgramManagement = () => {
             <TooltipTrigger asChild>
               <Input
                 id="exercisesCount"
+                type="text"
+                inputMode="numeric"
+                maxLength={2}
                 value={programSearchForm.exercisesCount}
-                onChange={(e) => setProgramSearchForm({ ...programSearchForm, exercisesCount: e.target.value })}
+                // onChange={(e) => setProgramSearchForm({ ...programSearchForm, exercisesCount: e.target.value })}
                 placeholder="Enter Exercises Count"
+                onChange={(e) => {
+                  const value = e.target.value.replace(/\D/g, "");
+
+                  if (value === "" || (Number(value) >= 1)) {
+                    setProgramSearchForm({
+                      ...programSearchForm,
+                      exercisesCount: value,
+                    });
+                  }
+                }}
               />
             </TooltipTrigger>
 
@@ -1208,9 +1672,22 @@ const WorkoutProgramManagement = () => {
             <TooltipTrigger asChild>
               <Input
                 id="exercisesReps"
+                type="text"
+                inputMode="numeric"
+                maxLength={2}
                 value={programSearchForm.exercisesReps}
-                onChange={(e) => setProgramSearchForm({ ...programSearchForm, exercisesReps: e.target.value })}
+                // onChange={(e) => setProgramSearchForm({ ...programSearchForm, exercisesReps: e.target.value })}
                 placeholder="Enter Exercises Repetitions"
+                onChange={(e) => {
+                  const value = e.target.value.replace(/\D/g, "");
+
+                  if (value === "" || (Number(value) >= 1)) {
+                    setProgramSearchForm({
+                      ...programSearchForm,
+                      exercisesReps: value,
+                    });
+                  }
+                }}
               />
             </TooltipTrigger>
 
@@ -1262,6 +1739,24 @@ const WorkoutProgramManagement = () => {
     }
   };
 
+  const addLabels = {
+    programs: "Programs",
+    packages: "Packages",
+  };
+
+  const handleAdd = () => {
+    switch (activeTab) {
+      case "programs":
+        handleAddProgram();
+        break;
+      case "packages":
+        handleAddPackage();
+        break;
+      default:
+        break;
+    }
+  };
+
   return (
     <div className="min-h-screen bg-gray-50">
 
@@ -1282,7 +1777,7 @@ const WorkoutProgramManagement = () => {
 
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Stats Grid */}
-        {/* <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
           {stats.map((stat, index) => (
             <Card key={index}>
               <CardContent className="p-6">
@@ -1298,7 +1793,7 @@ const WorkoutProgramManagement = () => {
               </CardContent>
             </Card>
           ))}
-        </div> */}
+        </div>
 
         {/* Search and Add */}
         <Card className="mb-6">
@@ -1361,10 +1856,21 @@ const WorkoutProgramManagement = () => {
                 Packages
               </TabsTrigger>
             </TabsList>
-            <Button onClick={activeTab === 'programs' ? handleAddProgram : handleAddPackage}>
-              <Plus className="h-4 w-4 mr-2" />
-              Add {activeTab === 'programs' ? 'Program' : 'Package'}
-            </Button>
+
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button onClick={handleAdd}>
+                    <Plus className="h-4 w-4 mr-2" />
+                    Add {addLabels[activeTab]}
+                  </Button>
+                </TooltipTrigger>
+
+                <TooltipContent>
+                  <p>Add {addLabels[activeTab]}</p>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
           </div>
 
           {/* Programs Tab */}
@@ -1400,22 +1906,43 @@ const WorkoutProgramManagement = () => {
                             </div>
 
                             <div className="flex gap-1 bg-slate-50 p-1 rounded-lg border border-gray-100">
-                              <Button
-                                variant="ghost"
-                                size="icon"
-                                className="h-8 w-8 text-gray-600 hover:text-violet-600 hover:bg-violet-50"
-                                onClick={() => handleEditProgram(program)}
-                              >
-                                <Edit className="h-4 w-4" />
-                              </Button>
-                              <Button
-                                variant="ghost"
-                                size="icon"
-                                className="h-8 w-8 text-red-500 hover:text-red-700 hover:bg-red-50"
-                                onClick={() => handleDeleteProgram(program)}
-                              >
-                                <Trash2 className="h-4 w-4" />
-                              </Button>
+                              <TooltipProvider>
+                                <Tooltip>
+                                  <TooltipTrigger asChild>
+                                    <Button
+                                      variant="ghost"
+                                      size="icon"
+                                      className="h-8 w-8 text-gray-600 hover:text-violet-600 hover:bg-violet-50"
+                                      onClick={() => handleEditProgram(program)}
+                                    >
+                                      <Edit className="h-4 w-4" />
+                                    </Button>
+                                  </TooltipTrigger>
+
+                                  <TooltipContent>
+                                    <p>Edit</p>
+                                  </TooltipContent>
+                                </Tooltip>
+                              </TooltipProvider>
+
+                              <TooltipProvider>
+                                <Tooltip>
+                                  <TooltipTrigger asChild>
+                                    <Button
+                                      variant="ghost"
+                                      size="icon"
+                                      className="h-8 w-8 text-red-500 hover:text-red-700 hover:bg-red-50"
+                                      onClick={() => handleDeleteProgram(program)}
+                                    >
+                                      <Trash2 className="h-4 w-4" />
+                                    </Button>
+                                  </TooltipTrigger>
+
+                                  <TooltipContent>
+                                    <p>Delete</p>
+                                  </TooltipContent>
+                                </Tooltip>
+                              </TooltipProvider>
                             </div>
                           </div>
 
@@ -1655,7 +2182,8 @@ const WorkoutProgramManagement = () => {
                           <Input
                             id="name"
                             value={programForm.name}
-                            onChange={(e) => setProgramForm({ ...programForm, name: e.target.value })}
+                            maxLength={100}
+                            onChange={(e) => { const value = e.target.value.replace(/[^a-zA-Z0-9 ]/g, ""); setProgramForm({ ...programForm, name: value }) }}
                             placeholder="e.g., Weight Loss Transformation"
                           />
                         </TooltipTrigger>
@@ -1740,6 +2268,7 @@ const WorkoutProgramManagement = () => {
                           <Input
                             id="goals"
                             value={programForm.goals}
+                            maxLength={250}
                             onChange={(e) => setProgramForm({ ...programForm, goals: e.target.value })}
                             placeholder="e.g., Weight Loss, Endurance"
                           />
@@ -1762,6 +2291,7 @@ const WorkoutProgramManagement = () => {
                         <Textarea
                           id="description"
                           value={programForm.description}
+                          maxLength={250}
                           onChange={(e) => setProgramForm({ ...programForm, description: e.target.value })}
                           placeholder="Describe the program..."
                         />
@@ -1782,12 +2312,13 @@ const WorkoutProgramManagement = () => {
                 <div className="grid grid-cols-3 gap-4">
 
                   <div className="space-y-2">
-                    <Label htmlFor="duration" className={submittedPrograms && !programForm.durationPerSession ? "text-red-500" : ""}>Duration Per Session</Label>
+                    <Label htmlFor="duration" className={submittedPrograms && !programForm.durationPerSession ? "text-red-500" : ""}>Duration Per Session*</Label>
                     <TooltipProvider>
                       <Tooltip>
                         <TooltipTrigger asChild>
                           <Input
                             id="duration"
+                            maxLength={20}
                             value={programForm.durationPerSession}
                             onChange={(e) => setProgramForm({ ...programForm, durationPerSession: e.target.value })}
                             placeholder="e.g., 45 minutes"
@@ -1802,17 +2333,26 @@ const WorkoutProgramManagement = () => {
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="sessions" className={submittedPrograms && !programForm.sessionsPerWeek ? "text-red-500" : ""}>Sessions Per Week</Label>
+                    <Label htmlFor="sessions" className={submittedPrograms && !programForm.sessionsPerWeek ? "text-red-500" : ""}>Sessions Per Week*</Label>
                     <TooltipProvider>
                       <Tooltip>
                         <TooltipTrigger asChild>
                           <Input
                             id="sessions"
-                            type="number"
-                            min={1}
-                            max={7}
+                            type="text"
+                            inputMode="numeric"
+                            maxLength={1}
                             value={programForm.sessionsPerWeek}
-                            onChange={(e) => setProgramForm({ ...programForm, sessionsPerWeek: e.target.value })}
+                            onChange={(e) => {
+                              const value = e.target.value.replace(/\D/g, "");
+
+                              if (value === "" || (Number(value) >= 1 && Number(value) <= 7)) {
+                                setProgramForm({
+                                  ...programForm,
+                                  sessionsPerWeek: value,
+                                });
+                              }
+                            }}
                           />
                         </TooltipTrigger>
 
@@ -1824,12 +2364,13 @@ const WorkoutProgramManagement = () => {
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="workingHours" className={submittedPrograms && !programForm.workingHours ? "text-red-500" : ""}>Working Hours</Label>
+                    <Label htmlFor="workingHours" className={submittedPrograms && !programForm.workingHours ? "text-red-500" : ""}>Working Hours*</Label>
                     <TooltipProvider>
                       <Tooltip>
                         <TooltipTrigger asChild>
                           <Input
                             id="workingHours"
+                            maxLength={50}
                             value={programForm.workingHours}
                             onChange={(e) => setProgramForm({ ...programForm, workingHours: e.target.value })}
                             placeholder="e.g., 6AM-10AM, 5PM-9PM"
@@ -1905,6 +2446,7 @@ const WorkoutProgramManagement = () => {
                               <Input
                                 placeholder="Exercise name"
                                 value={exercise.name}
+                                maxLength={100}
                                 onChange={(e) => updateExercise(index, 'name', e.target.value)}
                                 className="bg-white"
                               />
@@ -1920,10 +2462,19 @@ const WorkoutProgramManagement = () => {
                           <Tooltip>
                             <TooltipTrigger asChild>
                               <Input
-                                type="number"
+                                type="text"
                                 placeholder="Sets"
-                                value={exercise.sets}
-                                onChange={(e) => updateExercise(index, 'sets', parseInt(e.target.value) || 0)}
+                                maxLength={2}
+                                value={exercise.sets === 0 ? "" : exercise.sets}
+                                onChange={(e) => {
+                                  const value = e.target.value.replace(/\D/g, "");
+
+                                  updateExercise(
+                                    index,
+                                    "sets",
+                                    value === "" ? 0 : parseInt(value, 10)
+                                  );
+                                }}
                                 className="bg-white"
                               />
                             </TooltipTrigger>
@@ -1939,9 +2490,19 @@ const WorkoutProgramManagement = () => {
                             <Tooltip>
                               <TooltipTrigger asChild>
                                 <Input
-                                  placeholder="Reps (e.g., 10-12)"
-                                  value={exercise.reps}
-                                  onChange={(e) => updateExercise(index, 'reps', e.target.value)}
+                                  type="text"
+                                  placeholder="Reps"
+                                  maxLength={2}
+                                  value={exercise.reps === 0 ? "" : exercise.reps}
+                                  onChange={(e) => {
+                                    const value = e.target.value.replace(/\D/g, ""); // Allow only digits
+
+                                    updateExercise(
+                                      index,
+                                      "reps",
+                                      value === "" ? 0 : parseInt(value, 10)
+                                    );
+                                  }}
                                   className="bg-white"
                                 />
                               </TooltipTrigger>

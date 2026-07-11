@@ -3448,8 +3448,7 @@ const programInsertData = async (req, res) => {
       .input("Company_code", sql.NVarChar, Company_code)
       .input("Location_code", sql.NVarChar, Location_code)
       .input("created_by", sql.NVarChar, created_by)
-      .query(`EXEC sp_Program_Hdr_Ramya @mode,'',@ProgramName,@Description,@Category,@Difficulty_level,@Goals,@Exercises,
-@Duration_per_session,@Sessions_per_week,@Working_hours,@is_active,'','',0,0,@Company_code,@Location_code,'',@created_by,''`);
+      .query(`EXEC sp_Program_Hdr_Ramya @mode,'',@ProgramName,@Description,@Category,@Difficulty_level,@Goals,@Exercises,@Duration_per_session,@Sessions_per_week,@Working_hours,@is_active,'','',0,0,@Company_code,@Location_code,'',@created_by,''`);
 
     res.status(200).json({
       message: "program data saved successfully",
@@ -3512,14 +3511,16 @@ const programDeleteData = async (req, res) => {
   try {
     const pool = await connection.connectToDatabase();
 
-    for (const ProgramID of programIDsToDelete) {
+    for (const Keyfield of programIDsToDelete) {
       await pool
         .request()
         .input("mode", sql.NVarChar, "D")
-        .input("ProgramID", sql.NVarChar, ProgramID)
+        .input("Keyfield", sql.NVarChar, Keyfield)
+        .input("ProgramID", sql.NVarChar, req.headers["programid"])
         .input("Company_code", sql.NVarChar, req.headers["company_code"])
         .input("Location_code", sql.NVarChar, req.headers["location_code"])
-        .query(`EXEC sp_Program_Hdr_Ramya @mode,@ProgramID,'','','','','','','','','','','','',0,0,@Company_code,@Location_code,'','',''`);
+        .input("modified_by", sql.NVarChar, req.headers["modified_by"])
+        .query(`EXEC sp_Program_Hdr_Ramya @mode,@ProgramID,'','','','','','','','','','','','',0,0,@Company_code,@Location_code,@Keyfield,'',@modified_by`);
     }
 
     res.status(200).json("program deleted successfully");
@@ -3563,7 +3564,6 @@ const programFacultyUpdateData = async (req, res) => {
   try {
     const pool = await connection.connectToDatabase();
     await pool
-
       .request()
       .input("mode", sql.NVarChar, "U")
       .input("Assigned_FacultyID", sql.NVarChar, Assigned_FacultyID)
@@ -3599,9 +3599,11 @@ const programFacultyDeleteData = async (req, res) => {
         .request()
         .input("mode", sql.NVarChar, "D")
         .input("Keyfield_header", sql.NVarChar, Keyfield_header)
+        .input("ProgramID", sql.NVarChar, req.headers["programid"])
         .input("Company_code", sql.NVarChar, req.headers["company_code"])
         .input("Location_code", sql.NVarChar, req.headers["location_code"])
-        .query(`EXEC sp_Program_Faculty_Assignment @mode,'','',@Company_code,@Location_code,'',@Keyfield_header,'','',''`);
+        .input("modified_by", sql.NVarChar, req.headers["modified_by"])
+        .query(`EXEC sp_Program_Faculty_Assignment @mode,'','',@Company_code,@Location_code,@ProgramID,@Keyfield_header,'','',@modified_by`);
     }
 
     res.status(200).json("program deleted successfully");
@@ -3687,9 +3689,11 @@ const programExerciseDeleteData = async (req, res) => {
         .request()
         .input("mode", sql.NVarChar, "D")
         .input("Keyfield_header", sql.NVarChar, Keyfield_header)
+        .input("ProgramID", sql.NVarChar, req.headers["programid"])
         .input("Company_code", sql.NVarChar, req.headers["company_code"])
         .input("Location_code", sql.NVarChar, req.headers["location_code"])
-        .query(`EXEC sp_Program_Exercises @mode,'',0,'',0,0,'',@Company_code,@Location_code,@keyfield_header,'','',''`);
+        .input("modified_by", sql.NVarChar, req.headers["modified_by"])
+        .query(`EXEC sp_Program_Exercises @mode,@ProgramID,0,'',0,0,'',@Company_code,@Location_code,@keyfield_header,'','',@modified_by`);
     }
 
     res.status(200).json("program deleted successfully");
@@ -3764,15 +3768,10 @@ const programSearchData = async (req, res) => {
   }
 };
 //Code Ended by Pavun on 07-07-2026
+
 //Code Added by Ramya on 08-07-2026
 const settingSaveData = async (req, res) => {
-  const {
-    NumberGeneration,
-    MemberExpiredSoon,
-    Company_code,
-    Location_code,
-    created_by
-  } = req.body;
+  const { NumberGeneration, MemberExpiredSoon, companyCode, locationCode, created_by } = req.body;
 
   try {
     const pool = await connection.connectToDatabase();
@@ -3782,22 +3781,12 @@ const settingSaveData = async (req, res) => {
       .input("mode", sql.NVarChar, "I")
       .input("NumberGeneration", sql.NVarChar, NumberGeneration)
       .input("MemberExpiredSoon", sql.Int, MemberExpiredSoon)
-      .input("Company_code", sql.NVarChar, Company_code)
-      .input("Location_code", sql.NVarChar, Location_code)
+      .input("Company_code", sql.NVarChar, companyCode)
+      .input("Location_code", sql.NVarChar, locationCode)
       .input("keyfield_header", sql.NVarChar, "")
       .input("created_by", sql.NVarChar, created_by)
       .input("modified_by", sql.NVarChar, created_by)
-      .query(`
-        EXEC sp_Setting
-        @mode,
-        @NumberGeneration,
-        @MemberExpiredSoon,
-        @Company_code,
-        @Location_code,
-        @keyfield_header,
-        @created_by,
-        @modified_by
-      `);
+      .query(`EXEC sp_Setting @mode, @NumberGeneration, @MemberExpiredSoon, @Company_code, @Location_code, @keyfield_header, @created_by, @modified_by`);
 
     res.status(200).json({
       message: result.recordset[0].Message,
@@ -3811,10 +3800,83 @@ const settingSaveData = async (req, res) => {
     });
   }
 };
-
-
-
 //Code Ended by Ramya on 08-07-2026
+
+//Code Added by Dinesh Gokul on 08-07-2026
+const getSettingScreenData = async (req, res) => {
+  const { Company_code, Location_code } = req.body;
+  try {
+    const pool = await connection.connectToDatabase();
+    const result = await pool
+      .request()
+      .input("mode", sql.NVarChar, "SS")
+      .input("Company_code", sql.NVarChar, Company_code)
+      .input("Location_code", sql.NVarChar, Location_code)
+      .query(`EXEC sp_Setting @mode, '', '', @Company_code, @Location_code, '', '', ''`);
+
+    if (result.recordset.length > 0) {
+      res.status(200).json(result.recordset);
+    } else {
+      res.status(404).json("Data not found");
+    }
+  } catch (err) {
+    console.error("Error", err);
+    res.status(500).json({ message: err.message || "Internal Server Error" });
+  }
+}
+//Code Ended by Dinesh Gokul on 08-07-2026
+
+//Code Added by Pavun on 08-07-2026
+const programCardData = async (req, res) => {
+  const { Company_code, Location_code } = req.body;
+
+  try {
+    const pool = await connection.connectToDatabase();
+    const result = await pool
+      .request()
+      .input("mode", sql.NVarChar, "ST")
+      .input("Company_code", sql.NVarChar, Company_code)
+      .input("Location_code", sql.NVarChar, Location_code)
+      .query(`EXEC sp_Program_Hdr_Ramya @mode,'','','','','','','','','','','','','',0,0,@Company_code,@Location_code,'','',''`);
+    if (result.recordset.length > 0) {
+      res.status(200).json(result.recordset);
+    } else {
+      res.status(404).json("Data not found");
+    }
+  } catch (err) {
+    console.error("Error", err.message);
+    return res
+      .status(500)
+      .json({ message: err.message || "Internal Server Error" });
+  }
+};
+
+//Code Ended by Pavun on 08-07-2026
+
+//Code Added by Dinesh Gokul on 10-07-2026
+const getTrainerCardData = async (req, res) => {
+  const { Company_code, Location_code } = req.body;
+  try {
+    const pool = await connection.connectToDatabase();
+    const result = await pool
+      .request()
+      .input("mode", sql.NVarChar, "ST")
+      .input("Company_code", sql.NVarChar, Company_code)
+      .input("Location_code", sql.NVarChar, Location_code)
+      .query(`EXEC sp_GYM_Trainer @mode, '', '', '', '', '', '', Null, 
+        '', '', '', '', '', '', '', @Location_Code, '', @company_code,  0, 0, 0, 0, '', '', '', ''`);
+
+    if (result.recordset.length > 0) {
+      res.status(200).json(result.recordset);
+    } else {
+      res.status(404).json("Data not found");
+    }
+  } catch (err) {
+    console.error("Error", err);
+    res.status(500).json({ message: err.message || "Internal Server Error" });
+  }
+}
+//Code Ended by Dinesh Gokul on 10-07-2026
 
 module.exports = {
   getCompanyno,
@@ -3933,7 +3995,10 @@ module.exports = {
   programExerciseDeleteData,
   getMemberCardData,
   programSearchData,
-  settingSaveData
+  settingSaveData,
+  getSettingScreenData,
+  programCardData,
+  getTrainerCardData
 
 
 };
