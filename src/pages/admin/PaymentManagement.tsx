@@ -73,14 +73,9 @@ import {
   Legend,
 } from "recharts";
 import {
-  Building2,
-  Building,
-  MapPin,
-  Shield,
-  ShieldCheck,
-  User,
-  Tags,
-  Hash,
+  LayoutDashboard,
+  History,
+  FileBarChart2,
 } from "lucide-react";
 
 // Types
@@ -297,25 +292,25 @@ const PaymentManagement = () => {
       value: "paymentDashboard",
       label: "Dashboard",
       screenType: "PaymentDashboard",
-      icon: Building,
+      icon: LayoutDashboard,
     },
     {
       value: "newPayment",
       label: "New Payment",
       screenType: "NewPayment",
-      icon: Building2,
+      icon: CreditCard,
     },
     {
       value: "paymentHistory",
       label: "Payment History",
       screenType: "PaymentHistory",
-      icon: MapPin,
+      icon: History,
     },
     {
       value: "paymentReports",
       label: "Reports",
       screenType: "PaymentReports",
-      icon: Users,
+      icon: FileBarChart2,
     },
   ];
 
@@ -336,15 +331,10 @@ const PaymentManagement = () => {
   }, []);
 
   const tabPermissions = [
-    "Company",
-    "CompanyMapping",
-    "Location",
-    "Role",
-    "RoleMapping",
-    "RoleRights",
-    "User",
-    "Attribute",
-    "NumberSeries",
+    "PaymentDashboard",
+    "NewPayment",
+    "PaymentHistory",
+    "PaymentReports"
   ];
 
   const hasAnyTabPermission = tabPermissions.some((tab) =>
@@ -362,8 +352,7 @@ const PaymentManagement = () => {
           </h2>
 
           <p className="mt-2 text-gray-500">
-            You don't have permission to access any module in Super User
-            Management.
+            You don't have permission to access any module in Payment Management.
           </p>
 
           <Button className="mt-6" onClick={() => navigate("/AdminDashboard")}>
@@ -622,7 +611,7 @@ const PaymentManagement = () => {
                 onClick={() => setWebhookDialogOpen(true)}
                 className="shrink-0 px-2 sm:px-4"
               >
-                <Settings className="h-4 w-4 mr-2" />
+                <Settings className="h-4 w-4 sm:mr-2" />
                 <span className="hidden sm:inline">Integration Settings</span>
               </Button>
             </div>
@@ -631,19 +620,24 @@ const PaymentManagement = () => {
       </header>
 
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
-          <div className="flex flex-wrap items-center gap-4 mb-4 w-full">
-            <TabsList className="grid w-full grid-cols-4 custom-scrollbar">
+        <Tabs
+          value={activeTab}
+          onValueChange={setActiveTab}
+          className="space-y-6"
+        >
+          <div className="mb-4 w-full overflow-x-auto scrollbar-thin">
+            <TabsList
+              className=" inline-flex w-max min-w-full sm:grid sm:w-full sm:grid-cols-4">
               {allowedTabs.map((tab) => {
                 const Icon = tab.icon;
+
                 return (
                   <TabsTrigger
                     key={tab.value}
                     value={tab.value}
-                    className="flex items-center gap-2"
-                  >
-                    <Icon className="h-4 w-4 mr-2" />
-                    {tab.label}
+                    className="flex items-center justify-center whitespace-nowrap px-4 py-2 min-w-[160px] sm:min-w-0">
+                    <Icon className="h-4 w-4 mr-2 shrink-0" />
+                    <span>{tab.label}</span>
                   </TabsTrigger>
                 );
               })}
