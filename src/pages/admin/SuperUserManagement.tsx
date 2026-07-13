@@ -4188,8 +4188,8 @@ const WorkoutProgramManagement = () => {
     setNumberSeriesForm({
       company_code: companyCode,
       Screen_Type: "",
-      Start_Year: "",
-      End_Year: "",
+      Start_Year: fyStart,
+      End_Year: fyEnd,
       Start_No: "",
       Running_No: "",
       End_No: "",
