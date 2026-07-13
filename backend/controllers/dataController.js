@@ -3531,7 +3531,7 @@ const programDeleteData = async (req, res) => {
 };
 
 const programFacultyInsertData = async (req, res) => {
-  const { Assigned_FacultyID, is_active, ProgramID, Company_code, Location_code, created_by, Keyfield_header } = req.body;
+  const { Assigned_FacultyID, is_active, ProgramID, Company_code, Location_code, created_by, Keyfield_header ,UpdateMode} = req.body;
 
   try {
     const pool = await connection.connectToDatabase();
@@ -3546,8 +3546,9 @@ const programFacultyInsertData = async (req, res) => {
       .input("Location_code", sql.NVarChar, Location_code)
       .input("Keyfield_header", sql.NVarChar, Keyfield_header)
       .input("created_by", sql.NVarChar, created_by)
-      .query(`EXEC sp_Program_Faculty_Assignment @mode,@Assigned_FacultyID,@is_active,@Company_code,@Location_code,@ProgramID,@Keyfield_header,
-'',@created_by,''`);
+      .input("UpdateMode", sql.NVarChar, UpdateMode)
+      .query(`EXEC sp_Program_Faculty_Assignment_Ramya @mode,@Assigned_FacultyID,@is_active,@Company_code,@Location_code,@ProgramID,@Keyfield_header,
+'',@created_by,'',@UpdateMode`);
 
     res.status(200).json("program faculty data saved successfully");
   } catch (err) {
@@ -3572,7 +3573,7 @@ const programFacultyUpdateData = async (req, res) => {
       .input("Company_code", sql.NVarChar, Company_code)
       .input("Location_code", sql.NVarChar, Location_code)
       .input("created_by", sql.NVarChar, created_by)
-      .query(`EXEC sp_Program_Faculty_Assignment @mode,@Assigned_FacultyID,@is_active,@Company_code,@Location_code,@ProgramID,'','',@created_by,''`);
+      .query(`EXEC sp_Program_Faculty_Assignment_Ramya @mode,@Assigned_FacultyID,@is_active,@Company_code,@Location_code,@ProgramID,'','',@created_by,'',''`);
 
     res.status(200).json("program faculty data saved successfully");
   } catch (err) {
@@ -3603,7 +3604,8 @@ const programFacultyDeleteData = async (req, res) => {
         .input("Company_code", sql.NVarChar, req.headers["company_code"])
         .input("Location_code", sql.NVarChar, req.headers["location_code"])
         .input("modified_by", sql.NVarChar, req.headers["modified_by"])
-        .query(`EXEC sp_Program_Faculty_Assignment @mode,'','',@Company_code,@Location_code,@ProgramID,@Keyfield_header,'','',@modified_by`);
+        .input("UpdateMode", sql.NVarChar, req.headers["updatemode"])
+        .query(`EXEC sp_Program_Faculty_Assignment_Ramya @mode,'','',@Company_code,@Location_code,@ProgramID,@Keyfield_header,'','',@modified_by,@UpdateMode`);
     }
 
     res.status(200).json("program deleted successfully");
@@ -3614,7 +3616,7 @@ const programFacultyDeleteData = async (req, res) => {
 };
 
 const programExerciseInsertData = async (req, res) => {
-  const { ProgramID, ExercisesID, Exercises_Name, Exercises_Count, Exercises_Repetitions, is_active, Company_code, Location_code, created_by } = req.body;
+  const { ProgramID, ExercisesID, Exercises_Name, Exercises_Count, Exercises_Repetitions, is_active, Company_code, Location_code, created_by,UpdateMode } = req.body;
 
   try {
     const pool = await connection.connectToDatabase();
@@ -3631,8 +3633,9 @@ const programExerciseInsertData = async (req, res) => {
       .input("Company_code", sql.NVarChar, Company_code)
       .input("Location_code", sql.NVarChar, Location_code)
       .input("created_by", sql.NVarChar, created_by)
-      .query(`EXEC sp_Program_Exercises @mode,@ProgramID,@ExercisesID,@Exercises_Name,@Exercises_Count,@Exercises_Repetitions,@is_active,@Company_code,
-@Location_code,'','',@created_by,''`);
+      .input("UpdateMode", sql.NVarChar, UpdateMode)
+      .query(`EXEC sp_Program_Exercises_Ramya @mode,@ProgramID,@ExercisesID,@Exercises_Name,@Exercises_Count,@Exercises_Repetitions,@is_active,@Company_code,
+@Location_code,'','',@created_by,'',@UpdateMode`);
 
     res.status(200).json("program exercise data saved successfully");
   } catch (err) {
@@ -3661,8 +3664,8 @@ const programExerciseUpdateData = async (req, res) => {
       .input("Company_code", sql.NVarChar, Company_code)
       .input("Location_code", sql.NVarChar, Location_code)
       .input("created_by", sql.NVarChar, created_by)
-      .query(`EXEC sp_Program_Exercises @mode,@ProgramID,@ExercisesID,@Exercises_Name,@Exercises_Count,@Exercises_Repetitions,@is_active,@Company_code,
-@Location_code,'','',@created_by,''`);
+      .query(`EXEC sp_Program_Exercises_Ramya @mode,@ProgramID,@ExercisesID,@Exercises_Name,@Exercises_Count,@Exercises_Repetitions,@is_active,@Company_code,
+@Location_code,'','',@created_by,'',''`);
 
     res.status(200).json("program exercise data saved successfully");
   } catch (err) {
@@ -3693,7 +3696,8 @@ const programExerciseDeleteData = async (req, res) => {
         .input("Company_code", sql.NVarChar, req.headers["company_code"])
         .input("Location_code", sql.NVarChar, req.headers["location_code"])
         .input("modified_by", sql.NVarChar, req.headers["modified_by"])
-        .query(`EXEC sp_Program_Exercises @mode,@ProgramID,0,'',0,0,'',@Company_code,@Location_code,@keyfield_header,'','',@modified_by`);
+        .input("UpdateMode", sql.NVarChar, req.headers["updatemode"])
+        .query(`EXEC sp_Program_Exercises_Ramya @mode,@ProgramID,0,'',0,0,'',@Company_code,@Location_code,@keyfield_header,'','',@modified_by,@UpdateMode`);
     }
 
     res.status(200).json("program deleted successfully");
