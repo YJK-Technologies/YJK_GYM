@@ -631,7 +631,7 @@ const FacultyManagement = () => {
 
         toast({
           title: "Data Not Found",
-          description: data?.message || "No matching attributes found.",
+          description: data?.message || "No matching trainers found.",
           variant: "destructive",
         });
       } else {
