@@ -856,6 +856,7 @@ const WorkoutProgramManagement = () => {
           location_code: locationCode,
           modified_by: userCode,
           programid: programForm.id,
+          updatemode:"UD"
         },
         body: JSON.stringify({
           ProgramFacultys: [editingProgram.Keyfield],
@@ -876,6 +877,7 @@ const WorkoutProgramManagement = () => {
             Company_code: companyCode,
             Location_code: locationCode,
             created_by: userCode,
+            UpdateMode: "UI"
           }),
         });
       }
@@ -889,6 +891,7 @@ const WorkoutProgramManagement = () => {
           location_code: locationCode,
           modified_by: userCode,
           programid: programForm.id,
+          updatemode:"UD"
         },
         body: JSON.stringify({
           ProgramExercises: [editingProgram.Keyfield],
@@ -914,6 +917,7 @@ const WorkoutProgramManagement = () => {
             Company_code: companyCode,
             Location_code: locationCode,
             created_by: userCode,
+            UpdateMode: "UI"
           }),
         });
       }
