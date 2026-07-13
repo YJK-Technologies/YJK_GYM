@@ -558,7 +558,7 @@ const commappingdeleteData = async (req, res) => {
         .request()
         .input("keyfiels", keyfiels)
         .input("modified_by", sql.NVarChar, req.headers["modified-by"])
-        .query(`EXEC sp_user_company_mapping 'D','','','','001','',0,@keyfiels,'','',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL`);
+        .query(`EXEC sp_user_company_mapping 'D','','','','001','',0,@keyfiels,'',@modified_by,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL`);
     }
     res.status(200).json("User and company mapping data deleted successfully");
   } catch (err) {

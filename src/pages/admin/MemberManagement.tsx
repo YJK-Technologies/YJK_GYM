@@ -20,6 +20,9 @@ import AgGridTable from "@/components/ui/ag-grid-table";
 import ImageUpload from "../ImageUpload";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { showConfirmToast } from '../../components/ui/show-confirm-toast';
+import { useCompany } from "../CompanyContext";
+
+
 
 interface Member {
   MemberID: string;
@@ -47,7 +50,17 @@ interface Member {
   modified_by: string;
 }
 
-const emptyMember: Member = {
+interface MemberStats {
+  TotalMembers: number;
+  ActiveMembers: number;
+  InactiveMembers: number;
+  ExpiringSoonMembers: number;
+}
+
+const MemberManagement = () => {
+  const { companyCode, locationCode, userCode } = useCompany();
+  
+  const emptyMember: Member = {
   MemberID: '',
   Identity_No: '',
   Full_name: '',
@@ -67,20 +80,12 @@ const emptyMember: Member = {
   is_active: false,
   Receive_promotions: false,
   Receive_notifications: false,
-  Company_code: 'YJK',
-  Location_code: 'LOC001',
-  created_by: 'admin',
-  modified_by: 'admin'
+  Company_code: companyCode,
+  Location_code: locationCode,
+  created_by: userCode,
+  modified_by: userCode
 };
 
-interface MemberStats {
-  TotalMembers: number;
-  ActiveMembers: number;
-  InactiveMembers: number;
-  ExpiringSoonMembers: number;
-}
-
-const MemberManagement = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
   const [gender, setGender] = useState<any[]>([]);
@@ -105,7 +110,7 @@ const MemberManagement = () => {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          company_code: "YJK",
+          company_code: companyCode,
         }),
       });
 
@@ -129,7 +134,7 @@ const MemberManagement = () => {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          company_code: "YJK",
+          company_code: companyCode,
         }),
       });
 
@@ -153,7 +158,7 @@ const MemberManagement = () => {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          company_code: "YJK",
+          company_code: companyCode,
         }),
       });
 
@@ -177,8 +182,8 @@ const MemberManagement = () => {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          Company_code: "YJK",
-          Location_code: "LOC001",
+          Company_code: companyCode,
+          Location_code: locationCode,
         }),
       });
 
@@ -204,7 +209,7 @@ const MemberManagement = () => {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          company_code: "YJK",
+          company_code: companyCode,
         }),
       });
 
@@ -569,9 +574,9 @@ const MemberManagement = () => {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          company_code: "YJK",
-          location_code: "LOC001",
-          "modified-by": "admin",
+          company_code: companyCode,
+          location_code: locationCode,
+          "modified-by": userCode,
         },
         body: JSON.stringify({
           MemberIDs: [memberID],
@@ -1148,8 +1153,8 @@ const MemberManagement = () => {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          Company_code: "YJK",
-          Location_code: "LOC001",
+          Company_code: companyCode,
+          Location_code: locationCode,
           MemberID: memberSearchForm.MemberID,
           Identity_No: memberSearchForm.Identity_No,
           Full_name: memberSearchForm.Full_name,
@@ -1214,21 +1219,32 @@ const MemberManagement = () => {
 
   return (
     <div className="min-h-screen bg-gray-50">
+
       <header className="bg-white shadow-sm border-b">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center py-4">
-            <div className="flex items-center space-x-4">
-              <Button variant="ghost" onClick={() => navigate('/AdminDashboard')}>
+            <div className="flex items-center gap-2 sm:gap-4 min-w-0">
+              <Button 
+                variant="ghost" 
+                onClick={() => navigate('/AdminDashboard')}
+                className="flex items-center px-2 sm:px-4"
+              >
                 <ArrowLeft className="h-4 w-4 mr-2" />
-                Back
+                <span className="hidden sm:inline ml-2">Back</span>
               </Button>
-              <h1 className="text-2xl font-bold text-gray-900">Member Management</h1>
+              <h1 className="text-lg sm:text-xl lg:text-2xl font-bold text-gray-900 truncate">Member Management</h1>
             </div>
+
             <Tooltip>
               <TooltipTrigger asChild>
-                <Button onClick={handleAddMember}>
-                  <Plus className="h-4 w-4 mr-2" />
-                  Add Member
+                <Button 
+                  onClick={handleAddMember}
+                  className="shrink-0 px-2 sm:px-4"
+                >
+                  <Plus className="h-4 w-4 sm:mr-2" />
+                  <span className="hidden sm:inline">
+                    Add Member
+                  </span>
                 </Button>
               </TooltipTrigger>
               <TooltipContent>Add Member</TooltipContent>

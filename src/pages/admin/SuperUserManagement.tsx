@@ -1,27 +1,72 @@
-import React, { useState, useEffect } from 'react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Textarea } from '@/components/ui/textarea';
-import { Switch } from '@/components/ui/switch';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { useNavigate } from 'react-router-dom';
-import { useToast } from '@/hooks/use-toast';
-import { ArrowLeft, Plus, Search, RotateCcw, Edit, Trash2, Eye, EyeOff, } from 'lucide-react';
-import { Building2, Building, MapPin, Shield, Users, ShieldCheck, User, Tags, Hash, } from "lucide-react";
+import React, { useState, useEffect } from "react";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
+import { Switch } from "@/components/ui/switch";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { useNavigate } from "react-router-dom";
+import { useToast } from "@/hooks/use-toast";
+import {
+  ArrowLeft,
+  Plus,
+  Search,
+  RotateCcw,
+  Edit,
+  Trash2,
+  Eye,
+  EyeOff,
+} from "lucide-react";
+import {
+  Building2,
+  Building,
+  MapPin,
+  Shield,
+  Users,
+  ShieldCheck,
+  User,
+  Tags,
+  Hash,
+} from "lucide-react";
 import ImageUpload from "../ImageUpload";
-import { BASE_URL } from '../ApiConfig';
+import { BASE_URL } from "../ApiConfig";
 import AgGridTable from "@/components/ui/ag-grid-table";
-import '../../index.css';
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
-import { showConfirmToast } from '../../components/ui/show-confirm-toast';
+import "../../index.css";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
+import { showConfirmToast } from "../../components/ui/show-confirm-toast";
+import { useCompany } from "../CompanyContext";
 
 const WorkoutProgramManagement = () => {
+  const { companyCode, locationCode, userCode } = useCompany();
+
   const navigate = useNavigate();
   const { toast } = useToast();
   const [cities, setCities] = useState<any[]>([]);
@@ -50,7 +95,7 @@ const WorkoutProgramManagement = () => {
   //Attribute Detail Screen
   const [attributehdr, setAttributeHdr] = useState<any[]>([]);
 
-  //Numberseries screen 
+  //Numberseries screen
   const [ScreenType, setScreenType] = useState<any[]>([]);
   const [NumberPrefix, setNumberPrefix] = useState<any[]>([]);
   const [BillFormat, setBillFormat] = useState<any[]>([]);
@@ -63,7 +108,7 @@ const WorkoutProgramManagement = () => {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          company_code: "YJK",
+          company_code: companyCode,
         }),
       });
 
@@ -87,7 +132,7 @@ const WorkoutProgramManagement = () => {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          company_code: "YJK",
+          company_code: companyCode,
         }),
       });
 
@@ -111,7 +156,7 @@ const WorkoutProgramManagement = () => {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          company_code: "YJK",
+          company_code: companyCode,
         }),
       });
 
@@ -135,7 +180,7 @@ const WorkoutProgramManagement = () => {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          company_code: "YJK",
+          company_code: companyCode,
         }),
       });
 
@@ -204,7 +249,7 @@ const WorkoutProgramManagement = () => {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          company_code: "YJK",
+          company_code: companyCode,
         }),
       });
 
@@ -215,7 +260,6 @@ const WorkoutProgramManagement = () => {
       } else {
         console.error("Failed to fetch cities");
       }
-
     } catch (error) {
       console.error("Error fetching companies:", error);
     }
@@ -230,7 +274,7 @@ const WorkoutProgramManagement = () => {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          company_code: "YJK",
+          company_code: companyCode,
         }),
       });
 
@@ -241,7 +285,6 @@ const WorkoutProgramManagement = () => {
       } else {
         console.error("Failed to fetch cities");
       }
-
     } catch (error) {
       console.error("Error fetching companies:", error);
     }
@@ -255,7 +298,7 @@ const WorkoutProgramManagement = () => {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          company_code: "YJK",
+          company_code: companyCode,
         }),
       });
 
@@ -266,7 +309,6 @@ const WorkoutProgramManagement = () => {
       } else {
         console.error("Failed to fetch cities");
       }
-
     } catch (error) {
       console.error("Error fetching companies:", error);
     }
@@ -280,7 +322,7 @@ const WorkoutProgramManagement = () => {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          company_code: "YJK",
+          company_code: companyCode,
         }),
       });
 
@@ -291,7 +333,6 @@ const WorkoutProgramManagement = () => {
       } else {
         console.error("Failed to fetch cities");
       }
-
     } catch (error) {
       console.error("Error fetching companies:", error);
     }
@@ -306,7 +347,7 @@ const WorkoutProgramManagement = () => {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          company_code: "YJK",
+          company_code: companyCode,
         }),
       });
 
@@ -330,7 +371,7 @@ const WorkoutProgramManagement = () => {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          company_code: "YJK",
+          company_code: companyCode,
         }),
       });
 
@@ -355,7 +396,7 @@ const WorkoutProgramManagement = () => {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          company_code: "YJK",
+          company_code: companyCode,
         }),
       });
 
@@ -371,7 +412,7 @@ const WorkoutProgramManagement = () => {
     }
   };
 
-  //Number series Detail Screen 
+  //Number series Detail Screen
   const fetchScreenType = async () => {
     try {
       const response = await fetch(`${BASE_URL}/screentype`, {
@@ -380,7 +421,7 @@ const WorkoutProgramManagement = () => {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          company_code: "YJK",
+          company_code: companyCode,
         }),
       });
 
@@ -391,7 +432,6 @@ const WorkoutProgramManagement = () => {
       } else {
         console.error("Failed to fetch ScreenType");
       }
-
     } catch (error) {
       console.error("Error fetching ScreenType:", error);
     }
@@ -405,7 +445,7 @@ const WorkoutProgramManagement = () => {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          company_code: "YJK",
+          company_code: companyCode,
         }),
       });
 
@@ -416,7 +456,6 @@ const WorkoutProgramManagement = () => {
       } else {
         console.error("Failed to fetch NumberPrefix");
       }
-
     } catch (error) {
       console.error("Error fetching ScreenType:", error);
     }
@@ -430,7 +469,7 @@ const WorkoutProgramManagement = () => {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          company_code: "YJK",
+          company_code: companyCode,
         }),
       });
 
@@ -441,7 +480,6 @@ const WorkoutProgramManagement = () => {
       } else {
         console.error("Failed to fetch BillFormat");
       }
-
     } catch (error) {
       console.error("Error fetching BillFormat:", error);
     }
@@ -466,7 +504,7 @@ const WorkoutProgramManagement = () => {
         fetchAttributeHdr(),
         fetchScreenType(),
         fetchNumberPrefix(),
-        fetchBillFormat()
+        fetchBillFormat(),
       ]);
     };
 
@@ -474,24 +512,61 @@ const WorkoutProgramManagement = () => {
   }, []);
 
   const tabs = [
-    { value: "company", label: "Company", screenType: "Company", icon: Building },
-    { value: "companyMapping", label: "Company Mapping", screenType: "CompanyMapping", icon: Building2 },
-    { value: "location", label: "Location", screenType: "Location", icon: MapPin },
+    {
+      value: "company",
+      label: "Company",
+      screenType: "Company",
+      icon: Building,
+    },
+    {
+      value: "companyMapping",
+      label: "Company Mapping",
+      screenType: "CompanyMapping",
+      icon: Building2,
+    },
+    {
+      value: "location",
+      label: "Location",
+      screenType: "Location",
+      icon: MapPin,
+    },
     { value: "role", label: "Role", screenType: "Role", icon: Shield },
-    { value: "roleMapping", label: "Role Mapping", screenType: "RoleMapping", icon: Users },
-    { value: "roleRights", label: "Role Rights", screenType: "RoleRights", icon: ShieldCheck },
+    {
+      value: "roleMapping",
+      label: "Role Mapping",
+      screenType: "RoleMapping",
+      icon: Users,
+    },
+    {
+      value: "roleRights",
+      label: "Role Rights",
+      screenType: "RoleRights",
+      icon: ShieldCheck,
+    },
     { value: "user", label: "User", screenType: "User", icon: User },
-    { value: "attribute", label: "Attribute", screenType: "Attribute", icon: Tags },
-    { value: "NumberSeries", label: "Number Series", screenType: "NumberSeries", icon: Hash },
+    {
+      value: "attribute",
+      label: "Attribute",
+      screenType: "Attribute",
+      icon: Tags,
+    },
+    {
+      value: "NumberSeries",
+      label: "Number Series",
+      screenType: "NumberSeries",
+      icon: Hash,
+    },
   ];
 
-  const [activeTab, setActiveTab] = useState('');
+  const [activeTab, setActiveTab] = useState("");
 
   const permissions = JSON.parse(sessionStorage.getItem("permissions") || "[]");
 
   const allowedScreens = permissions.map((p: any) => p.screen_type);
 
-  const allowedTabs = tabs.filter(tab => allowedScreens.includes(tab.screenType));
+  const allowedTabs = tabs.filter((tab) =>
+    allowedScreens.includes(tab.screenType),
+  );
 
   useEffect(() => {
     if (allowedTabs.length > 0) {
@@ -511,7 +586,9 @@ const WorkoutProgramManagement = () => {
     "NumberSeries",
   ];
 
-  const hasAnyTabPermission = tabPermissions.some((tab) => allowedScreens.includes(tab));
+  const hasAnyTabPermission = tabPermissions.some((tab) =>
+    allowedScreens.includes(tab),
+  );
 
   if (!hasAnyTabPermission) {
     return (
@@ -528,10 +605,7 @@ const WorkoutProgramManagement = () => {
             Management.
           </p>
 
-          <Button
-            className="mt-6"
-            onClick={() => navigate("/AdminDashboard")}
-          >
+          <Button className="mt-6" onClick={() => navigate("/AdminDashboard")}>
             Back to Dashboard
           </Button>
         </div>
@@ -563,8 +637,8 @@ const WorkoutProgramManagement = () => {
     annualReportURL: "",
     location_no: "",
     company_gst_no: "",
-    created_by: "admin",
-    modified_by: "admin",
+    created_by: "",
+    modified_by: "",
   });
 
   //Company Search States
@@ -722,7 +796,7 @@ const WorkoutProgramManagement = () => {
           </Tooltip>
         </div>
       ),
-    }
+    },
   ];
 
   // Preview images for ImageUpload component
@@ -751,7 +825,7 @@ const WorkoutProgramManagement = () => {
 
           reader.readAsDataURL(file);
         });
-      })
+      }),
     );
 
     setCompanyImages(convertedImages);
@@ -761,17 +835,18 @@ const WorkoutProgramManagement = () => {
   const [submittedCompanyMapping, setSubmittedCompanyMapping] = useState(false);
   const [companyMappings, setCompanyMappings] = useState([]);
   const [editingCompanyMapping, setEditingCompanyMapping] = useState<any>(null);
-  const [isCompanyMappingDialogOpen, setIsCompanyMappingDialogOpen] = useState(false);
+  const [isCompanyMappingDialogOpen, setIsCompanyMappingDialogOpen] =
+    useState(false);
   const [companyMappingForm, setCompanyMappingForm] = useState({
-    company_code: "YJK",
+    company_code: "",
     user_code: "",
     company_no: "",
     location_no: "",
     status: "Active",
     order_no: "",
     keyfiels: "",
-    created_by: "admin",
-    modified_by: "admin",
+    created_by: "",
+    modified_by: "",
   });
 
   //Company Mapping Search States
@@ -860,7 +935,7 @@ const WorkoutProgramManagement = () => {
           </Tooltip>
         </div>
       ),
-    }
+    },
   ];
 
   //Location Dialog States
@@ -882,8 +957,8 @@ const WorkoutProgramManagement = () => {
     email_id: "",
     status: "Active",
     contact_no: "",
-    created_by: "admin",
-    modified_by: "admin",
+    created_by: "",
+    modified_by: "",
   });
 
   //Location Search States
@@ -1015,7 +1090,7 @@ const WorkoutProgramManagement = () => {
           </Tooltip>
         </div>
       ),
-    }
+    },
   ];
 
   //Role Dialog States
@@ -1024,12 +1099,12 @@ const WorkoutProgramManagement = () => {
   const [editingRole, setEditingRole] = useState<any>(null);
   const [isRoleDialogOpen, setIsRoleDialogOpen] = useState(false);
   const [roleForm, setRoleForm] = useState({
-    company_code: "YJK",
+    company_code: "",
     role_id: "",
     role_name: "",
     description: "",
-    created_by: "admin",
-    modified_by: "admin",
+    created_by: "",
+    modified_by: "",
   });
 
   //Role Search States
@@ -1099,12 +1174,12 @@ const WorkoutProgramManagement = () => {
   const [editingRoleMapping, setEditingRoleMapping] = useState<any>(null);
   const [isRoleMappingDialogOpen, setIsRoleMappingDialogOpen] = useState(false);
   const [roleMappingForm, setRoleMappingForm] = useState({
-    company_code: "YJK",
+    company_code: "",
     user_code: "",
     role_id: "",
     keyfield: "",
-    created_by: "admin",
-    modified_by: "admin",
+    created_by: "",
+    modified_by: "",
   });
 
   //Role Mapping Search States
@@ -1179,7 +1254,7 @@ const WorkoutProgramManagement = () => {
           </Tooltip>
         </div>
       ),
-    }
+    },
   ];
 
   //Role Rights Dialog States
@@ -1188,13 +1263,13 @@ const WorkoutProgramManagement = () => {
   const [editingRoleRight, setEditingRoleRight] = useState<any>(null);
   const [isRoleRightsDialogOpen, setIsRoleRightsDialogOpen] = useState(false);
   const [roleRightsForm, setRoleRightsForm] = useState({
-    company_code: "YJK",
+    company_code: "",
     role_id: "",
     screen_type: "",
     permission_type: "",
     keyfield: "",
-    created_by: "admin",
-    modified_by: "admin",
+    created_by: "",
+    modified_by: "",
   });
 
   //Role Rights Search States
@@ -1263,7 +1338,7 @@ const WorkoutProgramManagement = () => {
           </Tooltip>
         </div>
       ),
-    }
+    },
   ];
 
   //User Dialog States
@@ -1286,8 +1361,8 @@ const WorkoutProgramManagement = () => {
     gender: "",
     role_id: "",
     super_admin: false,
-    created_by: "admin",
-    modified_by: "admin",
+    created_by: "",
+    modified_by: "",
   });
 
   const [userImages, setUserImages] = useState<(string | null)[]>([null, null]);
@@ -1312,7 +1387,7 @@ const WorkoutProgramManagement = () => {
 
           reader.readAsDataURL(file);
         });
-      })
+      }),
     );
 
     setUserImages(convertedImages);
@@ -1320,7 +1395,7 @@ const WorkoutProgramManagement = () => {
 
   //users Search States
   const [usersSearchForm, setusersSearchForm] = useState({
-    company_code: "YJK",
+    company_code: companyCode,
     user_code: "",
     user_name: "",
     first_name: "",
@@ -1328,7 +1403,7 @@ const WorkoutProgramManagement = () => {
     user_status: "",
     dob: "",
     gender: "",
-    created_by: "JK",
+    created_by: userCode,
   });
 
   //User Ag Grid
@@ -1424,7 +1499,7 @@ const WorkoutProgramManagement = () => {
           </Tooltip>
         </div>
       ),
-    }
+    },
   ];
 
   //Attribute Detail Dialog States
@@ -1433,13 +1508,13 @@ const WorkoutProgramManagement = () => {
   const [editingAttribute, setEditingAttribute] = useState<any>(null);
   const [isAttributeDialogOpen, setIsAttributeDialogOpen] = useState(false);
   const [attributeForm, setAttributeForm] = useState({
-    company_code: "YJK",
+    company_code: "",
     attributeheader_code: "",
     attributedetails_code: "",
     attributedetails_name: "",
     descriptions: "",
-    created_by: "admin",
-    modified_by: "admin",
+    created_by: "",
+    modified_by: "",
   });
 
   //Attribute Detail Search States
@@ -1505,7 +1580,12 @@ const WorkoutProgramManagement = () => {
               <Button
                 variant="ghost"
                 size="sm"
-                onClick={() => handleDeleteAttribute(params.data.attributeheader_code, params.data.attributedetails_code)}
+                onClick={() =>
+                  handleDeleteAttribute(
+                    params.data.attributeheader_code,
+                    params.data.attributedetails_code,
+                  )
+                }
               >
                 <Trash2 className="h-4 w-4 text-red-500" />
               </Button>
@@ -1514,24 +1594,30 @@ const WorkoutProgramManagement = () => {
           </Tooltip>
         </div>
       ),
-    }
+    },
   ];
 
   //Attribute Header Dialog States
   const [submittedAttributeHdr, setSubmittedAttributeHdr] = useState(false);
-  const [isAttributeHdrDialogOpen, setIsAttributeHdrDialogOpen] = useState(false);
+  const [isAttributeHdrDialogOpen, setIsAttributeHdrDialogOpen] =
+    useState(false);
   const [attributeHdrForm, setAttributeHdrForm] = useState({
-    company_code: "YJK", attributeheader_code: "", attributeheader_name: "", status: "Active", created_by: "admin", modified_by: "admin", tempstr1: "", tempstr2: "",
-    tempstr3: "", tempstr4: "", datetime1: "", datetime2: "", datetime3: "", datetime4: "",
+    company_code: "",
+    attributeheader_code: "",
+    attributeheader_name: "",
+    status: "Active",
+    created_by: "",
+    modified_by: "",
   });
 
-  //Number Series 
+  //Number Series
   const [submittedNumberSeries, setSubmittedNumberSeries] = useState(false);
-  const [isNumberSeriesDialogOpen, setIsNumberSeriesDialogOpen] = useState(false);
+  const [isNumberSeriesDialogOpen, setIsNumberSeriesDialogOpen] =
+    useState(false);
   const [editingNumberSeries, setEditingNumberSeries] = useState<any>(null);
   const [numberSeries, setNumberSeries] = useState([]);
   const [numberSeriesForm, setNumberSeriesForm] = useState({
-    company_code: "YJK",
+    company_code: "",
     Screen_Type: "",
     Start_Year: "",
     End_Year: "",
@@ -1542,16 +1628,14 @@ const WorkoutProgramManagement = () => {
     number_prefix: "0",
     Status: "Active",
     bill_format: "",
-    created_by: "admin",
-    modified_by: "admin",
+    created_by: "",
+    modified_by: "",
   });
 
   useEffect(() => {
     const today = new Date();
     const financialYear =
-      today.getMonth() >= 3
-        ? today.getFullYear()
-        : today.getFullYear() - 1;
+      today.getMonth() >= 3 ? today.getFullYear() : today.getFullYear() - 1;
 
     setNumberSeriesForm((prev) => ({
       ...prev,
@@ -1567,7 +1651,7 @@ const WorkoutProgramManagement = () => {
 
   //Number Series Search States
   const [numberSeriesSearchForm, setnumberSeriesSearchForm] = useState({
-    Screen_Type: ""
+    Screen_Type: "",
   });
 
   //Number Series Ag Grid
@@ -1668,7 +1752,7 @@ const WorkoutProgramManagement = () => {
           </Tooltip>
         </div>
       ),
-    }
+    },
   ];
 
   //Company CRUD Functions
@@ -1698,8 +1782,8 @@ const WorkoutProgramManagement = () => {
       annualReportURL: "",
       location_no: "",
       company_gst_no: "",
-      created_by: "admin",
-      modified_by: "admin",
+      created_by: userCode,
+      modified_by: userCode,
     });
     setCompanyImages([null, null]);
 
@@ -1762,7 +1846,7 @@ const WorkoutProgramManagement = () => {
         const byteCharacters = atob(base64);
 
         const byteNumbers = Array.from(byteCharacters, (char) =>
-          char.charCodeAt(0)
+          char.charCodeAt(0),
         );
 
         const byteArray = new Uint8Array(byteNumbers);
@@ -1776,20 +1860,14 @@ const WorkoutProgramManagement = () => {
         }
 
         if (index === 1) {
-          formData.append(
-            "authorisedSignatur",
-            blob,
-            "authorisedSignatur.png"
-          );
+          formData.append("authorisedSignatur", blob, "authorisedSignatur.png");
         }
       });
 
-      const response = await fetch(`${BASE_URL}/add`,
-        {
-          method: "POST",
-          body: formData,
-        }
-      );
+      const response = await fetch(`${BASE_URL}/add`, {
+        method: "POST",
+        body: formData,
+      });
 
       const data = await response.json();
 
@@ -1838,7 +1916,10 @@ const WorkoutProgramManagement = () => {
       const formData = new FormData();
 
       Object.keys(companyForm).forEach((key) => {
-        formData.append(key, companyForm[key as keyof typeof companyForm] ?? "");
+        formData.append(
+          key,
+          companyForm[key as keyof typeof companyForm] ?? "",
+        );
       });
 
       companyImages.forEach((img, index) => {
@@ -1848,7 +1929,7 @@ const WorkoutProgramManagement = () => {
         const byteCharacters = atob(base64);
 
         const byteNumbers = Array.from(byteCharacters, (char) =>
-          char.charCodeAt(0)
+          char.charCodeAt(0),
         );
 
         const byteArray = new Uint8Array(byteNumbers);
@@ -1862,20 +1943,14 @@ const WorkoutProgramManagement = () => {
         }
 
         if (index === 1) {
-          formData.append(
-            "authorisedSignatur",
-            blob,
-            "authorisedSignatur.png"
-          );
+          formData.append("authorisedSignatur", blob, "authorisedSignatur.png");
         }
       });
 
-      const response = await fetch(`${BASE_URL}/CompanyUpdate`,
-        {
-          method: "POST",
-          body: formData,
-        }
-      );
+      const response = await fetch(`${BASE_URL}/CompanyUpdate`, {
+        method: "POST",
+        body: formData,
+      });
 
       const data = await response.json();
 
@@ -1918,18 +1993,16 @@ const WorkoutProgramManagement = () => {
 
   const deleteCompany = async (companyNo: string) => {
     try {
-      const response = await fetch(`${BASE_URL}/delete`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            "modified-by": "admin",
-          },
-          body: JSON.stringify({
-            company_nos: [companyNo],
-          }),
-        }
-      );
+      const response = await fetch(`${BASE_URL}/delete`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "modified-by": userCode,
+        },
+        body: JSON.stringify({
+          company_nos: [companyNo],
+        }),
+      });
 
       const data = await response.json();
 
@@ -2000,18 +2073,17 @@ const WorkoutProgramManagement = () => {
       location_no: company.location_no,
       company_gst_no: company.company_gst_no,
       created_by: company.created_by,
-      modified_by: company.modified_by,
+      modified_by: userCode,
     });
 
     const logo =
-      company.company_logo?.data &&
-        Array.isArray(company.company_logo.data)
+      company.company_logo?.data && Array.isArray(company.company_logo.data)
         ? bufferToBase64(company.company_logo.data)
         : null;
 
     const signature =
       company.authorisedSignatur?.data &&
-        Array.isArray(company.authorisedSignatur.data)
+      Array.isArray(company.authorisedSignatur.data)
         ? bufferToBase64(company.authorisedSignatur.data)
         : null;
 
@@ -2083,15 +2155,15 @@ const WorkoutProgramManagement = () => {
     fetchCompanies(),
     setEditingCompanyMapping(null);
     setCompanyMappingForm({
-      company_code: "YJK",
+      company_code: companyCode,
       user_code: "",
       company_no: "",
       location_no: "",
       status: "Active",
       order_no: "",
       keyfiels: "",
-      created_by: "admin",
-      modified_by: "admin",
+      created_by: userCode,
+      modified_by: userCode,
     });
     setIsCompanyMappingDialogOpen(true);
   };
@@ -2120,15 +2192,13 @@ const WorkoutProgramManagement = () => {
     if (!validateCompanyMapping()) return;
 
     try {
-      const response = await fetch(`${BASE_URL}/addCompanyMappingData`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(companyMappingForm),
-        }
-      );
+      const response = await fetch(`${BASE_URL}/addCompanyMappingData`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(companyMappingForm),
+      });
 
       const data = await response.json();
 
@@ -2174,15 +2244,13 @@ const WorkoutProgramManagement = () => {
     if (!validateCompanyMapping()) return;
 
     try {
-      const response = await fetch(`${BASE_URL}/CompanyMappingUpdate`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(companyMappingForm),
-        }
-      );
+      const response = await fetch(`${BASE_URL}/CompanyMappingUpdate`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(companyMappingForm),
+      });
 
       const data = await response.json();
 
@@ -2225,18 +2293,16 @@ const WorkoutProgramManagement = () => {
 
   const deleteCompanyMapping = async (keyfiels: string) => {
     try {
-      const response = await fetch(`${BASE_URL}/commappingdeleteData`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            "modified-by": "admin",
-          },
-          body: JSON.stringify({
-            keyfiels: [keyfiels],
-          }),
-        }
-      );
+      const response = await fetch(`${BASE_URL}/commappingdeleteData`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "modified-by": userCode,
+        },
+        body: JSON.stringify({
+          keyfiels: [keyfiels],
+        }),
+      });
 
       const data = await response.json();
 
@@ -2251,8 +2317,7 @@ const WorkoutProgramManagement = () => {
       } else {
         toast({
           title: "Error",
-          description:
-            data.message || "Failed to delete company mapping.",
+          description: data.message || "Failed to delete company mapping.",
           variant: "destructive",
         });
       }
@@ -2277,21 +2342,19 @@ const WorkoutProgramManagement = () => {
 
   const handleCompanyMappingSearch = async () => {
     try {
-      const response = await fetch(`${BASE_URL}/companymappingsearchdata`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            company_code: "YJK",
-            user_code: companyMappingSearchForm.user_code,
-            company_no: companyMappingSearchForm.company_no,
-            location_no: companyMappingSearchForm.location_no,
-            status: companyMappingSearchForm.status,
-          }),
-        }
-      );
+      const response = await fetch(`${BASE_URL}/companymappingsearchdata`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          company_code: companyCode,
+          user_code: companyMappingSearchForm.user_code,
+          company_no: companyMappingSearchForm.company_no,
+          location_no: companyMappingSearchForm.location_no,
+          status: companyMappingSearchForm.status,
+        }),
+      });
 
       const data = await response.json();
 
@@ -2333,7 +2396,7 @@ const WorkoutProgramManagement = () => {
     setEditingCompanyMapping(mapping);
 
     setCompanyMappingForm({
-      company_code: "YJK",
+      company_code: companyCode,
       user_code: mapping.user_code,
       company_no: mapping.company_no,
       location_no: mapping.location_no,
@@ -2341,7 +2404,7 @@ const WorkoutProgramManagement = () => {
       order_no: mapping.order_no,
       keyfiels: mapping.keyfiels,
       created_by: mapping.created_by,
-      modified_by: mapping.modified_by,
+      modified_by: userCode,
     });
 
     setIsCompanyMappingDialogOpen(true);
@@ -2368,8 +2431,8 @@ const WorkoutProgramManagement = () => {
       email_id: "",
       status: "Active",
       contact_no: "",
-      created_by: "admin",
-      modified_by: "admin",
+      created_by: userCode,
+      modified_by: userCode,
     });
     setIsLocationDialogOpen(true);
   };
@@ -2417,15 +2480,13 @@ const WorkoutProgramManagement = () => {
     if (!validateLocation()) return;
 
     try {
-      const response = await fetch(`${BASE_URL}/addlocationinfo`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(locationForm),
-        }
-      );
+      const response = await fetch(`${BASE_URL}/addlocationinfo`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(locationForm),
+      });
 
       const data = await response.json();
 
@@ -2471,15 +2532,13 @@ const WorkoutProgramManagement = () => {
     if (!validateLocation()) return;
 
     try {
-      const response = await fetch(`${BASE_URL}/LocationUpdate`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(locationForm),
-        }
-      );
+      const response = await fetch(`${BASE_URL}/LocationUpdate`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(locationForm),
+      });
 
       const data = await response.json();
 
@@ -2522,18 +2581,16 @@ const WorkoutProgramManagement = () => {
 
   const deleteLocation = async (location_no: string) => {
     try {
-      const response = await fetch(`${BASE_URL}/deletelocation`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            "modified-by": "admin",
-          },
-          body: JSON.stringify({
-            location_nos: [location_no],
-          }),
-        }
-      );
+      const response = await fetch(`${BASE_URL}/deletelocation`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "modified-by": userCode,
+        },
+        body: JSON.stringify({
+          location_nos: [location_no],
+        }),
+      });
 
       const data = await response.json();
 
@@ -2643,7 +2700,7 @@ const WorkoutProgramManagement = () => {
       status: location.status,
       contact_no: location.contact_no,
       created_by: location.created_by,
-      modified_by: location.modified_by,
+      modified_by: userCode,
     });
 
     setIsLocationDialogOpen(true);
@@ -2653,21 +2710,18 @@ const WorkoutProgramManagement = () => {
   const handleAddRole = () => {
     setEditingRole(null);
     setRoleForm({
-      company_code: "YJK",
+      company_code: companyCode,
       role_id: "",
       role_name: "",
       description: "",
-      created_by: "admin",
-      modified_by: "admin",
+      created_by: userCode,
+      modified_by: userCode,
     });
     setIsRoleDialogOpen(true);
   };
 
   const validateRole = () => {
-    if (
-      !roleForm.role_id ||
-      !roleForm.role_name
-    ) {
+    if (!roleForm.role_id || !roleForm.role_name) {
       toast({
         title: "Required Fields",
         description: "Please fill all required fields.",
@@ -2790,8 +2844,8 @@ const WorkoutProgramManagement = () => {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          "modified-by": "admin",
-          "company_code": roleForm.company_code,
+          "modified-by": userCode,
+          company_code: companyCode,
         },
         body: JSON.stringify({
           role_ids: [role_id],
@@ -2842,7 +2896,7 @@ const WorkoutProgramManagement = () => {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          company_code: "YJK",
+          company_code: companyCode,
           role_id: roleSearchForm.role_id,
           role_name: roleSearchForm.role_name,
         }),
@@ -2888,12 +2942,12 @@ const WorkoutProgramManagement = () => {
     setEditingRole(role);
 
     setRoleForm({
-      company_code: "YJK",
+      company_code: companyCode,
       role_id: role.role_id,
       role_name: role.role_name,
       description: role.description,
       created_by: role.created_by,
-      modified_by: "admin",
+      modified_by: userCode,
     });
 
     setIsRoleDialogOpen(true);
@@ -2905,21 +2959,18 @@ const WorkoutProgramManagement = () => {
     fetchRole(),
     setEditingRoleMapping(null);
     setRoleMappingForm({
-      company_code: "YJK",
+      company_code: companyCode,
       user_code: "",
       role_id: "",
       keyfield: "",
-      created_by: "admin",
-      modified_by: "admin",
+      created_by: userCode,
+      modified_by: userCode,
     });
     setIsRoleMappingDialogOpen(true);
   };
 
   const validateRoleMapping = () => {
-    if (
-      !roleMappingForm.user_code ||
-      !roleMappingForm.role_id
-    ) {
+    if (!roleMappingForm.user_code || !roleMappingForm.role_id) {
       toast({
         title: "Required Fields",
         description: "Please fill all required fields.",
@@ -3037,13 +3088,12 @@ const WorkoutProgramManagement = () => {
   };
 
   const deleteRoleMapping = async (keyfield: string) => {
-
     try {
       const response = await fetch(`${BASE_URL}/RollMappingDelete`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          "modified-by": "admin",
+          "modified-by": userCode,
         },
         body: JSON.stringify({
           keyfield: [keyfield],
@@ -3088,21 +3138,19 @@ const WorkoutProgramManagement = () => {
 
   const handleRoleMappingSearch = async () => {
     try {
-      const response = await fetch(`${BASE_URL}/userrolsearchdata`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            company_code: "YJK",
-            user_code: roleMappingSearchForm.user_code,
-            user_name: roleMappingSearchForm.user_name,
-            role_id: roleMappingSearchForm.role_id,
-            role_name: roleMappingSearchForm.role_name,
-          }),
-        }
-      );
+      const response = await fetch(`${BASE_URL}/userrolsearchdata`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          company_code: companyCode,
+          user_code: roleMappingSearchForm.user_code,
+          user_name: roleMappingSearchForm.user_name,
+          role_id: roleMappingSearchForm.role_id,
+          role_name: roleMappingSearchForm.role_name,
+        }),
+      });
 
       const data = await response.json();
 
@@ -3144,12 +3192,12 @@ const WorkoutProgramManagement = () => {
     setEditingRoleMapping(mapping);
 
     setRoleMappingForm({
-      company_code: "YJK",
+      company_code: companyCode,
       user_code: mapping.user_code,
       role_id: mapping.role_id,
       keyfield: mapping.keyfield,
       created_by: mapping.created_by,
-      modified_by: "admin",
+      modified_by: userCode,
     });
 
     setIsRoleMappingDialogOpen(true);
@@ -3162,13 +3210,13 @@ const WorkoutProgramManagement = () => {
     fetchScreenType(),
     setEditingRoleRight(null);
     setRoleRightsForm({
-      company_code: "YJK",
+      company_code: companyCode,
       role_id: "",
       screen_type: "",
       permission_type: "",
       keyfield: "",
-      created_by: "admin",
-      modified_by: "admin",
+      created_by: userCode,
+      modified_by: userCode,
     });
     setIsRoleRightsDialogOpen(true);
   };
@@ -3301,7 +3349,7 @@ const WorkoutProgramManagement = () => {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          "modified-by": "admin",
+          "modified-by": userCode,
         },
         body: JSON.stringify({
           keyfield: [keyfield],
@@ -3346,20 +3394,18 @@ const WorkoutProgramManagement = () => {
 
   const handleRoleRightsSearch = async () => {
     try {
-      const response = await fetch(`${BASE_URL}/userscreensearchdata`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            company_code: "YJK",
-            role_id: roleRightsSearchForm.role_id,
-            screen_type: roleRightsSearchForm.screen_type,
-            permission_type: roleRightsSearchForm.permission_type,
-          }),
-        }
-      );
+      const response = await fetch(`${BASE_URL}/userscreensearchdata`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          company_code: companyCode,
+          role_id: roleRightsSearchForm.role_id,
+          screen_type: roleRightsSearchForm.screen_type,
+          permission_type: roleRightsSearchForm.permission_type,
+        }),
+      });
 
       const data = await response.json();
 
@@ -3401,13 +3447,13 @@ const WorkoutProgramManagement = () => {
     setEditingRoleRight(item);
 
     setRoleRightsForm({
-      company_code: "YJK",
+      company_code: companyCode,
       role_id: item.role_id,
       screen_type: item.screen_type,
       permission_type: item.permission_type,
       keyfield: item.keyfield,
       created_by: item.created_by,
-      modified_by: "admin",
+      modified_by: userCode,
     });
 
     setIsRoleRightsDialogOpen(true);
@@ -3420,7 +3466,7 @@ const WorkoutProgramManagement = () => {
     fetchRole(),
     setEditingUser(null);
     setUserForm({
-      company_code: "YJK",
+      company_code: companyCode,
       user_code: "",
       user_name: "",
       first_name: "",
@@ -3434,8 +3480,8 @@ const WorkoutProgramManagement = () => {
       gender: "",
       role_id: "",
       super_admin: false,
-      created_by: "admin",
-      modified_by: "admin",
+      created_by: userCode,
+      modified_by: userCode,
     });
     setUserImages([null]);
     setIsUserDialogOpen(true);
@@ -3485,9 +3531,6 @@ const WorkoutProgramManagement = () => {
     try {
       const formData = new FormData();
 
-      // Object.entries(userForm).forEach(([key, value]) => {
-      //   formData.append(key, value as string);
-      // });
       Object.entries(userForm).forEach(([key, value]) => {
         if (key === "super_admin") {
           formData.append("super_admin", value ? "Yes" : "No");
@@ -3495,10 +3538,6 @@ const WorkoutProgramManagement = () => {
           formData.append(key, String(value ?? ""));
         }
       });
-
-      // if (userImages?.length > 0 && userImages[0]) {
-      //   formData.append("user_img", userImages[0]);
-      // }
 
       userImages.forEach((img, index) => {
         if (!img) return;
@@ -3510,7 +3549,7 @@ const WorkoutProgramManagement = () => {
         const byteCharacters = atob(base64);
 
         const byteNumbers = Array.from(byteCharacters, (char) =>
-          char.charCodeAt(0)
+          char.charCodeAt(0),
         );
 
         const byteArray = new Uint8Array(byteNumbers);
@@ -3523,11 +3562,7 @@ const WorkoutProgramManagement = () => {
         const extension = mimeType.split("/")[1] || "png";
 
         if (index === 0) {
-          formData.append(
-            "user_img",
-            blob,
-            `user_img.${extension}`
-          );
+          formData.append("user_img", blob, `user_img.${extension}`);
         }
       });
 
@@ -3583,9 +3618,6 @@ const WorkoutProgramManagement = () => {
     try {
       const formData = new FormData();
 
-      // Object.entries(userForm).forEach(([key, value]) => {
-      //   formData.append(key, value as string);
-      // });
       Object.entries(userForm).forEach(([key, value]) => {
         if (key === "super_admin") {
           formData.append("super_admin", value ? "Yes" : "No");
@@ -3593,10 +3625,6 @@ const WorkoutProgramManagement = () => {
           formData.append(key, String(value ?? ""));
         }
       });
-
-      // if (userImages.length > 0) {
-      //   formData.append("user_images", userImages[0]);
-      // }
 
       userImages.forEach((img, index) => {
         if (!img) return;
@@ -3608,7 +3636,7 @@ const WorkoutProgramManagement = () => {
         const byteCharacters = atob(base64);
 
         const byteNumbers = Array.from(byteCharacters, (char) =>
-          char.charCodeAt(0)
+          char.charCodeAt(0),
         );
 
         const byteArray = new Uint8Array(byteNumbers);
@@ -3621,11 +3649,7 @@ const WorkoutProgramManagement = () => {
         const extension = mimeType.split("/")[1] || "png";
 
         if (index === 0) {
-          formData.append(
-            "user_images",
-            blob,
-            `user_images.${extension}`
-          );
+          formData.append("user_images", blob, `user_images.${extension}`);
         }
       });
 
@@ -3680,8 +3704,8 @@ const WorkoutProgramManagement = () => {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          "modified-by": "admin",
-          "company_code": "YJK",
+          "modified-by": userCode,
+          company_code: companyCode,
         },
         body: JSON.stringify({
           user_codes: [user_code],
@@ -3732,7 +3756,7 @@ const WorkoutProgramManagement = () => {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          company_code: "YJK",
+          company_code: companyCode,
           user_code: usersSearchForm.user_code,
           user_name: usersSearchForm.user_name,
           first_name: usersSearchForm.first_name,
@@ -3785,7 +3809,7 @@ const WorkoutProgramManagement = () => {
     console.log(user);
 
     setUserForm({
-      company_code: user.company_code,
+      company_code: companyCode,
       user_code: user.user_code,
       user_name: user.user_name,
       first_name: user.first_name,
@@ -3800,12 +3824,11 @@ const WorkoutProgramManagement = () => {
       role_id: user.role_id,
       super_admin: user.super_admin === "Yes",
       created_by: user.created_by,
-      modified_by: user.modified_by,
+      modified_by: userCode,
     });
 
     const userLogo =
-      user.user_images?.data &&
-        Array.isArray(user.user_images.data)
+      user.user_images?.data && Array.isArray(user.user_images.data)
         ? bufferToBase64(user.user_images.data)
         : null;
 
@@ -3819,13 +3842,13 @@ const WorkoutProgramManagement = () => {
     fetchAttributeHdr(),
     setEditingAttribute(null);
     setAttributeForm({
-      company_code: "YJK",
+      company_code: companyCode,
       attributeheader_code: "",
       attributedetails_code: "",
       attributedetails_name: "",
       descriptions: "",
-      created_by: "admin",
-      modified_by: "admin",
+      created_by: userCode,
+      modified_by: userCode,
     });
     setIsAttributeDialogOpen(true);
   };
@@ -3868,7 +3891,7 @@ const WorkoutProgramManagement = () => {
           title: "Success",
           description:
             data.message || "Attribute details created successfully.",
-            variant: "success",
+          variant: "success",
         });
 
         handleAttributeSearch();
@@ -3877,8 +3900,7 @@ const WorkoutProgramManagement = () => {
       } else {
         toast({
           title: "Error",
-          description:
-            data.message || "Failed to create attribute details.",
+          description: data.message || "Failed to create attribute details.",
           variant: "destructive",
         });
       }
@@ -3920,7 +3942,8 @@ const WorkoutProgramManagement = () => {
       if (response.ok) {
         toast({
           title: "Success",
-          description: data.message || data || "Attribute details updated successfully.",
+          description:
+            data.message || data || "Attribute details updated successfully.",
           variant: "success",
         });
 
@@ -3931,8 +3954,7 @@ const WorkoutProgramManagement = () => {
       } else {
         toast({
           title: "Error",
-          description:
-            data.message || "Failed to update attribute details.",
+          description: data.message || "Failed to update attribute details.",
           variant: "destructive",
         });
       }
@@ -3947,24 +3969,29 @@ const WorkoutProgramManagement = () => {
     }
   };
 
-  const handleDeleteAttribute = (attributeheader_code: string, attributedetails_code: string) => {
+  const handleDeleteAttribute = (
+    attributeheader_code: string,
+    attributedetails_code: string,
+  ) => {
     showConfirmToast({
       title: "Delete Attribute",
-      description:
-        "Are you sure you want to delete this attribute?",
+      description: "Are you sure you want to delete this attribute?",
       onConfirm: () =>
         deleteAttribute(attributeheader_code, attributedetails_code),
     });
   };
 
-  const deleteAttribute = async (attributeheader_code: string, attributedetails_code: string) => {
+  const deleteAttribute = async (
+    attributeheader_code: string,
+    attributedetails_code: string,
+  ) => {
     try {
       const response = await fetch(`${BASE_URL}/delattridetData`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          "modified-by": "admin",
-          "company_code": "YJK",
+          "modified-by": userCode,
+          company_code: companyCode,
         },
         body: JSON.stringify({
           attributeheader_codesToDelete: [attributeheader_code],
@@ -3977,7 +4004,8 @@ const WorkoutProgramManagement = () => {
       if (response.ok) {
         toast({
           title: "Success",
-          description: data.message || data || "Attribute details deleted successfully.",
+          description:
+            data.message || data || "Attribute details deleted successfully.",
           variant: "success",
         });
 
@@ -4017,7 +4045,7 @@ const WorkoutProgramManagement = () => {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          company_code: "YJK",
+          company_code: companyCode,
           attributeheader_code: attributeSearchForm.attributeheader_code,
           attributedetails_code: attributeSearchForm.attributedetails_code,
           attributedetails_name: attributeSearchForm.attributedetails_name,
@@ -4065,13 +4093,13 @@ const WorkoutProgramManagement = () => {
     setEditingAttribute(attribute);
 
     setAttributeForm({
-      company_code: attribute.company_code,
+      company_code: companyCode,
       attributeheader_code: attribute.attributeheader_code,
       attributedetails_code: attribute.attributedetails_code,
       attributedetails_name: attribute.attributedetails_name,
       descriptions: attribute.descriptions,
       created_by: attribute.created_by,
-      modified_by: "admin",
+      modified_by: userCode,
     });
 
     setIsAttributeDialogOpen(true);
@@ -4081,20 +4109,12 @@ const WorkoutProgramManagement = () => {
   const handleAddAttributeHdr = () => {
     fetchStatus(),
     setAttributeHdrForm({
-      company_code: "YJK",
+      company_code: companyCode,
       attributeheader_code: "",
       attributeheader_name: "",
       status: "Active",
-      created_by: "admin",
-      modified_by: "admin",
-      tempstr1: "",
-      tempstr2: "",
-      tempstr3: "",
-      tempstr4: "",
-      datetime1: "",
-      datetime2: "",
-      datetime3: "",
-      datetime4: "",
+      created_by: userCode,
+      modified_by: userCode,
     });
     setIsAttributeHdrDialogOpen(true);
   };
@@ -4122,15 +4142,13 @@ const WorkoutProgramManagement = () => {
     if (!validateAttributeHdr()) return;
 
     try {
-      const response = await fetch(`${BASE_URL}/addattriData`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(attributeHdrForm),
-        }
-      );
+      const response = await fetch(`${BASE_URL}/addattriData`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(attributeHdrForm),
+      });
 
       const data = await response.json();
 
@@ -4145,8 +4163,7 @@ const WorkoutProgramManagement = () => {
       } else {
         toast({
           title: "Error",
-          description:
-            data.message || "Failed to create attribute header.",
+          description: data.message || "Failed to create attribute header.",
           variant: "destructive",
         });
       }
@@ -4161,7 +4178,7 @@ const WorkoutProgramManagement = () => {
     }
   };
 
-  // NumberSeries CRUD Functions  
+  // NumberSeries CRUD Functions
   const handleAddNumberSeries = () => {
     fetchStatus(),
     fetchScreenType(),
@@ -4169,7 +4186,7 @@ const WorkoutProgramManagement = () => {
     fetchBillFormat()
     setEditingNumberSeries(null);
     setNumberSeriesForm({
-      company_code: "YJK",
+      company_code: companyCode,
       Screen_Type: "",
       Start_Year: "",
       End_Year: "",
@@ -4180,8 +4197,8 @@ const WorkoutProgramManagement = () => {
       number_prefix: "",
       Status: "Active",
       bill_format: "",
-      created_by: "admin",
-      modified_by: "admin",
+      created_by: userCode,
+      modified_by: userCode,
     });
 
     setIsNumberSeriesDialogOpen(true);
@@ -4217,15 +4234,13 @@ const WorkoutProgramManagement = () => {
     if (!validateNumberSeries()) return;
 
     try {
-      const response = await fetch(`${BASE_URL}/addNumberseries`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(numberSeriesForm),
-        }
-      );
+      const response = await fetch(`${BASE_URL}/addNumberseries`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(numberSeriesForm),
+      });
 
       const data = await response.json();
 
@@ -4271,16 +4286,13 @@ const WorkoutProgramManagement = () => {
     if (!validateNumberSeries()) return;
 
     try {
-
-      const response = await fetch(`${BASE_URL}/NumberSeriesUpdate`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(numberSeriesForm),
-        }
-      );
+      const response = await fetch(`${BASE_URL}/NumberSeriesUpdate`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(numberSeriesForm),
+      });
 
       const data = await response.json();
 
@@ -4327,8 +4339,8 @@ const WorkoutProgramManagement = () => {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          "modified-by": "admin",
-          "company_code": "YJK", // if required
+          "modified-by": userCode,
+          company_code: companyCode, // if required
         },
         body: JSON.stringify({
           Screen_TypesToDelete: [
@@ -4380,7 +4392,7 @@ const WorkoutProgramManagement = () => {
     setEditingNumberSeries(mapping);
 
     setNumberSeriesForm({
-      company_code: "YJK",
+      company_code: companyCode,
       Screen_Type: mapping.Screen_Type,
       Start_Year: mapping.Start_Year,
       End_Year: mapping.End_Year,
@@ -4391,15 +4403,14 @@ const WorkoutProgramManagement = () => {
       number_prefix: mapping.number_prefix,
       Status: mapping.Status,
       bill_format: mapping.bill_format,
-      created_by: "admin",
-      modified_by: "admin",
+      created_by: userCode,
+      modified_by: userCode,
     });
 
     setIsNumberSeriesDialogOpen(true);
   };
 
   const handleSearchNumberSeries = async () => {
-
     try {
       const response = await fetch(`${BASE_URL}/numberseriessearchdata`, {
         method: "POST",
@@ -4407,7 +4418,7 @@ const WorkoutProgramManagement = () => {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          company_code: "YJK",
+          company_code: companyCode,
           Screen_Type: numberSeriesSearchForm.Screen_Type,
         }),
       });
@@ -4497,7 +4508,6 @@ const WorkoutProgramManagement = () => {
 
   const renderCompanySearch = () => (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-x-4 gap-y-6">
-
       <div className="space-y-2">
         <Label>Company No</Label>
         <TooltipProvider>
@@ -4506,7 +4516,13 @@ const WorkoutProgramManagement = () => {
               <Input
                 placeholder="Enter Company No"
                 value={companySearchForm.company_no}
-                onChange={(e) => setCompanySearchForm({ ...companySearchForm, company_no: e.target.value, })} />
+                onChange={(e) =>
+                  setCompanySearchForm({
+                    ...companySearchForm,
+                    company_no: e.target.value,
+                  })
+                }
+              />
             </TooltipTrigger>
 
             <TooltipContent>
@@ -4524,7 +4540,13 @@ const WorkoutProgramManagement = () => {
               <Input
                 placeholder="Enter Company Name"
                 value={companySearchForm.company_name}
-                onChange={(e) => setCompanySearchForm({ ...companySearchForm, company_name: e.target.value, })} />
+                onChange={(e) =>
+                  setCompanySearchForm({
+                    ...companySearchForm,
+                    company_name: e.target.value,
+                  })
+                }
+              />
             </TooltipTrigger>
 
             <TooltipContent>
@@ -4542,7 +4564,13 @@ const WorkoutProgramManagement = () => {
               <Input
                 placeholder="Enter City"
                 value={companySearchForm.city}
-                onChange={(e) => setCompanySearchForm({ ...companySearchForm, city: e.target.value, })} />
+                onChange={(e) =>
+                  setCompanySearchForm({
+                    ...companySearchForm,
+                    city: e.target.value,
+                  })
+                }
+              />
             </TooltipTrigger>
 
             <TooltipContent>
@@ -4560,7 +4588,13 @@ const WorkoutProgramManagement = () => {
               <Input
                 placeholder="Enter State"
                 value={companySearchForm.state}
-                onChange={(e) => setCompanySearchForm({ ...companySearchForm, state: e.target.value, })} />
+                onChange={(e) =>
+                  setCompanySearchForm({
+                    ...companySearchForm,
+                    state: e.target.value,
+                  })
+                }
+              />
             </TooltipTrigger>
 
             <TooltipContent>
@@ -4580,7 +4614,13 @@ const WorkoutProgramManagement = () => {
                 maxLength={10}
                 value={companySearchForm.pincode}
                 inputMode="numeric"
-                onChange={(e) => setCompanySearchForm({ ...companySearchForm, pincode: e.target.value.replace(/\D/g, ""), })} />
+                onChange={(e) =>
+                  setCompanySearchForm({
+                    ...companySearchForm,
+                    pincode: e.target.value.replace(/\D/g, ""),
+                  })
+                }
+              />
             </TooltipTrigger>
 
             <TooltipContent>
@@ -4598,7 +4638,13 @@ const WorkoutProgramManagement = () => {
               <Input
                 placeholder="Enter Country"
                 value={companySearchForm.country}
-                onChange={(e) => setCompanySearchForm({ ...companySearchForm, country: e.target.value, })} />
+                onChange={(e) =>
+                  setCompanySearchForm({
+                    ...companySearchForm,
+                    country: e.target.value,
+                  })
+                }
+              />
             </TooltipTrigger>
 
             <TooltipContent>
@@ -4616,7 +4662,13 @@ const WorkoutProgramManagement = () => {
               <Input
                 placeholder="Enter Identification No"
                 value={companySearchForm.gst_no}
-                onChange={(e) => setCompanySearchForm({ ...companySearchForm, gst_no: e.target.value, })} />
+                onChange={(e) =>
+                  setCompanySearchForm({
+                    ...companySearchForm,
+                    gst_no: e.target.value,
+                  })
+                }
+              />
             </TooltipTrigger>
 
             <TooltipContent>
@@ -4635,7 +4687,13 @@ const WorkoutProgramManagement = () => {
               <div>
                 <Select
                   value={companySearchForm.status}
-                  onValueChange={(value) => setCompanySearchForm({ ...companySearchForm, status: value, })}>
+                  onValueChange={(value) =>
+                    setCompanySearchForm({
+                      ...companySearchForm,
+                      status: value,
+                    })
+                  }
+                >
                   <SelectTrigger>
                     <SelectValue placeholder="Select Status" />
                   </SelectTrigger>
@@ -4660,13 +4718,11 @@ const WorkoutProgramManagement = () => {
           </Tooltip>
         </TooltipProvider>
       </div>
-
     </div>
   );
 
   const renderCompanyMappingSearch = () => (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-
       <div className="space-y-2">
         <Label>User Code</Label>
         <TooltipProvider>
@@ -4675,7 +4731,13 @@ const WorkoutProgramManagement = () => {
               <Input
                 placeholder="Enter User Code"
                 value={companyMappingSearchForm.user_code}
-                onChange={(e) => setCompanyMappingSearchForm({ ...companyMappingSearchForm, user_code: e.target.value, })} />
+                onChange={(e) =>
+                  setCompanyMappingSearchForm({
+                    ...companyMappingSearchForm,
+                    user_code: e.target.value,
+                  })
+                }
+              />
             </TooltipTrigger>
 
             <TooltipContent>
@@ -4693,7 +4755,13 @@ const WorkoutProgramManagement = () => {
               <Input
                 placeholder="Enter Company Code"
                 value={companyMappingSearchForm.company_no}
-                onChange={(e) => setCompanyMappingSearchForm({ ...companyMappingSearchForm, company_no: e.target.value, })} />
+                onChange={(e) =>
+                  setCompanyMappingSearchForm({
+                    ...companyMappingSearchForm,
+                    company_no: e.target.value,
+                  })
+                }
+              />
             </TooltipTrigger>
 
             <TooltipContent>
@@ -4711,7 +4779,13 @@ const WorkoutProgramManagement = () => {
               <Input
                 placeholder="Enter Location No"
                 value={companyMappingSearchForm.location_no}
-                onChange={(e) => setCompanyMappingSearchForm({ ...companyMappingSearchForm, location_no: e.target.value, })} />
+                onChange={(e) =>
+                  setCompanyMappingSearchForm({
+                    ...companyMappingSearchForm,
+                    location_no: e.target.value,
+                  })
+                }
+              />
             </TooltipTrigger>
 
             <TooltipContent>
@@ -4727,7 +4801,15 @@ const WorkoutProgramManagement = () => {
           <Tooltip>
             <TooltipTrigger asChild>
               <div>
-                <Select value={companyMappingSearchForm.status} onValueChange={(value) => setCompanyMappingSearchForm({ ...companyMappingSearchForm, status: value, })}>
+                <Select
+                  value={companyMappingSearchForm.status}
+                  onValueChange={(value) =>
+                    setCompanyMappingSearchForm({
+                      ...companyMappingSearchForm,
+                      status: value,
+                    })
+                  }
+                >
                   <SelectTrigger>
                     <SelectValue placeholder="Select Status" />
                   </SelectTrigger>
@@ -4751,7 +4833,6 @@ const WorkoutProgramManagement = () => {
           </Tooltip>
         </TooltipProvider>
       </div>
-
     </div>
   );
 
@@ -4765,7 +4846,13 @@ const WorkoutProgramManagement = () => {
               <Input
                 placeholder="Enter Location No"
                 value={locationSearchForm.location_no}
-                onChange={(e) => setLocationSearchForm({ ...locationSearchForm, location_no: e.target.value, })} />
+                onChange={(e) =>
+                  setLocationSearchForm({
+                    ...locationSearchForm,
+                    location_no: e.target.value,
+                  })
+                }
+              />
             </TooltipTrigger>
 
             <TooltipContent>
@@ -4783,7 +4870,13 @@ const WorkoutProgramManagement = () => {
               <Input
                 placeholder="Enter Location Name"
                 value={locationSearchForm.location_name}
-                onChange={(e) => setLocationSearchForm({ ...locationSearchForm, location_name: e.target.value, })} />
+                onChange={(e) =>
+                  setLocationSearchForm({
+                    ...locationSearchForm,
+                    location_name: e.target.value,
+                  })
+                }
+              />
             </TooltipTrigger>
 
             <TooltipContent>
@@ -4801,7 +4894,13 @@ const WorkoutProgramManagement = () => {
               <Input
                 placeholder="Enter City"
                 value={locationSearchForm.city}
-                onChange={(e) => setLocationSearchForm({ ...locationSearchForm, city: e.target.value, })} />
+                onChange={(e) =>
+                  setLocationSearchForm({
+                    ...locationSearchForm,
+                    city: e.target.value,
+                  })
+                }
+              />
             </TooltipTrigger>
 
             <TooltipContent>
@@ -4819,7 +4918,13 @@ const WorkoutProgramManagement = () => {
               <Input
                 placeholder="Enter State"
                 value={locationSearchForm.state}
-                onChange={(e) => setLocationSearchForm({ ...locationSearchForm, state: e.target.value, })} />
+                onChange={(e) =>
+                  setLocationSearchForm({
+                    ...locationSearchForm,
+                    state: e.target.value,
+                  })
+                }
+              />
             </TooltipTrigger>
 
             <TooltipContent>
@@ -4837,7 +4942,13 @@ const WorkoutProgramManagement = () => {
               <Input
                 placeholder="Enter Pin Code"
                 value={locationSearchForm.pincode}
-                onChange={(e) => setLocationSearchForm({ ...locationSearchForm, pincode: e.target.value, })} />
+                onChange={(e) =>
+                  setLocationSearchForm({
+                    ...locationSearchForm,
+                    pincode: e.target.value,
+                  })
+                }
+              />
             </TooltipTrigger>
 
             <TooltipContent>
@@ -4855,7 +4966,13 @@ const WorkoutProgramManagement = () => {
               <Input
                 placeholder="Enter Country"
                 value={locationSearchForm.country}
-                onChange={(e) => setLocationSearchForm({ ...locationSearchForm, country: e.target.value, })} />
+                onChange={(e) =>
+                  setLocationSearchForm({
+                    ...locationSearchForm,
+                    country: e.target.value,
+                  })
+                }
+              />
             </TooltipTrigger>
 
             <TooltipContent>
@@ -4873,7 +4990,13 @@ const WorkoutProgramManagement = () => {
               <div>
                 <Select
                   value={locationSearchForm.status}
-                  onValueChange={(value) => setLocationSearchForm({ ...locationSearchForm, status: value, })}>
+                  onValueChange={(value) =>
+                    setLocationSearchForm({
+                      ...locationSearchForm,
+                      status: value,
+                    })
+                  }
+                >
                   <SelectTrigger>
                     <SelectValue placeholder="Select Status" />
                   </SelectTrigger>
@@ -4903,7 +5026,6 @@ const WorkoutProgramManagement = () => {
 
   const renderRoleSearch = () => (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-
       <div className="space-y-2">
         <Label>Role ID</Label>
         <TooltipProvider>
@@ -4912,7 +5034,13 @@ const WorkoutProgramManagement = () => {
               <Input
                 placeholder="Enter Role ID"
                 value={roleSearchForm.role_id}
-                onChange={(e) => setRoleSearchForm({ ...roleSearchForm, role_id: e.target.value, })} />
+                onChange={(e) =>
+                  setRoleSearchForm({
+                    ...roleSearchForm,
+                    role_id: e.target.value,
+                  })
+                }
+              />
             </TooltipTrigger>
 
             <TooltipContent>
@@ -4930,7 +5058,13 @@ const WorkoutProgramManagement = () => {
               <Input
                 placeholder="Enter Role Name"
                 value={roleSearchForm.role_name}
-                onChange={(e) => setRoleSearchForm({ ...roleSearchForm, role_name: e.target.value, })} />
+                onChange={(e) =>
+                  setRoleSearchForm({
+                    ...roleSearchForm,
+                    role_name: e.target.value,
+                  })
+                }
+              />
             </TooltipTrigger>
 
             <TooltipContent>
@@ -4939,13 +5073,11 @@ const WorkoutProgramManagement = () => {
           </Tooltip>
         </TooltipProvider>
       </div>
-
     </div>
   );
 
   const renderRoleMappingSearch = () => (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-
       <div className="space-y-2">
         <Label>User Code</Label>
         <TooltipProvider>
@@ -4954,7 +5086,13 @@ const WorkoutProgramManagement = () => {
               <Input
                 placeholder="Enter User Code"
                 value={roleMappingSearchForm.user_code}
-                onChange={(e) => setRoleMappingSearchForm({ ...roleMappingSearchForm, user_code: e.target.value, })} />
+                onChange={(e) =>
+                  setRoleMappingSearchForm({
+                    ...roleMappingSearchForm,
+                    user_code: e.target.value,
+                  })
+                }
+              />
             </TooltipTrigger>
 
             <TooltipContent>
@@ -4972,7 +5110,13 @@ const WorkoutProgramManagement = () => {
               <Input
                 placeholder="Enter User Name"
                 value={roleMappingSearchForm.user_name}
-                onChange={(e) => setRoleMappingSearchForm({ ...roleMappingSearchForm, user_name: e.target.value, })} />
+                onChange={(e) =>
+                  setRoleMappingSearchForm({
+                    ...roleMappingSearchForm,
+                    user_name: e.target.value,
+                  })
+                }
+              />
             </TooltipTrigger>
 
             <TooltipContent>
@@ -4990,7 +5134,13 @@ const WorkoutProgramManagement = () => {
               <Input
                 placeholder="Enter Role ID"
                 value={roleMappingSearchForm.role_id}
-                onChange={(e) => setRoleMappingSearchForm({ ...roleMappingSearchForm, role_id: e.target.value, })} />
+                onChange={(e) =>
+                  setRoleMappingSearchForm({
+                    ...roleMappingSearchForm,
+                    role_id: e.target.value,
+                  })
+                }
+              />
             </TooltipTrigger>
 
             <TooltipContent>
@@ -5008,7 +5158,13 @@ const WorkoutProgramManagement = () => {
               <Input
                 placeholder="Enter Role Name"
                 value={roleMappingSearchForm.role_name}
-                onChange={(e) => setRoleMappingSearchForm({ ...roleMappingSearchForm, role_name: e.target.value, })} />
+                onChange={(e) =>
+                  setRoleMappingSearchForm({
+                    ...roleMappingSearchForm,
+                    role_name: e.target.value,
+                  })
+                }
+              />
             </TooltipTrigger>
 
             <TooltipContent>
@@ -5017,13 +5173,11 @@ const WorkoutProgramManagement = () => {
           </Tooltip>
         </TooltipProvider>
       </div>
-
     </div>
   );
 
   const renderRoleRightsSearch = () => (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-
       <div className="space-y-2">
         <Label>Role ID</Label>
         <TooltipProvider>
@@ -5032,7 +5186,13 @@ const WorkoutProgramManagement = () => {
               <Input
                 placeholder="Enter Role ID"
                 value={roleRightsSearchForm.role_id}
-                onChange={(e) => setRoleRightsSearchForm({ ...roleRightsSearchForm, role_id: e.target.value, })} />
+                onChange={(e) =>
+                  setRoleRightsSearchForm({
+                    ...roleRightsSearchForm,
+                    role_id: e.target.value,
+                  })
+                }
+              />
             </TooltipTrigger>
 
             <TooltipContent>
@@ -5050,7 +5210,13 @@ const WorkoutProgramManagement = () => {
               <Input
                 placeholder="Enter Screen Type"
                 value={roleRightsSearchForm.screen_type}
-                onChange={(e) => setRoleRightsSearchForm({ ...roleRightsSearchForm, screen_type: e.target.value, })} />
+                onChange={(e) =>
+                  setRoleRightsSearchForm({
+                    ...roleRightsSearchForm,
+                    screen_type: e.target.value,
+                  })
+                }
+              />
             </TooltipTrigger>
 
             <TooltipContent>
@@ -5068,7 +5234,13 @@ const WorkoutProgramManagement = () => {
               <Input
                 placeholder="Enter Permission Type"
                 value={roleRightsSearchForm.permission_type}
-                onChange={(e) => setRoleRightsSearchForm({ ...roleRightsSearchForm, permission_type: e.target.value, })} />
+                onChange={(e) =>
+                  setRoleRightsSearchForm({
+                    ...roleRightsSearchForm,
+                    permission_type: e.target.value,
+                  })
+                }
+              />
             </TooltipTrigger>
 
             <TooltipContent>
@@ -5077,13 +5249,11 @@ const WorkoutProgramManagement = () => {
           </Tooltip>
         </TooltipProvider>
       </div>
-
     </div>
   );
 
   const renderUserSearch = () => (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-
       <div className="space-y-2">
         <Label>User Code</Label>
 
@@ -5142,7 +5312,13 @@ const WorkoutProgramManagement = () => {
               <Input
                 placeholder="Enter First Name"
                 value={usersSearchForm.first_name}
-                onChange={(e) => setusersSearchForm({ ...usersSearchForm, first_name: e.target.value, })} />
+                onChange={(e) =>
+                  setusersSearchForm({
+                    ...usersSearchForm,
+                    first_name: e.target.value,
+                  })
+                }
+              />
             </TooltipTrigger>
 
             <TooltipContent>
@@ -5160,7 +5336,13 @@ const WorkoutProgramManagement = () => {
               <Input
                 placeholder="Enter Last Name"
                 value={usersSearchForm.last_name}
-                onChange={(e) => setusersSearchForm({ ...usersSearchForm, last_name: e.target.value, })} />
+                onChange={(e) =>
+                  setusersSearchForm({
+                    ...usersSearchForm,
+                    last_name: e.target.value,
+                  })
+                }
+              />
             </TooltipTrigger>
 
             <TooltipContent>
@@ -5215,10 +5397,16 @@ const WorkoutProgramManagement = () => {
           <Tooltip>
             <TooltipTrigger asChild>
               <Input
-                type='date'
+                type="date"
                 placeholder="Enter DOB"
                 value={usersSearchForm.dob}
-                onChange={(e) => setusersSearchForm({ ...usersSearchForm, dob: e.target.value, })} />
+                onChange={(e) =>
+                  setusersSearchForm({
+                    ...usersSearchForm,
+                    dob: e.target.value,
+                  })
+                }
+              />
             </TooltipTrigger>
 
             <TooltipContent>
@@ -5266,13 +5454,11 @@ const WorkoutProgramManagement = () => {
           </SelectContent>
         </Select>
       </div>
-
     </div>
   );
 
   const renderAttributeSearch = () => (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-
       <div className="space-y-2">
         <Label>Code</Label>
         <TooltipProvider>
@@ -5281,7 +5467,13 @@ const WorkoutProgramManagement = () => {
               <Input
                 placeholder="Enter Code"
                 value={attributeSearchForm.attributeheader_code}
-                onChange={(e) => setAttributeSearchForm({ ...attributeSearchForm, attributeheader_code: e.target.value, })} />
+                onChange={(e) =>
+                  setAttributeSearchForm({
+                    ...attributeSearchForm,
+                    attributeheader_code: e.target.value,
+                  })
+                }
+              />
             </TooltipTrigger>
 
             <TooltipContent>
@@ -5299,7 +5491,13 @@ const WorkoutProgramManagement = () => {
               <Input
                 placeholder="Enter Sub Code"
                 value={attributeSearchForm.attributedetails_code}
-                onChange={(e) => setAttributeSearchForm({ ...attributeSearchForm, attributedetails_code: e.target.value, })} />
+                onChange={(e) =>
+                  setAttributeSearchForm({
+                    ...attributeSearchForm,
+                    attributedetails_code: e.target.value,
+                  })
+                }
+              />
             </TooltipTrigger>
 
             <TooltipContent>
@@ -5317,7 +5515,13 @@ const WorkoutProgramManagement = () => {
               <Input
                 placeholder="Enter Detail Name"
                 value={attributeSearchForm.attributedetails_name}
-                onChange={(e) => setAttributeSearchForm({ ...attributeSearchForm, attributedetails_name: e.target.value, })} />
+                onChange={(e) =>
+                  setAttributeSearchForm({
+                    ...attributeSearchForm,
+                    attributedetails_name: e.target.value,
+                  })
+                }
+              />
             </TooltipTrigger>
 
             <TooltipContent>
@@ -5335,7 +5539,13 @@ const WorkoutProgramManagement = () => {
               <Input
                 placeholder="Enter Description"
                 value={attributeSearchForm.descriptions}
-                onChange={(e) => setAttributeSearchForm({ ...attributeSearchForm, descriptions: e.target.value, })} />
+                onChange={(e) =>
+                  setAttributeSearchForm({
+                    ...attributeSearchForm,
+                    descriptions: e.target.value,
+                  })
+                }
+              />
             </TooltipTrigger>
 
             <TooltipContent>
@@ -5344,20 +5554,35 @@ const WorkoutProgramManagement = () => {
           </Tooltip>
         </TooltipProvider>
       </div>
-
     </div>
   );
 
   const renderNumberSeriesSearch = () => (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-
       <div className="space-y-2">
-        <Label htmlFor="ScreenType" className={submittedNumberSeries && !numberSeriesSearchForm.Screen_Type ? "text-red-500" : ""}>Screen Type</Label>
+        <Label
+          htmlFor="ScreenType"
+          className={
+            submittedNumberSeries && !numberSeriesSearchForm.Screen_Type
+              ? "text-red-500"
+              : ""
+          }
+        >
+          Screen Type
+        </Label>
         <TooltipProvider>
           <Tooltip>
             <TooltipTrigger asChild>
               <div>
-                <Select value={numberSeriesSearchForm.Screen_Type} onValueChange={(value) => setnumberSeriesSearchForm({ ...numberSeriesSearchForm, Screen_Type: value })}>
+                <Select
+                  value={numberSeriesSearchForm.Screen_Type}
+                  onValueChange={(value) =>
+                    setnumberSeriesSearchForm({
+                      ...numberSeriesSearchForm,
+                      Screen_Type: value,
+                    })
+                  }
+                >
                   <SelectTrigger>
                     <SelectValue placeholder="Select Screen Type" />
                   </SelectTrigger>
@@ -5381,7 +5606,6 @@ const WorkoutProgramManagement = () => {
           </Tooltip>
         </TooltipProvider>
       </div>
-
     </div>
   );
 
@@ -5521,7 +5745,7 @@ const WorkoutProgramManagement = () => {
 
       case "NumberSeries":
         setnumberSeriesSearchForm({
-          Screen_Type: ""
+          Screen_Type: "",
         });
         setNumberSeries([]);
         break;
@@ -5533,27 +5757,32 @@ const WorkoutProgramManagement = () => {
 
   return (
     <div className="min-h-screen bg-gray-50">
+      
       <header className="bg-white shadow-sm border-b">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center py-4">
-            <div className="flex items-center space-x-4">
-              <Button variant="ghost" onClick={() => navigate('/AdminDashboard')}>
+            <div className="flex items-center gap-2 sm:gap-4 min-w-0">
+              <Button
+                variant="ghost"
+                onClick={() => navigate("/AdminDashboard")}
+                className="flex items-center px-2 sm:px-4"
+              >
                 <ArrowLeft className="h-4 w-4 mr-2" />
-                Back to Dashboard
+                <span className="hidden sm:inline ml-2">Back to Dashboard</span>
               </Button>
-              <h1 className="text-2xl font-bold text-gray-900">Super User Management</h1>
+              <h1 className="text-lg sm:text-xl lg:text-2xl font-bold text-gray-900 truncate">
+                Super User Management
+              </h1>
             </div>
-            <Badge variant="secondary">Admin</Badge>
+            <Badge variant="secondary" className="shrink-0">Admin</Badge>
           </div>
         </div>
       </header>
 
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-
         {/* Search and Add */}
         <Card className="mb-6">
           <CardContent className="p-6">
-
             {activeTab === "company" && renderCompanySearch()}
 
             {activeTab === "companyMapping" && renderCompanyMappingSearch()}
@@ -5610,58 +5839,23 @@ const WorkoutProgramManagement = () => {
                 </Tooltip>
               </TooltipProvider>
             </div>
-
           </CardContent>
         </Card>
 
         {/*  companies and Packages */}
         <Tabs value={activeTab} onValueChange={setActiveTab}>
-          <div className="flex flex-wrap items-center justify-between gap-4 mb-4 w-full">
+          <div className="flex flex-wrap items-center gap-4 mb-4 w-full">
             <div className="overflow-x-auto min-w-0 max-w-full custom-scrollbar pb-2">
-              {/* <TabsList className="inline-flex h-10 items-center justify-center rounded-md bg-muted p-1 text-muted-foreground w-max">
-                <TabsTrigger value="company" className="flex items-center gap-2">
-                  <Building className="h-4 w-4" />
-                  Company
-                </TabsTrigger>
-                <TabsTrigger value="companyMapping" className="flex items-center gap-2">
-                  <Building2 className="h-4 w-4" />
-                  Company Mapping
-                </TabsTrigger>
-                <TabsTrigger value="location" className="flex items-center gap-2">
-                  <MapPin className="h-4 w-4" />
-                  Location
-                </TabsTrigger>
-                <TabsTrigger value="role" className="flex items-center gap-2">
-                  <Shield className="h-4 w-4" />
-                  Role
-                </TabsTrigger>
-                <TabsTrigger value="roleMapping" className="flex items-center gap-2">
-                  <Users className="h-4 w-4" />
-                  Role Mapping
-                </TabsTrigger>
-                <TabsTrigger value="roleRights" className="flex items-center gap-2">
-                  <ShieldCheck className="h-4 w-4" />
-                  Role Rights
-                </TabsTrigger>
-                <TabsTrigger value="user" className="flex items-center gap-2">
-                  <User className="h-4 w-4" />
-                  User
-                </TabsTrigger>
-                <TabsTrigger value="attribute" className="flex items-center gap-2">
-                  <Tags className="h-4 w-4" />
-                  Attribute
-                </TabsTrigger>
-                <TabsTrigger value="NumberSeries" className="flex items-center gap-2">
-                  <Hash className="h-4 w-4" />
-                  Number Series
-                </TabsTrigger>
-              </TabsList> */}
               <TabsList className="inline-flex h-10 items-center justify-center rounded-md bg-muted p-1 text-muted-foreground w-max">
                 {allowedTabs.map((tab) => {
                   const Icon = tab.icon;
 
                   return (
-                    <TabsTrigger key={tab.value} value={tab.value} className="flex items-center gap-2">
+                    <TabsTrigger
+                      key={tab.value}
+                      value={tab.value}
+                      className="flex items-center gap-2"
+                    >
                       <Icon className="h-4 w-4 mr-2" />
                       {tab.label}
                     </TabsTrigger>
@@ -5670,7 +5864,7 @@ const WorkoutProgramManagement = () => {
               </TabsList>
             </div>
 
-            <div className="flex-shrink-0 sm:ml-auto">
+            <div className="ml-auto flex-shrink-0">
               <TooltipProvider>
                 <Tooltip>
                   <TooltipTrigger asChild>
@@ -5894,32 +6088,47 @@ const WorkoutProgramManagement = () => {
               </CardContent>
             </Card>
           </TabsContent>
-
         </Tabs>
 
         {/* Add/Edit Company Dialog Or Popup*/}
-        <Dialog open={isCompanyDialogOpen} onOpenChange={(open) => {
-          if (!open) {
-            setSubmittedCompany(false);
-          }
-          setIsCompanyDialogOpen(open);
-        }}>
+        <Dialog
+          open={isCompanyDialogOpen}
+          onOpenChange={(open) => {
+            if (!open) {
+              setSubmittedCompany(false);
+            }
+            setIsCompanyDialogOpen(open);
+          }}
+        >
           <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
-
             <DialogHeader>
-              <DialogTitle>{editingCompany ? 'Edit Company' : 'Add New Company'}</DialogTitle>
+              <DialogTitle>
+                {editingCompany ? "Edit Company" : "Add New Company"}
+              </DialogTitle>
               <DialogDescription>
-                {editingCompany ? 'Update the company details' : 'Create a new company'}
+                {editingCompany
+                  ? "Update the company details"
+                  : "Create a new company"}
               </DialogDescription>
             </DialogHeader>
 
             <div className="grid gap-6 py-4">
               <div className="space-y-4">
-                <h4 className="font-medium text-sm text-gray-700">Company Details</h4>
+                <h4 className="font-medium text-sm text-gray-700">
+                  Company Details
+                </h4>
                 <div className="grid grid-cols-2 gap-4">
-
                   <div className="space-y-2">
-                    <Label htmlFor="name" className={submittedCompany && !companyForm.company_no ? "text-red-500" : ""}>Company No*</Label>
+                    <Label
+                      htmlFor="name"
+                      className={
+                        submittedCompany && !companyForm.company_no
+                          ? "text-red-500"
+                          : ""
+                      }
+                    >
+                      Company No*
+                    </Label>
                     <TooltipProvider>
                       <Tooltip>
                         <TooltipTrigger asChild>
@@ -5928,7 +6137,12 @@ const WorkoutProgramManagement = () => {
                             readOnly={!!editingCompany}
                             value={companyForm.company_no}
                             maxLength={18}
-                            onChange={(e) => setCompanyForm({ ...companyForm, company_no: e.target.value })}
+                            onChange={(e) =>
+                              setCompanyForm({
+                                ...companyForm,
+                                company_no: e.target.value,
+                              })
+                            }
                             placeholder="Enter company number (e.g., CMP001)"
                           />
                         </TooltipTrigger>
@@ -5945,14 +6159,28 @@ const WorkoutProgramManagement = () => {
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="name" className={submittedCompany && !companyForm.company_name ? "text-red-500" : ""}>Company Name*</Label>
+                    <Label
+                      htmlFor="name"
+                      className={
+                        submittedCompany && !companyForm.company_name
+                          ? "text-red-500"
+                          : ""
+                      }
+                    >
+                      Company Name*
+                    </Label>
                     <TooltipProvider>
                       <Tooltip>
                         <TooltipTrigger asChild>
                           <Input
                             id="name"
                             value={companyForm.company_name}
-                            onChange={(e) => setCompanyForm({ ...companyForm, company_name: e.target.value })}
+                            onChange={(e) =>
+                              setCompanyForm({
+                                ...companyForm,
+                                company_name: e.target.value,
+                              })
+                            }
                             placeholder="Enter company name (e.g., ABC Fitness Pvt Ltd)"
                           />
                         </TooltipTrigger>
@@ -5972,7 +6200,12 @@ const WorkoutProgramManagement = () => {
                           <Input
                             id="name"
                             value={companyForm.short_name}
-                            onChange={(e) => setCompanyForm({ ...companyForm, short_name: e.target.value })}
+                            onChange={(e) =>
+                              setCompanyForm({
+                                ...companyForm,
+                                short_name: e.target.value,
+                              })
+                            }
                             placeholder="Enter short name (e.g., ABC)"
                           />
                         </TooltipTrigger>
@@ -5985,14 +6218,28 @@ const WorkoutProgramManagement = () => {
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="name" className={submittedCompany && !companyForm.address1 ? "text-red-500" : ""}>Address 1*</Label>
+                    <Label
+                      htmlFor="name"
+                      className={
+                        submittedCompany && !companyForm.address1
+                          ? "text-red-500"
+                          : ""
+                      }
+                    >
+                      Address 1*
+                    </Label>
                     <TooltipProvider>
                       <Tooltip>
                         <TooltipTrigger asChild>
                           <Input
                             id="name"
                             value={companyForm.address1}
-                            onChange={(e) => setCompanyForm({ ...companyForm, address1: e.target.value })}
+                            onChange={(e) =>
+                              setCompanyForm({
+                                ...companyForm,
+                                address1: e.target.value,
+                              })
+                            }
                             placeholder="Enter address line 1"
                           />
                         </TooltipTrigger>
@@ -6005,14 +6252,28 @@ const WorkoutProgramManagement = () => {
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="name" className={submittedCompany && !companyForm.address2 ? "text-red-500" : ""}>Address 2*</Label>
+                    <Label
+                      htmlFor="name"
+                      className={
+                        submittedCompany && !companyForm.address2
+                          ? "text-red-500"
+                          : ""
+                      }
+                    >
+                      Address 2*
+                    </Label>
                     <TooltipProvider>
                       <Tooltip>
                         <TooltipTrigger asChild>
                           <Input
                             id="name"
                             value={companyForm.address2}
-                            onChange={(e) => setCompanyForm({ ...companyForm, address2: e.target.value })}
+                            onChange={(e) =>
+                              setCompanyForm({
+                                ...companyForm,
+                                address2: e.target.value,
+                              })
+                            }
                             placeholder="Enter address line 2"
                           />
                         </TooltipTrigger>
@@ -6032,7 +6293,12 @@ const WorkoutProgramManagement = () => {
                           <Input
                             id="name"
                             value={companyForm.address3}
-                            onChange={(e) => setCompanyForm({ ...companyForm, address3: e.target.value })}
+                            onChange={(e) =>
+                              setCompanyForm({
+                                ...companyForm,
+                                address3: e.target.value,
+                              })
+                            }
                             placeholder="Enter address line 3 (optional)"
                           />
                         </TooltipTrigger>
@@ -6045,12 +6311,26 @@ const WorkoutProgramManagement = () => {
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="city" className={submittedCompany && !companyForm.city ? "text-red-500" : ""}>City*</Label>
+                    <Label
+                      htmlFor="city"
+                      className={
+                        submittedCompany && !companyForm.city
+                          ? "text-red-500"
+                          : ""
+                      }
+                    >
+                      City*
+                    </Label>
                     <TooltipProvider>
                       <Tooltip>
                         <TooltipTrigger asChild>
                           <div>
-                            <Select value={companyForm.city} onValueChange={(value) => setCompanyForm({ ...companyForm, city: value })}>
+                            <Select
+                              value={companyForm.city}
+                              onValueChange={(value) =>
+                                setCompanyForm({ ...companyForm, city: value })
+                              }
+                            >
                               <SelectTrigger>
                                 <SelectValue placeholder="Select City" />
                               </SelectTrigger>
@@ -6076,12 +6356,26 @@ const WorkoutProgramManagement = () => {
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="state" className={submittedCompany && !companyForm.state ? "text-red-500" : ""}>State*</Label>
+                    <Label
+                      htmlFor="state"
+                      className={
+                        submittedCompany && !companyForm.state
+                          ? "text-red-500"
+                          : ""
+                      }
+                    >
+                      State*
+                    </Label>
                     <TooltipProvider>
                       <Tooltip>
                         <TooltipTrigger asChild>
                           <div>
-                            <Select value={companyForm.state} onValueChange={(value) => setCompanyForm({ ...companyForm, state: value })}>
+                            <Select
+                              value={companyForm.state}
+                              onValueChange={(value) =>
+                                setCompanyForm({ ...companyForm, state: value })
+                              }
+                            >
                               <SelectTrigger>
                                 <SelectValue placeholder="Select State" />
                               </SelectTrigger>
@@ -6107,7 +6401,16 @@ const WorkoutProgramManagement = () => {
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="name" className={submittedCompany && !companyForm.pincode ? "text-red-500" : ""}>Pin Code*</Label>
+                    <Label
+                      htmlFor="name"
+                      className={
+                        submittedCompany && !companyForm.pincode
+                          ? "text-red-500"
+                          : ""
+                      }
+                    >
+                      Pin Code*
+                    </Label>
                     <TooltipProvider>
                       <Tooltip>
                         <TooltipTrigger asChild>
@@ -6116,7 +6419,12 @@ const WorkoutProgramManagement = () => {
                             maxLength={10}
                             inputMode="numeric"
                             value={companyForm.pincode}
-                            onChange={(e) => setCompanyForm({ ...companyForm, pincode: e.target.value.replace(/\D/g, ""), })}
+                            onChange={(e) =>
+                              setCompanyForm({
+                                ...companyForm,
+                                pincode: e.target.value.replace(/\D/g, ""),
+                              })
+                            }
                             placeholder="Enter Pin Code (e.g., 600001)"
                           />
                         </TooltipTrigger>
@@ -6129,12 +6437,29 @@ const WorkoutProgramManagement = () => {
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="country" className={submittedCompany && !companyForm.country ? "text-red-500" : ""}>Country*</Label>
+                    <Label
+                      htmlFor="country"
+                      className={
+                        submittedCompany && !companyForm.country
+                          ? "text-red-500"
+                          : ""
+                      }
+                    >
+                      Country*
+                    </Label>
                     <TooltipProvider>
                       <Tooltip>
                         <TooltipTrigger asChild>
                           <div>
-                            <Select value={companyForm.country} onValueChange={(value) => setCompanyForm({ ...companyForm, country: value })}>
+                            <Select
+                              value={companyForm.country}
+                              onValueChange={(value) =>
+                                setCompanyForm({
+                                  ...companyForm,
+                                  country: value,
+                                })
+                              }
+                            >
                               <SelectTrigger>
                                 <SelectValue placeholder="Select Country" />
                               </SelectTrigger>
@@ -6160,14 +6485,28 @@ const WorkoutProgramManagement = () => {
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="name" className={submittedCompany && !companyForm.email_id ? "text-red-500" : ""}>Email*</Label>
+                    <Label
+                      htmlFor="name"
+                      className={
+                        submittedCompany && !companyForm.email_id
+                          ? "text-red-500"
+                          : ""
+                      }
+                    >
+                      Email*
+                    </Label>
                     <TooltipProvider>
                       <Tooltip>
                         <TooltipTrigger asChild>
                           <Input
                             id="name"
                             value={companyForm.email_id}
-                            onChange={(e) => setCompanyForm({ ...companyForm, email_id: e.target.value })}
+                            onChange={(e) =>
+                              setCompanyForm({
+                                ...companyForm,
+                                email_id: e.target.value,
+                              })
+                            }
                             placeholder="Enter email address (e.g., info@company.com)"
                           />
                         </TooltipTrigger>
@@ -6180,12 +6519,29 @@ const WorkoutProgramManagement = () => {
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="status" className={submittedCompany && !companyForm.status ? "text-red-500" : ""}>Status*</Label>
+                    <Label
+                      htmlFor="status"
+                      className={
+                        submittedCompany && !companyForm.status
+                          ? "text-red-500"
+                          : ""
+                      }
+                    >
+                      Status*
+                    </Label>
                     <TooltipProvider>
                       <Tooltip>
                         <TooltipTrigger asChild>
                           <div>
-                            <Select value={companyForm.status} onValueChange={(value) => setCompanyForm({ ...companyForm, status: value })}>
+                            <Select
+                              value={companyForm.status}
+                              onValueChange={(value) =>
+                                setCompanyForm({
+                                  ...companyForm,
+                                  status: value,
+                                })
+                              }
+                            >
                               <SelectTrigger>
                                 <SelectValue placeholder="Select Status" />
                               </SelectTrigger>
@@ -6220,7 +6576,12 @@ const WorkoutProgramManagement = () => {
                             type="date"
                             value={companyForm.foundedDate}
                             max={new Date().toISOString().split("T")[0]}
-                            onChange={(e) => setCompanyForm({ ...companyForm, foundedDate: e.target.value })}
+                            onChange={(e) =>
+                              setCompanyForm({
+                                ...companyForm,
+                                foundedDate: e.target.value,
+                              })
+                            }
                             // max={new Date().toISOString().split("T")[0]}
                             placeholder="Select founded date"
                           />
@@ -6241,7 +6602,12 @@ const WorkoutProgramManagement = () => {
                           <Input
                             id="name"
                             value={companyForm.websiteURL}
-                            onChange={(e) => setCompanyForm({ ...companyForm, websiteURL: e.target.value })}
+                            onChange={(e) =>
+                              setCompanyForm({
+                                ...companyForm,
+                                websiteURL: e.target.value,
+                              })
+                            }
                             placeholder="Enter website URL (e.g., https://www.company.com)"
                           />
                         </TooltipTrigger>
@@ -6254,7 +6620,16 @@ const WorkoutProgramManagement = () => {
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="name" className={submittedCompany && !companyForm.contact_no ? "text-red-500" : ""}>Contact No*</Label>
+                    <Label
+                      htmlFor="name"
+                      className={
+                        submittedCompany && !companyForm.contact_no
+                          ? "text-red-500"
+                          : ""
+                      }
+                    >
+                      Contact No*
+                    </Label>
                     <TooltipProvider>
                       <Tooltip>
                         <TooltipTrigger asChild>
@@ -6263,7 +6638,12 @@ const WorkoutProgramManagement = () => {
                             value={companyForm.contact_no}
                             maxLength={13}
                             inputMode="numeric"
-                            onChange={(e) => setCompanyForm({ ...companyForm, contact_no: e.target.value.replace(/\D/g, ""), })}
+                            onChange={(e) =>
+                              setCompanyForm({
+                                ...companyForm,
+                                contact_no: e.target.value.replace(/\D/g, ""),
+                              })
+                            }
                             placeholder="Enter contact number (e.g.,+91 9876543210)"
                           />
                         </TooltipTrigger>
@@ -6283,7 +6663,12 @@ const WorkoutProgramManagement = () => {
                           <Input
                             id="name"
                             value={companyForm.annualReportURL}
-                            onChange={(e) => setCompanyForm({ ...companyForm, annualReportURL: e.target.value })}
+                            onChange={(e) =>
+                              setCompanyForm({
+                                ...companyForm,
+                                annualReportURL: e.target.value,
+                              })
+                            }
                             placeholder="Enter annual report URL"
                           />
                         </TooltipTrigger>
@@ -6303,7 +6688,12 @@ const WorkoutProgramManagement = () => {
                           <Input
                             id="name"
                             value={companyForm.company_gst_no}
-                            onChange={(e) => setCompanyForm({ ...companyForm, company_gst_no: e.target.value })}
+                            onChange={(e) =>
+                              setCompanyForm({
+                                ...companyForm,
+                                company_gst_no: e.target.value,
+                              })
+                            }
                             placeholder="Enter identification number (e.g., 33ABCDE1234F1Z5)"
                           />
                         </TooltipTrigger>
@@ -6316,12 +6706,29 @@ const WorkoutProgramManagement = () => {
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="name" className={submittedCompany && !companyForm.location_no ? "text-red-500" : ""}>Location No*</Label>
+                    <Label
+                      htmlFor="name"
+                      className={
+                        submittedCompany && !companyForm.location_no
+                          ? "text-red-500"
+                          : ""
+                      }
+                    >
+                      Location No*
+                    </Label>
                     <TooltipProvider>
                       <Tooltip>
                         <TooltipTrigger asChild>
                           <div>
-                            <Select value={companyForm.location_no} onValueChange={(value) => setCompanyForm({ ...companyForm, location_no: value })}>
+                            <Select
+                              value={companyForm.location_no}
+                              onValueChange={(value) =>
+                                setCompanyForm({
+                                  ...companyForm,
+                                  location_no: value,
+                                })
+                              }
+                            >
                               <SelectTrigger>
                                 <SelectValue placeholder="Select Location" />
                               </SelectTrigger>
@@ -6331,7 +6738,8 @@ const WorkoutProgramManagement = () => {
                                     key={location.location_no}
                                     value={location.location_no}
                                   >
-                                    {location.location_no} - {location.location_name}
+                                    {location.location_no} -{" "}
+                                    {location.location_name}
                                   </SelectItem>
                                 ))}
                               </SelectContent>
@@ -6345,7 +6753,6 @@ const WorkoutProgramManagement = () => {
                       </Tooltip>
                     </TooltipProvider>
                   </div>
-
                 </div>
               </div>
 
@@ -6357,7 +6764,6 @@ const WorkoutProgramManagement = () => {
                 maxImages={2}
                 tooltips={["Upload Company Logo", "Upload Signature"]}
               />
-
             </div>
             <DialogFooter>
               <TooltipProvider>
@@ -6398,31 +6804,58 @@ const WorkoutProgramManagement = () => {
         </Dialog>
 
         {/* Add/Edit Company Mapping Dialog Or Popup*/}
-        <Dialog open={isCompanyMappingDialogOpen} onOpenChange={(open) => {
-          if (!open) {
-            setSubmittedCompanyMapping(false);
-          }
-          setIsCompanyMappingDialogOpen(open);
-        }}>
+        <Dialog
+          open={isCompanyMappingDialogOpen}
+          onOpenChange={(open) => {
+            if (!open) {
+              setSubmittedCompanyMapping(false);
+            }
+            setIsCompanyMappingDialogOpen(open);
+          }}
+        >
           <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
             <DialogHeader>
-              <DialogTitle>{editingCompanyMapping ? 'Edit Company Mapping' : 'Add New Company Mapping'}</DialogTitle>
+              <DialogTitle>
+                {editingCompanyMapping
+                  ? "Edit Company Mapping"
+                  : "Add New Company Mapping"}
+              </DialogTitle>
               <DialogDescription>
-                {editingCompanyMapping ? 'Update the company mapping details' : 'Create a new company mapping'}
+                {editingCompanyMapping
+                  ? "Update the company mapping details"
+                  : "Create a new company mapping"}
               </DialogDescription>
             </DialogHeader>
             <div className="grid gap-6 py-4">
               <div className="space-y-4">
-                <h4 className="font-medium text-sm text-gray-700">Company Mapping Details</h4>
+                <h4 className="font-medium text-sm text-gray-700">
+                  Company Mapping Details
+                </h4>
                 <div className="grid grid-cols-2 gap-4">
-
                   <div className="space-y-2">
-                    <Label htmlFor="user" className={submittedCompanyMapping && !companyMappingForm.user_code ? "text-red-500" : ""}>User Code*</Label>
+                    <Label
+                      htmlFor="user"
+                      className={
+                        submittedCompanyMapping && !companyMappingForm.user_code
+                          ? "text-red-500"
+                          : ""
+                      }
+                    >
+                      User Code*
+                    </Label>
                     <TooltipProvider>
                       <Tooltip>
                         <TooltipTrigger asChild>
                           <div>
-                            <Select value={companyMappingForm.user_code} onValueChange={(value) => setCompanyMappingForm({ ...companyMappingForm, user_code: value })}>
+                            <Select
+                              value={companyMappingForm.user_code}
+                              onValueChange={(value) =>
+                                setCompanyMappingForm({
+                                  ...companyMappingForm,
+                                  user_code: value,
+                                })
+                              }
+                            >
                               <SelectTrigger>
                                 <SelectValue placeholder="Select User Code" />
                               </SelectTrigger>
@@ -6448,12 +6881,30 @@ const WorkoutProgramManagement = () => {
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="company" className={submittedCompanyMapping && !companyMappingForm.company_no ? "text-red-500" : ""}>Company Code*</Label>
+                    <Label
+                      htmlFor="company"
+                      className={
+                        submittedCompanyMapping &&
+                        !companyMappingForm.company_no
+                          ? "text-red-500"
+                          : ""
+                      }
+                    >
+                      Company Code*
+                    </Label>
                     <TooltipProvider>
                       <Tooltip>
                         <TooltipTrigger asChild>
                           <div>
-                            <Select value={companyMappingForm.company_no} onValueChange={(value) => setCompanyMappingForm({ ...companyMappingForm, company_no: value })}>
+                            <Select
+                              value={companyMappingForm.company_no}
+                              onValueChange={(value) =>
+                                setCompanyMappingForm({
+                                  ...companyMappingForm,
+                                  company_no: value,
+                                })
+                              }
+                            >
                               <SelectTrigger>
                                 <SelectValue placeholder="Select Company Code" />
                               </SelectTrigger>
@@ -6463,7 +6914,8 @@ const WorkoutProgramManagement = () => {
                                     key={company.company_no}
                                     value={company.company_no}
                                   >
-                                    {company.company_no} - {company.company_name}
+                                    {company.company_no} -{" "}
+                                    {company.company_name}
                                   </SelectItem>
                                 ))}
                               </SelectContent>
@@ -6479,12 +6931,30 @@ const WorkoutProgramManagement = () => {
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="location" className={submittedCompanyMapping && !companyMappingForm.location_no ? "text-red-500" : ""}>Location No*</Label>
+                    <Label
+                      htmlFor="location"
+                      className={
+                        submittedCompanyMapping &&
+                        !companyMappingForm.location_no
+                          ? "text-red-500"
+                          : ""
+                      }
+                    >
+                      Location No*
+                    </Label>
                     <TooltipProvider>
                       <Tooltip>
                         <TooltipTrigger asChild>
                           <div>
-                            <Select value={companyMappingForm.location_no} onValueChange={(value) => setCompanyMappingForm({ ...companyMappingForm, location_no: value })}>
+                            <Select
+                              value={companyMappingForm.location_no}
+                              onValueChange={(value) =>
+                                setCompanyMappingForm({
+                                  ...companyMappingForm,
+                                  location_no: value,
+                                })
+                              }
+                            >
                               <SelectTrigger>
                                 <SelectValue placeholder="Select Location No" />
                               </SelectTrigger>
@@ -6494,7 +6964,8 @@ const WorkoutProgramManagement = () => {
                                     key={location.location_no}
                                     value={location.location_no}
                                   >
-                                    {location.location_no} - {location.location_name}
+                                    {location.location_no} -{" "}
+                                    {location.location_name}
                                   </SelectItem>
                                 ))}
                               </SelectContent>
@@ -6510,12 +6981,29 @@ const WorkoutProgramManagement = () => {
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="status" className={submittedCompanyMapping && !companyMappingForm.status ? "text-red-500" : ""}>Status*</Label>
+                    <Label
+                      htmlFor="status"
+                      className={
+                        submittedCompanyMapping && !companyMappingForm.status
+                          ? "text-red-500"
+                          : ""
+                      }
+                    >
+                      Status*
+                    </Label>
                     <TooltipProvider>
                       <Tooltip>
                         <TooltipTrigger asChild>
                           <div>
-                            <Select value={companyMappingForm.status} onValueChange={(value) => setCompanyMappingForm({ ...companyMappingForm, status: value })}>
+                            <Select
+                              value={companyMappingForm.status}
+                              onValueChange={(value) =>
+                                setCompanyMappingForm({
+                                  ...companyMappingForm,
+                                  status: value,
+                                })
+                              }
+                            >
                               <SelectTrigger>
                                 <SelectValue placeholder="Select Status" />
                               </SelectTrigger>
@@ -6550,7 +7038,12 @@ const WorkoutProgramManagement = () => {
                             inputMode="numeric"
                             maxLength={3}
                             value={companyMappingForm.order_no}
-                            onChange={(e) => setCompanyMappingForm({ ...companyMappingForm, order_no: e.target.value })}
+                            onChange={(e) =>
+                              setCompanyMappingForm({
+                                ...companyMappingForm,
+                                order_no: e.target.value,
+                              })
+                            }
                             placeholder="Enter order number (e.g., 001)"
                           />
                         </TooltipTrigger>
@@ -6561,8 +7054,6 @@ const WorkoutProgramManagement = () => {
                       </Tooltip>
                     </TooltipProvider>
                   </div>
-
-
                 </div>
               </div>
             </div>
@@ -6570,10 +7061,15 @@ const WorkoutProgramManagement = () => {
               <TooltipProvider>
                 <Tooltip>
                   <TooltipTrigger asChild>
-                    <Button variant="outline" onClick={() => {
-                      setSubmittedCompanyMapping(false);
-                      setIsCompanyMappingDialogOpen(false);
-                    }}>Cancel</Button>
+                    <Button
+                      variant="outline"
+                      onClick={() => {
+                        setSubmittedCompanyMapping(false);
+                        setIsCompanyMappingDialogOpen(false);
+                      }}
+                    >
+                      Cancel
+                    </Button>
                   </TooltipTrigger>
 
                   <TooltipContent>
@@ -6585,7 +7081,10 @@ const WorkoutProgramManagement = () => {
               <TooltipProvider>
                 <Tooltip>
                   <TooltipTrigger asChild>
-                    <Button onClick={handleSaveCompanyMapping}>{editingCompanyMapping ? 'Update' : 'Create'} Company Mapping</Button>
+                    <Button onClick={handleSaveCompanyMapping}>
+                      {editingCompanyMapping ? "Update" : "Create"} Company
+                      Mapping
+                    </Button>
                   </TooltipTrigger>
 
                   <TooltipContent>
@@ -6602,26 +7101,43 @@ const WorkoutProgramManagement = () => {
         </Dialog>
 
         {/* Add/Edit Location Dialog Or Popup*/}
-        <Dialog open={isLocationDialogOpen} onOpenChange={(open) => {
-          if (!open) {
-            setSubmittedLocation(false);
-          }
-          setIsLocationDialogOpen(open);
-        }}>
+        <Dialog
+          open={isLocationDialogOpen}
+          onOpenChange={(open) => {
+            if (!open) {
+              setSubmittedLocation(false);
+            }
+            setIsLocationDialogOpen(open);
+          }}
+        >
           <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
             <DialogHeader>
-              <DialogTitle>{editingLocation ? 'Edit Location' : 'Add New Location'}</DialogTitle>
+              <DialogTitle>
+                {editingLocation ? "Edit Location" : "Add New Location"}
+              </DialogTitle>
               <DialogDescription>
-                {editingLocation ? 'Update the location details' : 'Create a new location'}
+                {editingLocation
+                  ? "Update the location details"
+                  : "Create a new location"}
               </DialogDescription>
             </DialogHeader>
             <div className="grid gap-6 py-4">
               <div className="space-y-4">
-                <h4 className="font-medium text-sm text-gray-700">Location Details</h4>
+                <h4 className="font-medium text-sm text-gray-700">
+                  Location Details
+                </h4>
                 <div className="grid grid-cols-2 gap-4">
-
                   <div className="space-y-2">
-                    <Label htmlFor="name" className={submittedLocation && !locationForm.location_no ? "text-red-500" : ""}>Location No*</Label>
+                    <Label
+                      htmlFor="name"
+                      className={
+                        submittedLocation && !locationForm.location_no
+                          ? "text-red-500"
+                          : ""
+                      }
+                    >
+                      Location No*
+                    </Label>
                     <TooltipProvider>
                       <Tooltip>
                         <TooltipTrigger asChild>
@@ -6630,7 +7146,12 @@ const WorkoutProgramManagement = () => {
                             maxLength={18}
                             readOnly={!!editingLocation}
                             value={locationForm.location_no}
-                            onChange={(e) => setLocationForm({ ...locationForm, location_no: e.target.value })}
+                            onChange={(e) =>
+                              setLocationForm({
+                                ...locationForm,
+                                location_no: e.target.value,
+                              })
+                            }
                             placeholder="Enter location number (e.g., LOC001)"
                           />
                         </TooltipTrigger>
@@ -6647,14 +7168,28 @@ const WorkoutProgramManagement = () => {
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="name" className={submittedLocation && !locationForm.location_name ? "text-red-500" : ""}>Location Name*</Label>
+                    <Label
+                      htmlFor="name"
+                      className={
+                        submittedLocation && !locationForm.location_name
+                          ? "text-red-500"
+                          : ""
+                      }
+                    >
+                      Location Name*
+                    </Label>
                     <TooltipProvider>
                       <Tooltip>
                         <TooltipTrigger asChild>
                           <Input
                             id="name"
                             value={locationForm.location_name}
-                            onChange={(e) => setLocationForm({ ...locationForm, location_name: e.target.value })}
+                            onChange={(e) =>
+                              setLocationForm({
+                                ...locationForm,
+                                location_name: e.target.value,
+                              })
+                            }
                             placeholder="Enter location name (e.g., Chennai Branch)"
                           />
                         </TooltipTrigger>
@@ -6667,14 +7202,28 @@ const WorkoutProgramManagement = () => {
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="name" className={submittedLocation && !locationForm.short_name ? "text-red-500" : ""}>Short Name*</Label>
+                    <Label
+                      htmlFor="name"
+                      className={
+                        submittedLocation && !locationForm.short_name
+                          ? "text-red-500"
+                          : ""
+                      }
+                    >
+                      Short Name*
+                    </Label>
                     <TooltipProvider>
                       <Tooltip>
                         <TooltipTrigger asChild>
                           <Input
                             id="name"
                             value={locationForm.short_name}
-                            onChange={(e) => setLocationForm({ ...locationForm, short_name: e.target.value })}
+                            onChange={(e) =>
+                              setLocationForm({
+                                ...locationForm,
+                                short_name: e.target.value,
+                              })
+                            }
                             placeholder="Enter short name (e.g., CHN)"
                           />
                         </TooltipTrigger>
@@ -6687,14 +7236,28 @@ const WorkoutProgramManagement = () => {
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="name" className={submittedLocation && !locationForm.address1 ? "text-red-500" : ""}>Address 1*</Label>
+                    <Label
+                      htmlFor="name"
+                      className={
+                        submittedLocation && !locationForm.address1
+                          ? "text-red-500"
+                          : ""
+                      }
+                    >
+                      Address 1*
+                    </Label>
                     <TooltipProvider>
                       <Tooltip>
                         <TooltipTrigger asChild>
                           <Input
                             id="name"
                             value={locationForm.address1}
-                            onChange={(e) => setLocationForm({ ...locationForm, address1: e.target.value })}
+                            onChange={(e) =>
+                              setLocationForm({
+                                ...locationForm,
+                                address1: e.target.value,
+                              })
+                            }
                             placeholder="Enter address line 1"
                           />
                         </TooltipTrigger>
@@ -6707,14 +7270,28 @@ const WorkoutProgramManagement = () => {
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="name" className={submittedLocation && !locationForm.address2 ? "text-red-500" : ""}>Address 2*</Label>
+                    <Label
+                      htmlFor="name"
+                      className={
+                        submittedLocation && !locationForm.address2
+                          ? "text-red-500"
+                          : ""
+                      }
+                    >
+                      Address 2*
+                    </Label>
                     <TooltipProvider>
                       <Tooltip>
                         <TooltipTrigger asChild>
                           <Input
                             id="name"
                             value={locationForm.address2}
-                            onChange={(e) => setLocationForm({ ...locationForm, address2: e.target.value })}
+                            onChange={(e) =>
+                              setLocationForm({
+                                ...locationForm,
+                                address2: e.target.value,
+                              })
+                            }
                             placeholder="Enter address line 2"
                           />
                         </TooltipTrigger>
@@ -6733,7 +7310,12 @@ const WorkoutProgramManagement = () => {
                           <Input
                             id="name"
                             value={locationForm.address3}
-                            onChange={(e) => setLocationForm({ ...locationForm, address3: e.target.value })}
+                            onChange={(e) =>
+                              setLocationForm({
+                                ...locationForm,
+                                address3: e.target.value,
+                              })
+                            }
                             placeholder="Enter address line 3 (optional)"
                           />
                         </TooltipTrigger>
@@ -6746,12 +7328,29 @@ const WorkoutProgramManagement = () => {
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="city" className={submittedLocation && !locationForm.city ? "text-red-500" : ""}>City*</Label>
+                    <Label
+                      htmlFor="city"
+                      className={
+                        submittedLocation && !locationForm.city
+                          ? "text-red-500"
+                          : ""
+                      }
+                    >
+                      City*
+                    </Label>
                     <TooltipProvider>
                       <Tooltip>
                         <TooltipTrigger asChild>
                           <div>
-                            <Select value={locationForm.city} onValueChange={(value) => setLocationForm({ ...locationForm, city: value })}>
+                            <Select
+                              value={locationForm.city}
+                              onValueChange={(value) =>
+                                setLocationForm({
+                                  ...locationForm,
+                                  city: value,
+                                })
+                              }
+                            >
                               <SelectTrigger>
                                 <SelectValue placeholder="Select City" />
                               </SelectTrigger>
@@ -6777,12 +7376,29 @@ const WorkoutProgramManagement = () => {
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="state" className={submittedLocation && !locationForm.state ? "text-red-500" : ""}>State*</Label>
+                    <Label
+                      htmlFor="state"
+                      className={
+                        submittedLocation && !locationForm.state
+                          ? "text-red-500"
+                          : ""
+                      }
+                    >
+                      State*
+                    </Label>
                     <TooltipProvider>
                       <Tooltip>
                         <TooltipTrigger asChild>
                           <div>
-                            <Select value={locationForm.state} onValueChange={(value) => setLocationForm({ ...locationForm, state: value })}>
+                            <Select
+                              value={locationForm.state}
+                              onValueChange={(value) =>
+                                setLocationForm({
+                                  ...locationForm,
+                                  state: value,
+                                })
+                              }
+                            >
                               <SelectTrigger>
                                 <SelectValue placeholder="Select State" />
                               </SelectTrigger>
@@ -6808,7 +7424,16 @@ const WorkoutProgramManagement = () => {
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="name" className={submittedLocation && !locationForm.pincode ? "text-red-500" : ""}>Pin Code*</Label>
+                    <Label
+                      htmlFor="name"
+                      className={
+                        submittedLocation && !locationForm.pincode
+                          ? "text-red-500"
+                          : ""
+                      }
+                    >
+                      Pin Code*
+                    </Label>
                     <TooltipProvider>
                       <Tooltip>
                         <TooltipTrigger asChild>
@@ -6817,7 +7442,12 @@ const WorkoutProgramManagement = () => {
                             inputMode="numeric"
                             maxLength={10}
                             value={locationForm.pincode}
-                            onChange={(e) => setLocationForm({ ...locationForm, pincode: e.target.value })}
+                            onChange={(e) =>
+                              setLocationForm({
+                                ...locationForm,
+                                pincode: e.target.value,
+                              })
+                            }
                             placeholder="Enter Pin code (e.g., 600001)"
                           />
                         </TooltipTrigger>
@@ -6830,12 +7460,29 @@ const WorkoutProgramManagement = () => {
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="country" className={submittedLocation && !locationForm.country ? "text-red-500" : ""}>Country*</Label>
+                    <Label
+                      htmlFor="country"
+                      className={
+                        submittedLocation && !locationForm.country
+                          ? "text-red-500"
+                          : ""
+                      }
+                    >
+                      Country*
+                    </Label>
                     <TooltipProvider>
                       <Tooltip>
                         <TooltipTrigger asChild>
                           <div>
-                            <Select value={locationForm.country} onValueChange={(value) => setLocationForm({ ...locationForm, country: value })}>
+                            <Select
+                              value={locationForm.country}
+                              onValueChange={(value) =>
+                                setLocationForm({
+                                  ...locationForm,
+                                  country: value,
+                                })
+                              }
+                            >
                               <SelectTrigger>
                                 <SelectValue placeholder="Select Country" />
                               </SelectTrigger>
@@ -6861,14 +7508,28 @@ const WorkoutProgramManagement = () => {
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="name" className={submittedLocation && !locationForm.email_id ? "text-red-500" : ""}>Email*</Label>
+                    <Label
+                      htmlFor="name"
+                      className={
+                        submittedLocation && !locationForm.email_id
+                          ? "text-red-500"
+                          : ""
+                      }
+                    >
+                      Email*
+                    </Label>
                     <TooltipProvider>
                       <Tooltip>
                         <TooltipTrigger asChild>
                           <Input
                             id="name"
                             value={locationForm.email_id}
-                            onChange={(e) => setLocationForm({ ...locationForm, email_id: e.target.value })}
+                            onChange={(e) =>
+                              setLocationForm({
+                                ...locationForm,
+                                email_id: e.target.value,
+                              })
+                            }
                             placeholder="Enter email address (e.g., branch@example.com)"
                           />
                         </TooltipTrigger>
@@ -6881,12 +7542,29 @@ const WorkoutProgramManagement = () => {
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="status" className={submittedLocation && !locationForm.status ? "text-red-500" : ""}>Status*</Label>
+                    <Label
+                      htmlFor="status"
+                      className={
+                        submittedLocation && !locationForm.status
+                          ? "text-red-500"
+                          : ""
+                      }
+                    >
+                      Status*
+                    </Label>
                     <TooltipProvider>
                       <Tooltip>
                         <TooltipTrigger asChild>
                           <div>
-                            <Select value={locationForm.status} onValueChange={(value) => setLocationForm({ ...locationForm, status: value })}>
+                            <Select
+                              value={locationForm.status}
+                              onValueChange={(value) =>
+                                setLocationForm({
+                                  ...locationForm,
+                                  status: value,
+                                })
+                              }
+                            >
                               <SelectTrigger>
                                 <SelectValue placeholder="Select Status" />
                               </SelectTrigger>
@@ -6912,7 +7590,16 @@ const WorkoutProgramManagement = () => {
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="name" className={submittedLocation && !locationForm.contact_no ? "text-red-500" : ""}>Contact No*</Label>
+                    <Label
+                      htmlFor="name"
+                      className={
+                        submittedLocation && !locationForm.contact_no
+                          ? "text-red-500"
+                          : ""
+                      }
+                    >
+                      Contact No*
+                    </Label>
                     <TooltipProvider>
                       <Tooltip>
                         <TooltipTrigger asChild>
@@ -6921,7 +7608,12 @@ const WorkoutProgramManagement = () => {
                             value={locationForm.contact_no}
                             maxLength={100}
                             inputMode="numeric"
-                            onChange={(e) => setLocationForm({ ...locationForm, contact_no: e.target.value.replace(/\D/g, ""), })}
+                            onChange={(e) =>
+                              setLocationForm({
+                                ...locationForm,
+                                contact_no: e.target.value.replace(/\D/g, ""),
+                              })
+                            }
                             placeholder="Enter contact number (e.g., +91 9876543210)"
                           />
                         </TooltipTrigger>
@@ -6932,7 +7624,6 @@ const WorkoutProgramManagement = () => {
                       </Tooltip>
                     </TooltipProvider>
                   </div>
-
                 </div>
               </div>
             </div>
@@ -6940,10 +7631,15 @@ const WorkoutProgramManagement = () => {
               <TooltipProvider>
                 <Tooltip>
                   <TooltipTrigger asChild>
-                    <Button variant="outline" onClick={() => {
-                      setSubmittedLocation(false);
-                      setIsLocationDialogOpen(false);
-                    }}>Cancel</Button>
+                    <Button
+                      variant="outline"
+                      onClick={() => {
+                        setSubmittedLocation(false);
+                        setIsLocationDialogOpen(false);
+                      }}
+                    >
+                      Cancel
+                    </Button>
                   </TooltipTrigger>
 
                   <TooltipContent>
@@ -6955,7 +7651,9 @@ const WorkoutProgramManagement = () => {
               <TooltipProvider>
                 <Tooltip>
                   <TooltipTrigger asChild>
-                    <Button onClick={handleSaveLocation}>{editingLocation ? 'Update' : 'Create'} Location</Button>
+                    <Button onClick={handleSaveLocation}>
+                      {editingLocation ? "Update" : "Create"} Location
+                    </Button>
                   </TooltipTrigger>
 
                   <TooltipContent>
@@ -6967,32 +7665,44 @@ const WorkoutProgramManagement = () => {
                   </TooltipContent>
                 </Tooltip>
               </TooltipProvider>
-
             </DialogFooter>
           </DialogContent>
         </Dialog>
 
         {/* Add/Edit Role Dialog Or Popup*/}
-        <Dialog open={isRoleDialogOpen} onOpenChange={(open) => {
-          if (!open) {
-            setSubmittedRole(false);
-          }
-          setIsRoleDialogOpen(open);
-        }}>
+        <Dialog
+          open={isRoleDialogOpen}
+          onOpenChange={(open) => {
+            if (!open) {
+              setSubmittedRole(false);
+            }
+            setIsRoleDialogOpen(open);
+          }}
+        >
           <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
             <DialogHeader>
-              <DialogTitle>{editingRole ? 'Edit Role' : 'Add New Role'}</DialogTitle>
+              <DialogTitle>
+                {editingRole ? "Edit Role" : "Add New Role"}
+              </DialogTitle>
               <DialogDescription>
-                {editingRole ? 'Update the role details' : 'Create a new role'}
+                {editingRole ? "Update the role details" : "Create a new role"}
               </DialogDescription>
             </DialogHeader>
             <div className="grid gap-6 py-4">
               <div className="space-y-4">
-                <h4 className="font-medium text-sm text-gray-700">Role Details</h4>
+                <h4 className="font-medium text-sm text-gray-700">
+                  Role Details
+                </h4>
                 <div className="grid grid-cols-2 gap-4">
-
                   <div className="space-y-2">
-                    <Label htmlFor="name" className={submittedRole && !roleForm.role_id ? "text-red-500" : ""}>Role ID*</Label>
+                    <Label
+                      htmlFor="name"
+                      className={
+                        submittedRole && !roleForm.role_id ? "text-red-500" : ""
+                      }
+                    >
+                      Role ID*
+                    </Label>
                     <TooltipProvider>
                       <Tooltip>
                         <TooltipTrigger asChild>
@@ -7000,7 +7710,15 @@ const WorkoutProgramManagement = () => {
                             id="name"
                             readOnly={!!editingRole}
                             value={roleForm.role_id}
-                            onChange={(e) => setRoleForm({ ...roleForm, role_id: e.target.value.replace(/[^a-zA-Z0-9_-]/g, ""), })}
+                            onChange={(e) =>
+                              setRoleForm({
+                                ...roleForm,
+                                role_id: e.target.value.replace(
+                                  /[^a-zA-Z0-9_-]/g,
+                                  "",
+                                ),
+                              })
+                            }
                             placeholder="Enter the role id (e.g., ADMIN)"
                           />
                         </TooltipTrigger>
@@ -7013,14 +7731,31 @@ const WorkoutProgramManagement = () => {
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="name" className={submittedRole && !roleForm.role_name ? "text-red-500" : ""}>Role Name*</Label>
+                    <Label
+                      htmlFor="name"
+                      className={
+                        submittedRole && !roleForm.role_name
+                          ? "text-red-500"
+                          : ""
+                      }
+                    >
+                      Role Name*
+                    </Label>
                     <TooltipProvider>
                       <Tooltip>
                         <TooltipTrigger asChild>
                           <Input
                             id="name"
                             value={roleForm.role_name}
-                            onChange={(e) => setRoleForm({ ...roleForm, role_name: e.target.value.replace(/[^a-zA-Z0-9_-]/g, ""), })}
+                            onChange={(e) =>
+                              setRoleForm({
+                                ...roleForm,
+                                role_name: e.target.value.replace(
+                                  /[^a-zA-Z0-9_-]/g,
+                                  "",
+                                ),
+                              })
+                            }
                             placeholder="Enter the role name (e.g., Administrator)"
                           />
                         </TooltipTrigger>
@@ -7031,7 +7766,6 @@ const WorkoutProgramManagement = () => {
                       </Tooltip>
                     </TooltipProvider>
                   </div>
-
                 </div>
 
                 <div className="space-y-2">
@@ -7042,7 +7776,12 @@ const WorkoutProgramManagement = () => {
                         <Textarea
                           id="name"
                           value={roleForm.description}
-                          onChange={(e) => setRoleForm({ ...roleForm, description: e.target.value })}
+                          onChange={(e) =>
+                            setRoleForm({
+                              ...roleForm,
+                              description: e.target.value,
+                            })
+                          }
                           placeholder="Enter a brief description of the role and its responsibilities"
                         />
                       </TooltipTrigger>
@@ -7053,7 +7792,6 @@ const WorkoutProgramManagement = () => {
                     </Tooltip>
                   </TooltipProvider>
                 </div>
-
               </div>
             </div>
 
@@ -7061,10 +7799,15 @@ const WorkoutProgramManagement = () => {
               <TooltipProvider>
                 <Tooltip>
                   <TooltipTrigger asChild>
-                    <Button variant="outline" onClick={() => {
-                      setSubmittedRole(false);
-                      setIsRoleDialogOpen(false);
-                    }}>Cancel</Button>
+                    <Button
+                      variant="outline"
+                      onClick={() => {
+                        setSubmittedRole(false);
+                        setIsRoleDialogOpen(false);
+                      }}
+                    >
+                      Cancel
+                    </Button>
                   </TooltipTrigger>
 
                   <TooltipContent>
@@ -7076,49 +7819,75 @@ const WorkoutProgramManagement = () => {
               <TooltipProvider>
                 <Tooltip>
                   <TooltipTrigger asChild>
-                    <Button onClick={handleSaveRole}>{editingRole ? 'Update' : 'Create'} Role</Button>
+                    <Button onClick={handleSaveRole}>
+                      {editingRole ? "Update" : "Create"} Role
+                    </Button>
                   </TooltipTrigger>
 
                   <TooltipContent>
                     <p>
-                      {editingCompany
-                        ? "Update the role"
-                        : "Create a role"}
+                      {editingCompany ? "Update the role" : "Create a role"}
                     </p>
                   </TooltipContent>
                 </Tooltip>
               </TooltipProvider>
-
             </DialogFooter>
           </DialogContent>
         </Dialog>
 
         {/* Add/Edit Role Mapping Dialog Or Popup*/}
-        <Dialog open={isRoleMappingDialogOpen} onOpenChange={(open) => {
-          if (!open) {
-            setSubmittedRoleMapping(false);
-          }
-          setIsRoleMappingDialogOpen(open);
-        }}>
+        <Dialog
+          open={isRoleMappingDialogOpen}
+          onOpenChange={(open) => {
+            if (!open) {
+              setSubmittedRoleMapping(false);
+            }
+            setIsRoleMappingDialogOpen(open);
+          }}
+        >
           <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
             <DialogHeader>
-              <DialogTitle>{editingRoleMapping ? 'Edit Role Mapping' : 'Add New Role Mapping'}</DialogTitle>
+              <DialogTitle>
+                {editingRoleMapping
+                  ? "Edit Role Mapping"
+                  : "Add New Role Mapping"}
+              </DialogTitle>
               <DialogDescription>
-                {editingRoleMapping ? 'Update the role mapping details' : 'Create a new role mapping'}
+                {editingRoleMapping
+                  ? "Update the role mapping details"
+                  : "Create a new role mapping"}
               </DialogDescription>
             </DialogHeader>
             <div className="grid gap-6 py-4">
               <div className="space-y-4">
-                <h4 className="font-medium text-sm text-gray-700">Role Mapping Details</h4>
+                <h4 className="font-medium text-sm text-gray-700">
+                  Role Mapping Details
+                </h4>
                 <div className="grid grid-cols-2 gap-4">
-
                   <div className="space-y-2">
-                    <Label htmlFor="user" className={submittedRoleMapping && !roleMappingForm.user_code ? "text-red-500" : ""}>User Code*</Label>
+                    <Label
+                      htmlFor="user"
+                      className={
+                        submittedRoleMapping && !roleMappingForm.user_code
+                          ? "text-red-500"
+                          : ""
+                      }
+                    >
+                      User Code*
+                    </Label>
                     <TooltipProvider>
                       <Tooltip>
                         <TooltipTrigger asChild>
                           <div>
-                            <Select value={roleMappingForm.user_code} onValueChange={(value) => setRoleMappingForm({ ...roleMappingForm, user_code: value })}>
+                            <Select
+                              value={roleMappingForm.user_code}
+                              onValueChange={(value) =>
+                                setRoleMappingForm({
+                                  ...roleMappingForm,
+                                  user_code: value,
+                                })
+                              }
+                            >
                               <SelectTrigger>
                                 <SelectValue placeholder="Select User Code" />
                               </SelectTrigger>
@@ -7144,12 +7913,29 @@ const WorkoutProgramManagement = () => {
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="role" className={submittedRoleMapping && !roleMappingForm.role_id ? "text-red-500" : ""}>Role ID*</Label>
+                    <Label
+                      htmlFor="role"
+                      className={
+                        submittedRoleMapping && !roleMappingForm.role_id
+                          ? "text-red-500"
+                          : ""
+                      }
+                    >
+                      Role ID*
+                    </Label>
                     <TooltipProvider>
                       <Tooltip>
                         <TooltipTrigger asChild>
                           <div>
-                            <Select value={roleMappingForm.role_id} onValueChange={(value) => setRoleMappingForm({ ...roleMappingForm, role_id: value })}>
+                            <Select
+                              value={roleMappingForm.role_id}
+                              onValueChange={(value) =>
+                                setRoleMappingForm({
+                                  ...roleMappingForm,
+                                  role_id: value,
+                                })
+                              }
+                            >
                               <SelectTrigger>
                                 <SelectValue placeholder="Select Role ID" />
                               </SelectTrigger>
@@ -7173,7 +7959,6 @@ const WorkoutProgramManagement = () => {
                       </Tooltip>
                     </TooltipProvider>
                   </div>
-
                 </div>
               </div>
             </div>
@@ -7181,10 +7966,15 @@ const WorkoutProgramManagement = () => {
               <TooltipProvider>
                 <Tooltip>
                   <TooltipTrigger asChild>
-                    <Button variant="outline" onClick={() => {
-                      setSubmittedRoleMapping(false);
-                      setIsRoleMappingDialogOpen(false)
-                    }}>Cancel</Button>
+                    <Button
+                      variant="outline"
+                      onClick={() => {
+                        setSubmittedRoleMapping(false);
+                        setIsRoleMappingDialogOpen(false);
+                      }}
+                    >
+                      Cancel
+                    </Button>
                   </TooltipTrigger>
 
                   <TooltipContent>
@@ -7196,7 +7986,9 @@ const WorkoutProgramManagement = () => {
               <TooltipProvider>
                 <Tooltip>
                   <TooltipTrigger asChild>
-                    <Button onClick={handleSaveRoleMapping}>{editingRoleMapping ? 'Update' : 'Create'} Role Mapping</Button>
+                    <Button onClick={handleSaveRoleMapping}>
+                      {editingRoleMapping ? "Update" : "Create"} Role Mapping
+                    </Button>
                   </TooltipTrigger>
 
                   <TooltipContent>
@@ -7208,37 +8000,61 @@ const WorkoutProgramManagement = () => {
                   </TooltipContent>
                 </Tooltip>
               </TooltipProvider>
-
             </DialogFooter>
           </DialogContent>
         </Dialog>
 
         {/* Add/Edit Role Rights Dialog Or Popup*/}
-        <Dialog open={isRoleRightsDialogOpen} onOpenChange={(open) => {
-          if (!open) {
-            setSubmittedRoleRights(false);
-          }
-          setIsRoleRightsDialogOpen(open);
-        }}>
+        <Dialog
+          open={isRoleRightsDialogOpen}
+          onOpenChange={(open) => {
+            if (!open) {
+              setSubmittedRoleRights(false);
+            }
+            setIsRoleRightsDialogOpen(open);
+          }}
+        >
           <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
             <DialogHeader>
-              <DialogTitle>{editingRoleRight ? 'Edit Role Rights' : 'Add New Role Rights'}</DialogTitle>
+              <DialogTitle>
+                {editingRoleRight ? "Edit Role Rights" : "Add New Role Rights"}
+              </DialogTitle>
               <DialogDescription>
-                {editingRoleRight ? 'Update the role rights details' : 'Create a new role rights'}
+                {editingRoleRight
+                  ? "Update the role rights details"
+                  : "Create a new role rights"}
               </DialogDescription>
             </DialogHeader>
             <div className="grid gap-6 py-4">
               <div className="space-y-4">
-                <h4 className="font-medium text-sm text-gray-700">Role Rights Details</h4>
+                <h4 className="font-medium text-sm text-gray-700">
+                  Role Rights Details
+                </h4>
                 <div className="grid grid-cols-2 gap-4">
-
                   <div className="space-y-2">
-                    <Label htmlFor="role" className={submittedRoleRights && !roleRightsForm.role_id ? "text-red-500" : ""}>Role ID*</Label>
+                    <Label
+                      htmlFor="role"
+                      className={
+                        submittedRoleRights && !roleRightsForm.role_id
+                          ? "text-red-500"
+                          : ""
+                      }
+                    >
+                      Role ID*
+                    </Label>
                     <TooltipProvider>
                       <Tooltip>
                         <TooltipTrigger asChild>
                           <div>
-                            <Select value={roleRightsForm.role_id} onValueChange={(value) => setRoleRightsForm({ ...roleRightsForm, role_id: value })}>
+                            <Select
+                              value={roleRightsForm.role_id}
+                              onValueChange={(value) =>
+                                setRoleRightsForm({
+                                  ...roleRightsForm,
+                                  role_id: value,
+                                })
+                              }
+                            >
                               <SelectTrigger>
                                 <SelectValue placeholder="Select Role ID" />
                               </SelectTrigger>
@@ -7264,12 +8080,29 @@ const WorkoutProgramManagement = () => {
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="screen" className={submittedRoleRights && !roleRightsForm.screen_type ? "text-red-500" : ""}>Screen Type*</Label>
+                    <Label
+                      htmlFor="screen"
+                      className={
+                        submittedRoleRights && !roleRightsForm.screen_type
+                          ? "text-red-500"
+                          : ""
+                      }
+                    >
+                      Screen Type*
+                    </Label>
                     <TooltipProvider>
                       <Tooltip>
                         <TooltipTrigger asChild>
                           <div>
-                            <Select value={roleRightsForm.screen_type} onValueChange={(value) => setRoleRightsForm({ ...roleRightsForm, screen_type: value })}>
+                            <Select
+                              value={roleRightsForm.screen_type}
+                              onValueChange={(value) =>
+                                setRoleRightsForm({
+                                  ...roleRightsForm,
+                                  screen_type: value,
+                                })
+                              }
+                            >
                               <SelectTrigger>
                                 <SelectValue placeholder="Select Screen Type" />
                               </SelectTrigger>
@@ -7295,12 +8128,29 @@ const WorkoutProgramManagement = () => {
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="permission" className={submittedRoleRights && !roleRightsForm.permission_type ? "text-red-500" : ""}>Permission Type*</Label>
+                    <Label
+                      htmlFor="permission"
+                      className={
+                        submittedRoleRights && !roleRightsForm.permission_type
+                          ? "text-red-500"
+                          : ""
+                      }
+                    >
+                      Permission Type*
+                    </Label>
                     <TooltipProvider>
                       <Tooltip>
                         <TooltipTrigger asChild>
                           <div>
-                            <Select value={roleRightsForm.permission_type} onValueChange={(value) => setRoleRightsForm({ ...roleRightsForm, permission_type: value })}>
+                            <Select
+                              value={roleRightsForm.permission_type}
+                              onValueChange={(value) =>
+                                setRoleRightsForm({
+                                  ...roleRightsForm,
+                                  permission_type: value,
+                                })
+                              }
+                            >
                               <SelectTrigger>
                                 <SelectValue placeholder="Select Permission Type" />
                               </SelectTrigger>
@@ -7324,19 +8174,22 @@ const WorkoutProgramManagement = () => {
                       </Tooltip>
                     </TooltipProvider>
                   </div>
-
                 </div>
               </div>
-
             </div>
             <DialogFooter>
               <TooltipProvider>
                 <Tooltip>
                   <TooltipTrigger asChild>
-                    <Button variant="outline" onClick={() => {
-                      setSubmittedRoleRights(false);
-                      setIsRoleRightsDialogOpen(false);
-                    }}>Cancel</Button>
+                    <Button
+                      variant="outline"
+                      onClick={() => {
+                        setSubmittedRoleRights(false);
+                        setIsRoleRightsDialogOpen(false);
+                      }}
+                    >
+                      Cancel
+                    </Button>
                   </TooltipTrigger>
 
                   <TooltipContent>
@@ -7348,7 +8201,9 @@ const WorkoutProgramManagement = () => {
               <TooltipProvider>
                 <Tooltip>
                   <TooltipTrigger asChild>
-                    <Button onClick={handleSaveRoleRight}>{editingRoleRight ? 'Update' : 'Create'} Role Rights</Button>
+                    <Button onClick={handleSaveRoleRight}>
+                      {editingRoleRight ? "Update" : "Create"} Role Rights
+                    </Button>
                   </TooltipTrigger>
 
                   <TooltipContent>
@@ -7360,7 +8215,6 @@ const WorkoutProgramManagement = () => {
                   </TooltipContent>
                 </Tooltip>
               </TooltipProvider>
-
             </DialogFooter>
           </DialogContent>
         </Dialog>
@@ -7369,18 +8223,30 @@ const WorkoutProgramManagement = () => {
         <Dialog open={isUserDialogOpen} onOpenChange={setIsUserDialogOpen}>
           <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
             <DialogHeader>
-              <DialogTitle>{editingUser ? 'Edit User' : 'Add User'}</DialogTitle>
+              <DialogTitle>
+                {editingUser ? "Edit User" : "Add User"}
+              </DialogTitle>
               <DialogDescription>
-                {editingUser ? 'Update the User details' : 'Create a new User'}
+                {editingUser ? "Update the User details" : "Create a new User"}
               </DialogDescription>
             </DialogHeader>
             <div className="grid gap-6 py-4">
               <div className="space-y-4">
-                <h4 className="font-medium text-sm text-gray-700">User Details</h4>
+                <h4 className="font-medium text-sm text-gray-700">
+                  User Details
+                </h4>
                 <div className="grid grid-cols-2 gap-4">
-
                   <div className="space-y-2">
-                    <Label htmlFor="name" className={submittedUser && !userForm.user_code ? "text-red-500" : ""}>User Code*</Label>
+                    <Label
+                      htmlFor="name"
+                      className={
+                        submittedUser && !userForm.user_code
+                          ? "text-red-500"
+                          : ""
+                      }
+                    >
+                      User Code*
+                    </Label>
                     <TooltipProvider>
                       <Tooltip>
                         <TooltipTrigger asChild>
@@ -7388,7 +8254,12 @@ const WorkoutProgramManagement = () => {
                             id="UserCode"
                             readOnly={!!editingUser}
                             value={userForm.user_code}
-                            onChange={(e) => setUserForm({ ...userForm, user_code: e.target.value })}
+                            onChange={(e) =>
+                              setUserForm({
+                                ...userForm,
+                                user_code: e.target.value,
+                              })
+                            }
                             placeholder="e.g., User Code"
                           />
                         </TooltipTrigger>
@@ -7402,14 +8273,28 @@ const WorkoutProgramManagement = () => {
 
                   <div className="space-y-2">
                     {/* <Label htmlFor="name">User Name*</Label> */}
-                    <Label htmlFor="name" className={submittedUser && !userForm.user_name ? "text-red-500" : ""}>User Name*</Label>
+                    <Label
+                      htmlFor="name"
+                      className={
+                        submittedUser && !userForm.user_name
+                          ? "text-red-500"
+                          : ""
+                      }
+                    >
+                      User Name*
+                    </Label>
                     <TooltipProvider>
                       <Tooltip>
                         <TooltipTrigger asChild>
                           <Input
                             id="UserName"
                             value={userForm.user_name}
-                            onChange={(e) => setUserForm({ ...userForm, user_name: e.target.value })}
+                            onChange={(e) =>
+                              setUserForm({
+                                ...userForm,
+                                user_name: e.target.value,
+                              })
+                            }
                             placeholder="e.g., User Name"
                           />
                         </TooltipTrigger>
@@ -7423,14 +8308,28 @@ const WorkoutProgramManagement = () => {
 
                   <div className="space-y-2">
                     {/* <Label htmlFor="FirstName">First Name*</Label> */}
-                    <Label htmlFor="name" className={submittedUser && !userForm.first_name ? "text-red-500" : ""}>First Name*</Label>
+                    <Label
+                      htmlFor="name"
+                      className={
+                        submittedUser && !userForm.first_name
+                          ? "text-red-500"
+                          : ""
+                      }
+                    >
+                      First Name*
+                    </Label>
                     <TooltipProvider>
                       <Tooltip>
                         <TooltipTrigger asChild>
                           <Input
                             id="FirstName"
                             value={userForm.first_name}
-                            onChange={(e) => setUserForm({ ...userForm, first_name: e.target.value })}
+                            onChange={(e) =>
+                              setUserForm({
+                                ...userForm,
+                                first_name: e.target.value,
+                              })
+                            }
                             placeholder="e.g., First Name"
                           />
                         </TooltipTrigger>
@@ -7444,14 +8343,28 @@ const WorkoutProgramManagement = () => {
 
                   <div className="space-y-2">
                     {/* <Label htmlFor="LastName">Last Name*</Label> */}
-                    <Label htmlFor="name" className={submittedUser && !userForm.last_name ? "text-red-500" : ""}>Last Name*</Label>
+                    <Label
+                      htmlFor="name"
+                      className={
+                        submittedUser && !userForm.last_name
+                          ? "text-red-500"
+                          : ""
+                      }
+                    >
+                      Last Name*
+                    </Label>
                     <TooltipProvider>
                       <Tooltip>
                         <TooltipTrigger asChild>
                           <Input
                             id="LastName"
                             value={userForm.last_name}
-                            onChange={(e) => setUserForm({ ...userForm, last_name: e.target.value })}
+                            onChange={(e) =>
+                              setUserForm({
+                                ...userForm,
+                                last_name: e.target.value,
+                              })
+                            }
                             placeholder="e.g., Last Name"
                           />
                         </TooltipTrigger>
@@ -7465,7 +8378,16 @@ const WorkoutProgramManagement = () => {
 
                   <div className="space-y-2">
                     {/* <Label htmlFor="name">Password*</Label> */}
-                    <Label htmlFor="name" className={submittedUser && !userForm.user_password ? "text-red-500" : ""}>Password*</Label>
+                    <Label
+                      htmlFor="name"
+                      className={
+                        submittedUser && !userForm.user_password
+                          ? "text-red-500"
+                          : ""
+                      }
+                    >
+                      Password*
+                    </Label>
                     <TooltipProvider>
                       <Tooltip>
                         <TooltipTrigger asChild>
@@ -7489,7 +8411,11 @@ const WorkoutProgramManagement = () => {
                               onClick={() => setShowPassword(!showPassword)}
                               className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700"
                             >
-                              {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                              {showPassword ? (
+                                <EyeOff size={18} />
+                              ) : (
+                                <Eye size={18} />
+                              )}
                             </button>
                           </div>
                         </TooltipTrigger>
@@ -7503,7 +8429,16 @@ const WorkoutProgramManagement = () => {
 
                   <div className="space-y-2">
                     {/* <Label htmlFor="UserCode">Status*</Label> */}
-                    <Label htmlFor="name" className={submittedUser && !userForm.user_status ? "text-red-500" : ""}>Status*</Label>
+                    <Label
+                      htmlFor="name"
+                      className={
+                        submittedUser && !userForm.user_status
+                          ? "text-red-500"
+                          : ""
+                      }
+                    >
+                      Status*
+                    </Label>
                     <Select
                       value={userForm.user_status}
                       onValueChange={(value) =>
@@ -7540,7 +8475,9 @@ const WorkoutProgramManagement = () => {
                   <div className="space-y-2">
                     <Label
                       htmlFor="name"
-                      className={submittedUser && !userForm.role_id ? "text-red-500" : ""}
+                      className={
+                        submittedUser && !userForm.role_id ? "text-red-500" : ""
+                      }
                     >
                       Role ID*
                     </Label>
@@ -7567,10 +8504,7 @@ const WorkoutProgramManagement = () => {
 
                       <SelectContent>
                         {role.map((role: any) => (
-                          <SelectItem
-                            key={role.role_id}
-                            value={role.role_id}
-                          >
+                          <SelectItem key={role.role_id} value={role.role_id}>
                             {role.role_id} - {role.role_name}
                           </SelectItem>
                         ))}
@@ -7580,14 +8514,28 @@ const WorkoutProgramManagement = () => {
 
                   <div className="space-y-2">
                     {/* <Label htmlFor="Email">Email*</Label> */}
-                    <Label htmlFor="name" className={submittedUser && !userForm.email_id ? "text-red-500" : ""}>Email*</Label>
+                    <Label
+                      htmlFor="name"
+                      className={
+                        submittedUser && !userForm.email_id
+                          ? "text-red-500"
+                          : ""
+                      }
+                    >
+                      Email*
+                    </Label>
                     <TooltipProvider>
                       <Tooltip>
                         <TooltipTrigger asChild>
                           <Input
                             id="Email"
                             value={userForm.email_id}
-                            onChange={(e) => setUserForm({ ...userForm, email_id: e.target.value })}
+                            onChange={(e) =>
+                              setUserForm({
+                                ...userForm,
+                                email_id: e.target.value,
+                              })
+                            }
                             placeholder="e.g., Email"
                           />
                         </TooltipTrigger>
@@ -7600,16 +8548,25 @@ const WorkoutProgramManagement = () => {
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="name" className={submittedUser && !userForm.dob ? "text-red-500" : ""}>DOB*</Label>
+                    <Label
+                      htmlFor="name"
+                      className={
+                        submittedUser && !userForm.dob ? "text-red-500" : ""
+                      }
+                    >
+                      DOB*
+                    </Label>
                     <TooltipProvider>
                       <Tooltip>
                         <TooltipTrigger asChild>
                           <Input
                             id="DOB"
-                            type='date'
+                            type="date"
                             value={userForm.dob}
                             max={maxDOB.toISOString().split("T")[0]}
-                            onChange={(e) => setUserForm({ ...userForm, dob: e.target.value })}
+                            onChange={(e) =>
+                              setUserForm({ ...userForm, dob: e.target.value })
+                            }
                             placeholder="e.g., DOB"
                           />
                         </TooltipTrigger>
@@ -7661,8 +8618,14 @@ const WorkoutProgramManagement = () => {
                     <Switch
                       id="isActive"
                       checked={userForm.super_admin}
-                      disabled={!["sa", "super admin"].includes(userForm.role_id?.toLowerCase())}
-                      onCheckedChange={(checked) => setUserForm({ ...userForm, super_admin: checked })}
+                      disabled={
+                        !["sa", "super admin"].includes(
+                          userForm.role_id?.toLowerCase(),
+                        )
+                      }
+                      onCheckedChange={(checked) =>
+                        setUserForm({ ...userForm, super_admin: checked })
+                      }
                     />
                     <Label htmlFor="isActive">Super Admin</Label>
                   </div>
@@ -7676,16 +8639,20 @@ const WorkoutProgramManagement = () => {
                 onFilesChange={handleUserFiles}
                 maxImages={1}
               />
-
             </div>
             <DialogFooter>
               <TooltipProvider>
                 <Tooltip>
                   <TooltipTrigger asChild>
-                    <Button variant="outline" onClick={() => {
-                      setIsUserDialogOpen(false);
-                      setSubmittedUser(false);
-                    }}>Cancel</Button>
+                    <Button
+                      variant="outline"
+                      onClick={() => {
+                        setIsUserDialogOpen(false);
+                        setSubmittedUser(false);
+                      }}
+                    >
+                      Cancel
+                    </Button>
                   </TooltipTrigger>
 
                   <TooltipContent>
@@ -7696,7 +8663,9 @@ const WorkoutProgramManagement = () => {
               <TooltipProvider>
                 <Tooltip>
                   <TooltipTrigger asChild>
-                    <Button onClick={handleSaveUser}>{editingUser ? 'Update User' : 'Create User'}</Button>
+                    <Button onClick={handleSaveUser}>
+                      {editingUser ? "Update User" : "Create User"}
+                    </Button>
                   </TooltipTrigger>
 
                   <TooltipContent>
@@ -7709,26 +8678,44 @@ const WorkoutProgramManagement = () => {
         </Dialog>
 
         {/* Add/Edit Attribute Detail Dialog Or Popup*/}
-        <Dialog open={isAttributeDialogOpen} onOpenChange={(open) => {
-          if (!open) {
-            setSubmittedAttributeDet(false);
-          }
-          setIsAttributeDialogOpen(open);
-        }}>
+        <Dialog
+          open={isAttributeDialogOpen}
+          onOpenChange={(open) => {
+            if (!open) {
+              setSubmittedAttributeDet(false);
+            }
+            setIsAttributeDialogOpen(open);
+          }}
+        >
           <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
             <DialogHeader>
-              <DialogTitle>{editingAttribute ? 'Edit Attribute' : 'Add Attribute'}</DialogTitle>
+              <DialogTitle>
+                {editingAttribute ? "Edit Attribute" : "Add Attribute"}
+              </DialogTitle>
               <DialogDescription>
-                {editingAttribute ? 'Update the Attribute details' : 'Create a new Attribute'}
+                {editingAttribute
+                  ? "Update the Attribute details"
+                  : "Create a new Attribute"}
               </DialogDescription>
             </DialogHeader>
             <div className="grid gap-6 py-4">
               <div className="space-y-4">
-                <h4 className="font-medium text-sm text-gray-700">Attribute Details</h4>
+                <h4 className="font-medium text-sm text-gray-700">
+                  Attribute Details
+                </h4>
                 <div className="grid grid-cols-2 gap-4">
-
                   <div className="space-y-2">
-                    <Label htmlFor="attributeheader_code" className={submittedAttributeDet && !attributeForm.attributeheader_code ? "text-red-500" : ""}>Code*</Label>
+                    <Label
+                      htmlFor="attributeheader_code"
+                      className={
+                        submittedAttributeDet &&
+                        !attributeForm.attributeheader_code
+                          ? "text-red-500"
+                          : ""
+                      }
+                    >
+                      Code*
+                    </Label>
                     <div className="flex gap-2">
                       <TooltipProvider>
                         <Tooltip>
@@ -7736,7 +8723,12 @@ const WorkoutProgramManagement = () => {
                             <div className="flex-1">
                               <Select
                                 value={attributeForm.attributeheader_code}
-                                onValueChange={(value) => setAttributeForm({ ...attributeForm, attributeheader_code: value, })}
+                                onValueChange={(value) =>
+                                  setAttributeForm({
+                                    ...attributeForm,
+                                    attributeheader_code: value,
+                                  })
+                                }
                                 disabled={!!editingAttribute}
                               >
                                 <SelectTrigger className="flex-1">
@@ -7746,9 +8738,12 @@ const WorkoutProgramManagement = () => {
                                   {attributehdr.map((attributeheader: any) => (
                                     <SelectItem
                                       key={attributeheader.attributeheader_code}
-                                      value={attributeheader.attributeheader_code}
+                                      value={
+                                        attributeheader.attributeheader_code
+                                      }
                                     >
-                                      {attributeheader.attributeheader_code} - {attributeheader.attributeheader_name}
+                                      {attributeheader.attributeheader_code} -{" "}
+                                      {attributeheader.attributeheader_name}
                                     </SelectItem>
                                   ))}
                                 </SelectContent>
@@ -7770,7 +8765,11 @@ const WorkoutProgramManagement = () => {
                         <TooltipProvider>
                           <Tooltip>
                             <TooltipTrigger asChild>
-                              <Button type="button" variant="outline" onClick={handleAddAttributeHdr}>
+                              <Button
+                                type="button"
+                                variant="outline"
+                                onClick={handleAddAttributeHdr}
+                              >
                                 <Plus className="h-4 w-4" />
                               </Button>
                             </TooltipTrigger>
@@ -7785,14 +8784,29 @@ const WorkoutProgramManagement = () => {
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="SubCode" className={submittedAttributeDet && !attributeForm.attributedetails_code ? "text-red-500" : ""}>Sub Code*</Label>
+                    <Label
+                      htmlFor="SubCode"
+                      className={
+                        submittedAttributeDet &&
+                        !attributeForm.attributedetails_code
+                          ? "text-red-500"
+                          : ""
+                      }
+                    >
+                      Sub Code*
+                    </Label>
                     <TooltipProvider>
                       <Tooltip>
                         <TooltipTrigger asChild>
                           <Input
                             id="SubCode"
                             value={attributeForm.attributedetails_code}
-                            onChange={(e) => setAttributeForm({ ...attributeForm, attributedetails_code: e.target.value })}
+                            onChange={(e) =>
+                              setAttributeForm({
+                                ...attributeForm,
+                                attributedetails_code: e.target.value,
+                              })
+                            }
                             disabled={!!editingAttribute}
                             placeholder="Enter the sub code (e.g., ACTIVE)"
                           />
@@ -7806,14 +8820,29 @@ const WorkoutProgramManagement = () => {
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="DetailsName" className={submittedAttributeDet && !attributeForm.attributedetails_name ? "text-red-500" : ""}>Details Name*</Label>
+                    <Label
+                      htmlFor="DetailsName"
+                      className={
+                        submittedAttributeDet &&
+                        !attributeForm.attributedetails_name
+                          ? "text-red-500"
+                          : ""
+                      }
+                    >
+                      Details Name*
+                    </Label>
                     <TooltipProvider>
                       <Tooltip>
                         <TooltipTrigger asChild>
                           <Input
                             id="DetailsName"
                             value={attributeForm.attributedetails_name}
-                            onChange={(e) => setAttributeForm({ ...attributeForm, attributedetails_name: e.target.value })}
+                            onChange={(e) =>
+                              setAttributeForm({
+                                ...attributeForm,
+                                attributedetails_name: e.target.value,
+                              })
+                            }
                             placeholder="Enter the details name (e.g., Active)"
                           />
                         </TooltipTrigger>
@@ -7824,7 +8853,6 @@ const WorkoutProgramManagement = () => {
                       </Tooltip>
                     </TooltipProvider>
                   </div>
-
                 </div>
 
                 <div className="space-y-2">
@@ -7835,7 +8863,12 @@ const WorkoutProgramManagement = () => {
                         <Textarea
                           id="description"
                           value={attributeForm.descriptions}
-                          onChange={(e) => setAttributeForm({ ...attributeForm, descriptions: e.target.value })}
+                          onChange={(e) =>
+                            setAttributeForm({
+                              ...attributeForm,
+                              descriptions: e.target.value,
+                            })
+                          }
                           placeholder="Enter the description"
                         />
                       </TooltipTrigger>
@@ -7846,18 +8879,21 @@ const WorkoutProgramManagement = () => {
                     </Tooltip>
                   </TooltipProvider>
                 </div>
-
               </div>
             </div>
             <DialogFooter>
-
               <TooltipProvider>
                 <Tooltip>
                   <TooltipTrigger asChild>
-                    <Button variant="outline" onClick={() => {
-                      setSubmittedAttributeDet(false);
-                      setIsAttributeDialogOpen(false);
-                    }}>Cancel</Button>
+                    <Button
+                      variant="outline"
+                      onClick={() => {
+                        setSubmittedAttributeDet(false);
+                        setIsAttributeDialogOpen(false);
+                      }}
+                    >
+                      Cancel
+                    </Button>
                   </TooltipTrigger>
 
                   <TooltipContent>
@@ -7869,7 +8905,9 @@ const WorkoutProgramManagement = () => {
               <TooltipProvider>
                 <Tooltip>
                   <TooltipTrigger asChild>
-                    <Button onClick={handleSaveAttribute}>{editingAttribute ? 'Update' : 'Create'} Attribute Detail</Button>
+                    <Button onClick={handleSaveAttribute}>
+                      {editingAttribute ? "Update" : "Create"} Attribute Detail
+                    </Button>
                   </TooltipTrigger>
 
                   <TooltipContent>
@@ -7881,35 +8919,53 @@ const WorkoutProgramManagement = () => {
                   </TooltipContent>
                 </Tooltip>
               </TooltipProvider>
-
             </DialogFooter>
           </DialogContent>
         </Dialog>
 
         {/* Add Attribute Header Dialog  Or Popup*/}
-        <Dialog open={isAttributeHdrDialogOpen} onOpenChange={(open) => {
-          if (!open) {
-            setSubmittedAttributeHdr(false);
-          }
-          setIsAttributeHdrDialogOpen(open);
-        }}>
+        <Dialog
+          open={isAttributeHdrDialogOpen}
+          onOpenChange={(open) => {
+            if (!open) {
+              setSubmittedAttributeHdr(false);
+            }
+            setIsAttributeHdrDialogOpen(open);
+          }}
+        >
           <DialogContent className="max-w-md">
             <DialogHeader>
               <DialogTitle>Add Attribute Hdr</DialogTitle>
-              <DialogDescription>Create a new Attribute Header</DialogDescription>
+              <DialogDescription>
+                Create a new Attribute Header
+              </DialogDescription>
             </DialogHeader>
 
             <div className="grid gap-4 py-4">
-
               <div className="space-y-2">
-                <Label htmlFor="code" className={submittedAttributeHdr && !attributeHdrForm.attributeheader_code ? "text-red-500" : ""}>Code*</Label>
+                <Label
+                  htmlFor="code"
+                  className={
+                    submittedAttributeHdr &&
+                    !attributeHdrForm.attributeheader_code
+                      ? "text-red-500"
+                      : ""
+                  }
+                >
+                  Code*
+                </Label>
                 <TooltipProvider>
                   <Tooltip>
                     <TooltipTrigger asChild>
                       <Input
                         id="Code"
                         value={attributeHdrForm.attributeheader_code}
-                        onChange={(e) => setAttributeHdrForm({ ...attributeHdrForm, attributeheader_code: e.target.value, })}
+                        onChange={(e) =>
+                          setAttributeHdrForm({
+                            ...attributeHdrForm,
+                            attributeheader_code: e.target.value,
+                          })
+                        }
                         placeholder="Enter attribute code (e.g., ACCOUNT_TYPE)"
                       />
                     </TooltipTrigger>
@@ -7922,14 +8978,29 @@ const WorkoutProgramManagement = () => {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="code" className={submittedAttributeHdr && !attributeHdrForm.attributeheader_name ? "text-red-500" : ""}>Name*</Label>
+                <Label
+                  htmlFor="code"
+                  className={
+                    submittedAttributeHdr &&
+                    !attributeHdrForm.attributeheader_name
+                      ? "text-red-500"
+                      : ""
+                  }
+                >
+                  Name*
+                </Label>
                 <TooltipProvider>
                   <Tooltip>
                     <TooltipTrigger asChild>
                       <Input
                         id="Name"
                         value={attributeHdrForm.attributeheader_name}
-                        onChange={(e) => setAttributeHdrForm({ ...attributeHdrForm, attributeheader_name: e.target.value, })}
+                        onChange={(e) =>
+                          setAttributeHdrForm({
+                            ...attributeHdrForm,
+                            attributeheader_name: e.target.value,
+                          })
+                        }
                         placeholder="Enter attribute name (e.g., Account Type)"
                       />
                     </TooltipTrigger>
@@ -7942,12 +9013,29 @@ const WorkoutProgramManagement = () => {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="code" className={submittedAttributeHdr && !attributeHdrForm.status ? "text-red-500" : ""}>Status*</Label>
+                <Label
+                  htmlFor="code"
+                  className={
+                    submittedAttributeHdr && !attributeHdrForm.status
+                      ? "text-red-500"
+                      : ""
+                  }
+                >
+                  Status*
+                </Label>
                 <TooltipProvider>
                   <Tooltip>
                     <TooltipTrigger asChild>
                       <div>
-                        <Select value={attributeHdrForm.status} onValueChange={(value) => setAttributeHdrForm({ ...attributeHdrForm, status: value, })}>
+                        <Select
+                          value={attributeHdrForm.status}
+                          onValueChange={(value) =>
+                            setAttributeHdrForm({
+                              ...attributeHdrForm,
+                              status: value,
+                            })
+                          }
+                        >
                           <SelectTrigger>
                             <SelectValue placeholder="Select Status" />
                           </SelectTrigger>
@@ -7971,17 +9059,21 @@ const WorkoutProgramManagement = () => {
                   </Tooltip>
                 </TooltipProvider>
               </div>
-
             </div>
 
             <DialogFooter>
               <TooltipProvider>
                 <Tooltip>
                   <TooltipTrigger asChild>
-                    <Button variant="outline" onClick={() => {
-                      setSubmittedAttributeHdr(false);
-                      setIsAttributeHdrDialogOpen(false);
-                    }}>Cancel</Button>
+                    <Button
+                      variant="outline"
+                      onClick={() => {
+                        setSubmittedAttributeHdr(false);
+                        setIsAttributeHdrDialogOpen(false);
+                      }}
+                    >
+                      Cancel
+                    </Button>
                   </TooltipTrigger>
 
                   <TooltipContent>
@@ -7993,7 +9085,9 @@ const WorkoutProgramManagement = () => {
               <TooltipProvider>
                 <Tooltip>
                   <TooltipTrigger asChild>
-                    <Button onClick={handleCreateAttributeHdr}>Create Attribute Header</Button>
+                    <Button onClick={handleCreateAttributeHdr}>
+                      Create Attribute Header
+                    </Button>
                   </TooltipTrigger>
 
                   <TooltipContent>
@@ -8001,37 +9095,63 @@ const WorkoutProgramManagement = () => {
                   </TooltipContent>
                 </Tooltip>
               </TooltipProvider>
-
             </DialogFooter>
           </DialogContent>
         </Dialog>
 
         {/* Add/Edit Numberseries Dialog Or Popup*/}
-        <Dialog open={isNumberSeriesDialogOpen} onOpenChange={(open) => {
-          if (!open) {
-            setSubmittedNumberSeries(false);
-          }
-          setIsNumberSeriesDialogOpen(open);
-        }}>
+        <Dialog
+          open={isNumberSeriesDialogOpen}
+          onOpenChange={(open) => {
+            if (!open) {
+              setSubmittedNumberSeries(false);
+            }
+            setIsNumberSeriesDialogOpen(open);
+          }}
+        >
           <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
             <DialogHeader>
-              <DialogTitle>{editingNumberSeries ? 'Edit Number Series ' : 'Add Number Series '}</DialogTitle>
+              <DialogTitle>
+                {editingNumberSeries
+                  ? "Edit Number Series "
+                  : "Add Number Series "}
+              </DialogTitle>
               <DialogDescription>
-                {editingNumberSeries ? 'Update the Number Series  details' : 'Create a new Number Series '}
+                {editingNumberSeries
+                  ? "Update the Number Series  details"
+                  : "Create a new Number Series "}
               </DialogDescription>
             </DialogHeader>
             <div className="grid gap-6 py-4">
               <div className="space-y-4">
-                <h4 className="font-medium text-sm text-gray-700">Number Series Details</h4>
+                <h4 className="font-medium text-sm text-gray-700">
+                  Number Series Details
+                </h4>
                 <div className="grid grid-cols-2 gap-4">
-
                   <div className="space-y-2">
-                    <Label htmlFor="ScreenType" className={submittedNumberSeries && !numberSeriesForm.Screen_Type ? "text-red-500" : ""}>Screen Type*</Label>
+                    <Label
+                      htmlFor="ScreenType"
+                      className={
+                        submittedNumberSeries && !numberSeriesForm.Screen_Type
+                          ? "text-red-500"
+                          : ""
+                      }
+                    >
+                      Screen Type*
+                    </Label>
                     <TooltipProvider>
                       <Tooltip>
                         <TooltipTrigger asChild>
                           <div>
-                            <Select value={numberSeriesForm.Screen_Type} onValueChange={(value) => setNumberSeriesForm({ ...numberSeriesForm, Screen_Type: value })}>
+                            <Select
+                              value={numberSeriesForm.Screen_Type}
+                              onValueChange={(value) =>
+                                setNumberSeriesForm({
+                                  ...numberSeriesForm,
+                                  Screen_Type: value,
+                                })
+                              }
+                            >
                               <SelectTrigger>
                                 <SelectValue placeholder="Select Screen Type" />
                               </SelectTrigger>
@@ -8057,7 +9177,16 @@ const WorkoutProgramManagement = () => {
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="StartYear" className={submittedNumberSeries && !numberSeriesForm.Start_Year ? "text-red-500" : ""}>Start Year*</Label>
+                    <Label
+                      htmlFor="StartYear"
+                      className={
+                        submittedNumberSeries && !numberSeriesForm.Start_Year
+                          ? "text-red-500"
+                          : ""
+                      }
+                    >
+                      Start Year*
+                    </Label>
                     <TooltipProvider>
                       <Tooltip>
                         <TooltipTrigger asChild>
@@ -8067,7 +9196,12 @@ const WorkoutProgramManagement = () => {
                             min={fyStart}
                             max={fyEnd}
                             value={numberSeriesForm.Start_Year}
-                            onChange={(e) => setNumberSeriesForm({ ...numberSeriesForm, Start_Year: e.target.value })}
+                            onChange={(e) =>
+                              setNumberSeriesForm({
+                                ...numberSeriesForm,
+                                Start_Year: e.target.value,
+                              })
+                            }
                             placeholder="Select Start Year"
                           />
                         </TooltipTrigger>
@@ -8080,7 +9214,16 @@ const WorkoutProgramManagement = () => {
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="EndYear" className={submittedNumberSeries && !numberSeriesForm.End_Year ? "text-red-500" : ""}>End Year*</Label>
+                    <Label
+                      htmlFor="EndYear"
+                      className={
+                        submittedNumberSeries && !numberSeriesForm.End_Year
+                          ? "text-red-500"
+                          : ""
+                      }
+                    >
+                      End Year*
+                    </Label>
                     <TooltipProvider>
                       <Tooltip>
                         <TooltipTrigger asChild>
@@ -8090,7 +9233,12 @@ const WorkoutProgramManagement = () => {
                             min={fyStart}
                             max={fyEnd}
                             value={numberSeriesForm.End_Year}
-                            onChange={(e) => setNumberSeriesForm({ ...numberSeriesForm, End_Year: e.target.value })}
+                            onChange={(e) =>
+                              setNumberSeriesForm({
+                                ...numberSeriesForm,
+                                End_Year: e.target.value,
+                              })
+                            }
                             placeholder="Select End Year"
                           />
                         </TooltipTrigger>
@@ -8103,16 +9251,27 @@ const WorkoutProgramManagement = () => {
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="Start No" className={submittedNumberSeries && !numberSeriesForm.Start_No ? "text-red-500" : ""}>Start No*</Label>
+                    <Label
+                      htmlFor="Start No"
+                      className={
+                        submittedNumberSeries && !numberSeriesForm.Start_No
+                          ? "text-red-500"
+                          : ""
+                      }
+                    >
+                      Start No*
+                    </Label>
                     <TooltipProvider>
                       <Tooltip>
                         <TooltipTrigger asChild>
                           <Input
                             id="Start No"
                             value={numberSeriesForm.Start_No}
-                            onChange={(e) => setNumberSeriesForm({
-                              ...numberSeriesForm, Start_No: e.target.value.replace(/[^0-9]/g, ""),
-                            })
+                            onChange={(e) =>
+                              setNumberSeriesForm({
+                                ...numberSeriesForm,
+                                Start_No: e.target.value.replace(/[^0-9]/g, ""),
+                              })
                             }
                             placeholder="Enter Start No"
                           />
@@ -8126,14 +9285,31 @@ const WorkoutProgramManagement = () => {
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="Running No" className={submittedNumberSeries && !numberSeriesForm.Running_No ? "text-red-500" : ""}>Running No*</Label>
+                    <Label
+                      htmlFor="Running No"
+                      className={
+                        submittedNumberSeries && !numberSeriesForm.Running_No
+                          ? "text-red-500"
+                          : ""
+                      }
+                    >
+                      Running No*
+                    </Label>
                     <TooltipProvider>
                       <Tooltip>
                         <TooltipTrigger asChild>
                           <Input
                             id="Running No"
                             value={numberSeriesForm.Running_No}
-                            onChange={(e) => setNumberSeriesForm({ ...numberSeriesForm, Running_No: e.target.value.replace(/[^0-9]/g, "") })}
+                            onChange={(e) =>
+                              setNumberSeriesForm({
+                                ...numberSeriesForm,
+                                Running_No: e.target.value.replace(
+                                  /[^0-9]/g,
+                                  "",
+                                ),
+                              })
+                            }
                             placeholder="Enter Running No"
                           />
                         </TooltipTrigger>
@@ -8146,14 +9322,28 @@ const WorkoutProgramManagement = () => {
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="End No" className={submittedNumberSeries && !numberSeriesForm.End_No ? "text-red-500" : ""}>End No*</Label>
+                    <Label
+                      htmlFor="End No"
+                      className={
+                        submittedNumberSeries && !numberSeriesForm.End_No
+                          ? "text-red-500"
+                          : ""
+                      }
+                    >
+                      End No*
+                    </Label>
                     <TooltipProvider>
                       <Tooltip>
                         <TooltipTrigger asChild>
                           <Input
                             id="End No"
                             value={numberSeriesForm.End_No}
-                            onChange={(e) => setNumberSeriesForm({ ...numberSeriesForm, End_No: e.target.value.replace(/[^0-9]/g, "") })}
+                            onChange={(e) =>
+                              setNumberSeriesForm({
+                                ...numberSeriesForm,
+                                End_No: e.target.value.replace(/[^0-9]/g, ""),
+                              })
+                            }
                             placeholder="Enter End No"
                           />
                         </TooltipTrigger>
@@ -8166,17 +9356,30 @@ const WorkoutProgramManagement = () => {
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="Text" className={submittedNumberSeries && !numberSeriesForm.text ? "text-red-500" : ""}>Text*</Label>
+                    <Label
+                      htmlFor="Text"
+                      className={
+                        submittedNumberSeries && !numberSeriesForm.text
+                          ? "text-red-500"
+                          : ""
+                      }
+                    >
+                      Text*
+                    </Label>
                     <TooltipProvider>
                       <Tooltip>
                         <TooltipTrigger asChild>
                           <Input
                             id="text"
                             value={numberSeriesForm.text}
-                            onChange={(e) => setNumberSeriesForm({ ...numberSeriesForm, text: e.target.value })}
+                            onChange={(e) =>
+                              setNumberSeriesForm({
+                                ...numberSeriesForm,
+                                text: e.target.value,
+                              })
+                            }
                             placeholder="Enter text"
                           />
-
                         </TooltipTrigger>
 
                         <TooltipContent>
@@ -8187,12 +9390,29 @@ const WorkoutProgramManagement = () => {
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="Number Prefix" className={submittedNumberSeries && !numberSeriesForm.number_prefix ? "text-red-500" : ""}>Number Prefix*</Label>
+                    <Label
+                      htmlFor="Number Prefix"
+                      className={
+                        submittedNumberSeries && !numberSeriesForm.number_prefix
+                          ? "text-red-500"
+                          : ""
+                      }
+                    >
+                      Number Prefix*
+                    </Label>
                     <TooltipProvider>
                       <Tooltip>
                         <TooltipTrigger asChild>
                           <div>
-                            <Select value={numberSeriesForm.number_prefix} onValueChange={(value) => setNumberSeriesForm({ ...numberSeriesForm, number_prefix: value })}>
+                            <Select
+                              value={numberSeriesForm.number_prefix}
+                              onValueChange={(value) =>
+                                setNumberSeriesForm({
+                                  ...numberSeriesForm,
+                                  number_prefix: value,
+                                })
+                              }
+                            >
                               <SelectTrigger>
                                 <SelectValue placeholder="Select Number Prefix" />
                               </SelectTrigger>
@@ -8218,12 +9438,29 @@ const WorkoutProgramManagement = () => {
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="Bill Format" className={submittedNumberSeries && !numberSeriesForm.bill_format ? "text-red-500" : ""}>Bill Format*</Label>
+                    <Label
+                      htmlFor="Bill Format"
+                      className={
+                        submittedNumberSeries && !numberSeriesForm.bill_format
+                          ? "text-red-500"
+                          : ""
+                      }
+                    >
+                      Bill Format*
+                    </Label>
                     <TooltipProvider>
                       <Tooltip>
                         <TooltipTrigger asChild>
                           <div>
-                            <Select value={numberSeriesForm.bill_format} onValueChange={(value) => setNumberSeriesForm({ ...numberSeriesForm, bill_format: value })}>
+                            <Select
+                              value={numberSeriesForm.bill_format}
+                              onValueChange={(value) =>
+                                setNumberSeriesForm({
+                                  ...numberSeriesForm,
+                                  bill_format: value,
+                                })
+                              }
+                            >
                               <SelectTrigger>
                                 <SelectValue placeholder="Select Bill Format" />
                               </SelectTrigger>
@@ -8249,12 +9486,29 @@ const WorkoutProgramManagement = () => {
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="Status" className={submittedNumberSeries && !numberSeriesForm.Status ? "text-red-500" : ""}>Status*</Label>
+                    <Label
+                      htmlFor="Status"
+                      className={
+                        submittedNumberSeries && !numberSeriesForm.Status
+                          ? "text-red-500"
+                          : ""
+                      }
+                    >
+                      Status*
+                    </Label>
                     <TooltipProvider>
                       <Tooltip>
                         <TooltipTrigger asChild>
                           <div>
-                            <Select value={numberSeriesForm.Status} onValueChange={(value) => setNumberSeriesForm({ ...numberSeriesForm, Status: value })}>
+                            <Select
+                              value={numberSeriesForm.Status}
+                              onValueChange={(value) =>
+                                setNumberSeriesForm({
+                                  ...numberSeriesForm,
+                                  Status: value,
+                                })
+                              }
+                            >
                               <SelectTrigger>
                                 <SelectValue placeholder="Select Status" />
                               </SelectTrigger>
@@ -8278,7 +9532,6 @@ const WorkoutProgramManagement = () => {
                       </Tooltip>
                     </TooltipProvider>
                   </div>
-
                 </div>
               </div>
             </div>
@@ -8286,10 +9539,15 @@ const WorkoutProgramManagement = () => {
               <TooltipProvider>
                 <Tooltip>
                   <TooltipTrigger asChild>
-                    <Button variant="outline" onClick={() => {
-                      setSubmittedNumberSeries(false);
-                      setIsNumberSeriesDialogOpen(false);
-                    }}>Cancel</Button>
+                    <Button
+                      variant="outline"
+                      onClick={() => {
+                        setSubmittedNumberSeries(false);
+                        setIsNumberSeriesDialogOpen(false);
+                      }}
+                    >
+                      Cancel
+                    </Button>
                   </TooltipTrigger>
 
                   <TooltipContent>
@@ -8301,7 +9559,9 @@ const WorkoutProgramManagement = () => {
               <TooltipProvider>
                 <Tooltip>
                   <TooltipTrigger asChild>
-                    <Button onClick={handleSaveNumberSeries}>{editingNumberSeries ? 'Update' : 'Create'} Number Series</Button>
+                    <Button onClick={handleSaveNumberSeries}>
+                      {editingNumberSeries ? "Update" : "Create"} Number Series
+                    </Button>
                   </TooltipTrigger>
 
                   <TooltipContent>
