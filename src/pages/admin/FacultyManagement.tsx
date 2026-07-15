@@ -864,7 +864,7 @@ const FacultyManagement = () => {
                                     Email: e.target.value,
                                   })
                                 }
-                                placeholder="e.g., Email"
+                                placeholder="e.g., trainer@ruw.edu.bh"
                               />
                             </TooltipTrigger>
 

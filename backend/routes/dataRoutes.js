@@ -164,6 +164,10 @@ router.post("/Diet_Plans_DetailsDelete", dataController.Diet_Plans_DetailsDelete
 router.post("/Diet_Plans_DetailsLoopInsert", dataController.Diet_Plans_DetailsLoopInsert)
 router.post("/Diet_Plans_DetailsLoopUpdate", dataController.Diet_Plans_DetailsLoopUpdate)
 router.post("/Diet_Plans_DetailsLoopDelete", dataController.Diet_Plans_DetailsLoopDelete)
+router.post("/getMealType", dataController.getMealType)
+router.post("/getEssentials", dataController.getEssentials)
+router.post("/getDuration", dataController.getDuration)
+router.post("/dietPlanSearchData", dataController.dietPlanSearchData)
 
 
 
