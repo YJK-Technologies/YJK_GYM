@@ -2567,7 +2567,7 @@ const getLoginorout = async (req, res) => {
   }
 };
 
-const getGender = async (req, res) => {
+const getDisType = async (req, res) => {
   const { company_code } = req.body;
   try {
     const pool = await connection.connectToDatabase();
@@ -2575,7 +2575,7 @@ const getGender = async (req, res) => {
       .request()
       .input("company_code", sql.NVarChar, company_code)
       .query(
-        "EXEC sp_attribute_Info 'F',@company_code,'Gender','','', '' ,'','', NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL",
+        "EXEC sp_attribute_Info 'F',@company_code,'Discount Type','','', '' ,'','', NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL",
       );
 
     res.json(result.recordset);
@@ -4002,7 +4002,8 @@ const couponDeleteData = async (req, res) => {
 
 const couponSearchData = async (req, res) => {
 
-  const { CouponID, Coupon_Code, Discount_Type, Status, Company_Code, Location_Code } = req.body;
+  const { CouponID, Coupon_Code, Description, Discount_Type, Status, Valid_From, Valid_Until, Company_Code, 
+    Discount_Value, Applicable_Packages, Location_Code } = req.body;
 
   try {
 
@@ -4013,12 +4014,16 @@ const couponSearchData = async (req, res) => {
       .input("mode", sql.NVarChar, "SC")
       .input("CouponID", sql.NVarChar, CouponID)
       .input("Coupon_Code", sql.NVarChar, Coupon_Code)
+      .input("Description", sql.NVarChar, Description)
       .input("Discount_Type", sql.NVarChar, Discount_Type)
       .input("Status", sql.NVarChar, Status)
+      .input("Valid_From", sql.NVarChar, Valid_From)
+      .input("Valid_Until", sql.NVarChar, Valid_Until)
       .input("Company_Code", sql.NVarChar, Company_Code)
       .input("Location_Code", sql.NVarChar, Location_Code)
-      .query(`EXEC Sp_Coupon @mode,@CouponID,@Coupon_Code,'',@Discount_Type,0,0,NULL,NULL,0,0,'',@Status,
-      @Company_Code,@Location_Code,'','',''`);
+      .input("Discount_Value", sql.Decimal(18,2), Discount_Value)
+      .input("Applicable_Packages", sql.NVarChar, Applicable_Packages)
+      .query(`EXEC Sp_Coupon @mode, @CouponID, @Coupon_Code, @Description, @Discount_Type, @Discount_Value, 0, @Valid_From, @Valid_Until, 0, 0, @Applicable_Packages, @Status, @Company_Code, @Location_Code, '', '', ''`); 
 
     if (result.recordset.length > 0) {
       res.status(200).json(result.recordset);
@@ -4027,12 +4032,80 @@ const couponSearchData = async (req, res) => {
     }
 
   } catch (err) {
-    console.error(err.message);
-    res.status(500).json({ message: err.message || "Internal Server Error" });
+    console.error("Error", err);
+    res.status(500).json({
+      message: err.message || "Internal Server Error"
+    });
   }
 
 };
 //code ended by SakthiGanesh on 07-14-26
+
+//code added by SakthiGanesh on 07-15-26
+const getGender = async (req, res) => {
+  const { company_code } = req.body;
+  try {
+    const pool = await connection.connectToDatabase();
+    const result = await pool
+      .request()
+      .input("company_code", sql.NVarChar, company_code)
+      .query(
+        "EXEC sp_attribute_Info 'F',@company_code,'Gender','','', '' ,'','', NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL",
+      );
+
+    res.json(result.recordset);
+  } catch (err) {
+    console.error("Error", err);
+    res.status(500).json({ message: err.message || "Internal Server Error" });
+  }
+};
+
+const getAppPackages = async (req, res) => {
+  const { company_code } = req.body;
+  try {
+    const pool = await connection.connectToDatabase();
+    const result = await pool
+      .request()
+      .input("company_code", sql.NVarChar, company_code)
+      .query(
+        "EXEC sp_attribute_Info 'F',@company_code,'Packages','','', '' ,'','', NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL",
+      );
+
+    res.json(result.recordset);
+  } catch (err) {
+    console.error("Error", err);
+    res.status(500).json({ message: err.message || "Internal Server Error" });
+  }
+};
+
+const couponDashboard = async (req, res) => {
+
+  const { Company_Code, Location_Code } = req.body;
+  try {
+    const pool = await connection.connectToDatabase();
+    const result = await pool
+      .request()
+      .input("mode", sql.NVarChar, "DS")
+      .input("Company_Code", sql.NVarChar, Company_Code)
+      .input("Location_Code", sql.NVarChar, Location_Code)
+      .query(`EXEC Sp_Coupon @mode, '', '', '', '', 0, 0,  NULL, NULL, 0, 0, '', '', @Company_Code, @Location_Code, '', '', '' `);
+
+    if (result.recordset.length > 0) {
+      res.status(200).json(result.recordset);
+    } else {
+      res.status(404).json({
+        message: "Dashboard data not found",
+      });
+    }
+  } catch (err) {
+    console.error("Error:", err);
+    res.status(500).json({
+      message: err.message || "Internal Server Error",
+    });
+  }
+
+};
+//code ended by SakthiGanesh on 07-15-26
 
 module.exports = {
   getCompanyno,
@@ -4158,7 +4231,10 @@ module.exports = {
   couponInsertData,
   couponUpdateData,
   couponDeleteData,
-  couponSearchData
+  couponSearchData,
+  getDisType,
+  getAppPackages,
+  couponDashboard
   
 
 
