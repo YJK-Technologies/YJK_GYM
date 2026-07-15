@@ -12,6 +12,7 @@ import { Switch } from '@/components/ui/switch';
 import { Textarea } from '@/components/ui/textarea';
 import { useNavigate } from 'react-router-dom';
 import { useToast } from '@/hooks/use-toast';
+import { BASE_URL } from '../ApiConfig';
 import { 
   ArrowLeft, 
   Plus, 
@@ -187,42 +188,70 @@ const CouponManagement = () => {
     setDialogOpen(true);
   };
 
-  const handleSaveCoupon = () => {
-    if (!formData.code || !formData.description) {
-      toast({
-        title: "Missing Information",
-        description: "Please fill in all required fields",
-        variant: "destructive",
-      });
-      return;
+const handleSaveCoupon = async () => {
+
+  if (!formData.code || !formData.description) {
+    toast({
+      title: "Missing Information",
+      description: "Please fill all required fields.",
+      variant: "destructive",
+    });
+    return;
+  }
+
+  try {
+
+    const response = await fetch(`${BASE_URL}/couponInsertData`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        Coupon_Code: formData.code.toUpperCase(),
+        Description: formData.description,
+        Discount_Type:
+          formData.discountType === "percentage"
+            ? "Percentage"
+            : "Flat",
+        Discount_Value: formData.discountValue,
+        Minimum_Purchase: formData.minimumPurchase,
+        Valid_From: formData.validFrom,
+        Valid_Until: formData.validUntil,
+        Max_Uses: formData.maxUses || 0,
+        Current_Uses: 0,
+        Applicable_Packages: formData.applicablePackages.join(","),
+        Status: formData.isActive ? "Active" : "Inactive",
+        Company_Code: sessionStorage.getItem("selectedCompanyCode"),
+        Location_Code: sessionStorage.getItem("selectedLocationCode"),
+        created_by: sessionStorage.getItem("selectedUserCode"),
+      }),
+    });
+
+    const result = await response.json();
+
+    if (!response.ok) {
+      throw new Error(result.message);
     }
 
-    const couponData: Coupon = {
-      id: editingCoupon?.id || `coup-${Date.now()}`,
-      code: formData.code.toUpperCase(),
-      description: formData.description,
-      discountType: formData.discountType,
-      discountValue: formData.discountValue,
-      minimumPurchase: formData.minimumPurchase,
-      validFrom: formData.validFrom,
-      validUntil: formData.validUntil,
-      maxUses: formData.maxUses,
-      currentUses: editingCoupon?.currentUses || 0,
-      applicablePackages: formData.applicablePackages,
-      status: formData.isActive ? 'Active' : 'Inactive'
-    };
+    toast({
+      title: "Success",
+      description: result.message,
+    });
 
-    if (editingCoupon) {
-      setCoupons(coupons.map(c => c.id === editingCoupon.id ? couponData : c));
-      toast({ title: "Coupon Updated", description: `${couponData.code} has been updated` });
-    } else {
-      setCoupons([couponData, ...coupons]);
-      toast({ title: "Coupon Created", description: `${couponData.code} has been created` });
-    }
-
+    // getCouponData();
     setDialogOpen(false);
-  };
 
+  } catch (err) {
+
+    toast({
+      title: "Error",
+      description: err.message,
+      variant: "destructive",
+    });
+
+  }
+
+};
   const handleDeleteCoupon = (id: string) => {
     setCoupons(coupons.filter(c => c.id !== id));
     toast({ title: "Coupon Deleted", description: "The coupon has been removed" });
