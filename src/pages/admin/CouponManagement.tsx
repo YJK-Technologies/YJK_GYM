@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -12,138 +12,149 @@ import { Switch } from '@/components/ui/switch';
 import { Textarea } from '@/components/ui/textarea';
 import { useNavigate } from 'react-router-dom';
 import { useToast } from '@/hooks/use-toast';
-import { 
-  ArrowLeft, 
-  Plus, 
-  Pencil, 
-  Trash2, 
-  Tag, 
-  Percent, 
-  DollarSign,
-  Calendar,
-  CheckCircle,
-  XCircle,
-  Clock,
-  Copy,
-  RefreshCw
-} from 'lucide-react';
+import { BASE_URL } from '../ApiConfig';
+import AgGridTable from "@/components/ui/ag-grid-table";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import { showConfirmToast } from '../../components/ui/show-confirm-toast';
+import { useCompany } from "../CompanyContext";
+import { ArrowLeft, Plus, Pencil, Trash2, Tag, Percent, DollarSign, Calendar, CheckCircle, XCircle, Clock, Copy, RefreshCw, RotateCcw, Search } from 'lucide-react';
 
 // Types
 interface Coupon {
   id: string;
+  CouponID: string;
   code: string;
   description: string;
-  discountType: 'percentage' | 'fixed';
+  discountType: string;
   discountValue: number;
   minimumPurchase: number;
   validFrom: string;
   validUntil: string;
   maxUses: number | null;
   currentUses: number;
-  applicablePackages: string[];
-  status: 'Active' | 'Inactive' | 'Expired';
+  applicablePackages: string;
+  status: string;
+  KeyField: string;
 }
 
-// Sample data
-const sampleCoupons: Coupon[] = [
-  {
-    id: 'coup-1',
-    code: 'SAVE10',
-    description: '10% off all packages',
-    discountType: 'percentage',
-    discountValue: 10,
-    minimumPurchase: 20,
-    validFrom: '2024-01-01',
-    validUntil: '2024-03-31',
-    maxUses: 100,
-    currentUses: 45,
-    applicablePackages: ['all'],
-    status: 'Active'
-  },
-  {
-    id: 'coup-2',
-    code: 'NEWMEMBER',
-    description: 'BHD 5 off for new members',
-    discountType: 'fixed',
-    discountValue: 5,
-    minimumPurchase: 25,
-    validFrom: '2024-01-01',
-    validUntil: '2024-12-31',
-    maxUses: null,
-    currentUses: 23,
-    applicablePackages: ['Monthly'],
-    status: 'Active'
-  },
-  {
-    id: 'coup-3',
-    code: 'HALFYEAR20',
-    description: '20% off Half-Yearly packages',
-    discountType: 'percentage',
-    discountValue: 20,
-    minimumPurchase: 100,
-    validFrom: '2024-02-01',
-    validUntil: '2024-02-28',
-    maxUses: 50,
-    currentUses: 50,
-    applicablePackages: ['Half-Yearly'],
-    status: 'Expired'
-  },
-  {
-    id: 'coup-4',
-    code: 'SUMMER25',
-    description: '25% off quarterly packages for summer',
-    discountType: 'percentage',
-    discountValue: 25,
-    minimumPurchase: 50,
-    validFrom: '2024-06-01',
-    validUntil: '2024-08-31',
-    maxUses: 200,
-    currentUses: 0,
-    applicablePackages: ['Quarterly'],
-    status: 'Inactive'
-  }
-];
 
 const CouponManagement = () => {
+  const { companyCode, locationCode, userCode } = useCompany();
+
   const navigate = useNavigate();
   const { toast } = useToast();
-  
-  const [coupons, setCoupons] = useState<Coupon[]>(sampleCoupons);
+  const [DiscountType, setDiscountType] = useState<any[]>([]);
+  const [AppPackages, setAppPackages] = useState<any[]>([]);
+
+
+  const fetchDiscountType = async () => {
+    try {
+      const response = await fetch(`${BASE_URL}/getDisType`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          company_code: companyCode,
+        }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        setDiscountType(data);
+      } else {
+        console.error("Failed to fetch status");
+      }
+    } catch (error) {
+      console.error("Error fetching status:", error);
+    }
+  };
+
+  const fetchAppPackages = async () => {
+    try {
+      const response = await fetch(`${BASE_URL}/getAppPackages`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          company_code: companyCode,
+        }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        setAppPackages(data);
+      } else {
+        console.error("Failed to fetch status");
+      }
+    } catch (error) {
+      console.error("Error fetching status:", error);
+    }
+  };
+
+
+  useEffect(() => {
+    const loadData = async () => {
+      await Promise.all([
+        fetchDiscountType(),
+        fetchAppPackages(),
+
+      ]);
+    };
+
+    loadData();
+  }, []);
+
+  const [coupons, setCoupons] = useState<Coupon[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState<string>('all');
-  
+
   // Dialog state
-  const [dialogOpen, setDialogOpen] = useState(false);
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [editingCoupon, setEditingCoupon] = useState<Coupon | null>(null);
-  
+  const [dashboardStats, setDashboardStats] = useState({ totalCoupons: 0, activeCoupons: 0, totalDiscountGiven: 0, mostUsedCoupon: "", mostUsedCount: 0, });
+
   // Form state
   const [formData, setFormData] = useState({
+    CouponID: '',
     code: '',
     description: '',
-    discountType: 'percentage' as 'percentage' | 'fixed',
+    discountType: '',
     discountValue: 0,
     minimumPurchase: 0,
     validFrom: '',
     validUntil: '',
     maxUses: null as number | null,
-    applicablePackages: ['all'] as string[],
-    isActive: true
+    applicablePackages: "",
+    isActive: true,
+    KeyField: ""
+  });
+
+  const [submittedCoupon, setSubmittedCoupon] = useState(false);
+
+  const [CouponSearchForm, setCouponSearchForm] = useState({
+    CouponID: "",
+    Coupon_Code: "",
+    Description: "",
+    Discount_Type: "",
+    Discount_Value: "0",
+    Applicable_Packages: "",
+    Status: "",
+    Valid_From: "",
+    Valid_Until: ""
   });
 
   // Stats
-  const activeCoupons = coupons.filter(c => c.status === 'Active').length;
-  const totalDiscountGiven = 1765.5; // Sample calculation
-  const mostUsedCoupon = coupons.reduce((prev, curr) => 
-    prev.currentUses > curr.currentUses ? prev : curr
-  );
+  // const activeCoupons = coupons.filter(c => c.status === 'Active').length;
+  // const totalDiscountGiven = 1765.5; // Sample calculation
+  // const mostUsedCoupon = coupons.reduce((prev, curr) => 
+  //   prev.currentUses > curr.currentUses ? prev : curr
+  // );
 
   // Filter coupons
-  const filteredCoupons = coupons.filter(coupon => {
-    const matchesSearch = coupon.code.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         coupon.description.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesStatus = statusFilter === 'all' || coupon.status === statusFilter;
-    return matchesSearch && matchesStatus;
-  });
 
   const generateCouponCode = () => {
     const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
@@ -158,6 +169,7 @@ const CouponManagement = () => {
     if (coupon) {
       setEditingCoupon(coupon);
       setFormData({
+        CouponID: coupon.CouponID,
         code: coupon.code,
         description: coupon.description,
         discountType: coupon.discountType,
@@ -167,94 +179,491 @@ const CouponManagement = () => {
         validUntil: coupon.validUntil,
         maxUses: coupon.maxUses,
         applicablePackages: coupon.applicablePackages,
-        isActive: coupon.status === 'Active'
+        isActive: coupon.status === 'Active',
+        KeyField: coupon.KeyField
       });
     } else {
       setEditingCoupon(null);
       setFormData({
+        CouponID: '',
         code: '',
         description: '',
-        discountType: 'percentage',
+        discountType: '',
         discountValue: 0,
         minimumPurchase: 0,
         validFrom: '',
         validUntil: '',
         maxUses: null,
-        applicablePackages: ['all'],
-        isActive: true
+        applicablePackages: "",
+        isActive: true,
+        KeyField: ''
       });
     }
-    setDialogOpen(true);
+    setIsDialogOpen(true);
   };
 
-  const handleSaveCoupon = () => {
-    if (!formData.code || !formData.description) {
+  const CouponColumnDefs = [
+    {
+      headerName: "Coupon ID",
+      field: "CouponID",
+      minWidth: 150,
+      cellStyle: { fontWeight: 600 },
+    },
+    {
+      headerName: "Coupon Code",
+      field: "Coupon_Code",
+      minWidth: 150,
+      cellStyle: { fontWeight: 600 },
+    },
+    {
+      headerName: "Description",
+      field: "Description",
+      minWidth: 220,
+    },
+    {
+      headerName: "Discount Type",
+      field: "Discount_Type",
+      minWidth: 150,
+    },
+    {
+      headerName: "Discount Value",
+      field: "Discount_Value",
+      minWidth: 140,
+    },
+    {
+      headerName: "Valid From",
+      field: "Valid_From",
+      minWidth: 140,
+    },
+    {
+      headerName: "Valid Until",
+      field: "Valid_Until",
+      minWidth: 140,
+    },
+    {
+      headerName: "Current Uses",
+      field: "CurrentUses",
+      hide: true,
+      minWidth: 130,
+    },
+    {
+      headerName: "Max Uses",
+      field: "Max_Uses",
+      minWidth: 130,
+    },
+    {
+      headerName: "Applicable Packages",
+      field: "Applicable_Packages",
+      minWidth: 130,
+    },
+    {
+      headerName: "KeyField",
+      field: "KeyField",
+      hide: true,
+      minWidth: 130,
+    },
+    {
+      headerName: "Status",
+      field: "Status",
+      minWidth: 120,
+      cellRenderer: (params: any) => (
+        <Badge variant={params.value === "Active" ? "default" : "secondary"}>
+          {params.value}
+        </Badge>
+      ),
+    },
+    {
+      headerName: "Actions",
+      width: 170,
+      minWidth: 170,
+      maxWidth: 170,
+      sortable: false,
+      filter: false,
+      cellStyle: {
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+      },
+      cellRenderer: (params: any) => (
+        <div className="flex gap-2">
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => handleEditCoupon(params.data)}
+              >
+                <Pencil className="h-4 w-4" />
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent>Edit</TooltipContent>
+          </Tooltip>
+
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => handleDeleteCoupon(params.data.KeyField)}
+              >
+                <Trash2 className="h-4 w-4 text-red-500" />
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent>Delete</TooltipContent>
+          </Tooltip>
+        </div>
+      ),
+    },
+  ];
+
+  // Added for date fetiching in update screen
+  const formatDateForInput = (date: any) => {
+    if (!date) return "";
+
+    return new Date(date).toISOString().split("T")[0];
+  };
+
+  const handleEditCoupon = (coupon: any) => {
+    setEditingCoupon(coupon);
+
+    setFormData({
+      CouponID: coupon.CouponID ?? "",
+      code: coupon.Coupon_Code ?? "",
+      description: coupon.Description ?? "",
+      discountType: coupon.Discount_Type ?? "",
+      discountValue: Number(coupon.Discount_Value) || 0,
+      minimumPurchase: Number(coupon.Minimum_Purchase) || 0,
+      validFrom: formatDateForInput(coupon.Valid_From),
+      validUntil: formatDateForInput(coupon.Valid_Until),
+      maxUses: coupon.Max_Uses != null ? Number(coupon.Max_Uses) : null,
+      applicablePackages: coupon.Applicable_Packages ?? "",
+      isActive:
+        coupon.Status === "Active" ||
+        coupon.Status === true ||
+        coupon.Status === 1,
+      KeyField: coupon.KeyField ?? "",
+    });
+
+
+    setIsDialogOpen(true);
+  };
+
+  const handleCreateCoupon = async () => {
+    setSubmittedCoupon(true);
+
+    if (!formData.code || !formData.description || !formData.discountType) {
       toast({
-        title: "Missing Information",
-        description: "Please fill in all required fields",
+        title: "Validation Error",
+        description: "Please fill all required fields.",
         variant: "destructive",
       });
       return;
     }
 
-    const couponData: Coupon = {
-      id: editingCoupon?.id || `coup-${Date.now()}`,
-      code: formData.code.toUpperCase(),
-      description: formData.description,
-      discountType: formData.discountType,
-      discountValue: formData.discountValue,
-      minimumPurchase: formData.minimumPurchase,
-      validFrom: formData.validFrom,
-      validUntil: formData.validUntil,
-      maxUses: formData.maxUses,
-      currentUses: editingCoupon?.currentUses || 0,
-      applicablePackages: formData.applicablePackages,
-      status: formData.isActive ? 'Active' : 'Inactive'
-    };
+    try {
+      const response = await fetch(`${BASE_URL}/couponInsertData`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          Coupon_Code: formData.code.toUpperCase(),
+          Description: formData.description,
+          Discount_Type: formData.discountType,
+          Discount_Value: formData.discountValue || 0,
+          Minimum_Purchase: formData.minimumPurchase || 0,
+          Valid_From: formData.validFrom,
+          Valid_Until: formData.validUntil,
+          Max_Uses: formData.maxUses || 0,
+          Current_Uses: 0,
+          Applicable_Packages: formData.applicablePackages,
+          Status: formData.isActive ? "Active" : "Inactive",
+          Company_Code: companyCode,
+          Location_Code: locationCode,
+          created_by: userCode,
+        }),
+      });
 
-    if (editingCoupon) {
-      setCoupons(coupons.map(c => c.id === editingCoupon.id ? couponData : c));
-      toast({ title: "Coupon Updated", description: `${couponData.code} has been updated` });
-    } else {
-      setCoupons([couponData, ...coupons]);
-      toast({ title: "Coupon Created", description: `${couponData.code} has been created` });
-    }
+      const data = await response.json();
 
-    setDialogOpen(false);
-  };
+      if (response.ok) {
+        toast({
+          title: "Success",
+          description: data.message || "Coupon created successfully.",
+          variant: "success",
+        });
 
-  const handleDeleteCoupon = (id: string) => {
-    setCoupons(coupons.filter(c => c.id !== id));
-    toast({ title: "Coupon Deleted", description: "The coupon has been removed" });
-  };
+        setEditingCoupon(null);
+        setIsDialogOpen(false);
+        setSubmittedCoupon(false);
 
-  const handleToggleStatus = (id: string) => {
-    setCoupons(coupons.map(c => {
-      if (c.id === id) {
-        const newStatus = c.status === 'Active' ? 'Inactive' : 'Active';
-        return { ...c, status: newStatus as 'Active' | 'Inactive' | 'Expired' };
+        handleCouponSearch();
+      } else {
+        toast({
+          title: "Error",
+          description: data.message || "Failed to create coupon.",
+          variant: "destructive",
+        });
       }
-      return c;
-    }));
-    toast({ title: "Status Updated", description: "Coupon status has been changed" });
-  };
-
-  const copyCode = (code: string) => {
-    navigator.clipboard.writeText(code);
-    toast({ title: "Copied!", description: `${code} copied to clipboard` });
-  };
-
-  const getStatusBadge = (status: string) => {
-    switch (status) {
-      case 'Active':
-        return <Badge className="bg-green-500 hover:bg-green-600"><CheckCircle className="h-3 w-3 mr-1" /> Active</Badge>;
-      case 'Inactive':
-        return <Badge variant="secondary"><Clock className="h-3 w-3 mr-1" /> Inactive</Badge>;
-      case 'Expired':
-        return <Badge variant="destructive"><XCircle className="h-3 w-3 mr-1" /> Expired</Badge>;
-      default:
-        return <Badge variant="secondary">{status}</Badge>;
+    } catch (err: any) {
+      toast({
+        title: "Server Error",
+        description: err.message || "Something went wrong.",
+        variant: "destructive",
+      });
     }
+  };
+
+  const handleUpdateCoupon = () => {
+    showConfirmToast({
+      title: "Update Coupon",
+      description: "Do you want to update these changes?",
+      onConfirm: updateCoupon,
+    });
+  };
+
+  const updateCoupon = async () => {
+    setSubmittedCoupon(true);
+
+    if (!formData.code || !formData.description || !formData.discountType) {
+      toast({
+        title: "Validation Error",
+        description: "Please fill all required fields.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    try {
+      const response = await fetch(`${BASE_URL}/couponUpdateData`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          CouponID: formData.CouponID,
+          Coupon_Code: formData.code.toUpperCase(),
+          Description: formData.description,
+          Discount_Type: formData.discountType,
+          Discount_Value: formData.discountValue || 0,
+          Minimum_Purchase: formData.minimumPurchase || 0,
+          Valid_From: formData.validFrom,
+          Valid_Until: formData.validUntil,
+          Max_Uses: formData.maxUses || 0,
+          Applicable_Packages: formData.applicablePackages,
+          Status: formData.isActive ? "Active" : "Inactive",
+          Company_Code: companyCode,
+          Location_Code: locationCode,
+          modified_by: userCode,
+          KeyField: formData.KeyField
+        }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        toast({
+          title: "Success",
+          description: data.message || "Coupon updated successfully.",
+          variant: "success",
+        });
+
+        setEditingCoupon(null);
+        setIsDialogOpen(false);
+        setSubmittedCoupon(false);
+
+        handleCouponSearch();
+        await getCouponDashboard();
+
+      } else {
+        toast({
+          title: "Error",
+          description: data.message || "Failed to update coupon.",
+          variant: "destructive",
+        });
+      }
+    } catch (err: any) {
+      toast({
+        title: "Server Error",
+        description: err.message || "Something went wrong.",
+        variant: "destructive",
+      });
+    }
+  };
+
+  const handleSaveCoupon = async () => {
+    if (editingCoupon) {
+      await handleUpdateCoupon();
+    } else {
+      await handleCreateCoupon();
+    }
+  };
+
+  const handleDeleteCoupon = (couponID: string) => {
+    showConfirmToast({
+      title: "Delete Coupon",
+      description: "Are you sure you want to delete this coupon?",
+      onConfirm: () => deleteCoupon(couponID),
+    });
+  };
+
+  const deleteCoupon = async (KeyField: string) => {
+    try {
+      const response = await fetch(`${BASE_URL}/couponDeleteData`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          company_code: companyCode,
+          location_code: locationCode,
+          "modified-by": userCode,
+        },
+        body: JSON.stringify({
+          CouponIDs: [KeyField],
+
+        }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        toast({
+          title: "Success",
+          description: data.message || "Coupon deleted successfully.",
+          variant: "success",
+        });
+        handleCouponSearch();
+      } else {
+        toast({
+          title: "Error",
+          description: data.message || "Failed to delete coupon.",
+          variant: "destructive",
+        });
+      }
+    } catch (err: any) {
+      console.error(err);
+
+      toast({
+        title: "Server Error",
+        description: err.message || "Something went wrong.",
+        variant: "destructive",
+      });
+    }
+  };
+
+  useEffect(() => {
+    getCouponDashboard();
+  }, []);
+
+  const getCouponDashboard = async () => {
+    try {
+      const response = await fetch(`${BASE_URL}/couponDashboard`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          Company_Code: companyCode,
+          Location_Code: locationCode,
+        }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok && data.length > 0) {
+        const item = data[0];
+
+        setDashboardStats({
+          totalCoupons: item.TotalCoupons,
+          activeCoupons: item.ActiveCoupons,
+          totalDiscountGiven: item.TotalDiscountGiven,
+          mostUsedCoupon: item.MostUsedCoupon || "-",
+          mostUsedCount: item.MostUsedCount || 0,
+        });
+      }
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  const handleCouponSearch = async () => {
+
+    try {
+      const response = await fetch(`${BASE_URL}/couponSearchData`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          Company_Code: companyCode,
+          Location_Code: locationCode,
+          CouponID: CouponSearchForm.CouponID,
+          Coupon_Code: CouponSearchForm.Coupon_Code,
+          Description: CouponSearchForm.Description,
+          Discount_Type: CouponSearchForm.Discount_Type,
+          Discount_Value: CouponSearchForm.Discount_Value ? CouponSearchForm.Discount_Value : 0,
+          Applicable_Packages: CouponSearchForm.Applicable_Packages,
+          Status: CouponSearchForm.Status,
+          Valid_From: CouponSearchForm.Valid_From,
+          Valid_Until: CouponSearchForm.Valid_Until,
+        }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        setCoupons(data);
+      }
+      else if (response.status === 404) {
+        setCoupons([]);
+
+        toast({
+          title: "Data Not Found",
+          description: data?.message || "No matching coupons found.",
+          variant: "destructive",
+        });
+      }
+      else {
+        setCoupons([]);
+
+        toast({
+          title: "Search Failed",
+          description: data?.message || "Something went wrong while searching.",
+          variant: "destructive",
+        });
+      }
+
+    } catch (error) {
+
+      console.error("Search Error:", error);
+
+      setCoupons([]);
+
+      toast({
+        title: "Server Error",
+        description:
+          error?.message ||
+          "Unable to connect to the server. Please try again later.",
+        variant: "destructive",
+      });
+
+    }
+
+  };
+
+  const handleReset = () => {
+    setCouponSearchForm({
+      CouponID: "",
+      Coupon_Code: "",
+      Description: "",
+      Discount_Type: "",
+      Discount_Value: "",
+      Applicable_Packages: "",
+      Status: "",
+      Valid_From: "",
+      Valid_Until: ""
+    });
+
+    setCoupons([]);
   };
 
   return (
@@ -264,8 +673,8 @@ const CouponManagement = () => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center py-4">
             <div className="flex items-center gap-2 sm:gap-4 min-w-0">
-              <Button 
-                variant="ghost" 
+              <Button
+                variant="ghost"
                 onClick={() => navigate('/AdminDashboard')}
                 className="flex items-center px-2 sm:px-4"
               >
@@ -274,13 +683,13 @@ const CouponManagement = () => {
               </Button>
               <h1 className="text-lg sm:text-xl lg:text-2xl font-bold text-gray-900 truncate">Coupon Management</h1>
             </div>
-            <Button 
+            <Button
               onClick={() => handleOpenDialog()}
               className="shrink-0 px-2 sm:px-4"
             >
               <Plus className="h-4 w-4 sm:mr-2" />
               <span className="hidden sm:inline">
-              Add Coupon
+                Add Coupon
               </span>
             </Button>
           </div>
@@ -290,178 +699,328 @@ const CouponManagement = () => {
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Stats Cards */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+
+          {/* Active Coupons */}
           <Card>
             <CardContent className="p-6">
               <div className="flex items-center">
                 <div className="p-2 rounded-lg bg-green-500 text-white mr-4">
                   <Tag className="h-6 w-6" />
                 </div>
+
                 <div>
-                  <p className="text-sm font-medium text-gray-600">Active Coupons</p>
-                  <p className="text-2xl font-bold text-gray-900">{activeCoupons}</p>
+                  <p className="text-sm font-medium text-gray-600">
+                    Active Coupons
+                  </p>
+
+                  <p className="text-2xl font-bold text-gray-900">
+                    {dashboardStats.activeCoupons}
+                  </p>
                 </div>
               </div>
             </CardContent>
           </Card>
+
+          {/* Total Discount Given */}
           <Card>
             <CardContent className="p-6">
               <div className="flex items-center">
                 <div className="p-2 rounded-lg bg-red-500 text-white mr-4">
                   <DollarSign className="h-6 w-6" />
                 </div>
+
                 <div>
-                  <p className="text-sm font-medium text-gray-600">Total Discounts Given</p>
-                  <p className="text-2xl font-bold text-gray-900">BHD {totalDiscountGiven.toFixed(3)}</p>
+                  <p className="text-sm font-medium text-gray-600">
+                    Total Discounts Given
+                  </p>
+
+                  <p className="text-2xl font-bold text-gray-900">
+                    BHD {Number(dashboardStats.totalDiscountGiven).toFixed(3)}
+                  </p>
                 </div>
               </div>
             </CardContent>
           </Card>
+
+          {/* Most Used Coupon */}
           <Card>
             <CardContent className="p-6">
               <div className="flex items-center">
                 <div className="p-2 rounded-lg bg-blue-500 text-white mr-4">
                   <Percent className="h-6 w-6" />
                 </div>
+
                 <div>
-                  <p className="text-sm font-medium text-gray-600">Most Used Coupon</p>
-                  <p className="text-2xl font-bold text-gray-900">{mostUsedCoupon.code}</p>
-                  <p className="text-sm text-gray-500">{mostUsedCoupon.currentUses} uses</p>
+                  <p className="text-sm font-medium text-gray-600">
+                    Most Used Coupon
+                  </p>
+
+                  <p className="text-2xl font-bold text-gray-900">
+                    {dashboardStats.mostUsedCoupon}
+                  </p>
+
+                  <p className="text-sm text-gray-500">
+                    {dashboardStats.mostUsedCount} uses
+                  </p>
                 </div>
               </div>
             </CardContent>
           </Card>
+
         </div>
 
-        {/* Coupons Table */}
-        <Card>
-          <CardHeader>
-            <div className="flex flex-col md:flex-row justify-between md:items-center gap-4">
-              <div>
-                <CardTitle>All Coupons</CardTitle>
-                <CardDescription>Manage discount and offer codes</CardDescription>
+        {/* Search and Filters  */}
+        <Card className="mb-6">
+
+          <CardContent className="p-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-x-4 gap-y-6">
+
+              <div className="space-y-2">
+                <Label htmlFor="code">Coupon Code </Label>
+                <div className="flex space-x-2">
+                  <TooltipProvider>
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <Input
+                          id="code"
+                          value={CouponSearchForm.CouponID}
+                          onChange={(e) => setCouponSearchForm({ ...CouponSearchForm, CouponID: e.target.value.toUpperCase() })}
+                          placeholder="Coupon Code"
+                          className="font-mono"
+                        />
+                      </TooltipTrigger>
+
+                      <TooltipContent>
+                        <p>Select Coupon Code</p>
+                      </TooltipContent>
+                    </Tooltip>
+                  </TooltipProvider>
+                </div>
               </div>
-            </div>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            {/* Filters */}
-            <div className="flex flex-col md:flex-row gap-4">
-              <div className="relative flex-1">
-                <Input
-                  placeholder="Search by code or description..."
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                />
+
+              <div className="space-y-2">
+                <Label>Discount Type</Label>
+
+                <TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <div>
+                        <Select
+                          value={CouponSearchForm.Discount_Type}
+                          onValueChange={(value) => setCouponSearchForm({ ...CouponSearchForm, Discount_Type: value, })}>
+                          <SelectTrigger>
+                            <SelectValue placeholder="Select Discount Type" />
+                          </SelectTrigger>
+
+                          <SelectContent>
+                            {DiscountType.map((DiscountType: any) => (
+                              <SelectItem
+                                key={DiscountType.attributedetails_name}
+                                value={DiscountType.attributedetails_name}
+                              >
+                                {DiscountType.attributedetails_name}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      </div>
+                    </TooltipTrigger>
+
+                    <TooltipContent>
+                      <p>Select Discount Type</p>
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
               </div>
-              <Select value={statusFilter} onValueChange={setStatusFilter}>
-                <SelectTrigger className="w-40">
-                  <SelectValue placeholder="Status" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">All Status</SelectItem>
-                  <SelectItem value="Active">Active</SelectItem>
-                  <SelectItem value="Inactive">Inactive</SelectItem>
-                  <SelectItem value="Expired">Expired</SelectItem>
-                </SelectContent>
-              </Select>
+
+              <div className="space-y-2">
+                <Label htmlFor="description">Description </Label>
+                <TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Input
+                        id="description"
+                        value={CouponSearchForm.Description}
+                        onChange={(e) => setCouponSearchForm({ ...CouponSearchForm, Description: e.target.value })}
+                        placeholder="Enter coupon description..."
+                      />
+                    </TooltipTrigger>
+
+                    <TooltipContent>
+                      <p>Select Description</p>
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="discountValue">
+                  Discount Value ({CouponSearchForm.Discount_Type === 'Percentage' ? '%' : 'BHD'})
+                </Label>
+                <TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Input
+                        id="discountValue"
+                        type="number"
+                        value={CouponSearchForm.Discount_Value}
+                        onChange={(e) =>
+                          setCouponSearchForm({
+                            ...CouponSearchForm,
+                            Discount_Value: e.target.value,
+                          })
+                        }
+                        min={0}
+                        max={CouponSearchForm.Discount_Type === "Percentage" ? 100 : undefined}
+                      />
+                    </TooltipTrigger>
+
+                    <TooltipContent>
+                      <p>Select Discount Value</p>
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="validFrom">Valid From </Label>
+                <TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Input
+                        id="validFrom"
+                        type="date"
+                        value={CouponSearchForm.Valid_From}
+                        onChange={(e) => setCouponSearchForm({ ...CouponSearchForm, Valid_From: e.target.value })}
+                      />
+                    </TooltipTrigger>
+
+                    <TooltipContent>
+                      <p>Select Valid From</p>
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="validUntil">Valid Until</Label>
+                <TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Input
+                        id="validUntil"
+                        type="date"
+                        value={CouponSearchForm.Valid_Until}
+                        onChange={(e) => setCouponSearchForm({ ...CouponSearchForm, Valid_Until: e.target.value })}
+                      />
+                    </TooltipTrigger>
+
+                    <TooltipContent>
+                      <p>Select Valid Until</p>
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
+              </div>
+
+              <div className="space-y-2">
+                <Label>Applicable Packages</Label>
+
+                <TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <div>
+                        <Select
+                          value={CouponSearchForm.Applicable_Packages}
+                          onValueChange={(value) => setCouponSearchForm({ ...CouponSearchForm, Applicable_Packages: value, })}>
+                          <SelectTrigger>
+                            <SelectValue placeholder="Select Applicable Packages" />
+                          </SelectTrigger>
+
+                          <SelectContent>
+                            {AppPackages.map((AppPackages: any) => (
+                              <SelectItem
+                                key={AppPackages.attributedetails_name}
+                                value={AppPackages.attributedetails_name}
+                              >
+                                {AppPackages.attributedetails_name}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      </div>
+                    </TooltipTrigger>
+
+                    <TooltipContent>
+                      <p>Select Applicable Packages</p>
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
+              </div>
+
             </div>
 
-            {/* Table */}
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Code</TableHead>
-                  <TableHead>Description</TableHead>
-                  <TableHead>Discount</TableHead>
-                  <TableHead>Valid Period</TableHead>
-                  <TableHead>Usage</TableHead>
-                  <TableHead>Packages</TableHead>
-                  <TableHead>Status</TableHead>
-                  <TableHead>Actions</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {filteredCoupons.map((coupon) => (
-                  <TableRow key={coupon.id}>
-                    <TableCell>
-                      <div className="flex items-center space-x-2">
-                        <span className="font-mono font-bold text-lg">{coupon.code}</span>
-                        <Button variant="ghost" size="sm" onClick={() => copyCode(coupon.code)}>
-                          <Copy className="h-3 w-3" />
-                        </Button>
-                      </div>
-                    </TableCell>
-                    <TableCell className="max-w-xs truncate">{coupon.description}</TableCell>
-                    <TableCell>
-                      <Badge variant="outline" className="font-semibold">
-                        {coupon.discountType === 'percentage' ? (
-                          <><Percent className="h-3 w-3 mr-1" />{coupon.discountValue}%</>
-                        ) : (
-                          <>BHD {coupon.discountValue.toFixed(3)}</>
-                        )}
-                      </Badge>
-                    </TableCell>
-                    <TableCell>
-                      <div className="text-sm">
-                        <p>{coupon.validFrom}</p>
-                        <p className="text-gray-500">to {coupon.validUntil}</p>
-                      </div>
-                    </TableCell>
-                    <TableCell>
-                      <div className="text-sm">
-                        <p className="font-medium">{coupon.currentUses}{coupon.maxUses ? ` / ${coupon.maxUses}` : ''}</p>
-                        {coupon.maxUses && (
-                          <div className="w-24 h-2 bg-gray-200 rounded-full mt-1">
-                            <div 
-                              className="h-2 bg-blue-500 rounded-full" 
-                              style={{ width: `${Math.min((coupon.currentUses / coupon.maxUses) * 100, 100)}%` }}
-                            />
-                          </div>
-                        )}
-                      </div>
-                    </TableCell>
-                    <TableCell>
-                      <Badge variant="secondary">
-                        {coupon.applicablePackages.includes('all') ? 'All' : coupon.applicablePackages.join(', ')}
-                      </Badge>
-                    </TableCell>
-                    <TableCell>{getStatusBadge(coupon.status)}</TableCell>
-                    <TableCell>
-                      <div className="flex space-x-1">
-                        <Button variant="ghost" size="sm" onClick={() => handleOpenDialog(coupon)}>
-                          <Pencil className="h-4 w-4" />
-                        </Button>
-                        {coupon.status !== 'Expired' && (
-                          <Button 
-                            variant="ghost" 
-                            size="sm"
-                            onClick={() => handleToggleStatus(coupon.id)}
-                          >
-                            {coupon.status === 'Active' ? (
-                              <XCircle className="h-4 w-4 text-red-500" />
-                            ) : (
-                              <CheckCircle className="h-4 w-4 text-green-500" />
-                            )}
-                          </Button>
-                        )}
-                        <Button 
-                          variant="ghost" 
-                          size="sm"
-                          onClick={() => handleDeleteCoupon(coupon.id)}
-                        >
-                          <Trash2 className="h-4 w-4 text-red-500" />
-                        </Button>
-                      </div>
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
+            <div className="flex justify-end gap-4 mt-6">
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Button
+                      size="icon"
+                      className="rounded-full"
+                      onClick={handleCouponSearch}
+                    >
+                      <Search className="h-5 w-5" />
+                    </Button>
+                  </TooltipTrigger>
+
+                  <TooltipContent>
+                    <p>Search</p>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Button
+                      size="icon"
+                      variant="secondary"
+                      className="rounded-full"
+                      onClick={handleReset}
+                    >
+                      <RotateCcw className="h-5 w-5" />
+                    </Button>
+                  </TooltipTrigger>
+
+                  <TooltipContent>
+                    <p>Reload</p>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+            </div>
+          </CardContent>
+
+        </Card>
+
+        {/*Coupon Table */}
+        <Card>
+          <CardHeader>
+            <CardTitle>Coupons</CardTitle>
+            <CardDescription>Manage coupon details</CardDescription>
+          </CardHeader>
+
+          <CardContent>
+            <AgGridTable
+              rowData={coupons}
+              columnDefs={CouponColumnDefs}
+              pagination={true}
+              paginationPageSize={10}
+              height="400px"
+            />
           </CardContent>
         </Card>
       </main>
 
       {/* Add/Edit Coupon Dialog */}
-      <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
+      <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
         <DialogContent className="max-w-2xl">
           <DialogHeader>
             <DialogTitle>{editingCoupon ? 'Edit Coupon' : 'Create New Coupon'}</DialogTitle>
@@ -473,44 +1032,83 @@ const CouponManagement = () => {
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
                 <Label htmlFor="code">Coupon Code *</Label>
-                <div className="flex space-x-2">
-                  <Input
-                    id="code"
-                    value={formData.code}
-                    onChange={(e) => setFormData({ ...formData, code: e.target.value.toUpperCase() })}
-                    placeholder="SAVE20"
-                    className="font-mono"
-                  />
-                  <Button variant="outline" type="button" onClick={generateCouponCode}>
-                    <RefreshCw className="h-4 w-4" />
-                  </Button>
-                </div>
+                <TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <div className="flex space-x-2">
+                        <Input
+                          id="code"
+                          value={formData.code}
+                          onChange={(e) => setFormData({ ...formData, code: e.target.value.toUpperCase() })}
+                          placeholder="SAVE20"
+                          className="font-mono"
+                        />
+                        <Button variant="outline" type="button" onClick={generateCouponCode}>
+                          <RefreshCw className="h-4 w-4" />
+                        </Button>
+                      </div>
+                    </TooltipTrigger>
+
+                    <TooltipContent>
+                      <p>Select Coupon Code</p>
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
               </div>
+
               <div className="space-y-2">
-                <Label htmlFor="discountType">Discount Type *</Label>
-                <Select 
-                  value={formData.discountType} 
-                  onValueChange={(value: 'percentage' | 'fixed') => setFormData({ ...formData, discountType: value })}
-                >
-                  <SelectTrigger>
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="percentage">Percentage (%)</SelectItem>
-                    <SelectItem value="fixed">Fixed Amount (BHD)</SelectItem>
-                  </SelectContent>
-                </Select>
+                <Label htmlFor="discountType" className={submittedCoupon && !formData.discountType ? "text-red-500" : ""}>Discount Type *</Label>
+                <TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <div>
+                        <Select
+                          value={formData.discountType}
+                          onValueChange={(value) => setFormData({ ...formData, discountType: value })}
+                        >
+                          <SelectTrigger>
+                            <SelectValue placeholder="Select Discount Type" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {DiscountType.map((DiscountType: any) => (
+                              <SelectItem
+                                key={DiscountType.attributedetails_code}
+                                value={DiscountType.attributedetails_code}
+                              >
+                                {DiscountType.attributedetails_name}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      </div>
+                    </TooltipTrigger>
+
+                    <TooltipContent>
+                      <p> Select Discount Type </p>
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
               </div>
             </div>
 
             <div className="space-y-2">
               <Label htmlFor="description">Description *</Label>
-              <Textarea
-                id="description"
-                value={formData.description}
-                onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                placeholder="Enter coupon description..."
-              />
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Textarea
+                      id="description"
+                      value={formData.description}
+                      onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+                      placeholder="Enter coupon description..."
+                    />
+                  </TooltipTrigger>
+
+                  <TooltipContent>
+                    <p>Select Description</p>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
             </div>
 
             <div className="grid grid-cols-2 gap-4">
@@ -518,76 +1116,150 @@ const CouponManagement = () => {
                 <Label htmlFor="discountValue">
                   Discount Value ({formData.discountType === 'percentage' ? '%' : 'BHD'}) *
                 </Label>
-                <Input
-                  id="discountValue"
-                  type="number"
-                  value={formData.discountValue}
-                  onChange={(e) => setFormData({ ...formData, discountValue: parseFloat(e.target.value) || 0 })}
-                  min={0}
-                  max={formData.discountType === 'percentage' ? 100 : undefined}
-                />
+                <TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Input
+                        id="discountValue"
+                        type="number"
+                        value={formData.discountValue}
+                        onChange={(e) => setFormData({ ...formData, discountValue: parseFloat(e.target.value) || 0 })}
+                        min={0}
+                        max={formData.discountType === 'percentage' ? 100 : undefined}
+                      />
+                    </TooltipTrigger>
+
+                    <TooltipContent>
+                      <p>Select Discount Value</p>
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
               </div>
               <div className="space-y-2">
                 <Label htmlFor="minimumPurchase">Minimum Purchase (BHD)</Label>
-                <Input
-                  id="minimumPurchase"
-                  type="number"
-                  value={formData.minimumPurchase}
-                  onChange={(e) => setFormData({ ...formData, minimumPurchase: parseFloat(e.target.value) || 0 })}
-                  min={0}
-                  step={0.001}
-                />
+                <TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Input
+                        id="minimumPurchase"
+                        type="number"
+                        value={formData.minimumPurchase}
+                        onChange={(e) => setFormData({ ...formData, minimumPurchase: parseFloat(e.target.value) || 0 })}
+                        min={0}
+                        step={0.001}
+                      />
+                    </TooltipTrigger>
+
+                    <TooltipContent>
+                      <p>Select Minimum Purchase (BHD)</p>
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
               </div>
             </div>
 
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
                 <Label htmlFor="validFrom">Valid From *</Label>
-                <Input
-                  id="validFrom"
-                  type="date"
-                  value={formData.validFrom}
-                  onChange={(e) => setFormData({ ...formData, validFrom: e.target.value })}
-                />
+                <TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Input
+                        id="validFrom"
+                        type="date"
+                        value={formData.validFrom}
+                        onChange={(e) => setFormData({ ...formData, validFrom: e.target.value })}
+                      />
+                    </TooltipTrigger>
+
+                    <TooltipContent>
+                      <p>Select Valid From</p>
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
               </div>
               <div className="space-y-2">
                 <Label htmlFor="validUntil">Valid Until *</Label>
-                <Input
-                  id="validUntil"
-                  type="date"
-                  value={formData.validUntil}
-                  onChange={(e) => setFormData({ ...formData, validUntil: e.target.value })}
-                />
+                <TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Input
+                        id="validUntil"
+                        type="date"
+                        value={formData.validUntil}
+                        onChange={(e) => setFormData({ ...formData, validUntil: e.target.value })}
+                      />
+                    </TooltipTrigger>
+
+                    <TooltipContent>
+                      <p>Select Valid Until </p>
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
               </div>
             </div>
 
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
                 <Label htmlFor="maxUses">Maximum Uses (leave empty for unlimited)</Label>
-                <Input
-                  id="maxUses"
-                  type="number"
-                  value={formData.maxUses || ''}
-                  onChange={(e) => setFormData({ ...formData, maxUses: e.target.value ? parseInt(e.target.value) : null })}
-                  min={1}
-                />
+                <TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Input
+                        id="maxUses"
+                        type="number"
+                        value={formData.maxUses || ''}
+                        onChange={(e) => setFormData({ ...formData, maxUses: e.target.value ? parseInt(e.target.value) : null })}
+                        min={1}
+                      />
+                    </TooltipTrigger>
+
+                    <TooltipContent>
+                      <p>Select Maximum Uses (leave empty for unlimited)</p>
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
               </div>
+
+
               <div className="space-y-2">
                 <Label htmlFor="packages">Applicable Packages</Label>
-                <Select 
-                  value={formData.applicablePackages[0]} 
-                  onValueChange={(value) => setFormData({ ...formData, applicablePackages: [value] })}
-                >
-                  <SelectTrigger>
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="all">All Packages</SelectItem>
-                    <SelectItem value="Monthly">Monthly Only</SelectItem>
-                    <SelectItem value="Quarterly">Quarterly Only</SelectItem>
-                    <SelectItem value="Half-Yearly">Half-Yearly Only</SelectItem>
-                  </SelectContent>
-                </Select>
+                <TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <div>
+                        <Select
+                          value={formData.applicablePackages}
+                          onValueChange={(value) =>
+                            setFormData({
+                              ...formData,
+                              applicablePackages: value,
+                            })
+                          }
+                        >
+                          <SelectTrigger>
+                            <SelectValue placeholder="Select Package" />
+                          </SelectTrigger>
+
+                          <SelectContent>
+                            {AppPackages.map((item: any) => (
+                              <SelectItem
+                                key={item.attributedetails_code}
+                                value={item.attributedetails_code}
+                              >
+                                {item.attributedetails_name}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      </div>
+                    </TooltipTrigger>
+
+                    <TooltipContent>
+                      <p>Select Applicable Packages</p>
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
               </div>
             </div>
 
@@ -601,7 +1273,7 @@ const CouponManagement = () => {
             </div>
           </div>
           <DialogFooter>
-            <Button variant="outline" onClick={() => setDialogOpen(false)}>
+            <Button variant="outline" onClick={() => setIsDialogOpen(false)}>
               Cancel
             </Button>
             <Button onClick={handleSaveCoupon}>

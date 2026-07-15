@@ -2567,7 +2567,7 @@ const getLoginorout = async (req, res) => {
   }
 };
 
-const getGender = async (req, res) => {
+const getDisType = async (req, res) => {
   const { company_code } = req.body;
   try {
     const pool = await connection.connectToDatabase();
@@ -2575,7 +2575,7 @@ const getGender = async (req, res) => {
       .request()
       .input("company_code", sql.NVarChar, company_code)
       .query(
-        "EXEC sp_attribute_Info 'F',@company_code,'Gender','','', '' ,'','', NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL",
+        "EXEC sp_attribute_Info 'F',@company_code,'Discount Type','','', '' ,'','', NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL",
       );
 
     res.json(result.recordset);
@@ -3881,6 +3881,231 @@ const getTrainerCardData = async (req, res) => {
   }
 }
 //Code Ended by Dinesh Gokul on 10-07-2026
+
+//code added by SakthiGanesh on 07-14-26
+const couponInsertData = async (req, res) => {
+  const { Coupon_Code, Description, Discount_Type, Discount_Value, Minimum_Purchase, Valid_From, Valid_Until, Max_Uses, 
+    Current_Uses, Applicable_Packages, Status, Company_Code, Location_Code, created_by } = req.body;  
+
+  try {
+    const pool = await connection.connectToDatabase();
+
+    const result = await pool
+      .request()
+      .input("mode", sql.NVarChar, "I")
+      .input("Coupon_Code", sql.NVarChar, Coupon_Code)
+      .input("Description", sql.NVarChar, Description)
+      .input("Discount_Type", sql.NVarChar, Discount_Type)
+      .input("Discount_Value", sql.Decimal(18,2), Discount_Value)
+      .input("Minimum_Purchase", sql.Decimal(18,2), Minimum_Purchase)
+      .input("Valid_From", sql.Date, Valid_From)
+      .input("Valid_Until", sql.Date, Valid_Until)
+      .input("Max_Uses", sql.Int, Max_Uses)
+      .input("Current_Uses", sql.Int, Current_Uses)
+      .input("Applicable_Packages", sql.NVarChar, Applicable_Packages)
+      .input("Status", sql.NVarChar, Status)
+      .input("Company_Code", sql.NVarChar, Company_Code)
+      .input("Location_Code", sql.NVarChar, Location_Code)
+      .input("created_by", sql.NVarChar, created_by)
+      .query(`EXEC Sp_Coupon @mode,'',@Coupon_Code,@Description,@Discount_Type,@Discount_Value,@Minimum_Purchase,
+      @Valid_From,@Valid_Until,@Max_Uses,@Current_Uses,@Applicable_Packages,@Status,
+      @Company_Code,@Location_Code,'',@created_by,''`);
+
+    res.status(200).json({
+      message: "Coupon created successfully",
+      CouponID: result.recordset[0].CouponID,
+      KeyField: result.recordset[0].KeyField,
+    });
+
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).json({ message: err.message || "Internal Server Error" });
+  }
+};
+
+const couponUpdateData = async (req, res) => {
+
+  const { CouponID, Coupon_Code, Description, Discount_Type, Discount_Value, Minimum_Purchase, Valid_From, 
+    Valid_Until, Max_Uses, Current_Uses, Applicable_Packages, Status, Company_Code, Location_Code, KeyField, modified_by } = req.body;
+
+  try {
+
+    const pool = await connection.connectToDatabase();
+
+    await pool
+      .request()
+      .input("mode", sql.NVarChar, "U")
+      .input("CouponID", sql.NVarChar, CouponID)
+      .input("Coupon_Code", sql.NVarChar, Coupon_Code)
+      .input("Description", sql.NVarChar, Description)
+      .input("Discount_Type", sql.NVarChar, Discount_Type)
+      .input("Discount_Value", sql.Decimal(18,2), Discount_Value)
+      .input("Minimum_Purchase", sql.Decimal(18,2), Minimum_Purchase)
+      .input("Valid_From", sql.Date, Valid_From)
+      .input("Valid_Until", sql.Date, Valid_Until)
+      .input("Max_Uses", sql.Int, Max_Uses)
+      .input("Current_Uses", sql.Int, Current_Uses)
+      .input("Applicable_Packages", sql.NVarChar, Applicable_Packages)
+      .input("Status", sql.NVarChar, Status)
+      .input("Company_Code", sql.NVarChar, Company_Code)
+      .input("Location_Code", sql.NVarChar, Location_Code)
+      .input("KeyField", sql.NVarChar, KeyField)
+      .input("modified_by", sql.NVarChar, modified_by)
+      .query(`EXEC Sp_Coupon @mode,@CouponID,@Coupon_Code,@Description,@Discount_Type,@Discount_Value,@Minimum_Purchase,
+      @Valid_From,@Valid_Until,@Max_Uses,@Current_Uses,@Applicable_Packages,@Status,
+      @Company_Code,@Location_Code,@KeyField,'',@modified_by`);
+
+    res.status(200).json("Coupon updated successfully");
+
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).json({ message: err.message || "Internal Server Error" });
+  }
+
+};
+
+const couponDeleteData = async (req, res) => {
+
+  const couponIDsToDelete = req.body.CouponIDs;
+
+  if (!couponIDsToDelete || !couponIDsToDelete.length) {
+    return res.status(400).json("Invalid or empty Coupon array.");
+  }
+
+  try {
+
+    const pool = await connection.connectToDatabase();
+
+    for (const KeyField of couponIDsToDelete) {
+
+      await pool
+        .request()
+        .input("mode", sql.NVarChar, "D")
+        .input("KeyField", sql.NVarChar, KeyField)
+        .input("CouponID", sql.NVarChar, req.headers["couponid"])
+        .input("Company_Code", sql.NVarChar, req.headers["company_code"])
+        .input("Location_Code", sql.NVarChar, req.headers["location_code"])
+        .input("modified_by", sql.NVarChar, req.headers["modified_by"])
+        .query(`EXEC Sp_Coupon @mode,@CouponID,'','','',0,0,NULL,NULL,0,0,'','',
+        @Company_Code,@Location_Code,@KeyField,'',@modified_by`);
+
+    }
+
+    res.status(200).json("Coupon deleted successfully");
+
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).json({ message: err.message || "Internal Server Error" });
+  }
+
+};
+
+const couponSearchData = async (req, res) => {
+
+  const { CouponID, Coupon_Code, Description, Discount_Type, Status, Valid_From, Valid_Until, Company_Code, 
+    Discount_Value, Applicable_Packages, Location_Code } = req.body;
+
+  try {
+
+    const pool = await connection.connectToDatabase();
+
+    const result = await pool
+      .request()
+      .input("mode", sql.NVarChar, "SC")
+      .input("CouponID", sql.NVarChar, CouponID)
+      .input("Coupon_Code", sql.NVarChar, Coupon_Code)
+      .input("Description", sql.NVarChar, Description)
+      .input("Discount_Type", sql.NVarChar, Discount_Type)
+      .input("Status", sql.NVarChar, Status)
+      .input("Valid_From", sql.NVarChar, Valid_From)
+      .input("Valid_Until", sql.NVarChar, Valid_Until)
+      .input("Company_Code", sql.NVarChar, Company_Code)
+      .input("Location_Code", sql.NVarChar, Location_Code)
+      .input("Discount_Value", sql.Decimal(18,2), Discount_Value)
+      .input("Applicable_Packages", sql.NVarChar, Applicable_Packages)
+      .query(`EXEC Sp_Coupon @mode, @CouponID, @Coupon_Code, @Description, @Discount_Type, @Discount_Value, 0, @Valid_From, @Valid_Until, 0, 0, @Applicable_Packages, @Status, @Company_Code, @Location_Code, '', '', ''`); 
+
+    if (result.recordset.length > 0) {
+      res.status(200).json(result.recordset);
+    } else {
+      res.status(404).json("Data not found");
+    }
+
+  } catch (err) {
+    console.error("Error", err);
+    res.status(500).json({
+      message: err.message || "Internal Server Error"
+    });
+  }
+
+};
+//code ended by SakthiGanesh on 07-14-26
+
+//code added by SakthiGanesh on 07-15-26
+const getGender = async (req, res) => {
+  const { company_code } = req.body;
+  try {
+    const pool = await connection.connectToDatabase();
+    const result = await pool
+      .request()
+      .input("company_code", sql.NVarChar, company_code)
+      .query(
+        "EXEC sp_attribute_Info 'F',@company_code,'Gender','','', '' ,'','', NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL",
+      );
+
+    res.json(result.recordset);
+  } catch (err) {
+    console.error("Error", err);
+    res.status(500).json({ message: err.message || "Internal Server Error" });
+  }
+};
+
+const getAppPackages = async (req, res) => {
+  const { company_code } = req.body;
+  try {
+    const pool = await connection.connectToDatabase();
+    const result = await pool
+      .request()
+      .input("company_code", sql.NVarChar, company_code)
+      .query(
+        "EXEC sp_attribute_Info 'F',@company_code,'Packages','','', '' ,'','', NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL",
+      );
+
+    res.json(result.recordset);
+  } catch (err) {
+    console.error("Error", err);
+    res.status(500).json({ message: err.message || "Internal Server Error" });
+  }
+};
+
+const couponDashboard = async (req, res) => {
+
+  const { Company_Code, Location_Code } = req.body;
+  try {
+    const pool = await connection.connectToDatabase();
+    const result = await pool
+      .request()
+      .input("mode", sql.NVarChar, "DS")
+      .input("Company_Code", sql.NVarChar, Company_Code)
+      .input("Location_Code", sql.NVarChar, Location_Code)
+      .query(`EXEC Sp_Coupon @mode, '', '', '', '', 0, 0,  NULL, NULL, 0, 0, '', '', @Company_Code, @Location_Code, '', '', '' `);
+
+    if (result.recordset.length > 0) {
+      res.status(200).json(result.recordset);
+    } else {
+      res.status(404).json({
+        message: "Dashboard data not found",
+      });
+    }
+  } catch (err) {
+    console.error("Error:", err);
+    res.status(500).json({
+      message: err.message || "Internal Server Error",
+    });
+  }
+
+};
+//code ended by SakthiGanesh on 07-15-26
 
 //Code added by Dinesh Gokul on 14-07-2026
 const Diet_Plans_hdrInsert = async (req, res) => {
