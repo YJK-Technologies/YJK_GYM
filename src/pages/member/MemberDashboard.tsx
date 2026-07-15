@@ -31,7 +31,7 @@ const MemberDashboard = () => {
     { title: 'Daily Workouts', description: 'Check your personalized workout plan', route: '/MemberWorkouts' },
     { title: 'Workout Programs', description: 'Browse available programs and packages', route: '/MemberPrograms' },
     { title: 'Body Progress', description: 'Track your fitness journey', route: '/MemberProgress' },
-    { title: 'Attendance', description: 'View your gym check-in history', route: '/MemberAttendance' },
+    { title: 'Attendance', description: 'View your gym check-in history', route: '/' },
   ];
 
   const recentAlerts = [
