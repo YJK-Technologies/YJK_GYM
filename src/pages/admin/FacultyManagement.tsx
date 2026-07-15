@@ -864,7 +864,7 @@ const FacultyManagement = () => {
                                     Email: e.target.value,
                                   })
                                 }
-                                placeholder="e.g., Email"
+                                placeholder="e.g., trainer@ruw.edu.bh"
                               />
                             </TooltipTrigger>
 
@@ -1376,7 +1376,7 @@ const FacultyManagement = () => {
                     </TooltipTrigger>
 
                     <TooltipContent>
-                      <p>Enter Full Name</p>
+                      <p>Enter Trainer ID</p>
                     </TooltipContent>
                   </Tooltip>
                 </TooltipProvider>

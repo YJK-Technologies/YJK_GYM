@@ -4107,6 +4107,701 @@ const couponDashboard = async (req, res) => {
 };
 //code ended by SakthiGanesh on 07-15-26
 
+//Code added by Dinesh Gokul on 14-07-2026
+const Diet_Plans_hdrInsert = async (req, res) => {
+  const {
+  DietPlanID, Diet_Name, Category, Description, Goals, Restrictions, TrainerID, Is_Active, KeyField, Location_Code,
+  created_date,
+  modified_date,
+  created_by,
+  modified_by,
+  company_code
+} = req.body;
+
+  try {
+    const pool = await sql.connect(dbConfig);
+    const result = await pool.request()
+      .input("mode", sql.NVarChar, "I")
+      .input("DietPlanID", sql.NVarChar, DietPlanID)
+      .input("Diet_Name", sql.NVarChar, Diet_Name)
+      .input("Category", sql.NVarChar, Category)
+      .input("Description", sql.NVarChar, Description)
+      .input("Goals", sql.NVarChar, Goals)
+      .input("Restrictions", sql.NVarChar, Restrictions)
+      .input("TrainerID", sql.NVarChar, TrainerID)
+      .input("Is_Active", sql.NVarChar, Is_Active)
+      .input("KeyField", sql.NVarChar, KeyField)
+      .input("Location_Code", sql.NVarChar, Location_Code)
+      .input("company_code", sql.NVarChar, company_code)
+      .input("created_by", sql.NVarChar, created_by)
+      .input("created_date", sql.DateTime, created_date)
+      .input("modified_by", sql.NVarChar, modified_by)
+      .input("modified_date", sql.DateTime, modified_date)
+      .query(`EXEC sp_Diet_Plans_hdr_Test @mode, @DietPlanID, @Diet_Name, @Category, @Description, @Goals, @Restrictions, @TrainerID, @Is_Active, @KeyField, @Location_Code, @company_code, @created_by, @created_date, @modified_by, @modified_date`);
+    const generatedDietPlanID = result.recordset[0].DietPlanID;
+    res.status(200).json({ success: true, message: "Diet_Plans_hdr insertd successfully", DietPlanID: generatedDietPlanID });
+  } catch (err) {
+    console.error("Error during Diet_Plans_hdr insert:", err);
+    res.status(500).json({ message: err.message || "Internal Server Error" });
+  }
+};
+
+const Diet_Plans_hdrUpdate = async (req, res) => {
+  const {
+  DietPlanID, Diet_Name, Category, Description, Goals, Restrictions, TrainerID, Is_Active, KeyField, Location_Code,
+  modified_by,
+  company_code
+} = req.body;
+
+  try {
+    const pool = await sql.connect(dbConfig);
+    await pool.request()
+      .input("mode", sql.NVarChar, "U")
+      .input("DietPlanID", sql.NVarChar, DietPlanID)
+      .input("Diet_Name", sql.NVarChar, Diet_Name)
+      .input("Category", sql.NVarChar, Category)
+      .input("Description", sql.NVarChar, Description)
+      .input("Goals", sql.NVarChar, Goals)
+      .input("Restrictions", sql.NVarChar, Restrictions)
+      .input("TrainerID", sql.NVarChar, TrainerID)
+      .input("Is_Active", sql.NVarChar, Is_Active)
+      .input("KeyField", sql.NVarChar, KeyField)
+      .input("Location_Code", sql.NVarChar, Location_Code)
+      .input("company_code", sql.NVarChar, company_code)
+      .input("modified_by", sql.NVarChar, modified_by)
+      .query(`EXEC sp_Diet_Plans_hdr_Test @mode, @DietPlanID, @Diet_Name, @Category, @Description, @Goals, @Restrictions, @TrainerID, @Is_Active, @KeyField, @Location_Code, @company_code, '', '', @modified_by, ''`);
+
+    res.status(200).json({ success: true, message: "Diet_Plans_hdr updated successfully" });
+  } catch (err) {
+    console.error("Error during Diet_Plans_hdr update:", err);
+    res.status(500).json({ message: err.message || "Internal Server Error" });
+  }
+};
+
+const Diet_Plans_hdrDelete = async (req, res) => {
+  const {DietPlanID, KeyField, Location_Code, modified_by, company_code
+} = req.body;
+
+  try {
+    const pool = await sql.connect(dbConfig);
+    await pool.request()
+      .input("mode", sql.NVarChar, "D")
+      .input("DietPlanID", sql.NVarChar, DietPlanID)
+      .input("KeyField", sql.NVarChar, KeyField)
+      .input("Location_Code", sql.NVarChar, Location_Code)
+      .input("company_code", sql.NVarChar, company_code)
+      .input("modified_by", sql.NVarChar, modified_by)
+      .query(`EXEC sp_Diet_Plans_hdr_Test @mode, @DietPlanID, '', '', '', '', '', '', '', @KeyField, @Location_Code, @company_code, '', '', @modified_by, ''`);
+
+    res.status(200).json({ success: true, message: "Diet_Plans_hdr deleted successfully" });
+  } catch (err) {
+    console.error("Error during Diet_Plans_hdr delete:", err);
+    res.status(500).json({ message: err.message || "Internal Server Error" });
+  }
+};
+
+// ---------- HEADER LOOP CRUD ----------
+// Auto-generated Diet_Plans_hdrLoopInsert API for sp_Diet_Plans_hdr
+const Diet_Plans_hdrLoopInsert = async (req, res) => {
+  const Diet_Plans_hdrData = req.body.Diet_Plans_hdrData;
+  if (!Diet_Plans_hdrData || !Diet_Plans_hdrData.length) {
+    return res.status(400).json("Invalid or empty Diet_Plans_hdrData array.");
+  }
+
+  try {
+    const pool = await sql.connect(dbConfig);
+    for (const item of Diet_Plans_hdrData) {
+      await pool.request()
+        .input("mode", sql.NVarChar, "I")
+        .input("DietPlanID", sql.NVarChar, item.DietPlanID)
+        .input("Diet_Name", sql.NVarChar, item.Diet_Name)
+        .input("Category", sql.NVarChar, item.Category)
+        .input("Description", sql.NVarChar, item.Description)
+        .input("Goals", sql.NVarChar, item.Goals)
+        .input("Restrictions", sql.NVarChar, item.Restrictions)
+        .input("TrainerID", sql.NVarChar, item.TrainerID)
+        .input("Is_Active", sql.NVarChar, item.Is_Active)
+        .input("KeyField", sql.NVarChar, item.KeyField)
+        .input("Location_Code", sql.NVarChar, item.Location_Code)
+        .input("company_code", sql.NVarChar, item.company_code)
+        .input("created_by", sql.NVarChar, item.created_by)
+        .input("created_date", sql.DateTime, item.created_date)
+        .input("modified_by", sql.NVarChar, item.modified_by)
+        .input("modified_date", sql.DateTime, item.modified_date)
+        .query(`EXEC sp_Diet_Plans_hdr_Test @mode, @DietPlanID, @Diet_Name, @Category, @Description, @Goals, @Restrictions, @TrainerID, @Is_Active, @KeyField, @Location_Code, @company_code, @created_by, @created_date, @modified_by, @modified_date`);
+    }
+    res.status(200).json("Diet_Plans_hdr data inserted successfully");
+  } catch (err) {
+    console.error("Error in Diet_Plans_hdrLoopInsert:", err);
+    res.status(500).json({ message: err.message || "Internal Server Error" });
+  }
+};
+
+// Auto-generated Diet_Plans_hdrLoopUpdate API for sp_Diet_Plans_hdr
+const Diet_Plans_hdrLoopUpdate = async (req, res) => {
+  const Diet_Plans_hdrData = req.body.Diet_Plans_hdrData;
+  if (!Diet_Plans_hdrData || !Diet_Plans_hdrData.length) {
+    return res.status(400).json("Invalid or empty Diet_Plans_hdrData array.");
+  }
+
+  try {
+    const pool = await sql.connect(dbConfig);
+    for (const item of Diet_Plans_hdrData) {
+      await pool.request()
+        .input("mode", sql.NVarChar, "U")
+        .input("DietPlanID", sql.NVarChar, item.DietPlanID)
+        .input("Diet_Name", sql.NVarChar, item.Diet_Name)
+        .input("Category", sql.NVarChar, item.Category)
+        .input("Description", sql.NVarChar, item.Description)
+        .input("Goals", sql.NVarChar, item.Goals)
+        .input("Restrictions", sql.NVarChar, item.Restrictions)
+        .input("TrainerID", sql.NVarChar, item.TrainerID)
+        .input("Is_Active", sql.NVarChar, item.Is_Active)
+        .input("KeyField", sql.NVarChar, item.KeyField)
+        .input("Location_Code", sql.NVarChar, item.Location_Code)
+        .input("company_code", sql.NVarChar, item.company_code)
+        .input("created_by", sql.NVarChar, item.created_by)
+        .input("created_date", sql.DateTime, item.created_date)
+        .input("modified_by", sql.NVarChar, item.modified_by)
+        .input("modified_date", sql.DateTime, item.modified_date)
+        .query(`EXEC sp_Diet_Plans_hdr_Test @mode, @DietPlanID, @Diet_Name, @Category, @Description, @Goals, @Restrictions, @TrainerID, @Is_Active, @KeyField, @Location_Code, @company_code, @created_by, @created_date, @modified_by, @modified_date`);
+    }
+    res.status(200).json("Diet_Plans_hdr data updated successfully");
+  } catch (err) {
+    console.error("Error in Diet_Plans_hdrLoopUpdate:", err);
+    res.status(500).json({ message: err.message || "Internal Server Error" });
+  }
+};
+
+// Auto-generated Diet_Plans_hdrLoopDelete API for sp_Diet_Plans_hdr
+const Diet_Plans_hdrLoopDelete = async (req, res) => {
+  const Diet_Plans_hdrData = req.body.Diet_Plans_hdrData;
+  if (!Diet_Plans_hdrData || !Diet_Plans_hdrData.length) {
+    return res.status(400).json("Invalid or empty Diet_Plans_hdrData array.");
+  }
+
+  try {
+    const pool = await sql.connect(dbConfig);
+    for (const item of Diet_Plans_hdrData) {
+      await pool.request()
+        .input("mode", sql.NVarChar, "D")
+        .input("DietPlanID", sql.NVarChar, item.DietPlanID)
+        .input("Diet_Name", sql.NVarChar, item.Diet_Name)
+        .input("Category", sql.NVarChar, item.Category)
+        .input("Description", sql.NVarChar, item.Description)
+        .input("Goals", sql.NVarChar, item.Goals)
+        .input("Restrictions", sql.NVarChar, item.Restrictions)
+        .input("TrainerID", sql.NVarChar, item.TrainerID)
+        .input("Is_Active", sql.NVarChar, item.Is_Active)
+        .input("KeyField", sql.NVarChar, item.KeyField)
+        .input("Location_Code", sql.NVarChar, item.Location_Code)
+        .input("company_code", sql.NVarChar, item.company_code)
+        .input("created_by", sql.NVarChar, item.created_by)
+        .input("created_date", sql.DateTime, item.created_date)
+        .input("modified_by", sql.NVarChar, item.modified_by)
+        .input("modified_date", sql.DateTime, item.modified_date)
+        .query(`EXEC sp_Diet_Plans_hdr_Test @mode, @DietPlanID, @Diet_Name, @Category, @Description, @Goals, @Restrictions, @TrainerID, @Is_Active, @KeyField, @Location_Code, @company_code, @created_by, @created_date, @modified_by, @modified_date`);
+    }
+    res.status(200).json("Diet_Plans_hdr data deleted successfully");
+  } catch (err) {
+    console.error("Error in Diet_Plans_hdrLoopDelete:", err);
+    res.status(500).json({ message: err.message || "Internal Server Error" });
+  }
+};
+
+const Diet_Plans_MealsInsert = async (req, res) => {
+  const { DietPlanID, Meal_Type, Meal_Name, Quantity, Calories, Protein, Carbs, Fats, Time_Slot, KeyField, Location_Code,
+  created_date,
+  modified_date,
+  created_by,
+  modified_by,
+  company_code
+} = req.body;
+
+  try {
+    const pool = await sql.connect(dbConfig);
+    await pool.request()
+      .input("mode", sql.NVarChar, "I")
+      .input("DietPlanID", sql.NVarChar, DietPlanID)
+      .input("Meal_Type", sql.NVarChar, Meal_Type)
+      .input("Meal_Name", sql.NVarChar, Meal_Name)
+      .input("Quantity", sql.NVarChar, Quantity)
+      .input("Calories", sql.NVarChar, Calories)
+      .input("Protein", sql.NVarChar, Protein)
+      .input("Carbs", sql.NVarChar, Carbs)
+      .input("Fats", sql.NVarChar, Fats)
+      .input("Time_Slot", sql.NVarChar, Time_Slot)
+      .input("KeyField", sql.NVarChar, KeyField)
+      .input("Location_Code", sql.NVarChar, Location_Code)
+      .input("company_code", sql.NVarChar, company_code)
+      .input("created_by", sql.NVarChar, created_by)
+      .input("created_date", sql.DateTime, created_date)
+      .input("modified_by", sql.NVarChar, modified_by)
+      .input("modified_date", sql.DateTime, modified_date)
+      .query(`EXEC sp_Diet_Plans_Meals @mode, 0, @DietPlanID, @Meal_Type, @Meal_Name, @Quantity, @Calories, @Protein, @Carbs, @Fats, @Time_Slot, @KeyField, @Location_Code, @company_code, @created_by, @created_date, @modified_by, @modified_date`);
+
+    res.status(200).json({ success: true, message: "Diet_Plans_Meals insertd successfully" });
+  } catch (err) {
+    console.error("Error during Diet_Plans_Meals insert:", err);
+    res.status(500).json({ message: err.message || "Internal Server Error" });
+  }
+};
+
+const Diet_Plans_MealsUpdate = async (req, res) => {
+  const {
+  Sno, DietPlanID, Meal_Type, Meal_Name, Quantity, Calories, Protein, Carbs, Fats, Time_Slot, KeyField, Location_Code,
+  created_date,
+  modified_date,
+  created_by,
+  modified_by,
+  company_code
+} = req.body;
+
+  try {
+    const pool = await sql.connect(dbConfig);
+    await pool.request()
+      .input("mode", sql.NVarChar, "U")
+      .input("Sno", sql.Int, Sno)
+      .input("DietPlanID", sql.NVarChar, DietPlanID)
+      .input("Meal_Type", sql.NVarChar, Meal_Type)
+      .input("Meal_Name", sql.NVarChar, Meal_Name)
+      .input("Quantity", sql.NVarChar, Quantity)
+      .input("Calories", sql.NVarChar, Calories)
+      .input("Protein", sql.NVarChar, Protein)
+      .input("Carbs", sql.NVarChar, Carbs)
+      .input("Fats", sql.NVarChar, Fats)
+      .input("Time_Slot", sql.NVarChar, Time_Slot)
+      .input("KeyField", sql.NVarChar, KeyField)
+      .input("Location_Code", sql.NVarChar, Location_Code)
+      .input("company_code", sql.NVarChar, company_code)
+      .input("created_by", sql.NVarChar, created_by)
+      .input("created_date", sql.DateTime, created_date)
+      .input("modified_by", sql.NVarChar, modified_by)
+      .input("modified_date", sql.DateTime, modified_date)
+      .query(`EXEC sp_Diet_Plans_Meals @mode, @Sno, @DietPlanID, @Meal_Type, @Meal_Name, @Quantity, @Calories, @Protein, @Carbs, @Fats, @Time_Slot, @KeyField, @Location_Code, @company_code, @created_by, @created_date, @modified_by, @modified_date`);
+
+    res.status(200).json({ success: true, message: "Diet_Plans_Meals updated successfully" });
+  } catch (err) {
+    console.error("Error during Diet_Plans_Meals update:", err);
+    res.status(500).json({ message: err.message || "Internal Server Error" });
+  }
+};
+
+const Diet_Plans_MealsDelete = async (req, res) => {
+  const {
+  Sno, DietPlanID, KeyField, Location_Code,
+  modified_by,
+  company_code
+} = req.body;
+
+  try {
+    const pool = await sql.connect(dbConfig);
+    await pool.request()
+      .input("mode", sql.NVarChar, "D")
+      .input("Sno", sql.Int, Sno)
+      .input("DietPlanID", sql.NVarChar, DietPlanID)
+      .input("KeyField", sql.NVarChar, KeyField)
+      .input("Location_Code", sql.NVarChar, Location_Code)
+      .input("company_code", sql.NVarChar, company_code)
+      .input("modified_by", sql.NVarChar, modified_by)
+      .query(`EXEC sp_Diet_Plans_Meals @mode, @Sno, @DietPlanID, '', '', '', '', '', '', '', '', @KeyField, @Location_Code, @company_code, '', '', @modified_by, ''`);
+
+    res.status(200).json({ success: true, message: "Diet_Plans_Meals deleted successfully" });
+  } catch (err) {
+    console.error("Error during Diet_Plans_Meals delete:", err);
+    res.status(500).json({ message: err.message || "Internal Server Error" });
+  }
+};
+
+// ---------- HEADER LOOP CRUD ----------
+// Auto-generated Diet_Plans_MealsLoopInsert API for sp_Diet_Plans_Meals
+const Diet_Plans_MealsLoopInsert = async (req, res) => {
+  const Diet_Plans_MealsData = req.body.Diet_Plans_MealsData;
+  if (!Diet_Plans_MealsData || !Diet_Plans_MealsData.length) {
+    return res.status(400).json("Invalid or empty Diet_Plans_MealsData array.");
+  }
+
+  try {
+    const pool = await sql.connect(dbConfig);
+    for (const item of Diet_Plans_MealsData) {
+      await pool.request()
+        .input("mode", sql.NVarChar, "I")
+        .input("Sno", sql.Int, item.Sno)
+        .input("DietPlanID", sql.NVarChar, item.DietPlanID)
+        .input("Meal_Type", sql.NVarChar, item.Meal_Type)
+        .input("Meal_Name", sql.NVarChar, item.Meal_Name)
+        .input("Quantity", sql.NVarChar, item.Quantity)
+        .input("Calories", sql.NVarChar, item.Calories)
+        .input("Protein", sql.NVarChar, item.Protein)
+        .input("Carbs", sql.NVarChar, item.Carbs)
+        .input("Fats", sql.NVarChar, item.Fats)
+        .input("Time_Slot", sql.NVarChar, item.Time_Slot)
+        .input("KeyField", sql.NVarChar, item.KeyField)
+        .input("Location_Code", sql.NVarChar, item.Location_Code)
+        .input("company_code", sql.NVarChar, item.company_code)
+        .input("created_by", sql.NVarChar, item.created_by)
+        .input("created_date", sql.DateTime, item.created_date)
+        .input("modified_by", sql.NVarChar, item.modified_by)
+        .input("modified_date", sql.DateTime, item.modified_date)
+        .query(`EXEC sp_Diet_Plans_Meals @mode, @Sno, @DietPlanID, @Meal_Type, @Meal_Name, @Quantity, @Calories, @Protein, @Carbs, @Fats, @Time_Slot, @KeyField, @Location_Code, @company_code, @created_by, @created_date, @modified_by, @modified_date`);
+    }
+    res.status(200).json("Diet_Plans_Meals data inserted successfully");
+  } catch (err) {
+    console.error("Error in Diet_Plans_MealsLoopInsert:", err);
+    res.status(500).json({ message: err.message || "Internal Server Error" });
+  }
+};
+
+// Auto-generated Diet_Plans_MealsLoopUpdate API for sp_Diet_Plans_Meals
+const Diet_Plans_MealsLoopUpdate = async (req, res) => {
+  const Diet_Plans_MealsData = req.body.Diet_Plans_MealsData;
+  if (!Diet_Plans_MealsData || !Diet_Plans_MealsData.length) {
+    return res.status(400).json("Invalid or empty Diet_Plans_MealsData array.");
+  }
+
+  try {
+    const pool = await sql.connect(dbConfig);
+    for (const item of Diet_Plans_MealsData) {
+      await pool.request()
+        .input("mode", sql.NVarChar, "U")
+        .input("Sno", sql.Int, item.Sno)
+        .input("DietPlanID", sql.NVarChar, item.DietPlanID)
+        .input("Meal_Type", sql.NVarChar, item.Meal_Type)
+        .input("Meal_Name", sql.NVarChar, item.Meal_Name)
+        .input("Quantity", sql.NVarChar, item.Quantity)
+        .input("Calories", sql.NVarChar, item.Calories)
+        .input("Protein", sql.NVarChar, item.Protein)
+        .input("Carbs", sql.NVarChar, item.Carbs)
+        .input("Fats", sql.NVarChar, item.Fats)
+        .input("Time_Slot", sql.NVarChar, item.Time_Slot)
+        .input("KeyField", sql.NVarChar, item.KeyField)
+        .input("Location_Code", sql.NVarChar, item.Location_Code)
+        .input("company_code", sql.NVarChar, item.company_code)
+        .input("created_by", sql.NVarChar, item.created_by)
+        .input("created_date", sql.DateTime, item.created_date)
+        .input("modified_by", sql.NVarChar, item.modified_by)
+        .input("modified_date", sql.DateTime, item.modified_date)
+        .query(`EXEC sp_Diet_Plans_Meals @mode, @Sno, @DietPlanID, @Meal_Type, @Meal_Name, @Quantity, @Calories, @Protein, @Carbs, @Fats, @Time_Slot, @KeyField, @Location_Code, @company_code, @created_by, @created_date, @modified_by, @modified_date`);
+    }
+    res.status(200).json("Diet_Plans_Meals data updated successfully");
+  } catch (err) {
+    console.error("Error in Diet_Plans_MealsLoopUpdate:", err);
+    res.status(500).json({ message: err.message || "Internal Server Error" });
+  }
+};
+
+// Auto-generated Diet_Plans_MealsLoopDelete API for sp_Diet_Plans_Meals
+const Diet_Plans_MealsLoopDelete = async (req, res) => {
+  const Diet_Plans_MealsData = req.body.Diet_Plans_MealsData;
+  if (!Diet_Plans_MealsData || !Diet_Plans_MealsData.length) {
+    return res.status(400).json("Invalid or empty Diet_Plans_MealsData array.");
+  }
+
+  try {
+    const pool = await sql.connect(dbConfig);
+    for (const item of Diet_Plans_MealsData) {
+      await pool.request()
+        .input("mode", sql.NVarChar, "D")
+        .input("Sno", sql.Int, item.Sno)
+        .input("DietPlanID", sql.NVarChar, item.DietPlanID)
+        .input("Meal_Type", sql.NVarChar, item.Meal_Type)
+        .input("Meal_Name", sql.NVarChar, item.Meal_Name)
+        .input("Quantity", sql.NVarChar, item.Quantity)
+        .input("Calories", sql.NVarChar, item.Calories)
+        .input("Protein", sql.NVarChar, item.Protein)
+        .input("Carbs", sql.NVarChar, item.Carbs)
+        .input("Fats", sql.NVarChar, item.Fats)
+        .input("Time_Slot", sql.NVarChar, item.Time_Slot)
+        .input("KeyField", sql.NVarChar, item.KeyField)
+        .input("Location_Code", sql.NVarChar, item.Location_Code)
+        .input("company_code", sql.NVarChar, item.company_code)
+        .input("created_by", sql.NVarChar, item.created_by)
+        .input("created_date", sql.DateTime, item.created_date)
+        .input("modified_by", sql.NVarChar, item.modified_by)
+        .input("modified_date", sql.DateTime, item.modified_date)
+        .query(`EXEC sp_Diet_Plans_Meals @mode, @Sno, @DietPlanID, @Meal_Type, @Meal_Name, @Quantity, @Calories, @Protein, @Carbs, @Fats, @Time_Slot, @KeyField, @Location_Code, @company_code, @created_by, @created_date, @modified_by, @modified_date`);
+    }
+    res.status(200).json("Diet_Plans_Meals data deleted successfully");
+  } catch (err) {
+    console.error("Error in Diet_Plans_MealsLoopDelete:", err);
+    res.status(500).json({ message: err.message || "Internal Server Error" });
+  }
+};
+
+const Diet_Plans_DetailsInsert = async (req, res) => {
+  const { DietPlanID, Essentials, Daily_Calories_Target, Duration, KeyField, Location_Code,
+  created_by,
+  company_code
+} = req.body;
+
+  try {
+    const pool = await sql.connect(dbConfig);
+    await pool.request()
+      .input("mode", sql.NVarChar, "I")
+      .input("DietPlanID", sql.NVarChar, DietPlanID)
+      .input("Essentials", sql.NVarChar, Essentials)
+      .input("Daily_Calories_Target", sql.NVarChar, Daily_Calories_Target)
+      .input("Duration", sql.NVarChar, Duration)
+      .input("KeyField", sql.NVarChar, KeyField)
+      .input("Location_Code", sql.NVarChar, Location_Code)
+      .input("company_code", sql.NVarChar, company_code)
+      .input("created_by", sql.NVarChar, created_by)
+      .query(`EXEC sp_Diet_Plans_Details @mode, 0, @DietPlanID, @Essentials, @Daily_Calories_Target, @Duration, @KeyField, @Location_Code, @company_code, @created_by, '', '', ''`);
+
+    res.status(200).json({ success: true, message: "Diet_Plans_Details insertd successfully" });
+  } catch (err) {
+    console.error("Error during Diet_Plans_Details insert:", err);
+    res.status(500).json({ message: err.message || "Internal Server Error" });
+  }
+};
+
+const Diet_Plans_DetailsUpdate = async (req, res) => {
+  const {
+  Sno, DietPlanID, Essentials, Daily_Calories_Target, Duration, KeyField, Location_Code,
+  created_date,
+  modified_date,
+  created_by,
+  modified_by,
+  company_code
+} = req.body;
+
+  try {
+    const pool = await sql.connect(dbConfig);
+    await pool.request()
+      .input("mode", sql.NVarChar, "U")
+      .input("Sno", sql.Int, Sno)
+      .input("DietPlanID", sql.NVarChar, DietPlanID)
+      .input("Essentials", sql.NVarChar, Essentials)
+      .input("Daily_Calories_Target", sql.NVarChar, Daily_Calories_Target)
+      .input("Duration", sql.NVarChar, Duration)
+      .input("KeyField", sql.NVarChar, KeyField)
+      .input("Location_Code", sql.NVarChar, Location_Code)
+      .input("company_code", sql.NVarChar, company_code)
+      .input("created_by", sql.NVarChar, created_by)
+      .input("created_date", sql.DateTime, created_date)
+      .input("modified_by", sql.NVarChar, modified_by)
+      .input("modified_date", sql.DateTime, modified_date)
+      .query(`EXEC sp_Diet_Plans_Details @mode, @Sno, @DietPlanID, @Essentials, @Daily_Calories_Target, @Duration, @KeyField, @Location_Code, @company_code, @created_by, @created_date, @modified_by, @modified_date`);
+
+    res.status(200).json({ success: true, message: "Diet_Plans_Details updated successfully" });
+  } catch (err) {
+    console.error("Error during Diet_Plans_Details update:", err);
+    res.status(500).json({ message: err.message || "Internal Server Error" });
+  }
+};
+
+const Diet_Plans_DetailsDelete = async (req, res) => {
+  const { Sno, DietPlanID, KeyField, Location_Code, modified_by, company_code } = req.body;
+
+  try {
+    const pool = await sql.connect(dbConfig);
+    await pool.request()
+      .input("mode", sql.NVarChar, "D")
+      .input("Sno", sql.Int, Sno)
+      .input("DietPlanID", sql.NVarChar, DietPlanID)
+      .input("KeyField", sql.NVarChar, KeyField)
+      .input("Location_Code", sql.NVarChar, Location_Code)
+      .input("company_code", sql.NVarChar, company_code)
+      .input("modified_by", sql.NVarChar, modified_by)
+      .query(`EXEC sp_Diet_Plans_Details @mode, @Sno, @DietPlanID, '', '', '', @KeyField, @Location_Code, @company_code, '', '', @modified_by, ''`);
+
+    res.status(200).json({ success: true, message: "Diet_Plans_Details deleted successfully" });
+  } catch (err) {
+    console.error("Error during Diet_Plans_Details delete:", err);
+    res.status(500).json({ message: err.message || "Internal Server Error" });
+  }
+};
+
+// ---------- HEADER LOOP CRUD ----------
+// Auto-generated Diet_Plans_DetailsLoopInsert API for sp_Diet_Plans_Details
+const Diet_Plans_DetailsLoopInsert = async (req, res) => {
+  const Diet_Plans_DetailsData = req.body.Diet_Plans_DetailsData;
+  if (!Diet_Plans_DetailsData || !Diet_Plans_DetailsData.length) {
+    return res.status(400).json("Invalid or empty Diet_Plans_DetailsData array.");
+  }
+
+  try {
+    const pool = await sql.connect(dbConfig);
+    for (const item of Diet_Plans_DetailsData) {
+      await pool.request()
+        .input("mode", sql.NVarChar, "I")
+        .input("Sno", sql.Int, item.Sno)
+        .input("DietPlanID", sql.NVarChar, item.DietPlanID)
+        .input("Essentials", sql.NVarChar, item.Essentials)
+        .input("Daily_Calories_Target", sql.NVarChar, item.Daily_Calories_Target)
+        .input("Duration", sql.NVarChar, item.Duration)
+        .input("KeyField", sql.NVarChar, item.KeyField)
+        .input("Location_Code", sql.NVarChar, item.Location_Code)
+        .input("company_code", sql.NVarChar, item.company_code)
+        .input("created_by", sql.NVarChar, item.created_by)
+        .input("created_date", sql.DateTime, item.created_date)
+        .input("modified_by", sql.NVarChar, item.modified_by)
+        .input("modified_date", sql.DateTime, item.modified_date)
+        .query(`EXEC sp_Diet_Plans_Details @mode, @Sno, @DietPlanID, @Essentials, @Daily_Calories_Target, @Duration, @KeyField, @Location_Code, @company_code, @created_by, @created_date, @modified_by, @modified_date`);
+    }
+    res.status(200).json("Diet_Plans_Details data inserted successfully");
+  } catch (err) {
+    console.error("Error in Diet_Plans_DetailsLoopInsert:", err);
+    res.status(500).json({ message: err.message || "Internal Server Error" });
+  }
+};
+
+const Diet_Plans_DetailsLoopUpdate = async (req, res) => {
+  const Diet_Plans_DetailsData = req.body.Diet_Plans_DetailsData;
+  if (!Diet_Plans_DetailsData || !Diet_Plans_DetailsData.length) {
+    return res.status(400).json("Invalid or empty Diet_Plans_DetailsData array.");
+  }
+
+  try {
+    const pool = await sql.connect(dbConfig);
+    for (const item of Diet_Plans_DetailsData) {
+      await pool.request()
+        .input("mode", sql.NVarChar, "U")
+        .input("Sno", sql.Int, item.Sno)
+        .input("DietPlanID", sql.NVarChar, item.DietPlanID)
+        .input("Essentials", sql.NVarChar, item.Essentials)
+        .input("Daily_Calories_Target", sql.NVarChar, item.Daily_Calories_Target)
+        .input("Duration", sql.NVarChar, item.Duration)
+        .input("KeyField", sql.NVarChar, item.KeyField)
+        .input("Location_Code", sql.NVarChar, item.Location_Code)
+        .input("company_code", sql.NVarChar, item.company_code)
+        .input("created_by", sql.NVarChar, item.created_by)
+        .input("created_date", sql.DateTime, item.created_date)
+        .input("modified_by", sql.NVarChar, item.modified_by)
+        .input("modified_date", sql.DateTime, item.modified_date)
+        .query(`EXEC sp_Diet_Plans_Details @mode, @Sno, @DietPlanID, @Essentials, @Daily_Calories_Target, @Duration, @KeyField, @Location_Code, @company_code, @created_by, @created_date, @modified_by, @modified_date`);
+    }
+    res.status(200).json("Diet_Plans_Details data updated successfully");
+  } catch (err) {
+    console.error("Error in Diet_Plans_DetailsLoopUpdate:", err);
+    res.status(500).json({ message: err.message || "Internal Server Error" });
+  }
+};
+
+// Auto-generated Diet_Plans_DetailsLoopDelete API for sp_Diet_Plans_Details
+const Diet_Plans_DetailsLoopDelete = async (req, res) => {
+  const Diet_Plans_DetailsData = req.body.Diet_Plans_DetailsData;
+  if (!Diet_Plans_DetailsData || !Diet_Plans_DetailsData.length) {
+    return res.status(400).json("Invalid or empty Diet_Plans_DetailsData array.");
+  }
+
+  try {
+    const pool = await sql.connect(dbConfig);
+    for (const item of Diet_Plans_DetailsData) {
+      await pool.request()
+        .input("mode", sql.NVarChar, "D")
+        .input("Sno", sql.Int, item.Sno)
+        .input("DietPlanID", sql.NVarChar, item.DietPlanID)
+        .input("Essentials", sql.NVarChar, item.Essentials)
+        .input("Daily_Calories_Target", sql.NVarChar, item.Daily_Calories_Target)
+        .input("Duration", sql.NVarChar, item.Duration)
+        .input("KeyField", sql.NVarChar, item.KeyField)
+        .input("Location_Code", sql.NVarChar, item.Location_Code)
+        .input("company_code", sql.NVarChar, item.company_code)
+        .input("created_by", sql.NVarChar, item.created_by)
+        .input("created_date", sql.DateTime, item.created_date)
+        .input("modified_by", sql.NVarChar, item.modified_by)
+        .input("modified_date", sql.DateTime, item.modified_date)
+        .query(`EXEC sp_Diet_Plans_Details @mode, @Sno, @DietPlanID, @Essentials, @Daily_Calories_Target, @Duration, @KeyField, @Location_Code, @company_code, @created_by, @created_date, @modified_by, @modified_date`);
+    }
+    res.status(200).json("Diet_Plans_Details data deleted successfully");
+  } catch (err) {
+    console.error("Error in Diet_Plans_DetailsLoopDelete:", err);
+    res.status(500).json({ message: err.message || "Internal Server Error" });
+  }
+};
+//Code ended by Dinesh Gokul on 14-07-2026
+
+//Code added by Dinesh Gokul on 15-07-2026
+const getMealType = async (req, res) => {
+  const { company_code } = req.body;
+  try {
+    const pool = await connection.connectToDatabase();
+    const result = await pool
+      .request()
+      .input("company_code", sql.NVarChar, company_code)
+      .query(
+        "EXEC sp_attribute_Info 'FD',@company_code,'Meal Type','','', '' ,'','', NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL",
+      );
+
+    res.json(result.recordset);
+  } catch (err) {
+    console.error("Error", err);
+    res.status(500).json({ message: err.message || "Internal Server Error" });
+  }
+};
+
+const getEssentials = async (req, res) => {
+  const { company_code } = req.body;
+  try {
+    const pool = await connection.connectToDatabase();
+    const result = await pool
+      .request()
+      .input("company_code", sql.NVarChar, company_code)
+      .query(
+        "EXEC sp_attribute_Info 'FD',@company_code,'Essentials','','', '' ,'','', NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL",
+      );
+
+    res.json(result.recordset);
+  } catch (err) {
+    console.error("Error", err);
+    res.status(500).json({ message: err.message || "Internal Server Error" });
+  }
+};
+
+const getDuration = async (req, res) => {
+  const { company_code } = req.body;
+  try {
+    const pool = await connection.connectToDatabase();
+    const result = await pool
+      .request()
+      .input("company_code", sql.NVarChar, company_code)
+      .query(
+        "EXEC sp_attribute_Info 'FD',@company_code,'Duration','','', '' ,'','', NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL",
+      );
+
+    res.json(result.recordset);
+  } catch (err) {
+    console.error("Error", err);
+    res.status(500).json({ message: err.message || "Internal Server Error" });
+  }
+};
+
+const dietPlanSearchData = async (req, res) => {
+  const { DietPlanID, Diet_Name, Category, Description, Goals, Restrictions, TrainerID, Is_Active, Company_code,
+    Location_code } = req.body;
+
+  try {
+    const pool = await connection.connectToDatabase();
+    const result = await pool
+      .request()
+      .input("mode", sql.NVarChar, "SC")
+      .input("DietPlanID", sql.NVarChar, DietPlanID)
+      .input("Diet_Name", sql.NVarChar, Diet_Name)
+      .input("Description", sql.NVarChar, Description)
+      .input("Category", sql.NVarChar, Category)
+      .input("Goals", sql.NVarChar, Goals)
+      .input("Restrictions", sql.NVarChar, Restrictions)
+      .input("TrainerID", sql.NVarChar, TrainerID)
+      .input("Is_Active", sql.NVarChar, Is_Active)
+      .input("Company_code", sql.NVarChar, Company_code)
+      .input("Location_code", sql.NVarChar, Location_code)
+      .query(`EXEC sp_Diet_Plans_hdr_Test @mode, @DietPlanID, @Diet_Name, @Category, @Description, @Goals, @Restrictions, @TrainerID, @Is_Active, '', @Location_Code, @company_code, '', '', '', ''`);
+
+    if (result.recordset.length > 0) {
+      res.status(200).json(result.recordset);
+    } else {
+      res.status(404).json("Data not found");
+    }
+  } catch (err) {
+    console.error("Error", err.message);
+    return res
+      .status(500)
+      .json({ message: err.message || "Internal Server Error" });
+  }
+};
+//Code ended by Dinesh Gokul on 15-07-2026
+
 module.exports = {
   getCompanyno,
   getsearchdata,
@@ -4228,14 +4923,28 @@ module.exports = {
   getSettingScreenData,
   programCardData,
   getTrainerCardData,
-  couponInsertData,
-  couponUpdateData,
-  couponDeleteData,
-  couponSearchData,
-  getDisType,
-  getAppPackages,
-  couponDashboard
-  
+  Diet_Plans_hdrInsert, 
+  Diet_Plans_hdrUpdate, 
+  Diet_Plans_hdrDelete,
+  Diet_Plans_hdrLoopInsert, 
+  Diet_Plans_hdrLoopUpdate, 
+  Diet_Plans_hdrLoopDelete,
+  Diet_Plans_MealsInsert, 
+  Diet_Plans_MealsUpdate, 
+  Diet_Plans_MealsDelete,
+  Diet_Plans_MealsLoopInsert, 
+  Diet_Plans_MealsLoopUpdate, 
+  Diet_Plans_MealsLoopDelete,
+  Diet_Plans_DetailsInsert, 
+  Diet_Plans_DetailsUpdate, 
+  Diet_Plans_DetailsDelete,
+  Diet_Plans_DetailsLoopInsert, 
+  Diet_Plans_DetailsLoopUpdate, 
+  Diet_Plans_DetailsLoopDelete,
+  getMealType,
+  getEssentials,
+  getDuration,
+  dietPlanSearchData
 
 
 };
