@@ -4944,7 +4944,14 @@ module.exports = {
   getMealType,
   getEssentials,
   getDuration,
-  dietPlanSearchData
+  dietPlanSearchData,
+  couponInsertData,
+couponUpdateData,
+couponDeleteData,
+couponSearchData,
+getDisType,
+getAppPackages,
+couponDashboard
 
 
 };
