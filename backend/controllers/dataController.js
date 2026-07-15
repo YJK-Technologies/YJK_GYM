@@ -3448,7 +3448,7 @@ const programInsertData = async (req, res) => {
       .input("Company_code", sql.NVarChar, Company_code)
       .input("Location_code", sql.NVarChar, Location_code)
       .input("created_by", sql.NVarChar, created_by)
-      .query(`EXEC sp_Program_Hdr_Ramya @mode,'',@ProgramName,@Description,@Category,@Difficulty_level,@Goals,@Exercises,@Duration_per_session,@Sessions_per_week,@Working_hours,@is_active,'','',0,0,@Company_code,@Location_code,'',@created_by,''`);
+      .query(`EXEC sp_Program_Hdr @mode,'',@ProgramName,@Description,@Category,@Difficulty_level,@Goals,@Exercises,@Duration_per_session,@Sessions_per_week,@Working_hours,@is_active,'','',0,0,@Company_code,@Location_code,'',@created_by,''`);
 
     res.status(200).json({
       message: "program data saved successfully",
@@ -3488,7 +3488,7 @@ const programUpdateData = async (req, res) => {
       .input("Location_code", sql.NVarChar, Location_code)
       .input("Keyfield", sql.NVarChar, Keyfield)
       .input("modified_by", sql.NVarChar, modified_by)
-      .query(`EXEC sp_Program_Hdr_Ramya @mode,@ProgramID,@ProgramName,@Description,@Category,@Difficulty_level,@Goals,@Exercises,
+      .query(`EXEC sp_Program_Hdr @mode,@ProgramID,@ProgramName,@Description,@Category,@Difficulty_level,@Goals,@Exercises,
 @Duration_per_session,@Sessions_per_week,@Working_hours,@is_active,'','',0,0,@Company_code,@Location_code,@Keyfield,'',@modified_by`);
 
     res.status(200).json("program data updated successfully");
@@ -3520,7 +3520,7 @@ const programDeleteData = async (req, res) => {
         .input("Company_code", sql.NVarChar, req.headers["company_code"])
         .input("Location_code", sql.NVarChar, req.headers["location_code"])
         .input("modified_by", sql.NVarChar, req.headers["modified_by"])
-        .query(`EXEC sp_Program_Hdr_Ramya @mode,@ProgramID,'','','','','','','','','','','','',0,0,@Company_code,@Location_code,@Keyfield,'',@modified_by`);
+        .query(`EXEC sp_Program_Hdr @mode,@ProgramID,'','','','','','','','','','','','',0,0,@Company_code,@Location_code,@Keyfield,'',@modified_by`);
     }
 
     res.status(200).json("program deleted successfully");
@@ -3547,7 +3547,7 @@ const programFacultyInsertData = async (req, res) => {
       .input("Keyfield_header", sql.NVarChar, Keyfield_header)
       .input("created_by", sql.NVarChar, created_by)
       .input("UpdateMode", sql.NVarChar, UpdateMode)
-      .query(`EXEC sp_Program_Faculty_Assignment_Ramya @mode,@Assigned_FacultyID,@is_active,@Company_code,@Location_code,@ProgramID,@Keyfield_header,
+      .query(`EXEC sp_Program_Faculty_Assignment @mode,@Assigned_FacultyID,@is_active,@Company_code,@Location_code,@ProgramID,@Keyfield_header,
 '',@created_by,'',@UpdateMode`);
 
     res.status(200).json("program faculty data saved successfully");
@@ -3573,7 +3573,7 @@ const programFacultyUpdateData = async (req, res) => {
       .input("Company_code", sql.NVarChar, Company_code)
       .input("Location_code", sql.NVarChar, Location_code)
       .input("created_by", sql.NVarChar, created_by)
-      .query(`EXEC sp_Program_Faculty_Assignment_Ramya @mode,@Assigned_FacultyID,@is_active,@Company_code,@Location_code,@ProgramID,'','',@created_by,'',''`);
+      .query(`EXEC sp_Program_Faculty_Assignment @mode,@Assigned_FacultyID,@is_active,@Company_code,@Location_code,@ProgramID,'','',@created_by,'',''`);
 
     res.status(200).json("program faculty data saved successfully");
   } catch (err) {
@@ -3605,7 +3605,7 @@ const programFacultyDeleteData = async (req, res) => {
         .input("Location_code", sql.NVarChar, req.headers["location_code"])
         .input("modified_by", sql.NVarChar, req.headers["modified_by"])
         .input("UpdateMode", sql.NVarChar, req.headers["updatemode"])
-        .query(`EXEC sp_Program_Faculty_Assignment_Ramya @mode,'','',@Company_code,@Location_code,@ProgramID,@Keyfield_header,'','',@modified_by,@UpdateMode`);
+        .query(`EXEC sp_Program_Faculty_Assignment @mode,'','',@Company_code,@Location_code,@ProgramID,@Keyfield_header,'','',@modified_by,@UpdateMode`);
     }
 
     res.status(200).json("program deleted successfully");
@@ -3634,7 +3634,7 @@ const programExerciseInsertData = async (req, res) => {
       .input("Location_code", sql.NVarChar, Location_code)
       .input("created_by", sql.NVarChar, created_by)
       .input("UpdateMode", sql.NVarChar, UpdateMode)
-      .query(`EXEC sp_Program_Exercises_Ramya @mode,@ProgramID,@ExercisesID,@Exercises_Name,@Exercises_Count,@Exercises_Repetitions,@is_active,@Company_code,
+      .query(`EXEC sp_Program_Exercises @mode,@ProgramID,@ExercisesID,@Exercises_Name,@Exercises_Count,@Exercises_Repetitions,@is_active,@Company_code,
 @Location_code,'','',@created_by,'',@UpdateMode`);
 
     res.status(200).json("program exercise data saved successfully");
@@ -3664,7 +3664,7 @@ const programExerciseUpdateData = async (req, res) => {
       .input("Company_code", sql.NVarChar, Company_code)
       .input("Location_code", sql.NVarChar, Location_code)
       .input("created_by", sql.NVarChar, created_by)
-      .query(`EXEC sp_Program_Exercises_Ramya @mode,@ProgramID,@ExercisesID,@Exercises_Name,@Exercises_Count,@Exercises_Repetitions,@is_active,@Company_code,
+      .query(`EXEC sp_Program_Exercises @mode,@ProgramID,@ExercisesID,@Exercises_Name,@Exercises_Count,@Exercises_Repetitions,@is_active,@Company_code,
 @Location_code,'','',@created_by,'',''`);
 
     res.status(200).json("program exercise data saved successfully");
@@ -3697,7 +3697,7 @@ const programExerciseDeleteData = async (req, res) => {
         .input("Location_code", sql.NVarChar, req.headers["location_code"])
         .input("modified_by", sql.NVarChar, req.headers["modified_by"])
         .input("UpdateMode", sql.NVarChar, req.headers["updatemode"])
-        .query(`EXEC sp_Program_Exercises_Ramya @mode,@ProgramID,0,'',0,0,'',@Company_code,@Location_code,@keyfield_header,'','',@modified_by,@UpdateMode`);
+        .query(`EXEC sp_Program_Exercises @mode,@ProgramID,0,'',0,0,'',@Company_code,@Location_code,@keyfield_header,'','',@modified_by,@UpdateMode`);
     }
 
     res.status(200).json("program deleted successfully");
@@ -3756,7 +3756,7 @@ const programSearchData = async (req, res) => {
       .input("Exercises_Repetitions", sql.NVarChar, Exercises_Repetitions)
       .input("Company_code", sql.NVarChar, Company_code)
       .input("Location_code", sql.NVarChar, Location_code)
-      .query(`EXEC sp_Program_Hdr_Ramya @mode,@ProgramID,@ProgramName,@Description,@Category,@Difficulty_level,@Goals,'',
+      .query(`EXEC sp_Program_Hdr @mode,@ProgramID,@ProgramName,@Description,@Category,@Difficulty_level,@Goals,'',
 @Duration_per_session,@Sessions_per_week,@Working_hours,@is_active,@Assigned_Faculty,@Exercises_Name,@Exercises_Count,@Exercises_Repetitions,@Company_code,@Location_code,'','',''`);
 
     if (result.recordset.length > 0) {
@@ -3841,7 +3841,7 @@ const programCardData = async (req, res) => {
       .input("mode", sql.NVarChar, "ST")
       .input("Company_code", sql.NVarChar, Company_code)
       .input("Location_code", sql.NVarChar, Location_code)
-      .query(`EXEC sp_Program_Hdr_Ramya @mode,'','','','','','','','','','','','','',0,0,@Company_code,@Location_code,'','',''`);
+      .query(`EXEC sp_Program_Hdr @mode,'','','','','','','','','','','','','',0,0,@Company_code,@Location_code,'','',''`);
     if (result.recordset.length > 0) {
       res.status(200).json(result.recordset);
     } else {

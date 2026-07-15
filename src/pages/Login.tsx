@@ -90,9 +90,9 @@ const Login = () => {
         await fetchUserData(user_code);
 
         if (role === "admin") {
-          navigate("/AdminDashboard");
+          navigate("/AdminDashboard", { replace: true });
         } else {
-          navigate("/Member");
+          navigate("/MemberDashboard", { replace: true });
         }
       } else {
         setLoginError(data.message || "Invalid Email ID or Password");
@@ -107,13 +107,13 @@ const Login = () => {
 
   // Handle Enter key press for both email and password fields
   const handleEnterKey = (
-  e: React.KeyboardEvent<HTMLInputElement>,
-  role: "admin" | "member"
-) => {
-  if (e.key === "Enter" && !loading) {
-    handleLogin(role);
-  }
-};
+    e: React.KeyboardEvent<HTMLInputElement>,
+    role: "admin" | "member"
+  ) => {
+    if (e.key === "Enter" && !loading) {
+      handleLogin(role);
+    }
+  };
 
   const UserPermission = async (role_id: any) => {
     try {
@@ -166,8 +166,6 @@ const Login = () => {
           });
 
           handleSave(company);
-
-          navigate("/AccountInformation");
         }
       }
     } catch (err) {
