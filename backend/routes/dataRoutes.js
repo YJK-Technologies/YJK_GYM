@@ -146,6 +146,13 @@ router.post("/programCardData",dataController.programCardData)
 router.post("/settingSaveData", dataController.settingSaveData)
 router.post("/getSettingScreenData", dataController.getSettingScreenData)
 router.post("/getTrainerCardData", dataController.getTrainerCardData)
+router.post("/couponInsertData", dataController.couponInsertData)
+router.post("/couponUpdateData", dataController.couponUpdateData)
+router.post("/couponDeleteData", dataController.couponDeleteData)
+router.post("/couponSearchData", dataController.couponSearchData)
+router.post("/getDisType", dataController.getDisType)
+router.post("/getAppPackages", dataController.getAppPackages)
+router.post("/couponDashboard", dataController.couponDashboard)
 
 
 
