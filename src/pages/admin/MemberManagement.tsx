@@ -21,8 +21,7 @@ import ImageUpload from "../ImageUpload";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { showConfirmToast } from '../../components/ui/show-confirm-toast';
 import { useCompany } from "../CompanyContext";
-
-
+import { hasActionPermission } from "@/utils/permission";
 
 interface Member {
   MemberID: string;
@@ -59,32 +58,32 @@ interface MemberStats {
 
 const MemberManagement = () => {
   const { companyCode, locationCode, userCode } = useCompany();
-  
+
   const emptyMember: Member = {
-  MemberID: '',
-  Identity_No: '',
-  Full_name: '',
-  DOB: '',
-  Gender: '',
-  Mobile: '',
-  WhatsApp_Number: '',
-  Password: '',
-  Email: '',
-  Address: '',
-  Emergency_contact_name: '',
-  Emergency_contact_phone: '',
-  Emergency_contact_relation: '',
-  Membership_type: 'Standard',
-  Joined_date: '',
-  Plan_expiry_date: '',
-  is_active: false,
-  Receive_promotions: false,
-  Receive_notifications: false,
-  Company_code: companyCode,
-  Location_code: locationCode,
-  created_by: userCode,
-  modified_by: userCode
-};
+    MemberID: '',
+    Identity_No: '',
+    Full_name: '',
+    DOB: '',
+    Gender: '',
+    Mobile: '',
+    WhatsApp_Number: '',
+    Password: '',
+    Email: '',
+    Address: '',
+    Emergency_contact_name: '',
+    Emergency_contact_phone: '',
+    Emergency_contact_relation: '',
+    Membership_type: 'Standard',
+    Joined_date: '',
+    Plan_expiry_date: '',
+    is_active: false,
+    Receive_promotions: false,
+    Receive_notifications: false,
+    Company_code: companyCode,
+    Location_code: locationCode,
+    created_by: userCode,
+    modified_by: userCode
+  };
 
   const navigate = useNavigate();
   const { toast } = useToast();
@@ -292,6 +291,11 @@ const MemberManagement = () => {
     setMemberImages(convertedImages);
   };
 
+  const showActionColumn =
+    hasActionPermission("AdminMembers", "view") ||
+    hasActionPermission("AdminMembers", "edit") ||
+    hasActionPermission("AdminMembers", "delete");
+
   const MembersColumnDefs = [
     {
       headerName: "Member ID",
@@ -414,61 +418,71 @@ const MemberManagement = () => {
         );
       },
     },
-    {
-      headerName: "Actions",
-      width: 170,
-      minWidth: 170,
-      maxWidth: 170,
-      sortable: false,
-      filter: false,
-      cellStyle: {
-        display: "flex",
-        justifyContent: "center",
-        alignItems: "center",
-      },
-      cellRenderer: (params: any) => (
-        <div className="flex gap-2">
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => handleViewMember(params.data)}
-              >
-                <Eye className="h-4 w-4" />
-              </Button>
-            </TooltipTrigger>
-            <TooltipContent>View</TooltipContent>
-          </Tooltip>
+    ...(showActionColumn
+      ? [
+        {
+          headerName: "Actions",
+          width: 170,
+          minWidth: 170,
+          maxWidth: 170,
+          sortable: false,
+          filter: false,
+          cellStyle: {
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+          },
+          cellRenderer: (params: any) => (
+            <div className="flex gap-2">
+              {hasActionPermission("AdminMembers", "view") && (
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => handleViewMember(params.data)}
+                    >
+                      <Eye className="h-4 w-4" />
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent>View</TooltipContent>
+                </Tooltip>
+              )}
 
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => handleEditMember(params.data)}
-              >
-                <Pencil className="h-4 w-4" />
-              </Button>
-            </TooltipTrigger>
-            <TooltipContent>Edit</TooltipContent>
-          </Tooltip>
+              {hasActionPermission("AdminMembers", "edit") && (
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => handleEditMember(params.data)}
+                    >
+                      <Pencil className="h-4 w-4" />
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent>Edit</TooltipContent>
+                </Tooltip>
+              )}
 
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => handleDeleteMember(params.data.MemberID)}
-              >
-                <Trash2 className="h-4 w-4 text-red-500" />
-              </Button>
-            </TooltipTrigger>
-            <TooltipContent>Delete</TooltipContent>
-          </Tooltip>
-        </div>
-      ),
-    },
+              {hasActionPermission("AdminMembers", "delete") && (
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => handleDeleteMember(params.data.MemberID)}
+                    >
+                      <Trash2 className="h-4 w-4 text-red-500" />
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent>Delete</TooltipContent>
+                </Tooltip>
+              )}
+            </div>
+          ),
+        },
+      ]
+      : []),
   ];
 
   const stats = [
@@ -1224,8 +1238,8 @@ const MemberManagement = () => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center py-4">
             <div className="flex items-center gap-2 sm:gap-4 min-w-0">
-              <Button 
-                variant="ghost" 
+              <Button
+                variant="ghost"
                 onClick={() => navigate('/AdminDashboard')}
                 className="flex items-center px-2 sm:px-4"
               >
@@ -1237,15 +1251,17 @@ const MemberManagement = () => {
 
             <Tooltip>
               <TooltipTrigger asChild>
-                <Button 
-                  onClick={handleAddMember}
-                  className="shrink-0 px-2 sm:px-4"
-                >
-                  <Plus className="h-4 w-4 sm:mr-2" />
-                  <span className="hidden sm:inline">
-                    Add Member
-                  </span>
-                </Button>
+                {hasActionPermission("AdminMembers", "add") && (
+                  <Button
+                    onClick={handleAddMember}
+                    className="shrink-0 px-2 sm:px-4"
+                  >
+                    <Plus className="h-4 w-4 sm:mr-2" />
+                    <span className="hidden sm:inline">
+                      Add Member
+                    </span>
+                  </Button>
+                )}
               </TooltipTrigger>
               <TooltipContent>Add Member</TooltipContent>
             </Tooltip>
@@ -1608,10 +1624,8 @@ const MemberManagement = () => {
                   </Tooltip>
                 </TooltipProvider>
               </div>
-
-
-
             </div>
+
             <div className="flex justify-end gap-4 mt-6">
               <TooltipProvider>
                 <Tooltip>
