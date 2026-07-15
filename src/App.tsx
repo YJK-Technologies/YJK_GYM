@@ -153,7 +153,7 @@ const App = () => (
           />
 
           <Route
-            path="/Member"
+            path="/MemberDashboard"
             element={
               <PermissionRoute
                 screenType="Member"

@@ -55,7 +55,7 @@ import ImageUpload from "../ImageUpload";
 import { showConfirmToast } from "../../components/ui/show-confirm-toast";
 import { Switch } from "@/components/ui/switch";
 import { useCompany } from "../CompanyContext";
-
+import { hasActionPermission } from "@/utils/permission";
 
 interface Trainer {
   id: string;
@@ -777,6 +777,7 @@ const FacultyManagement = () => {
                 <TooltipProvider>
                   <Tooltip>
                     <TooltipTrigger asChild>
+                      {hasActionPermission("AdminFaculty", "add") && (
                       <Button
                         onClick={handleAddTrainer}
                         className="shrink-0 px-2 sm:px-4"
@@ -784,6 +785,7 @@ const FacultyManagement = () => {
                         <Plus className="h-4 w-4 sm:mr-2" />
                         <span className="hidden sm:inline">Add Trainer</span>
                       </Button>
+                      )}
                     </TooltipTrigger>
 
                     <TooltipContent>Add Trainer</TooltipContent>
@@ -864,7 +866,7 @@ const FacultyManagement = () => {
                                     Email: e.target.value,
                                   })
                                 }
-                                placeholder="e.g., Email"
+                                placeholder="e.g., trainer@ruw.edu.bh"
                               />
                             </TooltipTrigger>
 
@@ -1376,7 +1378,7 @@ const FacultyManagement = () => {
                     </TooltipTrigger>
 
                     <TooltipContent>
-                      <p>Enter Full Name</p>
+                      <p>Enter Trainer ID</p>
                     </TooltipContent>
                   </Tooltip>
                 </TooltipProvider>
@@ -1785,6 +1787,7 @@ const FacultyManagement = () => {
                         </div>
                       </div>
                       <div className="flex gap-2">
+                        {hasActionPermission("AdminFaculty", "edit") && (
                         <Button
                           variant="ghost"
                           size="icon"
@@ -1792,6 +1795,8 @@ const FacultyManagement = () => {
                         >
                           <Edit className="h-4 w-4" />
                         </Button>
+                        )}
+                        {hasActionPermission("AdminFaculty", "delete") && (
                         <Button
                           variant="ghost"
                           size="icon"
@@ -1800,6 +1805,7 @@ const FacultyManagement = () => {
                         >
                           <Trash2 className="h-4 w-4" />
                         </Button>
+                        )}
                       </div>
                     </div>
 

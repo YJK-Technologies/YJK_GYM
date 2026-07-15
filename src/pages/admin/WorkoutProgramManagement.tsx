@@ -72,6 +72,7 @@ import {
 } from "@/components/ui/tooltip";
 import { showConfirmToast } from "../../components/ui/show-confirm-toast";
 import { useCompany } from "../CompanyContext";
+import { hasActionPermission } from "@/utils/permission";
 
 interface Exercise {
   name: string;
@@ -205,7 +206,7 @@ interface Stats {
 
 const WorkoutProgramManagement = () => {
   const { companyCode, locationCode, userCode } = useCompany();
-  
+
   const navigate = useNavigate();
   const { toast } = useToast();
 
@@ -588,10 +589,10 @@ const WorkoutProgramManagement = () => {
     const selectedExercises =
       program.Exercises.length > 0
         ? program.Exercises.map((exercise: any) => ({
-            name: exercise.Exercises_Name,
-            sets: exercise.Exercises_Count,
-            reps: exercise.Exercises_Repetitions,
-          }))
+          name: exercise.Exercises_Name,
+          sets: exercise.Exercises_Count,
+          reps: exercise.Exercises_Repetitions,
+        }))
         : [{ name: "", sets: 3, reps: "" }];
 
     setProgramForm({
@@ -856,7 +857,7 @@ const WorkoutProgramManagement = () => {
           location_code: locationCode,
           modified_by: userCode,
           programid: programForm.id,
-          updatemode:"UD"
+          updatemode: "UD"
         },
         body: JSON.stringify({
           ProgramFacultys: [editingProgram.Keyfield],
@@ -891,7 +892,7 @@ const WorkoutProgramManagement = () => {
           location_code: locationCode,
           modified_by: userCode,
           programid: programForm.id,
-          updatemode:"UD"
+          updatemode: "UD"
         },
         body: JSON.stringify({
           ProgramExercises: [editingProgram.Keyfield],
@@ -1377,16 +1378,16 @@ const WorkoutProgramManagement = () => {
         packages.map((p) =>
           p.id === editingPackage.id
             ? {
-                ...p,
-                ...packageForm,
-                durationDays: getDurationDays(packageForm.packageType),
-                programName: program?.name || "",
-                facultyName: faculty?.name || "",
-                features: packageForm.features
-                  .split(",")
-                  .map((f) => f.trim())
-                  .filter(Boolean),
-              }
+              ...p,
+              ...packageForm,
+              durationDays: getDurationDays(packageForm.packageType),
+              programName: program?.name || "",
+              facultyName: faculty?.name || "",
+              features: packageForm.features
+                .split(",")
+                .map((f) => f.trim())
+                .filter(Boolean),
+            }
             : p,
         ),
       );
@@ -1984,6 +1985,14 @@ const WorkoutProgramManagement = () => {
     packages: "Packages",
   };
 
+  //Tab Screen Mapping
+  const tabScreenMap = {
+    programs: "Programs",
+    packages: "Packages",
+  };
+
+  const currentScreen = tabScreenMap[activeTab as keyof typeof tabScreenMap];
+
   const handleAdd = () => {
     switch (activeTab) {
       case "programs":
@@ -2117,20 +2126,22 @@ const WorkoutProgramManagement = () => {
             </div>
 
             <div className="ml-auto flex-shrink-0">
-            <TooltipProvider>
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <Button onClick={handleAdd}>
-                    <Plus className="h-4 w-4 mr-2" />
-                    Add {addLabels[activeTab]}
-                  </Button>
-                </TooltipTrigger>
+              {currentScreen && hasActionPermission(currentScreen, "add") && (
+                <TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Button onClick={handleAdd}>
+                        <Plus className="h-4 w-4 mr-2" />
+                        Add {addLabels[activeTab]}
+                      </Button>
+                    </TooltipTrigger>
 
-                <TooltipContent>
-                  <p>Add {addLabels[activeTab]}</p>
-                </TooltipContent>
-              </Tooltip>
-            </TooltipProvider>
+                    <TooltipContent>
+                      Add {addLabels[activeTab]}
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
+              )}
             </div>
           </div>
 
@@ -2175,14 +2186,16 @@ const WorkoutProgramManagement = () => {
                               <TooltipProvider>
                                 <Tooltip>
                                   <TooltipTrigger asChild>
-                                    <Button
-                                      variant="ghost"
-                                      size="icon"
-                                      className="h-8 w-8 text-gray-600 hover:text-violet-600 hover:bg-violet-50"
-                                      onClick={() => handleEditProgram(program)}
-                                    >
-                                      <Edit className="h-4 w-4" />
-                                    </Button>
+                                    {hasActionPermission("Programs", "edit") && (
+                                      <Button
+                                        variant="ghost"
+                                        size="icon"
+                                        className="h-8 w-8 text-gray-600 hover:text-violet-600 hover:bg-violet-50"
+                                        onClick={() => handleEditProgram(program)}
+                                      >
+                                        <Edit className="h-4 w-4" />
+                                      </Button>
+                                    )}
                                   </TooltipTrigger>
 
                                   <TooltipContent>
@@ -2194,16 +2207,18 @@ const WorkoutProgramManagement = () => {
                               <TooltipProvider>
                                 <Tooltip>
                                   <TooltipTrigger asChild>
-                                    <Button
-                                      variant="ghost"
-                                      size="icon"
-                                      className="h-8 w-8 text-red-500 hover:text-red-700 hover:bg-red-50"
-                                      onClick={() =>
-                                        handleDeleteProgram(program)
-                                      }
-                                    >
-                                      <Trash2 className="h-4 w-4" />
-                                    </Button>
+                                    {hasActionPermission("Programs", "delete") && (
+                                      <Button
+                                        variant="ghost"
+                                        size="icon"
+                                        className="h-8 w-8 text-red-500 hover:text-red-700 hover:bg-red-50"
+                                        onClick={() =>
+                                          handleDeleteProgram(program)
+                                        }
+                                      >
+                                        <Trash2 className="h-4 w-4" />
+                                      </Button>
+                                    )}
                                   </TooltipTrigger>
 
                                   <TooltipContent>
@@ -2838,7 +2853,7 @@ const WorkoutProgramManagement = () => {
                     htmlFor="faculty"
                     className={
                       submittedPrograms &&
-                      programForm.assignedFaculty.length === 0
+                        programForm.assignedFaculty.length === 0
                         ? "text-red-500"
                         : ""
                     }
@@ -2875,14 +2890,13 @@ const WorkoutProgramManagement = () => {
               <div className="space-y-4">
                 <div className="flex justify-between items-center">
                   <h4
-                    className={`font-medium text-sm text-gray-700 ${
-                      submittedPrograms &&
+                    className={`font-medium text-sm text-gray-700 ${submittedPrograms &&
                       programForm.exercises.some(
                         (e) => !e.name.trim() || !e.sets || !e.reps,
                       )
-                        ? "text-red-500"
-                        : "text-gray-700"
-                    }`}
+                      ? "text-red-500"
+                      : "text-gray-700"
+                      }`}
                   >
                     Exercises*
                   </h4>
