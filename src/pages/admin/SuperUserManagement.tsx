@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import {
   Card,
   CardContent,
@@ -63,6 +63,7 @@ import {
 } from "@/components/ui/tooltip";
 import { showConfirmToast } from "../../components/ui/show-confirm-toast";
 import { useCompany } from "../CompanyContext";
+import { hasActionPermission } from "@/utils/permission";
 
 const WorkoutProgramManagement = () => {
   const { companyCode, locationCode, userCode } = useCompany();
@@ -530,7 +531,12 @@ const WorkoutProgramManagement = () => {
       screenType: "Location",
       icon: MapPin,
     },
-    { value: "role", label: "Role", screenType: "Role", icon: Shield },
+    {
+      value: "role",
+      label: "Role",
+      screenType: "Role",
+      icon: Shield
+    },
     {
       value: "roleMapping",
       label: "Role Mapping",
@@ -543,7 +549,12 @@ const WorkoutProgramManagement = () => {
       screenType: "RoleRights",
       icon: ShieldCheck,
     },
-    { value: "user", label: "User", screenType: "User", icon: User },
+    {
+      value: "user",
+      label: "User",
+      screenType: "User",
+      icon: User
+    },
     {
       value: "attribute",
       label: "Attribute",
@@ -653,6 +664,10 @@ const WorkoutProgramManagement = () => {
     status: "",
   });
 
+  const showCompanyActionColumn =
+    hasActionPermission("Company", "edit") ||
+    hasActionPermission("Company", "delete");
+
   //Company Ag Grid
   const CompanyColumnDefs = [
     {
@@ -755,48 +770,56 @@ const WorkoutProgramManagement = () => {
       field: "company_gst_no",
       minWidth: 150,
     },
-    {
-      headerName: "Actions",
-      width: 120,
-      minWidth: 120,
-      maxWidth: 120,
-      sortable: false,
-      filter: false,
-      cellStyle: {
-        display: "flex",
-        justifyContent: "center",
-        alignItems: "center",
-      },
-      cellRenderer: (params: any) => (
-        <div className="flex gap-2">
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => handleEditCompany(params.data)}
-              >
-                <Edit className="h-4 w-4" />
-              </Button>
-            </TooltipTrigger>
-            <TooltipContent>Edit</TooltipContent>
-          </Tooltip>
+    ...(showCompanyActionColumn
+      ? [
+        {
+          headerName: "Actions",
+          width: 120,
+          minWidth: 120,
+          maxWidth: 120,
+          sortable: false,
+          filter: false,
+          cellStyle: {
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+          },
+          cellRenderer: (params: any) => (
+            <div className="flex gap-2">
+              {hasActionPermission("Company", "edit") && (
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => handleEditCompany(params.data)}
+                    >
+                      <Edit className="h-4 w-4" />
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent>Edit</TooltipContent>
+                </Tooltip>
+              )}
 
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => handleDeleteCompany(params.data.company_no)}
-              >
-                <Trash2 className="h-4 w-4 text-red-500" />
-              </Button>
-            </TooltipTrigger>
-            <TooltipContent>Delete</TooltipContent>
-          </Tooltip>
-        </div>
-      ),
-    },
+              {hasActionPermission("Company", "delete") && (
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => handleDeleteCompany(params.data.company_no)}
+                    >
+                      <Trash2 className="h-4 w-4 text-red-500" />
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent>Delete</TooltipContent>
+                </Tooltip>
+              )}
+            </div>
+          ),
+        },
+      ]
+      : [])
   ];
 
   // Preview images for ImageUpload component
@@ -857,7 +880,11 @@ const WorkoutProgramManagement = () => {
     status: "",
   });
 
-  //Company Ag Grid
+  const showCompanyMappingActionColumn =
+    hasActionPermission("CompanyMapping", "edit") ||
+    hasActionPermission("CompanyMapping", "delete");
+
+  //Company Mapping Ag Grid
   const CompanyMappingColumnDefs = [
     {
       headerName: "User Code",
@@ -894,48 +921,56 @@ const WorkoutProgramManagement = () => {
       field: "order_no",
       minWidth: 150,
     },
-    {
-      headerName: "Actions",
-      width: 120,
-      minWidth: 120,
-      maxWidth: 120,
-      sortable: false,
-      filter: false,
-      cellStyle: {
-        display: "flex",
-        justifyContent: "center",
-        alignItems: "center",
-      },
-      cellRenderer: (params: any) => (
-        <div className="flex gap-2">
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => handleEditCompanyMapping(params.data)}
-              >
-                <Edit className="h-4 w-4" />
-              </Button>
-            </TooltipTrigger>
-            <TooltipContent>Edit</TooltipContent>
-          </Tooltip>
+    ...(showCompanyMappingActionColumn
+      ? [
+        {
+          headerName: "Actions",
+          width: 120,
+          minWidth: 120,
+          maxWidth: 120,
+          sortable: false,
+          filter: false,
+          cellStyle: {
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+          },
+          cellRenderer: (params: any) => (
+            <div className="flex gap-2">
+              {hasActionPermission("CompanyMapping", "edit") && (
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => handleEditCompanyMapping(params.data)}
+                    >
+                      <Edit className="h-4 w-4" />
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent>Edit</TooltipContent>
+                </Tooltip>
+              )}
 
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => handleDeleteCompanyMapping(params.data.keyfiels)}
-              >
-                <Trash2 className="h-4 w-4 text-red-500" />
-              </Button>
-            </TooltipTrigger>
-            <TooltipContent>Delete</TooltipContent>
-          </Tooltip>
-        </div>
-      ),
-    },
+              {hasActionPermission("CompanyMapping", "delete") && (
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => handleDeleteCompanyMapping(params.data.keyfiels)}
+                    >
+                      <Trash2 className="h-4 w-4 text-red-500" />
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent>Delete</TooltipContent>
+                </Tooltip>
+              )}
+            </div>
+          ),
+        },
+      ]
+      : [])
   ];
 
   //Location Dialog States
@@ -971,6 +1006,10 @@ const WorkoutProgramManagement = () => {
     country: "",
     status: "",
   });
+
+  const showLocationActionColumn =
+    hasActionPermission("Location", "edit") ||
+    hasActionPermission("Location", "delete");
 
   //Location Ag Grid
   const LocationColumnDefs = [
@@ -1049,48 +1088,56 @@ const WorkoutProgramManagement = () => {
       field: "contact_no",
       minWidth: 150,
     },
-    {
-      headerName: "Actions",
-      width: 120,
-      minWidth: 120,
-      maxWidth: 120,
-      sortable: false,
-      filter: false,
-      cellStyle: {
-        display: "flex",
-        justifyContent: "center",
-        alignItems: "center",
-      },
-      cellRenderer: (params: any) => (
-        <div className="flex gap-2">
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => handleEditLocation(params.data)}
-              >
-                <Edit className="h-4 w-4" />
-              </Button>
-            </TooltipTrigger>
-            <TooltipContent>Edit</TooltipContent>
-          </Tooltip>
+    ...(showLocationActionColumn
+      ? [
+        {
+          headerName: "Actions",
+          width: 120,
+          minWidth: 120,
+          maxWidth: 120,
+          sortable: false,
+          filter: false,
+          cellStyle: {
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+          },
+          cellRenderer: (params: any) => (
+            <div className="flex gap-2">
+              {hasActionPermission("Location", "edit") && (
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => handleEditLocation(params.data)}
+                    >
+                      <Edit className="h-4 w-4" />
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent>Edit</TooltipContent>
+                </Tooltip>
+              )}
 
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => handleDeleteLocation(params.data.location_no)}
-              >
-                <Trash2 className="h-4 w-4 text-red-500" />
-              </Button>
-            </TooltipTrigger>
-            <TooltipContent>Delete</TooltipContent>
-          </Tooltip>
-        </div>
-      ),
-    },
+              {hasActionPermission("Location", "delete") && (
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => handleDeleteLocation(params.data.location_no)}
+                    >
+                      <Trash2 className="h-4 w-4 text-red-500" />
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent>Delete</TooltipContent>
+                </Tooltip>
+              )}
+            </div>
+          ),
+        },
+      ]
+      : [])
   ];
 
   //Role Dialog States
@@ -1113,6 +1160,10 @@ const WorkoutProgramManagement = () => {
     role_name: "",
   });
 
+  const showRoleActionColumn =
+    hasActionPermission("Role", "edit") ||
+    hasActionPermission("Role", "delete");
+
   //Role Ag Grid
   const roleColumnDefs = [
     {
@@ -1128,44 +1179,52 @@ const WorkoutProgramManagement = () => {
       headerName: "Description",
       field: "description",
     },
-    {
-      headerName: "Actions",
-      maxWidth: 150,
-      cellStyle: {
-        display: "flex",
-        justifyContent: "flex-end",
-        alignItems: "center",
-      },
-      cellRenderer: (params: any) => (
-        <div className="flex gap-2">
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => handleEditRole(params.data)}
-              >
-                <Edit className="h-4 w-4" />
-              </Button>
-            </TooltipTrigger>
-            <TooltipContent>Edit</TooltipContent>
-          </Tooltip>
+    ...(showRoleActionColumn
+      ? [
+        {
+          headerName: "Actions",
+          maxWidth: 150,
+          cellStyle: {
+            display: "flex",
+            justifyContent: "flex-end",
+            alignItems: "center",
+          },
+          cellRenderer: (params: any) => (
+            <div className="flex gap-2">
+              {hasActionPermission("Role", "edit") && (
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => handleEditRole(params.data)}
+                    >
+                      <Edit className="h-4 w-4" />
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent>Edit</TooltipContent>
+                </Tooltip>
+              )}
 
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => handleDeleteRole(params.data.role_id)}
-              >
-                <Trash2 className="h-4 w-4 text-red-500" />
-              </Button>
-            </TooltipTrigger>
-            <TooltipContent>Delete</TooltipContent>
-          </Tooltip>
-        </div>
-      ),
-    },
+              {hasActionPermission("Role", "delete") && (
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => handleDeleteRole(params.data.role_id)}
+                    >
+                      <Trash2 className="h-4 w-4 text-red-500" />
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent>Delete</TooltipContent>
+                </Tooltip>
+              )}
+            </div>
+          ),
+        },
+      ]
+      : [])
   ];
 
   //Role Mapping Dialog States
@@ -1190,6 +1249,10 @@ const WorkoutProgramManagement = () => {
     role_name: "",
   });
 
+  const showRoleMappingActionColumn =
+    hasActionPermission("RoleMapping", "edit") ||
+    hasActionPermission("RoleMapping", "delete");
+
   //Role Mapping Ag Grid
   const RoleMappingColumnDefs = [
     {
@@ -1213,48 +1276,56 @@ const WorkoutProgramManagement = () => {
       field: "role_name",
       minWidth: 150,
     },
-    {
-      headerName: "Actions",
-      width: 120,
-      minWidth: 120,
-      maxWidth: 120,
-      sortable: false,
-      filter: false,
-      cellStyle: {
-        display: "flex",
-        justifyContent: "center",
-        alignItems: "center",
-      },
-      cellRenderer: (params: any) => (
-        <div className="flex gap-2">
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => handleEditRoleMapping(params.data)}
-              >
-                <Edit className="h-4 w-4" />
-              </Button>
-            </TooltipTrigger>
-            <TooltipContent>Edit</TooltipContent>
-          </Tooltip>
+    ...(showRoleMappingActionColumn
+      ? [
+        {
+          headerName: "Actions",
+          width: 120,
+          minWidth: 120,
+          maxWidth: 120,
+          sortable: false,
+          filter: false,
+          cellStyle: {
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+          },
+          cellRenderer: (params: any) => (
+            <div className="flex gap-2">
+              {hasActionPermission("RoleMapping", "edit") && (
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => handleEditRoleMapping(params.data)}
+                    >
+                      <Edit className="h-4 w-4" />
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent>Edit</TooltipContent>
+                </Tooltip>
+              )}
 
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => handleDeleteRoleMapping(params.data.keyfield)}
-              >
-                <Trash2 className="h-4 w-4 text-red-500" />
-              </Button>
-            </TooltipTrigger>
-            <TooltipContent>Delete</TooltipContent>
-          </Tooltip>
-        </div>
-      ),
-    },
+              {hasActionPermission("RoleMapping", "delete") && (
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => handleDeleteRoleMapping(params.data.keyfield)}
+                    >
+                      <Trash2 className="h-4 w-4 text-red-500" />
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent>Delete</TooltipContent>
+                </Tooltip>
+              )}
+            </div>
+          ),
+        },
+      ]
+      : [])
   ];
 
   //Role Rights Dialog States
@@ -1279,6 +1350,10 @@ const WorkoutProgramManagement = () => {
     permission_type: "",
   });
 
+  const showRoleRightsActionColumn =
+    hasActionPermission("RoleRights", "edit") ||
+    hasActionPermission("RoleRights", "delete");
+
   //Role Rights Ag Grid
   const RoleRightsColumnDefs = [
     {
@@ -1297,48 +1372,56 @@ const WorkoutProgramManagement = () => {
       field: "permission_type",
       minWidth: 150,
     },
-    {
-      headerName: "Actions",
-      width: 120,
-      minWidth: 120,
-      maxWidth: 120,
-      sortable: false,
-      filter: false,
-      cellStyle: {
-        display: "flex",
-        justifyContent: "center",
-        alignItems: "center",
-      },
-      cellRenderer: (params: any) => (
-        <div className="flex gap-2">
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => handleEditRoleRight(params.data)}
-              >
-                <Edit className="h-4 w-4" />
-              </Button>
-            </TooltipTrigger>
-            <TooltipContent>Edit</TooltipContent>
-          </Tooltip>
+    ...(showRoleRightsActionColumn
+      ? [
+        {
+          headerName: "Actions",
+          width: 120,
+          minWidth: 120,
+          maxWidth: 120,
+          sortable: false,
+          filter: false,
+          cellStyle: {
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+          },
+          cellRenderer: (params: any) => (
+            <div className="flex gap-2">
+              {hasActionPermission("RoleRights", "edit") && (
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => handleEditRoleRight(params.data)}
+                    >
+                      <Edit className="h-4 w-4" />
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent>Edit</TooltipContent>
+                </Tooltip>
+              )}
 
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => handleDeleteRoleRight(params.data.keyfield)}
-              >
-                <Trash2 className="h-4 w-4 text-red-500" />
-              </Button>
-            </TooltipTrigger>
-            <TooltipContent>Delete</TooltipContent>
-          </Tooltip>
-        </div>
-      ),
-    },
+              {hasActionPermission("RoleRights", "delete") && (
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => handleDeleteRoleRight(params.data.keyfield)}
+                    >
+                      <Trash2 className="h-4 w-4 text-red-500" />
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent>Delete</TooltipContent>
+                </Tooltip>
+              )}
+            </div>
+          ),
+        },
+      ]
+      : [])
   ];
 
   //User Dialog States
@@ -1406,6 +1489,10 @@ const WorkoutProgramManagement = () => {
     created_by: userCode,
   });
 
+  const showUserActionColumn =
+    hasActionPermission("User", "edit") ||
+    hasActionPermission("User", "delete");
+
   //User Ag Grid
   const UserColumnDefs = [
     {
@@ -1458,48 +1545,56 @@ const WorkoutProgramManagement = () => {
       field: "gender",
       minWidth: 150,
     },
-    {
-      headerName: "Actions",
-      width: 120,
-      minWidth: 120,
-      maxWidth: 120,
-      sortable: false,
-      filter: false,
-      cellStyle: {
-        display: "flex",
-        justifyContent: "center",
-        alignItems: "center",
-      },
-      cellRenderer: (params: any) => (
-        <div className="flex gap-2">
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => handleEditUser(params.data)}
-              >
-                <Edit className="h-4 w-4" />
-              </Button>
-            </TooltipTrigger>
-            <TooltipContent>Edit</TooltipContent>
-          </Tooltip>
+    ...(showUserActionColumn
+      ? [
+        {
+          headerName: "Actions",
+          width: 120,
+          minWidth: 120,
+          maxWidth: 120,
+          sortable: false,
+          filter: false,
+          cellStyle: {
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+          },
+          cellRenderer: (params: any) => (
+            <div className="flex gap-2">
+              {hasActionPermission("User", "edit") && (
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => handleEditUser(params.data)}
+                    >
+                      <Edit className="h-4 w-4" />
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent>Edit</TooltipContent>
+                </Tooltip>
+              )}
 
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => handleDeleteUser(params.data.user_code)}
-              >
-                <Trash2 className="h-4 w-4 text-red-500" />
-              </Button>
-            </TooltipTrigger>
-            <TooltipContent>Delete</TooltipContent>
-          </Tooltip>
-        </div>
-      ),
-    },
+              {hasActionPermission("User", "delete") && (
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => handleDeleteUser(params.data.user_code)}
+                    >
+                      <Trash2 className="h-4 w-4 text-red-500" />
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent>Delete</TooltipContent>
+                </Tooltip>
+              )}
+            </div>
+          ),
+        },
+      ]
+      : [])
   ];
 
   //Attribute Detail Dialog States
@@ -1525,6 +1620,10 @@ const WorkoutProgramManagement = () => {
     descriptions: "",
   });
 
+  const showAttributeActionColumn =
+    hasActionPermission("Attribute", "edit") ||
+    hasActionPermission("Attribute", "delete");
+
   //Attribute Ag Grid
   const AttributeColumnDefs = [
     {
@@ -1548,53 +1647,61 @@ const WorkoutProgramManagement = () => {
       field: "descriptions",
       minWidth: 150,
     },
-    {
-      headerName: "Actions",
-      width: 120,
-      minWidth: 120,
-      maxWidth: 120,
-      sortable: false,
-      filter: false,
-      cellStyle: {
-        display: "flex",
-        justifyContent: "center",
-        alignItems: "center",
-      },
-      cellRenderer: (params: any) => (
-        <div className="flex gap-2">
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => handleEditAttribute(params.data)}
-              >
-                <Edit className="h-4 w-4" />
-              </Button>
-            </TooltipTrigger>
-            <TooltipContent>Edit</TooltipContent>
-          </Tooltip>
+    ...(showAttributeActionColumn
+      ? [
+        {
+          headerName: "Actions",
+          width: 120,
+          minWidth: 120,
+          maxWidth: 120,
+          sortable: false,
+          filter: false,
+          cellStyle: {
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+          },
+          cellRenderer: (params: any) => (
+            <div className="flex gap-2">
+              {hasActionPermission("Attribute", "edit") && (
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => handleEditAttribute(params.data)}
+                    >
+                      <Edit className="h-4 w-4" />
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent>Edit</TooltipContent>
+                </Tooltip>
+              )}
 
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() =>
-                  handleDeleteAttribute(
-                    params.data.attributeheader_code,
-                    params.data.attributedetails_code,
-                  )
-                }
-              >
-                <Trash2 className="h-4 w-4 text-red-500" />
-              </Button>
-            </TooltipTrigger>
-            <TooltipContent>Delete</TooltipContent>
-          </Tooltip>
-        </div>
-      ),
-    },
+              {hasActionPermission("Attribute", "delete") && (
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() =>
+                        handleDeleteAttribute(
+                          params.data.attributeheader_code,
+                          params.data.attributedetails_code,
+                        )
+                      }
+                    >
+                      <Trash2 className="h-4 w-4 text-red-500" />
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent>Delete</TooltipContent>
+                </Tooltip>
+              )}
+            </div>
+          ),
+        },
+      ]
+      : [])
   ];
 
   //Attribute Header Dialog States
@@ -1654,6 +1761,10 @@ const WorkoutProgramManagement = () => {
     Screen_Type: "",
   });
 
+  const showNumberSeriesActionColumn =
+    hasActionPermission("NumberSeries", "edit") ||
+    hasActionPermission("NumberSeries", "delete");
+
   //Number Series Ag Grid
   const NumberSeriesColumnDefs = [
     {
@@ -1711,58 +1822,66 @@ const WorkoutProgramManagement = () => {
       field: "bill_format",
       minWidth: 150,
     },
-    {
-      headerName: "Actions",
-      width: 120,
-      minWidth: 120,
-      maxWidth: 120,
-      sortable: false,
-      filter: false,
-      cellStyle: {
-        display: "flex",
-        justifyContent: "center",
-        alignItems: "center",
-      },
-      cellRenderer: (params: any) => (
-        <div className="flex gap-2">
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => handleEditNumberSeries(params.data)}
-              >
-                <Edit className="h-4 w-4" />
-              </Button>
-            </TooltipTrigger>
-            <TooltipContent>Edit</TooltipContent>
-          </Tooltip>
+    ...(showNumberSeriesActionColumn
+      ? [
+        {
+          headerName: "Actions",
+          width: 120,
+          minWidth: 120,
+          maxWidth: 120,
+          sortable: false,
+          filter: false,
+          cellStyle: {
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+          },
+          cellRenderer: (params: any) => (
+            <div className="flex gap-2">
+              {hasActionPermission("NumberSeries", "edit") && (
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => handleEditNumberSeries(params.data)}
+                    >
+                      <Edit className="h-4 w-4" />
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent>Edit</TooltipContent>
+                </Tooltip>
+              )}
 
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => handleDeleteNumberSeries(params.data)}
-              >
-                <Trash2 className="h-4 w-4 text-red-500" />
-              </Button>
-            </TooltipTrigger>
-            <TooltipContent>Delete</TooltipContent>
-          </Tooltip>
-        </div>
-      ),
-    },
+              {hasActionPermission("NumberSeries", "delete") && (
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => handleDeleteNumberSeries(params.data)}
+                    >
+                      <Trash2 className="h-4 w-4 text-red-500" />
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent>Delete</TooltipContent>
+                </Tooltip>
+              )}
+            </div>
+          ),
+        },
+      ]
+      : [])
   ];
 
   //Company CRUD Functions
   const handleAddCompany = () => {
     fetchCities(),
-    fetchStates(),
-    fetchCountries(),
-    fetchStatus(),
-    fetchLocation(),
-    setEditingCompany(null);
+      fetchStates(),
+      fetchCountries(),
+      fetchStatus(),
+      fetchLocation(),
+      setEditingCompany(null);
     setCompanyForm({
       company_no: "",
       company_name: "",
@@ -2083,7 +2202,7 @@ const WorkoutProgramManagement = () => {
 
     const signature =
       company.authorisedSignatur?.data &&
-      Array.isArray(company.authorisedSignatur.data)
+        Array.isArray(company.authorisedSignatur.data)
         ? bufferToBase64(company.authorisedSignatur.data)
         : null;
 
@@ -2150,10 +2269,10 @@ const WorkoutProgramManagement = () => {
   //Company Mapping CRUD Functions
   const handleAddCompanyMapping = () => {
     fetchStatus(),
-    fetchLocation(),
-    fetchUsers(),
-    fetchCompanies(),
-    setEditingCompanyMapping(null);
+      fetchLocation(),
+      fetchUsers(),
+      fetchCompanies(),
+      setEditingCompanyMapping(null);
     setCompanyMappingForm({
       company_code: companyCode,
       user_code: "",
@@ -2413,10 +2532,10 @@ const WorkoutProgramManagement = () => {
   // Location CRUD Functions
   const handleAddLocation = () => {
     fetchCities(),
-    fetchStates(),
-    fetchCountries(),
-    fetchStatus(),
-    setEditingLocation(null);
+      fetchStates(),
+      fetchCountries(),
+      fetchStatus(),
+      setEditingLocation(null);
     setLocationForm({
       location_no: "",
       location_name: "",
@@ -2956,8 +3075,8 @@ const WorkoutProgramManagement = () => {
   //Role Mapping CRUD Functions
   const handleAddRoleMapping = () => {
     fetchUsers(),
-    fetchRole(),
-    setEditingRoleMapping(null);
+      fetchRole(),
+      setEditingRoleMapping(null);
     setRoleMappingForm({
       company_code: companyCode,
       user_code: "",
@@ -3206,9 +3325,9 @@ const WorkoutProgramManagement = () => {
   //Role Rights CRUD Functions
   const handleAddRoleRights = () => {
     fetchRole(),
-    fetchPermission(),
-    fetchScreenType(),
-    setEditingRoleRight(null);
+      fetchPermission(),
+      fetchScreenType(),
+      setEditingRoleRight(null);
     setRoleRightsForm({
       company_code: companyCode,
       role_id: "",
@@ -3462,9 +3581,9 @@ const WorkoutProgramManagement = () => {
   //User CRUD Functions
   const handleAddUser = () => {
     fetchStatus(),
-    fetchGender(),
-    fetchRole(),
-    setEditingUser(null);
+      fetchGender(),
+      fetchRole(),
+      setEditingUser(null);
     setUserForm({
       company_code: companyCode,
       user_code: "",
@@ -3840,7 +3959,7 @@ const WorkoutProgramManagement = () => {
   //Attribute Detail CRUD Functions
   const handleAddAttribute = () => {
     fetchAttributeHdr(),
-    setEditingAttribute(null);
+      setEditingAttribute(null);
     setAttributeForm({
       company_code: companyCode,
       attributeheader_code: "",
@@ -4108,14 +4227,14 @@ const WorkoutProgramManagement = () => {
   //add Attribute CRUD Functions
   const handleAddAttributeHdr = () => {
     fetchStatus(),
-    setAttributeHdrForm({
-      company_code: companyCode,
-      attributeheader_code: "",
-      attributeheader_name: "",
-      status: "Active",
-      created_by: userCode,
-      modified_by: userCode,
-    });
+      setAttributeHdrForm({
+        company_code: companyCode,
+        attributeheader_code: "",
+        attributeheader_name: "",
+        status: "Active",
+        created_by: userCode,
+        modified_by: userCode,
+      });
     setIsAttributeHdrDialogOpen(true);
   };
 
@@ -4181,9 +4300,9 @@ const WorkoutProgramManagement = () => {
   // NumberSeries CRUD Functions
   const handleAddNumberSeries = () => {
     fetchStatus(),
-    fetchScreenType(),
-    fetchNumberPrefix(),
-    fetchBillFormat()
+      fetchScreenType(),
+      fetchNumberPrefix(),
+      fetchBillFormat()
     setEditingNumberSeries(null);
     setNumberSeriesForm({
       company_code: companyCode,
@@ -4471,6 +4590,21 @@ const WorkoutProgramManagement = () => {
     attribute: "Attribute",
     NumberSeries: "NumberSeries",
   };
+
+  //Tab Screen Mapping
+  const tabScreenMap = {
+    company: "Company",
+    companyMapping: "CompanyMapping",
+    location: "Location",
+    role: "Role",
+    roleMapping: "RoleMapping",
+    roleRights: "RoleRights",
+    user: "User",
+    attribute: "Attribute",
+    NumberSeries: "NumberSeries",
+  };
+
+  const currentScreen = tabScreenMap[activeTab as keyof typeof tabScreenMap];
 
   const handleAdd = () => {
     switch (activeTab) {
@@ -5757,7 +5891,7 @@ const WorkoutProgramManagement = () => {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      
+
       <header className="bg-white shadow-sm border-b">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center py-4">
@@ -5865,20 +5999,22 @@ const WorkoutProgramManagement = () => {
             </div>
 
             <div className="ml-auto flex-shrink-0">
-              <TooltipProvider>
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <Button onClick={handleAdd}>
-                      <Plus className="h-4 w-4 mr-2" />
-                      Add {addLabels[activeTab]}
-                    </Button>
-                  </TooltipTrigger>
+              {currentScreen && hasActionPermission(currentScreen, "add") && (
+                <TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Button onClick={handleAdd}>
+                        <Plus className="h-4 w-4 mr-2" />
+                        Add {addLabels[activeTab]}
+                      </Button>
+                    </TooltipTrigger>
 
-                  <TooltipContent>
-                    <p>Add {addLabels[activeTab]}</p>
-                  </TooltipContent>
-                </Tooltip>
-              </TooltipProvider>
+                    <TooltipContent>
+                      Add {addLabels[activeTab]}
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
+              )}
             </div>
           </div>
 
@@ -6885,7 +7021,7 @@ const WorkoutProgramManagement = () => {
                       htmlFor="company"
                       className={
                         submittedCompanyMapping &&
-                        !companyMappingForm.company_no
+                          !companyMappingForm.company_no
                           ? "text-red-500"
                           : ""
                       }
@@ -6935,7 +7071,7 @@ const WorkoutProgramManagement = () => {
                       htmlFor="location"
                       className={
                         submittedCompanyMapping &&
-                        !companyMappingForm.location_no
+                          !companyMappingForm.location_no
                           ? "text-red-500"
                           : ""
                       }
@@ -8709,7 +8845,7 @@ const WorkoutProgramManagement = () => {
                       htmlFor="attributeheader_code"
                       className={
                         submittedAttributeDet &&
-                        !attributeForm.attributeheader_code
+                          !attributeForm.attributeheader_code
                           ? "text-red-500"
                           : ""
                       }
@@ -8788,7 +8924,7 @@ const WorkoutProgramManagement = () => {
                       htmlFor="SubCode"
                       className={
                         submittedAttributeDet &&
-                        !attributeForm.attributedetails_code
+                          !attributeForm.attributedetails_code
                           ? "text-red-500"
                           : ""
                       }
@@ -8824,7 +8960,7 @@ const WorkoutProgramManagement = () => {
                       htmlFor="DetailsName"
                       className={
                         submittedAttributeDet &&
-                        !attributeForm.attributedetails_name
+                          !attributeForm.attributedetails_name
                           ? "text-red-500"
                           : ""
                       }
@@ -8947,7 +9083,7 @@ const WorkoutProgramManagement = () => {
                   htmlFor="code"
                   className={
                     submittedAttributeHdr &&
-                    !attributeHdrForm.attributeheader_code
+                      !attributeHdrForm.attributeheader_code
                       ? "text-red-500"
                       : ""
                   }
@@ -8982,7 +9118,7 @@ const WorkoutProgramManagement = () => {
                   htmlFor="code"
                   className={
                     submittedAttributeHdr &&
-                    !attributeHdrForm.attributeheader_name
+                      !attributeHdrForm.attributeheader_name
                       ? "text-red-500"
                       : ""
                   }

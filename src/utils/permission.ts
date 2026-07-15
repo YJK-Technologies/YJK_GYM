@@ -1,4 +1,6 @@
-export const getPermission = (screenType: string) => {
+export const getPermission = (screenType?: string) => {
+  if (!screenType) return null;
+
   const permissions = JSON.parse(
     sessionStorage.getItem("permissions") || "[]"
   );
@@ -10,26 +12,30 @@ export const getPermission = (screenType: string) => {
 };
 
 export const hasActionPermission = (
-  screenType: string,
-  action: string
+  screenType?: string,
+  action?: string
 ) => {
-  const permission = getPermission(screenType);
+    if (!screenType || !action) return false;
 
-  if (!permission) return false;
+    const permission = getPermission(screenType);
 
-  const permissionType = (permission.permission_type || "")
-    .toLowerCase()
-    .trim();
+    if (!permission) return false;
 
-  // Full access
-  if (permissionType === "all permission") {
-    return true;
-  }
+    const permissionType = (permission.permission_type || "")
+        .toLowerCase()
+        .trim();
+
+    // Full access
+    if (permissionType === "all permission") {
+      return true;
+    }
 
   // Support comma separated values
-  const actions = permissionType
-    .split(",")
-    .map((x: string) => x.trim());
+//   const actions = permissionType
+//     .split(",")
+//     .map((x: string) => x.trim());
 
-  return actions.includes(action.toLowerCase());
+//   return actions.includes(action.toLowerCase());
+
+    return permissionType === action.toLowerCase();
 };
