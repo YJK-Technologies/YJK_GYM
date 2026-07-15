@@ -1376,7 +1376,7 @@ const FacultyManagement = () => {
                     </TooltipTrigger>
 
                     <TooltipContent>
-                      <p>Enter Full Name</p>
+                      <p>Enter Trainer ID</p>
                     </TooltipContent>
                   </Tooltip>
                 </TooltipProvider>

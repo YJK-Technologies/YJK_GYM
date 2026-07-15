@@ -9,6 +9,30 @@ import { Textarea } from '@/components/ui/textarea';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { useNavigate } from 'react-router-dom';
 import { ArrowLeft, Plus, Edit, Trash2, Utensils, Flame, Target, Clock, Copy, Users } from 'lucide-react';
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import {
+  GraduationCap,
+  Mail,
+  Minus,
+  Search,
+  RotateCcw,
+  Phone,
+  Award,
+  Eye,
+  EyeOff,
+} from "lucide-react";
 
 interface Meal {
   name: string;
@@ -38,11 +62,80 @@ interface DietPlan {
   trainer: string;
   isActive: boolean;
 }
+interface WorkoutProgram {
+  id: string;
+  name: string;
+  description: string;
+  category: string;
+  difficultyLevel: string;
+  goals: string[];
+  durationPerSession: string;
+  sessionsPerWeek: string;
+  assignedFaculty: string[];
+  workingHours: string;
+  isActive: boolean;
+  Keyfield: string;
+  createdDate: string;
+}
 
 const DietPlanManagement = () => {
   const navigate = useNavigate();
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
   const [selectedPlan, setSelectedPlan] = useState<DietPlan | null>(null);
+
+  // Const - temporary state for trainers list
+  const [trainers, setTrainers] = useState<any[]>([]);
+
+  // Const - duplicate rows
+  const [mealRows, setMealRows] = useState([
+  {
+    Meal_Type: "",
+    Meal_Name: "",
+    Quantity: "",
+    Calories: "",
+    Protein: "",
+    Carbs: "",
+    Fats: "",
+    Time_Slot: "",
+  },
+]);
+
+const addMealRow = () => {
+  setMealRows([
+    ...mealRows,
+    {
+      Meal_Type: "",
+      Meal_Name: "",
+      Quantity: "",
+      Calories: "",
+      Protein: "",
+      Carbs: "",
+      Fats: "",
+      Time_Slot: "",
+    },
+  ]);
+};
+
+const removeMealRow = (index: number) => {
+  if (mealRows.length === 1) return;
+
+  setMealRows(mealRows.filter((_, i) => i !== index));
+};
+
+const updateMealRow = (
+  index: number,
+  field: string,
+  value: string
+) => {
+  const updatedRows = [...mealRows];
+
+  updatedRows[index] = {
+    ...updatedRows[index],
+    [field]: value,
+  };
+
+  setMealRows(updatedRows);
+};
 
   // Sample diet plans data
   const [dietPlans] = useState<DietPlan[]>([
@@ -181,16 +274,6 @@ const DietPlanManagement = () => {
                       <Label htmlFor="description">Description</Label>
                       <Textarea id="description" placeholder="Detailed description of the diet plan..." rows={3} />
                     </div>
-                    <div className="grid grid-cols-2 gap-4">
-                      <div className="space-y-2">
-                        <Label htmlFor="calories">Daily Calories Target</Label>
-                        <Input id="calories" type="number" placeholder="2000" />
-                      </div>
-                      <div className="space-y-2">
-                        <Label htmlFor="duration">Duration</Label>
-                        <Input id="duration" placeholder="12 weeks" />
-                      </div>
-                    </div>
                     <div className="space-y-2">
                       <Label htmlFor="goals">Goals (comma-separated)</Label>
                       <Input id="goals" placeholder="Lose weight, Build muscle, etc." />
@@ -200,6 +283,322 @@ const DietPlanManagement = () => {
                       <Input id="restrictions" placeholder="Vegetarian, Gluten-free, etc." />
                     </div>
                   </div>
+
+                <h4 className="font-medium text-sm text-gray-700">Diet Plan Details</h4>
+                  <div className="grid grid-cols-3 gap-4">
+                      {/* <div className="space-y-2">
+                        <Label htmlFor="calories">Essentials</Label>
+                        <Input id="calories" type="text" placeholder="Protein" />
+                      </div> */}
+                      <div className="space-y-2">
+                        <Label htmlFor="faculty">Essentials</Label>
+                        <TooltipProvider>
+                          <Tooltip>
+                            <TooltipTrigger asChild>
+                              <div>
+                                <Select
+                                  // value={programSearchForm.assignedFaculty}
+                                  // onValueChange={(value) =>
+                                  //   setProgramSearchForm({
+                                  //     ...programSearchForm,
+                                  //     assignedFaculty: value,
+                                  //   })
+                                  // }
+                                >
+                                  <SelectTrigger>
+                                    <SelectValue placeholder="Select Assigned Faculty" />
+                                  </SelectTrigger>
+                      
+                                  <SelectContent>
+                                    {trainers.map((trainers: any) => (
+                                      <SelectItem
+                                        key={trainers.TrainerID}
+                                        value={trainers.TrainerID}
+                                      >
+                                        {trainers.TrainerID} - {trainers.FullName}
+                                      </SelectItem>
+                                    ))}
+                                  </SelectContent>
+                                </Select>
+                              </div>
+                            </TooltipTrigger>
+                      
+                            <TooltipContent>
+                              <p>Select Assigned Faculty</p>
+                            </TooltipContent>
+                          </Tooltip>
+                        </TooltipProvider>
+                      </div>
+
+                      <div className="space-y-2">
+                        <Label htmlFor="calories">Daily Calories Target</Label>
+                        <Input id="calories" type="number" placeholder="2000" />
+                      </div>
+
+                      {/* <div className="space-y-2">
+                        <Label htmlFor="duration">Duration</Label>
+                        <Input id="duration" placeholder="12 weeks" />
+                      </div> */}
+                      <div className="space-y-2">
+                        <Label htmlFor="faculty">Duration</Label>
+                        <TooltipProvider>
+                          <Tooltip>
+                            <TooltipTrigger asChild>
+                              <div>
+                                <Select
+                                  // value={programSearchForm.assignedFaculty}
+                                  // onValueChange={(value) =>
+                                  //   setProgramSearchForm({
+                                  //     ...programSearchForm,
+                                  //     assignedFaculty: value,
+                                  //   })
+                                  // }
+                                >
+                                  <SelectTrigger>
+                                    <SelectValue placeholder="Select Assigned Faculty" />
+                                  </SelectTrigger>
+                      
+                                  <SelectContent>
+                                    {trainers.map((trainers: any) => (
+                                      <SelectItem
+                                        key={trainers.TrainerID}
+                                        value={trainers.TrainerID}
+                                      >
+                                        {trainers.TrainerID} - {trainers.FullName}
+                                      </SelectItem>
+                                    ))}
+                                  </SelectContent>
+                                </Select>
+                              </div>
+                            </TooltipTrigger>
+                      
+                            <TooltipContent>
+                              <p>Select Assigned Faculty</p>
+                            </TooltipContent>
+                          </Tooltip>
+                        </TooltipProvider>
+                      </div>
+                    </div>
+
+                <h4 className="font-medium text-sm text-gray-700">Diet Plan Meals</h4>
+                  {/* <div className="grid grid-cols-3 gap-4">
+                      <div className="space-y-2">
+                        <Label htmlFor="faculty">Meal Type</Label>
+                        <TooltipProvider>
+                          <Tooltip>
+                            <TooltipTrigger asChild>
+                              <div>
+                                <Select
+                                >
+                                  <SelectTrigger>
+                                    <SelectValue placeholder="Select Assigned Faculty" />
+                                  </SelectTrigger>
+                      
+                                  <SelectContent>
+                                    {trainers.map((trainers: any) => (
+                                      <SelectItem
+                                        key={trainers.TrainerID}
+                                        value={trainers.TrainerID}
+                                      >
+                                        {trainers.TrainerID} - {trainers.FullName}
+                                      </SelectItem>
+                                    ))}
+                                  </SelectContent>
+                                </Select>
+                              </div>
+                            </TooltipTrigger>
+                      
+                            <TooltipContent>
+                              <p>Select Assigned Faculty</p>
+                            </TooltipContent>
+                          </Tooltip>
+                        </TooltipProvider>
+                      </div>
+
+                      <div className="space-y-2">
+                        <Label htmlFor="calories">Meal Name</Label>
+                        <Input id="calories" type="number" placeholder="2000" />
+                      </div>
+                      <div className="space-y-2">
+                        <Label htmlFor="duration">Quantity</Label>
+                        <Input id="duration" placeholder="12 weeks" />
+                      </div>
+                      <div className="space-y-2">
+                        <Label htmlFor="calories">Calories</Label>
+                        <Input id="calories" type="text" placeholder="Protein" />
+                      </div>
+                      <div className="space-y-2">
+                        <Label htmlFor="calories">Protein</Label>
+                        <Input id="calories" type="number" placeholder="2000" />
+                      </div>
+                      <div className="space-y-2">
+                        <Label htmlFor="duration">Carbs</Label>
+                        <Input id="duration" placeholder="12 weeks" />
+                      </div>
+                      <div className="space-y-2">
+                        <Label htmlFor="calories">Fats</Label>
+                        <Input id="calories" type="number" placeholder="2000" />
+                      </div>
+                      <div className="space-y-2">
+                        <Label htmlFor="duration">Time Slot</Label>
+                        <Input id="duration" placeholder="12 weeks" />
+                      </div>
+                    </div> */}
+
+                    <div className="space-y-4">
+                      {mealRows.map((meal, index) => (
+                        <div
+                          key={index}
+                          className="border rounded-lg p-4 space-y-4 bg-gray-50"
+                        >
+                          <div className="grid grid-cols-4 gap-4">
+                      
+                            {/* Meal Type */}
+                      
+                            <div className="space-y-2">
+                              <Label>Meal Type</Label>
+                      
+                              <Select
+                                value={meal.Meal_Type}
+                                onValueChange={(value) =>
+                                  updateMealRow(index, "Meal_Type", value)
+                                }
+                              >
+                                <SelectTrigger>
+                                  <SelectValue placeholder="Select Meal Type" />
+                                </SelectTrigger>
+                              
+                                <SelectContent>
+                                  <SelectItem value="Breakfast">Breakfast</SelectItem>
+                                  <SelectItem value="Lunch">Lunch</SelectItem>
+                                  <SelectItem value="Dinner">Dinner</SelectItem>
+                                  <SelectItem value="Snacks">Snacks</SelectItem>
+                                </SelectContent>
+                              </Select>
+                            </div>
+                              
+                            {/* Meal Name */}
+                              
+                            <div className="space-y-2">
+                              <Label>Meal Name</Label>
+                              
+                              <Input
+                                value={meal.Meal_Name}
+                                placeholder="Meal Name"
+                                onChange={(e) =>
+                                  updateMealRow(index, "Meal_Name", e.target.value)
+                                }
+                              />
+                            </div>
+                              
+                            {/* Quantity */}
+                              
+                            <div className="space-y-2">
+                              <Label>Quantity</Label>
+                              
+                              <Input
+                                value={meal.Quantity}
+                                placeholder="Quantity"
+                                onChange={(e) =>
+                                  updateMealRow(index, "Quantity", e.target.value)
+                                }
+                              />
+                            </div>
+                              
+                            {/* Calories */}
+                              
+                            <div className="space-y-2">
+                              <Label>Calories</Label>
+                              
+                              <Input
+                                value={meal.Calories}
+                                placeholder="Calories"
+                                onChange={(e) =>
+                                  updateMealRow(index, "Calories", e.target.value)
+                                }
+                              />
+                            </div>
+                              
+                            {/* Protein */}
+                              
+                            <div className="space-y-2">
+                              <Label>Protein</Label>
+                              
+                              <Input
+                                value={meal.Protein}
+                                placeholder="Protein"
+                                onChange={(e) =>
+                                  updateMealRow(index, "Protein", e.target.value)
+                                }
+                              />
+                            </div>
+                              
+                            {/* Carbs */}
+                              
+                            <div className="space-y-2">
+                              <Label>Carbs</Label>
+                              
+                              <Input
+                                value={meal.Carbs}
+                                placeholder="Carbs"
+                                onChange={(e) =>
+                                  updateMealRow(index, "Carbs", e.target.value)
+                                }
+                              />
+                            </div>
+                              
+                            {/* Fats */}
+                              
+                            <div className="space-y-2">
+                              <Label>Fats</Label>
+                              
+                              <Input
+                                value={meal.Fats}
+                                placeholder="Fats"
+                                onChange={(e) =>
+                                  updateMealRow(index, "Fats", e.target.value)
+                                }
+                              />
+                            </div>
+                              
+                            {/* Time Slot */}
+                              
+                            <div className="space-y-2">
+                              <Label>Time Slot</Label>
+                              
+                              <Input
+                                value={meal.Time_Slot}
+                                placeholder="Time Slot"
+                                onChange={(e) =>
+                                  updateMealRow(index, "Time_Slot", e.target.value)
+                                }
+                              />
+                            </div>
+                          </div>
+                              
+                          {/* Buttons */}
+                              
+                          <div className="flex justify-end gap-2">
+                            <Button
+                              type="button"
+                              variant="outline"
+                              onClick={addMealRow}
+                            >
+                              <Plus className="h-4 w-4" />
+                            </Button>
+                              
+                            <Button
+                              type="button"
+                              variant="outline"
+                              onClick={() => removeMealRow(index)}
+                            >
+                              <Minus className="h-4 w-4" />
+                            </Button>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+
                   <div className="flex justify-end gap-2">
                     <Button variant="outline" onClick={() => setIsAddDialogOpen(false)}>
                       Cancel
@@ -271,6 +670,184 @@ const DietPlanManagement = () => {
             </CardContent>
           </Card>
         </div>
+
+        <Card className="mb-6">
+          <CardContent className="p-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+              <div className="space-y-2">
+                <Label>Plan Name</Label>
+
+                <TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Input
+                        // maxLength={100}
+                        // placeholder="Enter Full Name"
+                        // value={TrainersSearchForm.TrainerID}
+                        // onChange={(e) =>
+                        //   setTrainersSearchForm({
+                        //     ...TrainersSearchForm,
+                        //     TrainerID: e.target.value,
+                        //   })
+                        // }
+                      />
+                    </TooltipTrigger>
+
+                    <TooltipContent>
+                      <p>Enter Plan Name</p>
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
+              </div>
+
+              <div className="space-y-2">
+                <Label>Category</Label>
+
+                <TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Input
+                        // maxLength={100}
+                        // placeholder="Enter Full Name"
+                        // value={TrainersSearchForm.FullName}
+                        // onChange={(e) =>
+                        //   setTrainersSearchForm({
+                        //     ...TrainersSearchForm,
+                        //     FullName: e.target.value,
+                        //   })
+                        // }
+                      />
+                    </TooltipTrigger>
+
+                    <TooltipContent>
+                      <p>Enter Category</p>
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
+              </div>
+
+              <div className="space-y-2">
+                <Label>Description</Label>
+
+                <TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Input
+                        // maxLength={255}
+                        // placeholder="Enter Email"
+                        // value={TrainersSearchForm.Email}
+                        // onChange={(e) =>
+                        //   setTrainersSearchForm({
+                        //     ...TrainersSearchForm,
+                        //     Email: e.target.value,
+                        //   })
+                        // }
+                      />
+                    </TooltipTrigger>
+
+                    <TooltipContent>
+                      <p>Enter Description</p>
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
+              </div>
+
+              <div className="space-y-2">
+                <Label>Goals</Label>
+                <TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Input
+                        // placeholder="Enter Phone"
+                        // value={TrainersSearchForm.Mobile}
+                        // inputMode="numeric"
+                        // maxLength={15}
+                        // onChange={(e) =>
+                        //   setTrainersSearchForm({
+                        //     ...TrainersSearchForm,
+                        //     Mobile: e.target.value.replace(/\D/g, ""),
+                        //   })
+                        // }
+                      />
+                    </TooltipTrigger>
+
+                    <TooltipContent>
+                      <p>Enter Goals</p>
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
+              </div>
+
+              <div className="space-y-2">
+                <Label>Dietary Restrictions</Label>
+                <TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Input
+                        // type="text"
+                        // inputMode="numeric"
+                        // maxLength={3}
+                        // placeholder="Enter Age From"
+                        // value={TrainersSearchForm.age_from}
+                        // onChange={(e) =>
+                        //   setTrainersSearchForm({
+                        //     ...TrainersSearchForm,
+                        //     age_from: e.target.value.replace(/\D/g, ""), // Numbers only
+                        //   })
+                        // }
+                      />
+                    </TooltipTrigger>
+
+                    <TooltipContent>
+                      <p>Enter Dietary Restrictions</p>
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
+              </div>
+
+              <div className="col-span-full flex justify-end gap-4 mt-6">
+                <TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Button
+                        size="icon"
+                        className="rounded-full"
+                        // onClick={handleTrainerSearch}
+                      >
+                        <Search className="h-5 w-5" />
+                      </Button>
+                    </TooltipTrigger>
+
+                    <TooltipContent>
+                      <p>Search</p>
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
+
+                <TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Button
+                        size="icon"
+                        variant="secondary"
+                        className="rounded-full"
+                        // onClick={handleReset}
+                      >
+                        <RotateCcw className="h-5 w-5" />
+                      </Button>
+                    </TooltipTrigger>
+
+                    <TooltipContent>
+                      <p>Reload</p>
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
+              </div>
+
+              
+            </div>
+          </CardContent>
+        </Card>
 
         {/* Diet Plans Grid */}
         <Card>
