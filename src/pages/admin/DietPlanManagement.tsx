@@ -98,11 +98,12 @@ interface WorkoutDietPlan {
   Is_Active: string;          // <-- string, not boolean
   DietPlanDetails: PlanDetails[];
   DietPlanMeals: PlanMeals[];
-  TotalCalories: string;
-  TotalCarbs: string;
-  TotalFats: string;
-  TotalProtein: string;
-  Keyfield: string;
+  Calories: string;
+  Protein: string;
+  Fats: string;
+  Carbs: string;
+  TotalDuration: string;
+  KeyField: string;
   createdDate: string;
 }
 
@@ -134,7 +135,7 @@ useState<WorkoutDietPlan | null>(null);
       Is_Active: true,
       PlanDetails: [{ Essentials: "", Daily_Calories_Target: "", Duration: "" }],
       PlanMeals: [{ Meal_Type: "", Meal_Name: "", Quantity: "", Calories: "", Protein: "", Carbs: "", Fats: "", Time_Slot: "" }],
-      Keyfield: "",
+      KeyField: "",
     });
   
     const [DietPlanSearchForm, setDietPlanSearchForm] = useState({
@@ -155,6 +156,7 @@ useState<WorkoutDietPlan | null>(null);
   const [MealTypeDrop, setMealTypeDrop] = useState<any[]>([]);
   const [EssentialsDrop, setEssentialsDrop] = useState<any[]>([]);
   const [DurationDrop, setDurationDrop] = useState<any[]>([]);
+  const [status, setStatus] = useState<any[]>([]);
 
   // Const - temporary state for trainers list
   const [trainers, setTrainers] = useState<any[]>([]);
@@ -349,6 +351,30 @@ const updateMealRow = (
         }
       };
 
+      const fetchStatus = async () => {
+          try {
+            const response = await fetch(`${BASE_URL}/status`, {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify({
+                company_code: companyCode,
+              }),
+            });
+      
+            const data = await response.json();
+      
+            if (response.ok) {
+              setStatus(data);
+            } else {
+              console.error("Failed to fetch status");
+            }
+          } catch (error) {
+            console.error("Error fetching status:", error);
+          }
+        };
+
     const trainerOptions: MultiSelectOption[] = trainers.map((trainer: any) => ({
         value: trainer.TrainerID,
         label: `${trainer.TrainerID} - ${trainer.FullName}`,
@@ -361,6 +387,7 @@ const updateMealRow = (
             fetchEssentials(),
             fetchDuration(),
             fetchTrainers(),
+            fetchStatus(),
           ]);
         };
     
@@ -380,6 +407,24 @@ const updateMealRow = (
   const trainerIDs = DietPlanForm.TrainerID
   .map((trainer) => trainer.value)
   .join(",");
+
+  const handleAddDietPlan = () => {
+    setEditingDietPlan(null);
+    setDietPlanForm({
+      DietPlanID: "",
+      Diet_Name: "",
+      Category: "",
+      Description: "",
+      Goals: "",
+      Restrictions: "",
+      TrainerID: [] as MultiSelectOption[],
+      Is_Active: true,
+      PlanDetails: [{ Essentials: "", Daily_Calories_Target: "", Duration: "" }],
+      PlanMeals: [{ Meal_Type: "", Meal_Name: "", Quantity: "", Calories: "", Protein: "", Carbs: "", Fats: "", Time_Slot: "" }],
+      KeyField: "",
+    });
+    setIsDietPlanDialogOpen(true);
+  };
 
   const handleSaveDietPlan = async () => {
     if (editingDietPlan) {
@@ -402,7 +447,11 @@ const updateMealRow = (
     !DietPlanForm.Goals.trim() ||
     !DietPlanForm.Restrictions.trim()
   ) {
-    alert("Please fill all mandatory fields.");
+    toast({
+        title: "Required Fields",
+        description: "Please fill all required fields.",
+        variant: "destructive",
+      });
     return;
   }
 
@@ -506,8 +555,6 @@ const updateMealRow = (
     // SUCCESS
     // ====================================================
 
-    alert("Diet Plan saved successfully.");
-
     setIsAddDialogOpen(false);
 
     setSubmittedDietPlans(false);
@@ -541,7 +588,7 @@ const updateMealRow = (
           Time_Slot: "",
         },
       ],
-      Keyfield: "",
+      KeyField: "",
     });
 
     // Reset Detail Rows
@@ -567,13 +614,121 @@ const updateMealRow = (
       },
     ]);
 
+    toast({
+        title: "Diet Plan Added",
+        description: "Diet Plan Added Successfully",
+        variant: "success",
+      });
+
+    handleDietPlanSearch(); // Refresh the list after deletion
+    setSubmittedDietPlans(false);
+    setIsDietPlanDialogOpen(false);
+
     // Optional
     // getDietPlans();
 
   } catch (error: any) {
-    console.error(error);
-    alert(error.message || "Something went wrong while saving.");
+    toast({
+        title: "Error",
+        description: error.message,
+        variant: "destructive",
+      });
   }
+};
+
+const handleEditDietPlan = async (plan:any) => {
+  setEditingDietPlan(plan);
+
+  // Convert Trainer IDs into MultiSelect format
+  const selectedTrainers =
+    plan.TrainerID?.split(",")
+      .map((id: string) => {
+        const trainer = trainerOptions.find(
+          (t: any) => t.value === id.trim()
+        );
+
+        return trainer ?? null;
+      })
+      .filter(Boolean) || [];
+
+      console.log(plan);
+
+  // Header
+  setDietPlanForm({
+  DietPlanID: plan.DietPlanID,
+  Diet_Name: plan.Diet_Name,
+  Category: plan.Category,
+  Description: plan.Description,
+  Goals: plan.Goals,
+  Restrictions: plan.Restrictions,
+  TrainerID: selectedTrainers,
+  Is_Active: plan.Is_Active === "Active",
+
+  PlanDetails: plan.DietPlanDetails ?? [
+    {
+      Essentials: "",
+      Daily_Calories_Target: "",
+      Duration: "",
+    },
+  ],
+
+  PlanMeals: plan.DietPlanMeals ?? [
+    {
+      Meal_Type: "",
+      Meal_Name: "",
+      Quantity: "",
+      Calories: "",
+      Protein: "",
+      Carbs: "",
+      Fats: "",
+      Time_Slot: "",
+    },
+  ],
+
+  KeyField: plan.KeyField,
+});
+
+const detailResponse = await fetch(
+  `${BASE_URL}/Diet_Plans_DetailsSearch`,
+  {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      DietPlanID: plan.DietPlanID,
+      company_code: companyCode,
+      Location_Code: locationCode,
+    }),
+  }
+);
+
+const details = await detailResponse.json();
+
+setDietPlanDetails(details);
+
+  const mealResponse = await fetch(
+  `${BASE_URL}/Diet_Plans_MealsSearch`,
+  {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      DietPlanID: plan.DietPlanID,
+      company_code: companyCode,
+      Location_Code: locationCode,
+    }),
+  }
+);
+
+const meals = await mealResponse.json();
+
+setMealRows(meals);
+
+
+  // Open Dialog
+  setIsDietPlanDialogOpen(true);
 };
 
   const handleUpdateDietPlan = () => {
@@ -600,7 +755,7 @@ const updateDietPlan = async () => {
       Restrictions: DietPlanForm.Restrictions,
       TrainerID: trainerIds,
       Is_Active: DietPlanForm.Is_Active ? "Active" : "Close",
-      KeyField: editingDietPlan.Keyfield,
+      KeyField: DietPlanForm.KeyField,
       Location_Code: locationCode,
       company_code: companyCode,
       modified_by: userCode,
@@ -638,7 +793,7 @@ const updateDietPlan = async () => {
         body: JSON.stringify({
           Sno: 0,
           DietPlanID: DietPlanForm.DietPlanID,
-          KeyField: editingDietPlan.Keyfield,
+          KeyField: editingDietPlan.KeyField,
           Location_Code: locationCode,
           company_code: companyCode,
           modified_by: userCode,
@@ -703,7 +858,7 @@ const updateDietPlan = async () => {
         body: JSON.stringify({
           Sno: 0,
           DietPlanID: DietPlanForm.DietPlanID,
-          KeyField: editingDietPlan.Keyfield,
+          KeyField: DietPlanForm.KeyField,
           Location_Code: locationCode,
           company_code: companyCode,
           modified_by: userCode,
@@ -777,6 +932,7 @@ const updateDietPlan = async () => {
 
     // Reload data
     // getDietPlans();
+    handleDietPlanSearch(); // Refresh the list after deletion
 
     setSubmittedDietPlans(false);
     setIsDietPlanDialogOpen(false);
@@ -815,7 +971,7 @@ const deleteDietPlan = async (dietPlan: any) => {
         body: JSON.stringify({
           Sno: 0,
           DietPlanID: dietPlan.DietPlanID,
-          KeyField: dietPlan.Keyfield,
+          KeyField: dietPlan.KeyField,
           Location_Code: locationCode,
           company_code: companyCode,
           modified_by: userCode,
@@ -845,7 +1001,7 @@ const deleteDietPlan = async (dietPlan: any) => {
         body: JSON.stringify({
           Sno: 0,
           DietPlanID: dietPlan.DietPlanID,
-          KeyField: dietPlan.Keyfield,
+          KeyField: dietPlan.KeyField,
           Location_Code: locationCode,
           company_code: companyCode,
           modified_by: userCode,
@@ -874,7 +1030,7 @@ const deleteDietPlan = async (dietPlan: any) => {
         },
         body: JSON.stringify({
           DietPlanID: dietPlan.DietPlanID,
-          KeyField: dietPlan.Keyfield,
+          KeyField: dietPlan.KeyField,
           Location_Code: locationCode,
           company_code: companyCode,
           modified_by: userCode,
@@ -895,8 +1051,10 @@ const deleteDietPlan = async (dietPlan: any) => {
     // ============================================
 
     setDietPlans((prev) =>
-      prev.filter((item) => item.Keyfield !== dietPlan.Keyfield)
+      prev.filter((item) => item.KeyField !== dietPlan.Keyfield)
     );
+
+    handleDietPlanSearch(); // Refresh the list after deletion
 
     // Refresh Data
     // getDietPlans();
@@ -948,7 +1106,7 @@ const handleDietPlanSearch = async () => {
 
         toast({
           title: "Data Not Found",
-          description: data?.message || "No matching programs found.",
+          description: data?.message || "No matching Diet Plans found.",
           variant: "destructive",
         });
       } else {
@@ -994,18 +1152,69 @@ const handleDietPlanSearch = async () => {
             </div>
             <div className="flex items-center space-x-4">
               {/* <Badge variant="secondary">Admin</Badge> */}
-              <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
+              <Dialog
+                  open={isDietPlanDialogOpen}
+                  onOpenChange={setIsDietPlanDialogOpen}
+              >
                 <DialogTrigger asChild>
-                  <Button className="shrink-0 px-2 sm:px-4">
+                  <Button
+                    className="shrink-0 px-2 sm:px-4"
+                    onClick={() => {
+                        setEditingDietPlan(null);
+                    
+                        setDietPlanForm({
+                            DietPlanID: "",
+                            Diet_Name: "",
+                            Category: "",
+                            Description: "",
+                            Goals: "",
+                            Restrictions: "",
+                            TrainerID: [] as MultiSelectOption[],
+                            Is_Active: true,
+                            PlanDetails: [{ Essentials: "", Daily_Calories_Target: "", Duration: "" }],
+                            PlanMeals: [{ Meal_Type: "", Meal_Name: "", Quantity: "", Calories: "", Protein: "", Carbs: "", Fats: "", Time_Slot: "" }],
+                            KeyField: "",
+                        });
+                      
+                        setDietPlanDetails([
+                            {
+                                Essentials: "",
+                                Daily_Calories_Target: "",
+                                Duration: "",
+                            },
+                        ]);
+                      
+                        setMealRows([
+                            {
+                                Meal_Type: "",
+                                Meal_Name: "",
+                                Quantity: "",
+                                Calories: "",
+                                Protein: "",
+                                Carbs: "",
+                                Fats: "",
+                                Time_Slot: "",
+                            },
+                        ]);
+                      
+                        setIsDietPlanDialogOpen(true);
+                    }}
+                >
                     <Plus className="h-4 w-4 sm:mr-2" />
                     <span className="hidden sm:inline">Create Diet Plan</span>
                   </Button>
                 </DialogTrigger>
                 <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
                   <DialogHeader>
-                    <DialogTitle>Create New Diet Plan</DialogTitle>
+                    <DialogTitle>
+                        {editingDietPlan
+                            ? "Update Diet Plan"
+                            : "Create New Diet Plan"}
+                    </DialogTitle>
                     <DialogDescription>
-                      Design a comprehensive nutrition plan for members.
+                      {editingDietPlan
+                          ? "Update diet plan information."
+                          : "Design a comprehensive nutrition plan for members."}
                     </DialogDescription>
                   </DialogHeader>
 
@@ -1354,7 +1563,7 @@ const handleDietPlanSearch = async () => {
                             </div>
                               
                             <div className="space-y-2">
-                              <Label>Duration</Label>
+                              <Label>Duration (Week)</Label>
                               <Select
                                   value={PlanDetails.Duration}
                                   onValueChange={(value)=>
@@ -1608,10 +1817,10 @@ const handleDietPlanSearch = async () => {
                       Cancel
                     </Button>
                     <Button onClick={handleSaveDietPlan}>
-                      Create Plan
+                        {editingDietPlan ? "Update Plan" : "Create Plan"}
                     </Button>
                   </div>
-                </DialogContent>
+                </DialogContent>  
               </Dialog>
             </div>
           </div>
@@ -1686,15 +1895,15 @@ const handleDietPlanSearch = async () => {
                   <Tooltip>
                     <TooltipTrigger asChild>
                       <Input
-                        // maxLength={100}
-                        // placeholder="Enter Full Name"
-                        // value={TrainersSearchForm.TrainerID}
-                        // onChange={(e) =>
-                        //   setTrainersSearchForm({
-                        //     ...TrainersSearchForm,
-                        //     TrainerID: e.target.value,
-                        //   })
-                        // }
+                        placeholder="Enter Diet Plan ID"
+                        value={DietPlanSearchForm.DietPlanID}
+                        maxLength={250}
+                        onChange={(e) =>
+                          setDietPlanSearchForm({
+                            ...DietPlanSearchForm,
+                            DietPlanID: e.target.value,
+                          })
+                        }
                       />
                     </TooltipTrigger>
 
@@ -1712,15 +1921,15 @@ const handleDietPlanSearch = async () => {
                   <Tooltip>
                     <TooltipTrigger asChild>
                       <Input
-                        // maxLength={100}
-                        // placeholder="Enter Full Name"
-                        // value={TrainersSearchForm.TrainerID}
-                        // onChange={(e) =>
-                        //   setTrainersSearchForm({
-                        //     ...TrainersSearchForm,
-                        //     TrainerID: e.target.value,
-                        //   })
-                        // }
+                        placeholder="Enter Plan Name"
+                        value={DietPlanSearchForm.Diet_Name}
+                        maxLength={250}
+                        onChange={(e) =>
+                          setDietPlanSearchForm({
+                            ...DietPlanSearchForm,
+                            Diet_Name: e.target.value,
+                          })
+                        }
                       />
                     </TooltipTrigger>
 
@@ -1738,15 +1947,15 @@ const handleDietPlanSearch = async () => {
                   <Tooltip>
                     <TooltipTrigger asChild>
                       <Input
-                        // maxLength={100}
-                        // placeholder="Enter Full Name"
-                        // value={TrainersSearchForm.FullName}
-                        // onChange={(e) =>
-                        //   setTrainersSearchForm({
-                        //     ...TrainersSearchForm,
-                        //     FullName: e.target.value,
-                        //   })
-                        // }
+                        placeholder="Enter Category"
+                        value={DietPlanSearchForm.Category}
+                        maxLength={250}
+                        onChange={(e) =>
+                          setDietPlanSearchForm({
+                            ...DietPlanSearchForm,
+                            Category: e.target.value,
+                          })
+                        }
                       />
                     </TooltipTrigger>
 
@@ -1764,15 +1973,15 @@ const handleDietPlanSearch = async () => {
                   <Tooltip>
                     <TooltipTrigger asChild>
                       <Input
-                        // maxLength={255}
-                        // placeholder="Enter Email"
-                        // value={TrainersSearchForm.Email}
-                        // onChange={(e) =>
-                        //   setTrainersSearchForm({
-                        //     ...TrainersSearchForm,
-                        //     Email: e.target.value,
-                        //   })
-                        // }
+                        placeholder="Enter Description"
+                        value={DietPlanSearchForm.Description}
+                        maxLength={250}
+                        onChange={(e) =>
+                          setDietPlanSearchForm({
+                            ...DietPlanSearchForm,
+                            Description: e.target.value,
+                          })
+                        }
                       />
                     </TooltipTrigger>
 
@@ -1789,16 +1998,15 @@ const handleDietPlanSearch = async () => {
                   <Tooltip>
                     <TooltipTrigger asChild>
                       <Input
-                        // placeholder="Enter Phone"
-                        // value={TrainersSearchForm.Mobile}
-                        // inputMode="numeric"
-                        // maxLength={15}
-                        // onChange={(e) =>
-                        //   setTrainersSearchForm({
-                        //     ...TrainersSearchForm,
-                        //     Mobile: e.target.value.replace(/\D/g, ""),
-                        //   })
-                        // }
+                        placeholder="Enter Goals"
+                        value={DietPlanSearchForm.Goals}
+                        maxLength={250}
+                        onChange={(e) =>
+                          setDietPlanSearchForm({
+                            ...DietPlanSearchForm,
+                            Goals: e.target.value,
+                          })
+                        }
                       />
                     </TooltipTrigger>
 
@@ -1815,17 +2023,15 @@ const handleDietPlanSearch = async () => {
                   <Tooltip>
                     <TooltipTrigger asChild>
                       <Input
-                        // type="text"
-                        // inputMode="numeric"
-                        // maxLength={3}
-                        // placeholder="Enter Age From"
-                        // value={TrainersSearchForm.age_from}
-                        // onChange={(e) =>
-                        //   setTrainersSearchForm({
-                        //     ...TrainersSearchForm,
-                        //     age_from: e.target.value.replace(/\D/g, ""), // Numbers only
-                        //   })
-                        // }
+                        placeholder="Enter Dietary Restrictions"
+                        value={DietPlanSearchForm.Restrictions}
+                        maxLength={250}
+                        onChange={(e) =>
+                          setDietPlanSearchForm({
+                            ...DietPlanSearchForm,
+                            Restrictions: e.target.value,
+                          })
+                        }
                       />
                     </TooltipTrigger>
 
@@ -1837,27 +2043,40 @@ const handleDietPlanSearch = async () => {
               </div>
 
               <div className="space-y-2">
-                <Label>Trainer ID</Label>
+                <Label htmlFor="faculty">Trainer ID</Label>
                 <TooltipProvider>
                   <Tooltip>
                     <TooltipTrigger asChild>
-                      <Input
-                        // type="text"
-                        // inputMode="numeric"
-                        // maxLength={3}
-                        // placeholder="Enter Age From"
-                        // value={TrainersSearchForm.age_from}
-                        // onChange={(e) =>
-                        //   setTrainersSearchForm({
-                        //     ...TrainersSearchForm,
-                        //     age_from: e.target.value.replace(/\D/g, ""), // Numbers only
-                        //   })
-                        // }
-                      />
+                      <div>
+                        <Select
+                          value={DietPlanSearchForm.TrainerID}
+                          onValueChange={(value) =>
+                            setDietPlanSearchForm({
+                              ...DietPlanSearchForm,
+                              TrainerID: value,
+                            })
+                          }
+                        >
+                          <SelectTrigger>
+                            <SelectValue placeholder="Select Assigned Faculty" />
+                          </SelectTrigger>
+        
+                          <SelectContent>
+                            {trainers.map((trainers: any) => (
+                              <SelectItem
+                                key={trainers.TrainerID}
+                                value={trainers.TrainerID}
+                              >
+                                {trainers.TrainerID} - {trainers.FullName}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      </div>
                     </TooltipTrigger>
-
+        
                     <TooltipContent>
-                      <p>Enter Trainer ID</p>
+                      <p>Select Trainer ID</p>
                     </TooltipContent>
                   </Tooltip>
                 </TooltipProvider>
@@ -1865,26 +2084,40 @@ const handleDietPlanSearch = async () => {
 
               <div className="space-y-2">
                 <Label>Status</Label>
+        
                 <TooltipProvider>
                   <Tooltip>
                     <TooltipTrigger asChild>
-                      <Input
-                        // type="text"
-                        // inputMode="numeric"
-                        // maxLength={3}
-                        // placeholder="Enter Age From"
-                        // value={TrainersSearchForm.age_from}
-                        // onChange={(e) =>
-                        //   setTrainersSearchForm({
-                        //     ...TrainersSearchForm,
-                        //     age_from: e.target.value.replace(/\D/g, ""), // Numbers only
-                        //   })
-                        // }
-                      />
+                      <div>
+                        <Select
+                          value={DietPlanSearchForm.Is_Active}
+                          onValueChange={(value) =>
+                            setDietPlanSearchForm({
+                              ...DietPlanSearchForm,
+                              Is_Active: value,
+                            })
+                          }
+                        >
+                          <SelectTrigger>
+                            <SelectValue placeholder="Select Status" />
+                          </SelectTrigger>
+        
+                          <SelectContent>
+                            {status.map((item: any) => (
+                              <SelectItem
+                                key={item.attributedetails_name}
+                                value={item.attributedetails_name}
+                              >
+                                {item.attributedetails_name}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      </div>
                     </TooltipTrigger>
-
+        
                     <TooltipContent>
-                      <p>Enter Status</p>
+                      <p>Select Status</p>
                     </TooltipContent>
                   </Tooltip>
                 </TooltipProvider>
@@ -1963,10 +2196,14 @@ const handleDietPlanSearch = async () => {
                           <Button variant="ghost" size="icon">
                             <Copy className="h-4 w-4" />
                           </Button>
-                          <Button variant="ghost" size="icon">
-                            <Edit className="h-4 w-4" />
+                          <Button
+                              variant="ghost"
+                              size="icon"
+                              onClick={() => handleEditDietPlan(plan)}
+                          >
+                              <Edit className="h-4 w-4" />
                           </Button>
-                          <Button variant="ghost" size="icon" className="text-red-500 hover:text-red-700">
+                          <Button variant="ghost" size="icon" onClick={() => handleDeleteDietPlan(plan)} className="text-red-500 hover:text-red-700">
                             <Trash2 className="h-4 w-4" />
                           </Button>
                         </div>
@@ -1977,27 +2214,27 @@ const handleDietPlanSearch = async () => {
                       <div className="grid grid-cols-4 gap-3 mb-4 p-3 bg-gray-50 rounded-lg">
                         <div className="text-center">
                           <p className="text-xs text-gray-500">Calories</p>
-                          <p className="font-bold text-orange-600">{plan.TotalCalories}</p>
+                          <p className="font-bold text-orange-600">{plan.Calories}</p>
                         </div>
                         <div className="text-center">
                           <p className="text-xs text-gray-500">Protein</p>
-                          <p className="font-bold text-red-600">{plan.TotalProtein}g</p>
+                          <p className="font-bold text-red-600">{plan.Protein}g</p>
                         </div>
                         <div className="text-center">
                           <p className="text-xs text-gray-500">Carbs</p>
-                          <p className="font-bold text-blue-600">{plan.TotalCarbs}g</p>
+                          <p className="font-bold text-blue-600">{plan.Carbs}g</p>
                         </div>
                         <div className="text-center">
                           <p className="text-xs text-gray-500">Fats</p>
-                          <p className="font-bold text-yellow-600">{plan.TotalFats}g</p>
+                          <p className="font-bold text-yellow-600">{plan.Fats}g</p>
                         </div>
                       </div>
 
                       <div className="flex items-center gap-4 text-sm text-gray-600 mb-4">
-                        {/* <div className="flex items-center">
+                        <div className="flex items-center">
                           <Clock className="h-4 w-4 mr-1" />
-                          {plan.duration}
-                        </div> */}
+                          {plan.TotalDuration} Weeks
+                        </div>
                         {/* <div className="flex items-center">
                           <Users className="h-4 w-4 mr-1" />
                           {plan.TrainerID} members
@@ -2016,11 +2253,16 @@ const handleDietPlanSearch = async () => {
                       </div>
 
                       <div>
-                        <p className="text-sm font-medium text-gray-700 mb-2">Dietary Tags:</p>
+                        <p className="text-sm font-medium text-gray-700 mb-2">
+                          Dietary Tags:
+                        </p>
+
                         <div className="flex flex-wrap gap-2">
-                          {/* {plan.Restrictions.map((restriction, index) => (
-                            <Badge key={index} variant="secondary" className="text-xs">{restriction}</Badge>
-                          ))} */}
+                          {plan.Restrictions?.split(",").map((restriction: string, index: number) => (
+                            <Badge key={index} variant="secondary" className="text-xs">
+                              {restriction.trim()}
+                            </Badge>
+                          ))}
                         </div>
                       </div>
 
