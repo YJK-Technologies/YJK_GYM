@@ -4946,12 +4946,12 @@ module.exports = {
   getDuration,
   dietPlanSearchData,
   couponInsertData,
-couponUpdateData,
-couponDeleteData,
-couponSearchData,
-getDisType,
-getAppPackages,
-couponDashboard
+  couponUpdateData,
+  couponDeleteData,
+  couponSearchData,
+  getDisType,
+  getAppPackages,
+  couponDashboard
 
 
 };

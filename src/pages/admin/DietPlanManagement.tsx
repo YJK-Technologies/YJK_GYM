@@ -89,15 +89,19 @@ interface PlanMeals {
 
 interface WorkoutDietPlan {
   DietPlanID: string;
-  name: string;
+  Diet_Name: string;
   Category: string;
   Description: string;
   Goals: string;
   Restrictions: string;
   TrainerID: string;
-  Is_Active: boolean;
+  Is_Active: string;          // <-- string, not boolean
   DietPlanDetails: PlanDetails[];
   DietPlanMeals: PlanMeals[];
+  TotalCalories: string;
+  TotalCarbs: string;
+  TotalFats: string;
+  TotalProtein: string;
   Keyfield: string;
   createdDate: string;
 }
@@ -105,7 +109,8 @@ interface WorkoutDietPlan {
 const DietPlanManagement = () => {
   const navigate = useNavigate();
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
-  const [selectedPlan, setSelectedPlan] = useState<DietPlan | null>(null);
+  const [selectedPlan, setSelectedPlan] =
+useState<WorkoutDietPlan | null>(null);
 
   // Const - Needed
   const { companyCode, locationCode, userCode } = useCompany();
@@ -937,13 +942,7 @@ const handleDietPlanSearch = async () => {
       const data = await response.json();
 
       if (response.ok) {
-        const formattedPrograms = data.map((program: any) => ({
-          ...program,
-          Exercises: program.Exercises ? JSON.parse(program.Exercises) : [],
-          Faculty: program.Faculty ? program.Faculty.split(",") : [],
-        }));
-
-        setDietPlans(formattedPrograms);
+        setDietPlans(data);
       } else if (response.status === 404) {
         setDietPlans([]);
 
@@ -1936,7 +1935,7 @@ const handleDietPlanSearch = async () => {
         </Card>
 
         {/* Diet Plans Grid */}
-        {/* <Card>
+        <Card>
           <CardHeader>
             <CardTitle>Diet Plans</CardTitle>
             <CardDescription>Create and manage nutrition programs for members</CardDescription>
@@ -1944,20 +1943,21 @@ const handleDietPlanSearch = async () => {
           <CardContent>
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
               {dietPlans.map((plan) => {
-                const macros = getMacroTotal(plan);
                 return (
-                  <Card key={plan.id} className="hover:shadow-md transition-shadow">
+                  <Card key={plan.DietPlanID} className="hover:shadow-md transition-shadow">
                     <CardContent className="p-6">
                       <div className="flex items-start justify-between mb-4">
                         <div>
                           <div className="flex items-center gap-2 mb-1">
-                            <h3 className="font-semibold text-lg">{plan.name}</h3>
-                            <Badge variant={plan.isActive ? 'default' : 'secondary'}>
-                              {plan.isActive ? 'Active' : 'Inactive'}
+                            <h3 className="font-semibold text-lg">{plan.Diet_Name}</h3>
+                            <Badge
+                                variant={plan.Is_Active === "Active" ? "default" : "secondary"}
+                            >
+                                {plan.Is_Active}
                             </Badge>
                           </div>
-                          <Badge variant="outline" className="mb-2">{plan.category}</Badge>
-                          <p className="text-sm text-gray-500">By {plan.trainer}</p>
+                          <Badge variant="outline" className="mb-2">{plan.Category}</Badge>
+                          <p className="text-sm text-gray-500">By {plan.TrainerID}</p>
                         </div>
                         <div className="flex gap-2">
                           <Button variant="ghost" size="icon">
@@ -1972,43 +1972,45 @@ const handleDietPlanSearch = async () => {
                         </div>
                       </div>
 
-                      <p className="text-gray-600 text-sm mb-4 line-clamp-2">{plan.description}</p>
+                      <p className="text-gray-600 text-sm mb-4 line-clamp-2">{plan.Description}</p>
 
                       <div className="grid grid-cols-4 gap-3 mb-4 p-3 bg-gray-50 rounded-lg">
                         <div className="text-center">
                           <p className="text-xs text-gray-500">Calories</p>
-                          <p className="font-bold text-orange-600">{plan.dailyCalories}</p>
+                          <p className="font-bold text-orange-600">{plan.TotalCalories}</p>
                         </div>
                         <div className="text-center">
                           <p className="text-xs text-gray-500">Protein</p>
-                          <p className="font-bold text-red-600">{macros.protein}g</p>
+                          <p className="font-bold text-red-600">{plan.TotalProtein}g</p>
                         </div>
                         <div className="text-center">
                           <p className="text-xs text-gray-500">Carbs</p>
-                          <p className="font-bold text-blue-600">{macros.carbs}g</p>
+                          <p className="font-bold text-blue-600">{plan.TotalCarbs}g</p>
                         </div>
                         <div className="text-center">
                           <p className="text-xs text-gray-500">Fats</p>
-                          <p className="font-bold text-yellow-600">{macros.fats}g</p>
+                          <p className="font-bold text-yellow-600">{plan.TotalFats}g</p>
                         </div>
                       </div>
 
                       <div className="flex items-center gap-4 text-sm text-gray-600 mb-4">
-                        <div className="flex items-center">
+                        {/* <div className="flex items-center">
                           <Clock className="h-4 w-4 mr-1" />
                           {plan.duration}
-                        </div>
-                        <div className="flex items-center">
+                        </div> */}
+                        {/* <div className="flex items-center">
                           <Users className="h-4 w-4 mr-1" />
-                          {plan.assignedMembers} members
-                        </div>
+                          {plan.TrainerID} members
+                        </div> */}
                       </div>
 
                       <div className="mb-3">
                         <p className="text-sm font-medium text-gray-700 mb-2">Goals:</p>
                         <div className="flex flex-wrap gap-2">
-                          {plan.goals.map((goal, index) => (
-                            <Badge key={index} variant="outline" className="text-xs">{goal}</Badge>
+                          {plan.Goals?.split(",").map((goal, index) => (
+                              <Badge key={index} variant="outline">
+                                  {goal.trim()}
+                              </Badge>
                           ))}
                         </div>
                       </div>
@@ -2016,9 +2018,9 @@ const handleDietPlanSearch = async () => {
                       <div>
                         <p className="text-sm font-medium text-gray-700 mb-2">Dietary Tags:</p>
                         <div className="flex flex-wrap gap-2">
-                          {plan.restrictions.map((restriction, index) => (
+                          {/* {plan.Restrictions.map((restriction, index) => (
                             <Badge key={index} variant="secondary" className="text-xs">{restriction}</Badge>
-                          ))}
+                          ))} */}
                         </div>
                       </div>
 
@@ -2035,10 +2037,10 @@ const handleDietPlanSearch = async () => {
               })}
             </div>
           </CardContent>
-        </Card> */}
+        </Card>
 
         {/* Plan Detail Dialog */}
-        <Dialog open={!!selectedPlan} onOpenChange={() => setSelectedPlan(null)}>
+        {/* <Dialog open={!!selectedPlan} onOpenChange={() => setSelectedPlan(null)}>
           <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto">
             {selectedPlan && (
               <>
@@ -2074,7 +2076,7 @@ const handleDietPlanSearch = async () => {
               </>
             )}
           </DialogContent>
-        </Dialog>
+        </Dialog> */}
       </main>
     </div>
   );
