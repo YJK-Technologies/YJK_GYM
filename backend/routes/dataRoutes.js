@@ -175,6 +175,17 @@ router.post("/getMealType", dataController.getMealType)
 router.post("/getEssentials", dataController.getEssentials)
 router.post("/getDuration", dataController.getDuration)
 router.post("/dietPlanSearchData", dataController.dietPlanSearchData)
+router.post("/getPrograms", dataController.getPrograms)
+router.post("/getPackageTypes", dataController.getPackageTypes)
+router.post("/PackageInsertData", dataController.PackageInsertData)
+router.post("/PackageUpdateData", dataController.PackageUpdateData)
+router.post("/PackageDeleteData", dataController.PackageDeleteData)
+router.post("/PackageSelectData", dataController.PackageSelectData)
+router.post("/PackageViewAllData", dataController.PackageViewAllData)
+router.post("/PackageSearchData", dataController.PackageSearchData)
+router.post("/PackageDetailsInsertData", dataController.PackageDetailsInsertData)
+router.post("/PackageDetailsUpdateData", dataController.PackageDetailsUpdateData)
+router.post("/PackageDetailsDeleteData", dataController.PackageDetailsDeleteData)
 
 
 

@@ -18,7 +18,7 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/comp
 import { showConfirmToast } from '../../components/ui/show-confirm-toast';
 import { useCompany } from "../CompanyContext";
 import { ArrowLeft, Plus, Pencil, Trash2, Tag, Percent, DollarSign, Calendar, CheckCircle, XCircle, Clock, Copy, RefreshCw, RotateCcw, Search } from 'lucide-react';
-
+import ReactMultiSelect, {MultiSelectOption,} from "@/components/ui/react-multi-select";
 // Types
 interface Coupon {
   id: string;
@@ -32,7 +32,8 @@ interface Coupon {
   validUntil: string;
   maxUses: number | null;
   currentUses: number;
-  applicablePackages: string;
+  // applicablePackages: string;
+  applicablePackages: { label: string; value: string }[];
   status: string;
   KeyField: string;
 }
@@ -72,28 +73,32 @@ const CouponManagement = () => {
   };
 
   const fetchAppPackages = async () => {
-    try {
-      const response = await fetch(`${BASE_URL}/getAppPackages`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          company_code: companyCode,
-        }),
-      });
-
-      const data = await response.json();
-
-      if (response.ok) {
-        setAppPackages(data);
-      } else {
-        console.error("Failed to fetch status");
-      }
-    } catch (error) {
-      console.error("Error fetching status:", error);
+  try {
+    const response = await fetch(`${BASE_URL}/getAppPackages`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        Company_Code: companyCode,
+        Location_Code: locationCode,
+      }),
+    });
+    const data = await response.json();
+    if (response.ok) {
+      setAppPackages(data);
+    } else {
+      console.error("Failed to fetch packages");
     }
-  };
+  } catch (error) {
+    console.error("Error fetching packages:", error);
+  }
+};
+
+const packageOptions = AppPackages.map((item: any) => ({
+  label: `${item.package_ID} - ${item.package_Name}`,
+  value: item.package_ID,
+}));
 
 
   useEffect(() => {
@@ -101,7 +106,6 @@ const CouponManagement = () => {
       await Promise.all([
         fetchDiscountType(),
         fetchAppPackages(),
-
       ]);
     };
 
@@ -128,7 +132,8 @@ const CouponManagement = () => {
     validFrom: '',
     validUntil: '',
     maxUses: null as number | null,
-    applicablePackages: "",
+    // applicablePackages: "",
+    applicablePackages: [] as { label: string; value: string }[],
     isActive: true,
     KeyField: ""
   });
@@ -194,7 +199,7 @@ const CouponManagement = () => {
         validFrom: '',
         validUntil: '',
         maxUses: null,
-        applicablePackages: "",
+        applicablePackages: [],
         isActive: true,
         KeyField: ''
       });
@@ -336,7 +341,20 @@ const CouponManagement = () => {
       validFrom: formatDateForInput(coupon.Valid_From),
       validUntil: formatDateForInput(coupon.Valid_Until),
       maxUses: coupon.Max_Uses != null ? Number(coupon.Max_Uses) : null,
-      applicablePackages: coupon.Applicable_Packages ?? "",
+      // applicablePackages: coupon.Applicable_Packages ?? "",
+      applicablePackages: coupon.Applicable_Packages
+      ? coupon.Applicable_Packages.split(",").map((id: string) => {
+          const pkg = AppPackages.find(
+            (item: any) => item.package_ID === id
+          );
+          return {
+            value: id,
+            label: pkg
+              ? `${pkg.package_ID} - ${pkg.package_Name}`
+              : id,
+          };
+        })
+      : [],
       isActive:
         coupon.Status === "Active" ||
         coupon.Status === true ||
@@ -376,7 +394,9 @@ const CouponManagement = () => {
           Valid_Until: formData.validUntil,
           Max_Uses: formData.maxUses || 0,
           Current_Uses: 0,
-          Applicable_Packages: formData.applicablePackages,
+          // Applicable_Packages: formData.applicablePackages,
+          Applicable_Packages: formData.applicablePackages
+          .map((item: any) => item.value) .join(","),
           Status: formData.isActive ? "Active" : "Inactive",
           Company_Code: companyCode,
           Location_Code: locationCode,
@@ -450,7 +470,9 @@ const CouponManagement = () => {
           Valid_From: formData.validFrom,
           Valid_Until: formData.validUntil,
           Max_Uses: formData.maxUses || 0,
-          Applicable_Packages: formData.applicablePackages,
+          // Applicable_Packages: formData.applicablePackages,
+          Applicable_Packages: formData.applicablePackages
+          .map((item) => item.value) .join(","),
           Status: formData.isActive ? "Active" : "Inactive",
           Company_Code: companyCode,
           Location_Code: locationCode,
@@ -1221,8 +1243,7 @@ const CouponManagement = () => {
                 </TooltipProvider>
               </div>
 
-
-              <div className="space-y-2">
+              {/* <div className="space-y-2">
                 <Label htmlFor="packages">Applicable Packages</Label>
                 <TooltipProvider>
                   <Tooltip>
@@ -1244,10 +1265,10 @@ const CouponManagement = () => {
                           <SelectContent>
                             {AppPackages.map((item: any) => (
                               <SelectItem
-                                key={item.attributedetails_code}
-                                value={item.attributedetails_code}
+                                key={item.package_ID}
+                                value={item.package_ID}
                               >
-                                {item.attributedetails_name}
+                                {item.package_ID}
                               </SelectItem>
                             ))}
                           </SelectContent>
@@ -1260,7 +1281,36 @@ const CouponManagement = () => {
                     </TooltipContent>
                   </Tooltip>
                 </TooltipProvider>
-              </div>
+              </div> */}
+
+              <div className="space-y-2">
+  <Label htmlFor="packages">Applicable Packages</Label>
+
+  <TooltipProvider>
+    <Tooltip>
+      <TooltipTrigger asChild>
+        <div>
+          <ReactMultiSelect
+  options={packageOptions}
+  value={formData.applicablePackages}
+  placeholder="Select Applicable Packages"
+  onChange={(selected) =>
+    setFormData({
+      ...formData,
+      applicablePackages: selected,
+    })
+  }
+/>
+        </div>
+      </TooltipTrigger>
+
+      <TooltipContent>
+        <p>Select Applicable Packages</p>
+      </TooltipContent>
+    </Tooltip>
+  </TooltipProvider>
+</div>
+
             </div>
 
             <div className="flex items-center space-x-2">
