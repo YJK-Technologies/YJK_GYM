@@ -4119,7 +4119,7 @@ const Diet_Plans_hdrInsert = async (req, res) => {
       .input("created_date", sql.DateTime, created_date)
       .input("modified_by", sql.NVarChar, modified_by)
       .input("modified_date", sql.DateTime, modified_date)
-      .query(`EXEC sp_Diet_Plans_hdr_Test @mode, @DietPlanID, @Diet_Name, @Category, @Description, @Goals, @Restrictions, @TrainerID, @Is_Active, @KeyField, @Location_Code, @company_code, @created_by, @created_date, @modified_by, @modified_date`);
+      .query(`EXEC sp_Diet_Plans_hdr @mode, @DietPlanID, @Diet_Name, @Category, @Description, @Goals, @Restrictions, @TrainerID, @Is_Active, @KeyField, @Location_Code, @company_code, @created_by, @created_date, @modified_by, @modified_date`);
     const generatedDietPlanID = result.recordset[0].DietPlanID;
     res.status(200).json({ success: true, message: "Diet_Plans_hdr insertd successfully", DietPlanID: generatedDietPlanID });
   } catch (err) {
@@ -4151,7 +4151,7 @@ const Diet_Plans_hdrUpdate = async (req, res) => {
       .input("Location_Code", sql.NVarChar, Location_Code)
       .input("company_code", sql.NVarChar, company_code)
       .input("modified_by", sql.NVarChar, modified_by)
-      .query(`EXEC sp_Diet_Plans_hdr_Test @mode, @DietPlanID, @Diet_Name, @Category, @Description, @Goals, @Restrictions, @TrainerID, @Is_Active, @KeyField, @Location_Code, @company_code, '', '', @modified_by, ''`);
+      .query(`EXEC sp_Diet_Plans_hdr @mode, @DietPlanID, @Diet_Name, @Category, @Description, @Goals, @Restrictions, @TrainerID, @Is_Active, @KeyField, @Location_Code, @company_code, '', '', @modified_by, ''`);
 
     res.status(200).json({ success: true, message: "Diet_Plans_hdr updated successfully" });
   } catch (err) {
@@ -4173,7 +4173,7 @@ const Diet_Plans_hdrDelete = async (req, res) => {
       .input("Location_Code", sql.NVarChar, Location_Code)
       .input("company_code", sql.NVarChar, company_code)
       .input("modified_by", sql.NVarChar, modified_by)
-      .query(`EXEC sp_Diet_Plans_hdr_Test @mode, @DietPlanID, '', '', '', '', '', '', '', @KeyField, @Location_Code, @company_code, '', '', @modified_by, ''`);
+      .query(`EXEC sp_Diet_Plans_hdr @mode, @DietPlanID, '', '', '', '', '', '', '', @KeyField, @Location_Code, @company_code, '', '', @modified_by, ''`);
 
     res.status(200).json({ success: true, message: "Diet_Plans_hdr deleted successfully" });
   } catch (err) {
@@ -4183,7 +4183,6 @@ const Diet_Plans_hdrDelete = async (req, res) => {
 };
 
 // ---------- HEADER LOOP CRUD ----------
-// Auto-generated Diet_Plans_hdrLoopInsert API for sp_Diet_Plans_hdr
 const Diet_Plans_hdrLoopInsert = async (req, res) => {
   const Diet_Plans_hdrData = req.body.Diet_Plans_hdrData;
   if (!Diet_Plans_hdrData || !Diet_Plans_hdrData.length) {
@@ -4210,7 +4209,7 @@ const Diet_Plans_hdrLoopInsert = async (req, res) => {
         .input("created_date", sql.DateTime, item.created_date)
         .input("modified_by", sql.NVarChar, item.modified_by)
         .input("modified_date", sql.DateTime, item.modified_date)
-        .query(`EXEC sp_Diet_Plans_hdr_Test @mode, @DietPlanID, @Diet_Name, @Category, @Description, @Goals, @Restrictions, @TrainerID, @Is_Active, @KeyField, @Location_Code, @company_code, @created_by, @created_date, @modified_by, @modified_date`);
+        .query(`EXEC sp_Diet_Plans_hdr @mode, @DietPlanID, @Diet_Name, @Category, @Description, @Goals, @Restrictions, @TrainerID, @Is_Active, @KeyField, @Location_Code, @company_code, @created_by, @created_date, @modified_by, @modified_date`);
     }
     res.status(200).json("Diet_Plans_hdr data inserted successfully");
   } catch (err) {
@@ -4219,7 +4218,6 @@ const Diet_Plans_hdrLoopInsert = async (req, res) => {
   }
 };
 
-// Auto-generated Diet_Plans_hdrLoopUpdate API for sp_Diet_Plans_hdr
 const Diet_Plans_hdrLoopUpdate = async (req, res) => {
   const Diet_Plans_hdrData = req.body.Diet_Plans_hdrData;
   if (!Diet_Plans_hdrData || !Diet_Plans_hdrData.length) {
@@ -4246,7 +4244,7 @@ const Diet_Plans_hdrLoopUpdate = async (req, res) => {
         .input("created_date", sql.DateTime, item.created_date)
         .input("modified_by", sql.NVarChar, item.modified_by)
         .input("modified_date", sql.DateTime, item.modified_date)
-        .query(`EXEC sp_Diet_Plans_hdr_Test @mode, @DietPlanID, @Diet_Name, @Category, @Description, @Goals, @Restrictions, @TrainerID, @Is_Active, @KeyField, @Location_Code, @company_code, @created_by, @created_date, @modified_by, @modified_date`);
+        .query(`EXEC sp_Diet_Plans_hdr @mode, @DietPlanID, @Diet_Name, @Category, @Description, @Goals, @Restrictions, @TrainerID, @Is_Active, @KeyField, @Location_Code, @company_code, @created_by, @created_date, @modified_by, @modified_date`);
     }
     res.status(200).json("Diet_Plans_hdr data updated successfully");
   } catch (err) {
@@ -4255,7 +4253,6 @@ const Diet_Plans_hdrLoopUpdate = async (req, res) => {
   }
 };
 
-// Auto-generated Diet_Plans_hdrLoopDelete API for sp_Diet_Plans_hdr
 const Diet_Plans_hdrLoopDelete = async (req, res) => {
   const Diet_Plans_hdrData = req.body.Diet_Plans_hdrData;
   if (!Diet_Plans_hdrData || !Diet_Plans_hdrData.length) {
@@ -4282,7 +4279,7 @@ const Diet_Plans_hdrLoopDelete = async (req, res) => {
         .input("created_date", sql.DateTime, item.created_date)
         .input("modified_by", sql.NVarChar, item.modified_by)
         .input("modified_date", sql.DateTime, item.modified_date)
-        .query(`EXEC sp_Diet_Plans_hdr_Test @mode, @DietPlanID, @Diet_Name, @Category, @Description, @Goals, @Restrictions, @TrainerID, @Is_Active, @KeyField, @Location_Code, @company_code, @created_by, @created_date, @modified_by, @modified_date`);
+        .query(`EXEC sp_Diet_Plans_hdr @mode, @DietPlanID, @Diet_Name, @Category, @Description, @Goals, @Restrictions, @TrainerID, @Is_Active, @KeyField, @Location_Code, @company_code, @created_by, @created_date, @modified_by, @modified_date`);
     }
     res.status(200).json("Diet_Plans_hdr data deleted successfully");
   } catch (err) {
@@ -4292,12 +4289,7 @@ const Diet_Plans_hdrLoopDelete = async (req, res) => {
 };
 
 const Diet_Plans_MealsInsert = async (req, res) => {
-  const { DietPlanID, Meal_Type, Meal_Name, Quantity, Calories, Protein, Carbs, Fats, Time_Slot, KeyField, Location_Code,
-  created_date,
-  modified_date,
-  created_by,
-  modified_by,
-  company_code
+  const { DietPlanID, Meal_Type, Meal_Name, Quantity, Calories, Protein, Carbs, Fats, Time_Slot, KeyField, Location_Code, created_date, modified_date, created_by, modified_by, company_code, UpdateMode
 } = req.body;
 
   try {
@@ -4320,7 +4312,8 @@ const Diet_Plans_MealsInsert = async (req, res) => {
       .input("created_date", sql.DateTime, created_date)
       .input("modified_by", sql.NVarChar, modified_by)
       .input("modified_date", sql.DateTime, modified_date)
-      .query(`EXEC sp_Diet_Plans_Meals @mode, 0, @DietPlanID, @Meal_Type, @Meal_Name, @Quantity, @Calories, @Protein, @Carbs, @Fats, @Time_Slot, @KeyField, @Location_Code, @company_code, @created_by, @created_date, @modified_by, @modified_date`);
+      .input("UpdateMode", sql.NVarChar, UpdateMode)
+      .query(`EXEC sp_Diet_Plans_Meals @mode, 0, @DietPlanID, @Meal_Type, @Meal_Name, @Quantity, @Calories, @Protein, @Carbs, @Fats, @Time_Slot, @KeyField, @Location_Code, @company_code, @created_by, @created_date, @modified_by, @modified_date, @UpdateMode`);
 
     res.status(200).json({ success: true, message: "Diet_Plans_Meals insertd successfully" });
   } catch (err) {
@@ -4360,7 +4353,7 @@ const Diet_Plans_MealsUpdate = async (req, res) => {
       .input("created_date", sql.DateTime, created_date)
       .input("modified_by", sql.NVarChar, modified_by)
       .input("modified_date", sql.DateTime, modified_date)
-      .query(`EXEC sp_Diet_Plans_Meals @mode, @Sno, @DietPlanID, @Meal_Type, @Meal_Name, @Quantity, @Calories, @Protein, @Carbs, @Fats, @Time_Slot, @KeyField, @Location_Code, @company_code, @created_by, @created_date, @modified_by, @modified_date`);
+      .query(`EXEC sp_Diet_Plans_Meals @mode, @Sno, @DietPlanID, @Meal_Type, @Meal_Name, @Quantity, @Calories, @Protein, @Carbs, @Fats, @Time_Slot, @KeyField, @Location_Code, @company_code, @created_by, @created_date, @modified_by, @modified_date, ''`);
 
     res.status(200).json({ success: true, message: "Diet_Plans_Meals updated successfully" });
   } catch (err) {
@@ -4370,11 +4363,7 @@ const Diet_Plans_MealsUpdate = async (req, res) => {
 };
 
 const Diet_Plans_MealsDelete = async (req, res) => {
-  const {
-  Sno, DietPlanID, KeyField, Location_Code,
-  modified_by,
-  company_code
-} = req.body;
+  const { Sno, DietPlanID, KeyField, Location_Code, modified_by, company_code, UpdateMode } = req.body;
 
   try {
     const pool = await sql.connect(dbConfig);
@@ -4386,7 +4375,8 @@ const Diet_Plans_MealsDelete = async (req, res) => {
       .input("Location_Code", sql.NVarChar, Location_Code)
       .input("company_code", sql.NVarChar, company_code)
       .input("modified_by", sql.NVarChar, modified_by)
-      .query(`EXEC sp_Diet_Plans_Meals @mode, @Sno, @DietPlanID, '', '', '', '', '', '', '', '', @KeyField, @Location_Code, @company_code, '', '', @modified_by, ''`);
+      .input("UpdateMode", sql.NVarChar, UpdateMode)
+      .query(`EXEC sp_Diet_Plans_Meals @mode, @Sno, @DietPlanID, '', '', '', '', '', '', '', '', @KeyField, @Location_Code, @company_code, '', '', @modified_by, '', @UpdateMode`);
 
     res.status(200).json({ success: true, message: "Diet_Plans_Meals deleted successfully" });
   } catch (err) {
@@ -4396,7 +4386,6 @@ const Diet_Plans_MealsDelete = async (req, res) => {
 };
 
 // ---------- HEADER LOOP CRUD ----------
-// Auto-generated Diet_Plans_MealsLoopInsert API for sp_Diet_Plans_Meals
 const Diet_Plans_MealsLoopInsert = async (req, res) => {
   const Diet_Plans_MealsData = req.body.Diet_Plans_MealsData;
   if (!Diet_Plans_MealsData || !Diet_Plans_MealsData.length) {
@@ -4425,7 +4414,7 @@ const Diet_Plans_MealsLoopInsert = async (req, res) => {
         .input("created_date", sql.DateTime, item.created_date)
         .input("modified_by", sql.NVarChar, item.modified_by)
         .input("modified_date", sql.DateTime, item.modified_date)
-        .query(`EXEC sp_Diet_Plans_Meals @mode, @Sno, @DietPlanID, @Meal_Type, @Meal_Name, @Quantity, @Calories, @Protein, @Carbs, @Fats, @Time_Slot, @KeyField, @Location_Code, @company_code, @created_by, @created_date, @modified_by, @modified_date`);
+        .query(`EXEC sp_Diet_Plans_Meals @mode, @Sno, @DietPlanID, @Meal_Type, @Meal_Name, @Quantity, @Calories, @Protein, @Carbs, @Fats, @Time_Slot, @KeyField, @Location_Code, @company_code, @created_by, @created_date, @modified_by, @modified_date, ''`);
     }
     res.status(200).json("Diet_Plans_Meals data inserted successfully");
   } catch (err) {
@@ -4434,7 +4423,6 @@ const Diet_Plans_MealsLoopInsert = async (req, res) => {
   }
 };
 
-// Auto-generated Diet_Plans_MealsLoopUpdate API for sp_Diet_Plans_Meals
 const Diet_Plans_MealsLoopUpdate = async (req, res) => {
   const Diet_Plans_MealsData = req.body.Diet_Plans_MealsData;
   if (!Diet_Plans_MealsData || !Diet_Plans_MealsData.length) {
@@ -4463,7 +4451,7 @@ const Diet_Plans_MealsLoopUpdate = async (req, res) => {
         .input("created_date", sql.DateTime, item.created_date)
         .input("modified_by", sql.NVarChar, item.modified_by)
         .input("modified_date", sql.DateTime, item.modified_date)
-        .query(`EXEC sp_Diet_Plans_Meals @mode, @Sno, @DietPlanID, @Meal_Type, @Meal_Name, @Quantity, @Calories, @Protein, @Carbs, @Fats, @Time_Slot, @KeyField, @Location_Code, @company_code, @created_by, @created_date, @modified_by, @modified_date`);
+        .query(`EXEC sp_Diet_Plans_Meals @mode, @Sno, @DietPlanID, @Meal_Type, @Meal_Name, @Quantity, @Calories, @Protein, @Carbs, @Fats, @Time_Slot, @KeyField, @Location_Code, @company_code, @created_by, @created_date, @modified_by, @modified_date, ''`);
     }
     res.status(200).json("Diet_Plans_Meals data updated successfully");
   } catch (err) {
@@ -4472,7 +4460,6 @@ const Diet_Plans_MealsLoopUpdate = async (req, res) => {
   }
 };
 
-// Auto-generated Diet_Plans_MealsLoopDelete API for sp_Diet_Plans_Meals
 const Diet_Plans_MealsLoopDelete = async (req, res) => {
   const Diet_Plans_MealsData = req.body.Diet_Plans_MealsData;
   if (!Diet_Plans_MealsData || !Diet_Plans_MealsData.length) {
@@ -4501,7 +4488,7 @@ const Diet_Plans_MealsLoopDelete = async (req, res) => {
         .input("created_date", sql.DateTime, item.created_date)
         .input("modified_by", sql.NVarChar, item.modified_by)
         .input("modified_date", sql.DateTime, item.modified_date)
-        .query(`EXEC sp_Diet_Plans_Meals @mode, @Sno, @DietPlanID, @Meal_Type, @Meal_Name, @Quantity, @Calories, @Protein, @Carbs, @Fats, @Time_Slot, @KeyField, @Location_Code, @company_code, @created_by, @created_date, @modified_by, @modified_date`);
+        .query(`EXEC sp_Diet_Plans_Meals @mode, @Sno, @DietPlanID, @Meal_Type, @Meal_Name, @Quantity, @Calories, @Protein, @Carbs, @Fats, @Time_Slot, @KeyField, @Location_Code, @company_code, @created_by, @created_date, @modified_by, @modified_date, ''`);
     }
     res.status(200).json("Diet_Plans_Meals data deleted successfully");
   } catch (err) {
@@ -4511,9 +4498,7 @@ const Diet_Plans_MealsLoopDelete = async (req, res) => {
 };
 
 const Diet_Plans_DetailsInsert = async (req, res) => {
-  const { DietPlanID, Essentials, Daily_Calories_Target, Duration, KeyField, Location_Code,
-  created_by,
-  company_code
+  const { DietPlanID, Essentials, Daily_Calories_Target, Duration, KeyField, Location_Code, created_by, company_code, UpdateMode
 } = req.body;
 
   try {
@@ -4528,7 +4513,8 @@ const Diet_Plans_DetailsInsert = async (req, res) => {
       .input("Location_Code", sql.NVarChar, Location_Code)
       .input("company_code", sql.NVarChar, company_code)
       .input("created_by", sql.NVarChar, created_by)
-      .query(`EXEC sp_Diet_Plans_Details @mode, 0, @DietPlanID, @Essentials, @Daily_Calories_Target, @Duration, @KeyField, @Location_Code, @company_code, @created_by, '', '', ''`);
+      .input("UpdateMode", sql.NVarChar, UpdateMode)
+      .query(`EXEC sp_Diet_Plans_Details @mode, 0, @DietPlanID, @Essentials, @Daily_Calories_Target, @Duration, @KeyField, @Location_Code, @company_code, @created_by, '', '', '', @UpdateMode`);
 
     res.status(200).json({ success: true, message: "Diet_Plans_Details insertd successfully" });
   } catch (err) {
@@ -4563,7 +4549,7 @@ const Diet_Plans_DetailsUpdate = async (req, res) => {
       .input("created_date", sql.DateTime, created_date)
       .input("modified_by", sql.NVarChar, modified_by)
       .input("modified_date", sql.DateTime, modified_date)
-      .query(`EXEC sp_Diet_Plans_Details @mode, @Sno, @DietPlanID, @Essentials, @Daily_Calories_Target, @Duration, @KeyField, @Location_Code, @company_code, @created_by, @created_date, @modified_by, @modified_date`);
+      .query(`EXEC sp_Diet_Plans_Details @mode, @Sno, @DietPlanID, @Essentials, @Daily_Calories_Target, @Duration, @KeyField, @Location_Code, @company_code, @created_by, @created_date, @modified_by, @modified_date, ''`);
 
     res.status(200).json({ success: true, message: "Diet_Plans_Details updated successfully" });
   } catch (err) {
@@ -4573,7 +4559,7 @@ const Diet_Plans_DetailsUpdate = async (req, res) => {
 };
 
 const Diet_Plans_DetailsDelete = async (req, res) => {
-  const { Sno, DietPlanID, KeyField, Location_Code, modified_by, company_code } = req.body;
+  const { Sno, DietPlanID, KeyField, Location_Code, modified_by, company_code, UpdateMode } = req.body;
 
   try {
     const pool = await sql.connect(dbConfig);
@@ -4585,7 +4571,8 @@ const Diet_Plans_DetailsDelete = async (req, res) => {
       .input("Location_Code", sql.NVarChar, Location_Code)
       .input("company_code", sql.NVarChar, company_code)
       .input("modified_by", sql.NVarChar, modified_by)
-      .query(`EXEC sp_Diet_Plans_Details @mode, @Sno, @DietPlanID, '', '', '', @KeyField, @Location_Code, @company_code, '', '', @modified_by, ''`);
+      .input("UpdateMode", sql.NVarChar, UpdateMode)
+      .query(`EXEC sp_Diet_Plans_Details @mode, @Sno, @DietPlanID, '', '', '', @KeyField, @Location_Code, @company_code, '', '', @modified_by, '', @UpdateMode`);
 
     res.status(200).json({ success: true, message: "Diet_Plans_Details deleted successfully" });
   } catch (err) {
@@ -4595,7 +4582,6 @@ const Diet_Plans_DetailsDelete = async (req, res) => {
 };
 
 // ---------- HEADER LOOP CRUD ----------
-// Auto-generated Diet_Plans_DetailsLoopInsert API for sp_Diet_Plans_Details
 const Diet_Plans_DetailsLoopInsert = async (req, res) => {
   const Diet_Plans_DetailsData = req.body.Diet_Plans_DetailsData;
   if (!Diet_Plans_DetailsData || !Diet_Plans_DetailsData.length) {
@@ -4619,7 +4605,7 @@ const Diet_Plans_DetailsLoopInsert = async (req, res) => {
         .input("created_date", sql.DateTime, item.created_date)
         .input("modified_by", sql.NVarChar, item.modified_by)
         .input("modified_date", sql.DateTime, item.modified_date)
-        .query(`EXEC sp_Diet_Plans_Details @mode, @Sno, @DietPlanID, @Essentials, @Daily_Calories_Target, @Duration, @KeyField, @Location_Code, @company_code, @created_by, @created_date, @modified_by, @modified_date`);
+        .query(`EXEC sp_Diet_Plans_Details @mode, @Sno, @DietPlanID, @Essentials, @Daily_Calories_Target, @Duration, @KeyField, @Location_Code, @company_code, @created_by, @created_date, @modified_by, @modified_date, ''`);
     }
     res.status(200).json("Diet_Plans_Details data inserted successfully");
   } catch (err) {
@@ -4651,7 +4637,7 @@ const Diet_Plans_DetailsLoopUpdate = async (req, res) => {
         .input("created_date", sql.DateTime, item.created_date)
         .input("modified_by", sql.NVarChar, item.modified_by)
         .input("modified_date", sql.DateTime, item.modified_date)
-        .query(`EXEC sp_Diet_Plans_Details @mode, @Sno, @DietPlanID, @Essentials, @Daily_Calories_Target, @Duration, @KeyField, @Location_Code, @company_code, @created_by, @created_date, @modified_by, @modified_date`);
+        .query(`EXEC sp_Diet_Plans_Details @mode, @Sno, @DietPlanID, @Essentials, @Daily_Calories_Target, @Duration, @KeyField, @Location_Code, @company_code, @created_by, @created_date, @modified_by, @modified_date, ''`);
     }
     res.status(200).json("Diet_Plans_Details data updated successfully");
   } catch (err) {
@@ -4660,7 +4646,6 @@ const Diet_Plans_DetailsLoopUpdate = async (req, res) => {
   }
 };
 
-// Auto-generated Diet_Plans_DetailsLoopDelete API for sp_Diet_Plans_Details
 const Diet_Plans_DetailsLoopDelete = async (req, res) => {
   const Diet_Plans_DetailsData = req.body.Diet_Plans_DetailsData;
   if (!Diet_Plans_DetailsData || !Diet_Plans_DetailsData.length) {
@@ -4684,7 +4669,7 @@ const Diet_Plans_DetailsLoopDelete = async (req, res) => {
         .input("created_date", sql.DateTime, item.created_date)
         .input("modified_by", sql.NVarChar, item.modified_by)
         .input("modified_date", sql.DateTime, item.modified_date)
-        .query(`EXEC sp_Diet_Plans_Details @mode, @Sno, @DietPlanID, @Essentials, @Daily_Calories_Target, @Duration, @KeyField, @Location_Code, @company_code, @created_by, @created_date, @modified_by, @modified_date`);
+        .query(`EXEC sp_Diet_Plans_Details @mode, @Sno, @DietPlanID, @Essentials, @Daily_Calories_Target, @Duration, @KeyField, @Location_Code, @company_code, @created_by, @created_date, @modified_by, @modified_date, ''`);
     }
     res.status(200).json("Diet_Plans_Details data deleted successfully");
   } catch (err) {
@@ -4768,7 +4753,7 @@ const dietPlanSearchData = async (req, res) => {
       .input("Is_Active", sql.NVarChar, Is_Active)
       .input("Company_code", sql.NVarChar, Company_code)
       .input("Location_code", sql.NVarChar, Location_code)
-      .query(`EXEC sp_Diet_Plans_hdr_Test @mode, @DietPlanID, @Diet_Name, @Category, @Description, @Goals, @Restrictions, @TrainerID, @Is_Active, '', @Location_Code, @company_code, '', '', '', ''`);
+      .query(`EXEC sp_Diet_Plans_hdr @mode, @DietPlanID, @Diet_Name, @Category, @Description, @Goals, @Restrictions, @TrainerID, @Is_Active, '', @Location_Code, @company_code, '', '', '', ''`);
 
     if (result.recordset.length > 0) {
       res.status(200).json(result.recordset);
@@ -5147,6 +5132,100 @@ const getAppPackages = async (req, res) => {
 };
 //Code Ended by SakthiGanesh on 17-07-26
 
+//Code added by Dinesh Gokul on 16-07-2026
+const Diet_Plans_DetailsSearch = async (req, res) => {
+  const {
+    DietPlanID,
+    Location_Code,
+    company_code,
+  } = req.body;
+
+  try {
+    const pool = await sql.connect(dbConfig);
+
+    const result = await pool.request()
+      .input("mode", sql.NVarChar, "A")
+      .input("DietPlanID", sql.NVarChar, DietPlanID)
+      .input("Location_Code", sql.NVarChar, Location_Code)
+      .input("company_code", sql.NVarChar, company_code)
+      .query(`  EXEC sp_Diet_Plans_Details  @mode,  '',  @DietPlanID,  '',  '',  '',  '',  @Location_Code,  @company_code,  '',  '',  '',  '', ''`);
+
+    res.status(200).json(result.recordset);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({
+      success: false,
+      message: err.message,
+    });
+  }
+};
+
+const Diet_Plans_MealsSearch = async (req, res) => {
+
+  const {
+    DietPlanID,
+    Location_Code,
+    company_code,
+  } = req.body;
+
+  try {
+
+    const pool = await sql.connect(dbConfig);
+
+    const result = await pool.request()
+
+      .input("mode", sql.NVarChar, "A")
+      .input("DietPlanID", sql.NVarChar, DietPlanID)
+      .input("Location_Code", sql.NVarChar, Location_Code)
+      .input("company_code", sql.NVarChar, company_code)
+
+      .query(`
+        EXEC sp_Diet_Plans_Meals @mode, '', @DietPlanID, '', '', '', '', '', '', '', '', '', 
+        @Location_Code, @company_code, '', '', '', '', '' `);
+
+    res.status(200).json(result.recordset);
+
+  }
+  catch(err){
+
+    console.error(err);
+
+    res.status(500).json({
+      success:false,
+      message:err.message
+    });
+  }
+};
+//Code ended by Dinesh Gokul on 16-07-2026
+
+//Code added by Dinesh Gokul on 17-07-2026
+const getDietPlanCardData = async (req, res) => {
+  const { Company_code, Location_code } = req.body;
+
+  try {
+    const pool = await connection.connectToDatabase();
+
+    const result = await pool
+      .request()
+      .input("mode", sql.NVarChar, "CD")
+      .input("company_code", sql.NVarChar, Company_code)
+      .input("Location_Code", sql.NVarChar, Location_code)
+      .query(`EXEC sp_Diet_Plans_hdr @mode, '', '', '', '', '', '', '', '', '', @Location_Code, @company_code, '', '', '', ''`);
+
+    res.status(200).json({
+      success: true,
+      data: result.recordset[0],
+    });
+  } catch (err) {
+    res.status(500).json({
+      success: false,
+      message: err.message,
+    });
+  }
+};
+//Code ended by Dinesh Gokul on 17-07-2026
+
+
 module.exports = {
   getCompanyno,
   getsearchdata,
@@ -5308,6 +5387,9 @@ module.exports = {
   PackageDetailsInsertData,
   PackageDetailsUpdateData,
   PackageDetailsDeleteData,
-  getAppPackages
+  getAppPackages,
+  Diet_Plans_DetailsSearch,
+  Diet_Plans_MealsSearch,
+  getDietPlanCardData
 
 };

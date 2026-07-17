@@ -186,6 +186,9 @@ router.post("/PackageSearchData", dataController.PackageSearchData)
 router.post("/PackageDetailsInsertData", dataController.PackageDetailsInsertData)
 router.post("/PackageDetailsUpdateData", dataController.PackageDetailsUpdateData)
 router.post("/PackageDetailsDeleteData", dataController.PackageDetailsDeleteData)
+router.post("/Diet_Plans_DetailsSearch", dataController.Diet_Plans_DetailsSearch)
+router.post("/Diet_Plans_MealsSearch", dataController.Diet_Plans_MealsSearch)
+router.post("/getDietPlanCardData", dataController.getDietPlanCardData)
 
 
 
