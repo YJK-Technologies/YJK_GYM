@@ -1903,13 +1903,6 @@ const handleDietPlanSearch = async () => {
                               <TooltipProvider>
                                 <Tooltip>
                                   <TooltipTrigger asChild>
-                              {/* <Input
-                                value={meal.Calories}
-                                placeholder="Calories"
-                                onChange={(e) =>
-                                  updateMealRow(index, "Calories", e.target.value)
-                                }
-                              /> */}
                               <Input
                                 type="text"
                                 inputMode="numeric"
@@ -1944,13 +1937,6 @@ const handleDietPlanSearch = async () => {
                               <TooltipProvider>
                                 <Tooltip>
                                   <TooltipTrigger asChild>
-                              {/* <Input
-                                value={meal.Protein}
-                                placeholder="Protein"
-                                onChange={(e) =>
-                                  updateMealRow(index, "Protein", e.target.value)
-                                }
-                              /> */}
                               <Input
                                 type="text"
                                 inputMode="numeric"
@@ -1985,13 +1971,6 @@ const handleDietPlanSearch = async () => {
                               <TooltipProvider>
                                 <Tooltip>
                                   <TooltipTrigger asChild>
-                              {/* <Input
-                                value={meal.Carbs}
-                                placeholder="Carbs"
-                                onChange={(e) =>
-                                  updateMealRow(index, "Carbs", e.target.value)
-                                }
-                              /> */}
                               <Input
                                 type="text"
                                 inputMode="numeric"
@@ -2026,13 +2005,6 @@ const handleDietPlanSearch = async () => {
                               <TooltipProvider>
                                 <Tooltip>
                                   <TooltipTrigger asChild>
-                              {/* <Input
-                                value={meal.Fats}
-                                placeholder="Fats"
-                                onChange={(e) =>
-                                  updateMealRow(index, "Fats", e.target.value)
-                                }
-                              /> */}
                               <Input
                                 type="text"
                                 inputMode="numeric"
@@ -2588,323 +2560,110 @@ const handleDietPlanSearch = async () => {
           </CardContent>
         </Card>
 
-        {/* Plan Detail Dialog */}
-        {/* <Dialog open={!!selectedPlan} onOpenChange={() => setSelectedPlan(null)}>
-          <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto">
+        <Dialog open={!!selectedPlan} onOpenChange={() => setSelectedPlan(null)}>
+          <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
             {selectedPlan && (
               <>
                 <DialogHeader>
-                  <DialogTitle className="flex items-center gap-2">
-                    {selectedPlan.name}
-                    <Badge>{selectedPlan.category}</Badge>
-                  </DialogTitle>
-                  <DialogDescription>{selectedPlan.description}</DialogDescription>
+                  <DialogTitle>{selectedPlan.Diet_Name}</DialogTitle>
+                  <DialogDescription>
+                    Diet Plan ID: {selectedPlan.DietPlanID}
+                  </DialogDescription>
                 </DialogHeader>
-                <div className="py-4">
-                  <h4 className="font-semibold mb-4">Daily Meal Plan</h4>
-                  <div className="space-y-4">
-                    {Object.entries(selectedPlan.meals).map(([mealType, meal]) => (
-                      <Card key={mealType}>
-                        <CardContent className="p-4">
-                          <div className="flex justify-between items-start">
-                            <div>
-                              <h5 className="font-medium capitalize text-blue-600">{mealType}</h5>
-                              <p className="font-semibold">{meal.name}</p>
-                              <p className="text-sm text-gray-600">{meal.description}</p>
-                            </div>
-                            <div className="text-right text-sm">
-                              <p className="font-bold text-orange-600">{meal.calories} cal</p>
-                              <p className="text-gray-500">P: {meal.protein}g | C: {meal.carbs}g | F: {meal.fats}g</p>
-                            </div>
-                          </div>
-                        </CardContent>
-                      </Card>
-                    ))}
+            
+                <div className="space-y-6 py-4">
+                  {/* Header Summary Section */}
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <h2 className="text-2xl font-bold">{selectedPlan.Diet_Name}</h2>
+                      <Badge
+                        variant={String(selectedPlan.Is_Active) === "Active" ? "default" : "secondary"}
+                        className="mt-2"
+                      >
+                        {String(selectedPlan.Is_Active)}
+                      </Badge>
+                      <Badge variant="outline" className="ml-2">
+                        {selectedPlan.Category}
+                      </Badge>
+                    </div>
+                  </div>
+            
+                  {/* Core Information Stack (One by One) */}
+                  <div className="flex flex-col gap-6">
+                    {/* Overview Card */}
+                    <Card>
+                      <CardHeader className="pb-2">
+                        <CardTitle className="text-sm font-medium text-gray-500">Overview & Goals</CardTitle>
+                      </CardHeader>
+                      <CardContent className="space-y-2">
+                        <p><span className="font-medium">Description:</span> {selectedPlan.Description}</p>
+                        <p><span className="font-medium">Goals:</span> {selectedPlan.Goals}</p>
+                        <p><span className="font-medium">Restrictions:</span> {selectedPlan.Restrictions}</p>
+                        <p><span className="font-medium">Trainer ID:</span> {selectedPlan.TrainerID}</p>
+                      </CardContent>
+                    </Card>
+            
+                    {/* Diet Plan Details Stack */}
+                    <div>
+                      <h3 className="text-sm font-semibold text-gray-500 mb-3 px-1 uppercase tracking-wider">
+                        Diet Plan Details
+                      </h3>
+                      <div className="flex flex-col gap-4">
+                        {selectedPlan.DietPlanDetails?.map((detail, index) => (
+                          <Card key={index}>
+                            <CardHeader className="pb-2">
+                              <CardTitle className="text-xs font-medium text-gray-400">Phase {index + 1}</CardTitle>
+                            </CardHeader>
+                            <CardContent className="space-y-2">
+                              <p><span className="font-medium">Essentials:</span> {detail.Essentials}</p>
+                              <p><span className="font-medium">Daily Calories Target:</span> {detail.Daily_Calories_Target}</p>
+                              <p><span className="font-medium">Duration (Weeks):</span> {detail.Duration}</p>
+                            </CardContent>
+                          </Card>
+                        ))}
+                      </div>
+                    </div>
+                      
+                    {/* Meals Stack */}
+                    <div>
+                      <h3 className="text-sm font-semibold text-gray-500 mb-3 px-1 uppercase tracking-wider">
+                        Meals Schedule
+                      </h3>
+                      <div className="flex flex-col gap-4">
+                        {selectedPlan.DietPlanMeals?.map((meal, index) => (
+                          <Card key={index}>
+                            <CardHeader className="pb-2 flex flex-row items-center justify-between space-y-0">
+                              <CardTitle className="text-sm font-bold text-gray-800">
+                                {meal.Meal_Name}
+                              </CardTitle>
+                              <Badge variant="secondary">{meal.Meal_Type}</Badge>
+                            </CardHeader>
+                            <CardContent className="space-y-2">
+                              <p><span className="font-medium">Time Slot:</span> {meal.Time_Slot}</p>
+                              <p><span className="font-medium">Quantity:</span> {meal.Quantity}</p>
+                              <div className="pt-2 grid grid-cols-2 sm:grid-cols-4 gap-2 border-t border-gray-100 text-sm">
+                                <div><span className="text-gray-500">Calories:</span> <span className="font-medium">{meal.Calories}</span></div>
+                                <div><span className="text-gray-500">Protein:</span> <span className="font-medium">{meal.Protein}</span></div>
+                                <div><span className="text-gray-500">Carbs:</span> <span className="font-medium">{meal.Carbs}</span></div>
+                                <div><span className="text-gray-500">Fats:</span> <span className="font-medium">{meal.Fats}</span></div>
+                              </div>
+                            </CardContent>
+                          </Card>
+                        ))}
+                      </div>
+                    </div>
                   </div>
                 </div>
+                      
+                <DialogFooter>
+                  <Button variant="outline" onClick={() => setSelectedPlan(null)}>
+                    Close
+                  </Button>
+                </DialogFooter>
               </>
             )}
           </DialogContent>
-        </Dialog> */}
-
-        {/* <Dialog
-          open={!!selectedPlan}
-          onOpenChange={() => setSelectedPlan(null)}
-        >
-          <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
-                
-            {selectedPlan && (
-              <>
-                <DialogHeader>
-                  <DialogTitle>
-                    {selectedPlan.Diet_Name}
-                  </DialogTitle>
-            
-                  <DialogDescription>
-                    {selectedPlan.Description}
-                  </DialogDescription>
-                </DialogHeader> */}
-            
-                {/* Header */}
-            
-                {/* Details */}
-            
-                {/* <h3 className="font-semibold mb-2">
-                  Diet Plan Details
-                </h3>
-            
-                {selectedPlan.DietPlanDetails.map((detail, index) => (
-                
-                  <Card
-                    key={index}
-                    className="mb-3"
-                  >
-                    <CardContent className="grid grid-cols-3 gap-4 pt-4">
-                
-                      <div>
-                
-                        <strong>Essentials</strong>
-                
-                        <br />
-                
-                        {detail.Essentials}
-                
-                      </div>
-                
-                      <div>
-                
-                        <strong>Calories Target</strong>
-                
-                        <br />
-                
-                        {detail.Daily_Calories_Target}
-                
-                      </div>
-                
-                      <div>
-                
-                        <strong>Duration</strong>
-                
-                        <br />
-                
-                        {detail.Duration}
-                
-                      </div>
-                
-                    </CardContent>
-                  </Card>
-        
-                ))} */}
-        
-                {/* Meals */}
-              
-                {/* <h3 className="font-semibold mt-6 mb-2">
-                  Meals
-                </h3>
-              
-                {selectedPlan.DietPlanMeals.map((meal, index) => (
-                
-                  <Card
-                    key={index}
-                    className="mb-3"
-                  >
-                    <CardContent className="grid grid-cols-4 gap-4 pt-4">
-                
-                      <div>
-                
-                        <strong>Meal Type</strong>
-                
-                        <br />
-                
-                        {meal.Meal_Type}
-                
-                      </div>
-                
-                      <div>
-                
-                        <strong>Meal Name</strong>
-                
-                        <br />
-                
-                        {meal.Meal_Name}
-                
-                      </div>
-                
-                      <div>
-                
-                        <strong>Quantity</strong>
-                
-                        <br />
-                
-                        {meal.Quantity}
-                
-                      </div>
-                
-                      <div>
-                
-                        <strong>Calories</strong>
-                
-                        <br />
-                
-                        {meal.Calories}
-                
-                      </div>
-                
-                      <div>
-                
-                        <strong>Protein</strong>
-                
-                        <br />
-                
-                        {meal.Protein}
-                
-                      </div>
-                
-                      <div>
-                
-                        <strong>Carbs</strong>
-                
-                        <br />
-                
-                        {meal.Carbs}
-                
-                      </div>
-                
-                      <div>
-                
-                        <strong>Fats</strong>
-                
-                        <br />
-                
-                        {meal.Fats}
-                
-                      </div>
-                
-                      <div>
-                
-                        <strong>Time Slot</strong>
-                
-                        <br />
-                
-                        {meal.Time_Slot}
-                
-                      </div>
-                
-                    </CardContent>
-                  </Card>
-        
-                ))}
-        
-              </>
-            )}
-        
-          </DialogContent>
-        </Dialog> */}
-
-        <Dialog open={!!selectedPlan} onOpenChange={() => setSelectedPlan(null)}>
-  <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
-    {selectedPlan && (
-      <>
-        <DialogHeader>
-          <DialogTitle>{selectedPlan.Diet_Name}</DialogTitle>
-          <DialogDescription>
-            Diet Plan ID: {selectedPlan.DietPlanID}
-          </DialogDescription>
-        </DialogHeader>
-
-        <div className="space-y-6 py-4">
-          {/* Header Summary Section */}
-          <div className="flex items-center justify-between">
-            <div>
-              <h2 className="text-2xl font-bold">{selectedPlan.Diet_Name}</h2>
-              <Badge
-                variant={String(selectedPlan.Is_Active) === "Active" ? "default" : "secondary"}
-                className="mt-2"
-              >
-                {String(selectedPlan.Is_Active)}
-              </Badge>
-              <Badge variant="outline" className="ml-2">
-                {selectedPlan.Category}
-              </Badge>
-            </div>
-          </div>
-
-          {/* Core Information Stack (One by One) */}
-          <div className="flex flex-col gap-6">
-            {/* Overview Card */}
-            <Card>
-              <CardHeader className="pb-2">
-                <CardTitle className="text-sm font-medium text-gray-500">Overview & Goals</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-2">
-                <p><span className="font-medium">Description:</span> {selectedPlan.Description}</p>
-                <p><span className="font-medium">Goals:</span> {selectedPlan.Goals}</p>
-                <p><span className="font-medium">Restrictions:</span> {selectedPlan.Restrictions}</p>
-                <p><span className="font-medium">Trainer ID:</span> {selectedPlan.TrainerID}</p>
-              </CardContent>
-            </Card>
-
-            {/* Diet Plan Details Stack */}
-            <div>
-              <h3 className="text-sm font-semibold text-gray-500 mb-3 px-1 uppercase tracking-wider">
-                Diet Plan Details
-              </h3>
-              <div className="flex flex-col gap-4">
-                {selectedPlan.DietPlanDetails?.map((detail, index) => (
-                  <Card key={index}>
-                    <CardHeader className="pb-2">
-                      <CardTitle className="text-xs font-medium text-gray-400">Phase {index + 1}</CardTitle>
-                    </CardHeader>
-                    <CardContent className="space-y-2">
-                      <p><span className="font-medium">Essentials:</span> {detail.Essentials}</p>
-                      <p><span className="font-medium">Daily Calories Target:</span> {detail.Daily_Calories_Target}</p>
-                      <p><span className="font-medium">Duration (Weeks):</span> {detail.Duration}</p>
-                    </CardContent>
-                  </Card>
-                ))}
-              </div>
-            </div>
-
-            {/* Meals Stack */}
-            <div>
-              <h3 className="text-sm font-semibold text-gray-500 mb-3 px-1 uppercase tracking-wider">
-                Meals Schedule
-              </h3>
-              <div className="flex flex-col gap-4">
-                {selectedPlan.DietPlanMeals?.map((meal, index) => (
-                  <Card key={index}>
-                    <CardHeader className="pb-2 flex flex-row items-center justify-between space-y-0">
-                      <CardTitle className="text-sm font-bold text-gray-800">
-                        {meal.Meal_Name}
-                      </CardTitle>
-                      <Badge variant="secondary">{meal.Meal_Type}</Badge>
-                    </CardHeader>
-                    <CardContent className="space-y-2">
-                      <p><span className="font-medium">Time Slot:</span> {meal.Time_Slot}</p>
-                      <p><span className="font-medium">Quantity:</span> {meal.Quantity}</p>
-                      <div className="pt-2 grid grid-cols-2 sm:grid-cols-4 gap-2 border-t border-gray-100 text-sm">
-                        <div><span className="text-gray-500">Calories:</span> <span className="font-medium">{meal.Calories}</span></div>
-                        <div><span className="text-gray-500">Protein:</span> <span className="font-medium">{meal.Protein}</span></div>
-                        <div><span className="text-gray-500">Carbs:</span> <span className="font-medium">{meal.Carbs}</span></div>
-                        <div><span className="text-gray-500">Fats:</span> <span className="font-medium">{meal.Fats}</span></div>
-                      </div>
-                    </CardContent>
-                  </Card>
-                ))}
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <DialogFooter>
-          <Button variant="outline" onClick={() => setSelectedPlan(null)}>
-            Close
-          </Button>
-        </DialogFooter>
-      </>
-    )}
-  </DialogContent>
-</Dialog>
+        </Dialog>
       </main>
     </div>
   );
