@@ -87,7 +87,7 @@ const MemberWorkouts = () => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center py-4">
             <div className="flex items-center space-x-4">
-              <Button variant="ghost" onClick={() => navigate('/Member')}>
+              <Button variant="ghost" onClick={() => navigate('/MemberDashboard')}>
                 <ArrowLeft className="h-4 w-4 mr-2" />
                 Back to Dashboard
               </Button>
