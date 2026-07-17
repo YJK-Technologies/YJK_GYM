@@ -4060,24 +4060,6 @@ const getGender = async (req, res) => {
   }
 };
 
-const getAppPackages = async (req, res) => {
-  const { company_code } = req.body;
-  try {
-    const pool = await connection.connectToDatabase();
-    const result = await pool
-      .request()
-      .input("company_code", sql.NVarChar, company_code)
-      .query(
-        "EXEC sp_attribute_Info 'F',@company_code,'Packages','','', '' ,'','', NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL",
-      );
-
-    res.json(result.recordset);
-  } catch (err) {
-    console.error("Error", err);
-    res.status(500).json({ message: err.message || "Internal Server Error" });
-  }
-};
-
 const couponDashboard = async (req, res) => {
 
   const { Company_Code, Location_Code } = req.body;
@@ -4787,6 +4769,369 @@ const dietPlanSearchData = async (req, res) => {
 };
 //Code ended by Dinesh Gokul on 15-07-2026
 
+//code added by SakthiGanesh J 16-07-26
+const getPackageTypes = async (req, res) => {
+  const { company_code } = req.body;
+  try {
+    const pool = await connection.connectToDatabase();
+    const result = await pool
+      .request()
+      .input("company_code", sql.NVarChar, company_code)
+      .query(
+        "EXEC sp_attribute_Info 'F',@company_code,'Package Types','','', '' ,'','', NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL",
+      );
+
+    res.json(result.recordset);
+  } catch (err) {
+    console.error("Error", err);
+    res.status(500).json({ message: err.message || "Internal Server Error" });
+  }
+};
+
+const getPrograms = async (req, res) => {
+  const { company_code, Location_Code } = req.body;
+
+  try {
+    const pool = await connection.connectToDatabase();
+
+    const result = await pool
+      .request()
+      .input("mode", sql.NVarChar, "PAD")
+      .input("company_code", sql.NVarChar, company_code)
+      .input("Location_Code", sql.NVarChar, Location_Code)
+      .query(`EXEC sp_Program_Hdr @mode,'','','','','','','','','','','','','',0,0,@Company_code,@Location_code,'','',''`);
+
+    if (result.recordset.length > 0) {
+      res.status(200).json(result.recordset);
+    } else {
+      res.status(404).json("Data not found");
+    }
+  } catch (err) {
+    console.error("Error:", err.message);
+    return res.status(500).json({
+      message: err.message || "Internal Server Error",
+    });
+  }
+};
+//code ended by SakthiGanesh J 16-07-26
+
+//Code added by Ramya on 16-07-2026
+
+const PackageInsertData = async (req, res) => {
+  const { package_Name, package_type, duration_days, price, features, discount_percentage,is_active, Company_code,
+    Location_code, created_by } = req.body;
+
+  try {
+    const pool = await connection.connectToDatabase();
+    const result = await pool
+      .request()
+      .input("Mode", sql.NVarChar, "I")
+      .input("package_Name", sql.NVarChar, package_Name)
+      .input("package_type", sql.NVarChar, package_type)
+      .input("duration_days", sql.Int, duration_days)
+      .input("price", sql.Decimal, price)
+      .input("features", sql.NVarChar, features)
+      .input("discount_percentage", sql.Decimal, discount_percentage)
+      .input("is_active", sql.NVarChar, is_active)
+      .input("Company_code", sql.NVarChar, Company_code)
+      .input("Location_code", sql.NVarChar, Location_code)
+      .input("created_by", sql.NVarChar, created_by)
+      .query(`EXEC sp_Package_hdr @Mode,'',@package_Name,@package_type,@duration_days,@price,@features,@discount_percentage,@is_active,@Company_code,@Location_code,'',@created_by,''`);
+
+    res.status(200).json({
+      message: "pakage data saved successfully",
+      PackageID: result.recordset[0].PackageID,
+    });
+  } catch (err) {
+    console.error("Error", err.message);
+    return res
+      .status(500)
+      .json({ message: err.message || "Internal Server Error" });
+  }
+};
+
+const PackageUpdateData = async (req, res) => {
+
+    const { package_ID,package_Name,package_type,duration_days,price,features,discount_percentage,is_active,Company_Code,Location_Code,modified_by
+    } = req.body;
+
+
+    try {
+
+        const pool = await connection.connectToDatabase();
+        await pool
+            .request()
+
+            .input("Mode", sql.NVarChar, "U")
+            .input("package_ID", sql.NVarChar, package_ID)
+            .input("package_Name", sql.NVarChar, package_Name)
+            .input("package_type", sql.NVarChar, package_type)
+            .input("duration_days", sql.Int, duration_days)
+            .input("price", sql.Decimal, price)
+            .input("features", sql.NVarChar, features)
+            .input("discount_percentage", sql.Decimal, discount_percentage)
+            .input("is_active", sql.NVarChar, is_active)
+            .input("Company_Code", sql.NVarChar, Company_Code)
+            .input("Location_Code", sql.NVarChar, Location_Code)
+            .input("modified_by", sql.NVarChar, modified_by)
+            .query(`EXEC sp_Package_hdr @Mode,@package_ID,@package_Name,@package_type,@duration_days,@price,@features,@discount_percentage,@is_active,@Company_Code,@Location_Code,'','',@modified_by`);
+        res.status(200).json({
+            message: "Package data updated successfully"
+        });
+    } catch (err) {
+        console.error("Error", err.message);
+        return res
+            .status(500)
+            .json({
+                message: err.message || "Internal Server Error"
+            });
+    }
+};
+const PackageDeleteData = async (req, res) => {
+    const {package_ID,Company_Code,Location_Code, KeyField } = req.body;
+    try {
+        const pool = await connection.connectToDatabase();
+        await pool
+            .request()
+            .input("Mode", sql.NVarChar, "D")
+            .input("package_ID", sql.NVarChar, package_ID)
+            .input("Company_Code", sql.NVarChar, Company_Code)
+            .input("Location_Code", sql.NVarChar, Location_Code)
+            .input("KeyField", sql.NVarChar, KeyField)
+            .query(` EXEC sp_Package_hdr @Mode, @package_ID, '', '', 0, 0, '', 0, '', @Company_Code, @Location_Code, @KeyField, '', ''`);
+        res.status(200).json({
+            message: "Package data deleted successfully"
+        });
+    } catch (err) {
+        console.error("Error", err.message);
+        return res
+            .status(500)
+            .json({
+                message: err.message || "Internal Server Error"
+            });
+    }
+};
+const PackageSelectData = async (req, res) => {
+    const {package_ID,Company_Code,Location_Code} = req.body;
+    try {
+        const pool = await connection.connectToDatabase();
+        const result = await pool
+            .request()
+            .input("Mode", sql.NVarChar, "S")
+            .input("package_ID", sql.NVarChar, package_ID)
+            .input("Company_Code", sql.NVarChar, Company_Code)
+            .input("Location_Code", sql.NVarChar, Location_Code)
+            .query(`EXEC sp_Package_hdr @Mode, @package_ID, '', '', 0, 0, '', 0, '', @Company_Code, @Location_Code, '', '', ''`);
+      res.status(200).json(result.recordset);
+    } catch (err) {
+        console.error("Error", err.message);
+        return res
+            .status(500)
+            .json({
+                message: err.message || "Internal Server Error"
+            });
+    }
+};
+const PackageViewAllData = async (req, res) => {
+    const {
+        Company_Code,Location_Code } = req.body;
+    try {
+        const pool = await connection.connectToDatabase();
+        const result = await pool
+            .request()
+            .input("Mode", sql.NVarChar, "A")
+            .input("package_Name", sql.NVarChar, "")
+            .input("package_type", sql.NVarChar, "")
+            .input("duration_days", sql.NVarChar, 0)
+            .input("price", sql.NVarChar, 0)
+            .input("features", sql.NVarChar, "")
+            .input("discount_percentage", sql.NVarChar, 0)
+            .input("is_active", sql.NVarChar, "")
+            .input("Company_Code", sql.NVarChar, Company_Code)
+            .input("Location_Code", sql.NVarChar, Location_Code)
+            .input("created_by", sql.NVarChar, "")
+            .input("modified_by", sql.NVarChar, "")
+            .query(`EXEC sp_Package_hdr @Mode,@package_ID,@package_Name,@package_type,@duration_days,@price,@features,@discount_percentage,@is_active,@Company_Code,@Location_Code, '',@created_by,@modified_by`);
+        res.status(200).json(result.recordset);
+    } catch (err) {
+        console.error("Error", err.message);
+        return res
+            .status(500)
+            .json({
+                message: err.message || "Internal Server Error"
+            });
+    }
+};
+const PackageSearchData = async (req, res) => {
+    const { package_ID, package_Name, package_type, duration_days, price, features, discount_percentage,
+       is_active, program_id, Company_Code, Location_Code } = req.body;
+
+    try {
+        const pool = await connection.connectToDatabase();
+
+        const result = await pool
+            .request()
+            .input("Mode", sql.NVarChar, "SC")
+            .input("package_ID", sql.NVarChar, package_ID)
+            .input("package_Name", sql.NVarChar, package_Name)
+            .input("package_type", sql.NVarChar, package_type)
+            .input("duration_days", sql.Int, duration_days)
+            .input("price", sql.Decimal(18, 2), price)
+            .input("features", sql.NVarChar, features)
+            .input("discount_percentage", sql.Decimal(18, 2), discount_percentage)
+            .input("is_active", sql.NVarChar, is_active)
+            .input("Company_Code", sql.NVarChar, Company_Code)
+            .input("Location_Code", sql.NVarChar, Location_Code)
+            .input("program_id", sql.NVarChar, program_id)
+            .query(` EXEC sp_Package_hdr @Mode, @package_ID, @package_Name, @package_type, @duration_days, @price, @features, @discount_percentage, @is_active, @Company_Code, @Location_Code, '', '', '' `);
+
+            if (result.recordset.length > 0) {
+                res.status(200).json(result.recordset);
+            } else {
+                res.status(404).json("Data not found");
+            }
+          
+        } catch (err) {
+            console.error("Error", err.message);
+            return res.status(500).json({
+                message: err.message || "Internal Server Error"
+            });
+        }
+    };
+
+  const PackageDetailsInsertData = async (req, res) => {
+
+    const { Sno, package_ID, Program_ID, Company_Code, Location_Code, created_by } = req.body;
+
+    try {
+
+        const pool = await connection.connectToDatabase();
+
+        await pool
+            .request()
+            .input("mode", sql.NVarChar, "I")
+            .input("Sno", sql.Int, Sno)
+            .input("package_ID", sql.NVarChar, package_ID)
+            .input("Program_ID", sql.NVarChar, Program_ID)
+            .input("Company_Code", sql.NVarChar, Company_Code)
+            .input("Location_Code", sql.NVarChar, Location_Code)
+            .input("created_by", sql.NVarChar, created_by)
+            .query(`EXEC sp_Package_Details @mode,@Sno,@package_ID, '',@Program_ID,'',@Company_Code,@Location_Code,@created_by,'',''`);
+
+        res.status(200).json("Package Details saved successfully");
+
+    } catch (err) {
+
+        console.error("Error", err.message);
+
+        return res
+            .status(500)
+            .json({ message: err.message || "Internal Server Error" });
+    }
+  };
+
+const PackageDetailsUpdateData = async (req, res) => {
+
+    const { Sno, KeyFieldHeader, Program_ID, Company_Code, Location_Code, created_by, modified_by, UpdateMode } = req.body;
+
+    try {
+
+        const pool = await connection.connectToDatabase();
+
+        await pool
+            .request()
+            .input("mode", sql.NVarChar, "U")
+            .input("Sno", sql.Int, Sno)
+            .input("KeyFieldHeader", sql.NVarChar, KeyFieldHeader)
+            .input("Program_ID", sql.NVarChar, Program_ID)
+            .input("KeyField", sql.NVarChar, "")
+            .input("Company_Code", sql.NVarChar, Company_Code)
+            .input("Location_Code", sql.NVarChar, Location_Code)
+            .input("created_by", sql.NVarChar, created_by)
+            .input("modified_by", sql.NVarChar, modified_by)
+            .input("UpdateMode", sql.NVarChar, UpdateMode)
+            .query(`EXEC sp_Package_Details @mode,@Sno,@KeyFieldHeader,@Program_ID,@KeyField,@Company_Code,@Location_Code,@created_by,@modified_by,@UpdateMode`);
+
+        res.status(200).json("Package Details updated successfully");
+
+    } catch (err) {
+
+        console.error("Error", err.message);
+
+        return res
+            .status(500)
+            .json({ message: err.message || "Internal Server Error" });
+    }
+};
+
+const PackageDetailsDeleteData = async (req, res) => {
+
+    const KeyFieldHeaders = req.body.KeyFieldHeaders;
+
+    if (!KeyFieldHeaders || !KeyFieldHeaders.length) {
+        return res.status(400).json("Invalid or empty package array.");
+    }
+
+    try {
+
+        const pool = await connection.connectToDatabase();
+
+        for (const KeyFieldHeader of KeyFieldHeaders) {
+
+            await pool
+                .request()
+                .input("mode", sql.NVarChar, "D")
+                .input("KeyFieldHeader", sql.NVarChar, KeyFieldHeader)
+                .input("Company_Code", sql.NVarChar, req.headers["company_code"])
+                .input("Location_Code", sql.NVarChar, req.headers["location_code"])
+                .input("modified_by", sql.NVarChar, req.headers["modified_by"])
+                .input("UpdateMode", sql.NVarChar, req.headers["updatemode"])
+                .query(` EXEC sp_Package_Details @mode, 0, '', @KeyFieldHeader, '', '', @Company_Code, @Location_Code, '', @modified_by, @UpdateMode `);
+        }
+
+        res.status(200).json("Package Details deleted successfully");
+
+    } catch (err) {
+
+        console.error("Error", err);
+
+        return res.status(500).json({
+            message: err.message || "Internal Server Error",
+        });
+    }
+};
+//Code ended by Ramya on 16-07-2026
+
+//Code Added by SakthiGanesh on 17-07-26
+const getAppPackages = async (req, res) => {
+  const { Company_Code, Location_Code } = req.body;
+
+  try {
+    const pool = await connection.connectToDatabase();
+
+    const result = await pool
+      .request()
+      .input("mode", sql.NVarChar, "P")
+      .input("Company_Code", sql.NVarChar, Company_Code)
+      .input("Location_Code", sql.NVarChar, Location_Code)
+      .query(`EXEC sp_Package_hdr @mode,'', '', '', 0,  0,  '', 0,  '', @Company_Code,@Location_Code,'', '', ''  `);
+
+    if (result.recordset.length > 0) {
+      res.status(200).json(result.recordset);
+    } else {
+      res.status(404).json({
+        message: "Package data not found",
+      });
+    }
+  } catch (err) {
+    console.error("Error:", err);
+    res.status(500).json({
+      message: err.message || "Internal Server Error",
+    });
+  }
+};
+//Code Ended by SakthiGanesh on 17-07-26
+
 //Code added by Dinesh Gokul on 16-07-2026
 const Diet_Plans_DetailsSearch = async (req, res) => {
   const {
@@ -4879,6 +5224,8 @@ const getDietPlanCardData = async (req, res) => {
   }
 };
 //Code ended by Dinesh Gokul on 17-07-2026
+
+
 module.exports = {
   getCompanyno,
   getsearchdata,
@@ -5027,11 +5374,22 @@ module.exports = {
   couponDeleteData,
   couponSearchData,
   getDisType,
-  getAppPackages,
+  
   couponDashboard,
+  getPackageTypes,
+  getPrograms,
+  PackageInsertData,
+  PackageUpdateData,
+  PackageDeleteData,
+  PackageSelectData,
+  PackageViewAllData,
+  PackageSearchData,
+  PackageDetailsInsertData,
+  PackageDetailsUpdateData,
+  PackageDetailsDeleteData,
+  getAppPackages,
   Diet_Plans_DetailsSearch,
   Diet_Plans_MealsSearch,
   getDietPlanCardData
-
 
 };
