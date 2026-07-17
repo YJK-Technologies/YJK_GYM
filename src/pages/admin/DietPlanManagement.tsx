@@ -443,7 +443,6 @@ const updateMealRow = (
   if (
     !DietPlanForm.Diet_Name.trim() ||
     !DietPlanForm.Category.trim() ||
-    !DietPlanForm.Description.trim() ||
     !DietPlanForm.Goals.trim() ||
     !DietPlanForm.Restrictions.trim()
   ) {
@@ -1254,7 +1253,7 @@ const handleDietPlanSearch = async () => {
                               ? "text-red-500"
                               : ""
                           }
-                         >Plan Name</Label>
+                         >Plan Name*</Label>
                         <TooltipProvider>
                           <Tooltip>
                             <TooltipTrigger asChild>
@@ -1287,7 +1286,7 @@ const handleDietPlanSearch = async () => {
                               ? "text-red-500"
                               : ""
                           }
-                         >Category</Label>
+                         >Category*</Label>
                         <TooltipProvider>
                           <Tooltip>
                             <TooltipTrigger asChild>
@@ -1314,14 +1313,7 @@ const handleDietPlanSearch = async () => {
                     </div>
 
                     <div className="space-y-2">
-                        <Label
-                          htmlFor="name"
-                          className={
-                            submittedDietPlans && !DietPlanForm.Description
-                              ? "text-red-500"
-                              : ""
-                          }
-                         >Description</Label>
+                        <Label>Description</Label>
                         <TooltipProvider>
                           <Tooltip>
                             <TooltipTrigger asChild>
@@ -1355,7 +1347,7 @@ const handleDietPlanSearch = async () => {
                               ? "text-red-500"
                               : ""
                           }
-                         >Goals (comma-separated)</Label>
+                         >Goals* (comma-separated)</Label>
                         <TooltipProvider>
                           <Tooltip>
                             <TooltipTrigger asChild>
@@ -1381,14 +1373,7 @@ const handleDietPlanSearch = async () => {
                       </div>
 
                     <div className="space-y-2">
-                        <Label
-                          htmlFor="name"
-                          className={
-                            submittedDietPlans && !DietPlanForm.Restrictions
-                              ? "text-red-500"
-                              : ""
-                          }
-                         >Dietary Restrictions (comma-separated)</Label>
+                        <Label>Dietary Restrictions (comma-separated)</Label>
                         <TooltipProvider>
                           <Tooltip>
                             <TooltipTrigger asChild>
@@ -1412,8 +1397,6 @@ const handleDietPlanSearch = async () => {
                           </Tooltip>
                         </TooltipProvider>
                       </div>
-                    
-                  
 
                   <div className="grid grid-cols-2 gap-4">
 
@@ -1426,28 +1409,6 @@ const handleDietPlanSearch = async () => {
                               : ""
                           }
                          >Trainer ID - Name</Label>
-                        {/* <TooltipProvider>
-                          <Tooltip>
-                            <TooltipTrigger asChild>
-                              <Input
-                                id="Email"
-                                maxLength={100}
-                                value={DietPlanForm.TrainerID}
-                                onChange={(e) =>
-                                  setDietPlanForm({
-                                    ...DietPlanForm,
-                                    TrainerID: e.target.value,
-                                  })
-                                }
-                                placeholder="e.g., Plan Name"
-                              />
-                            </TooltipTrigger>
-                      
-                            <TooltipContent>
-                              <p>Enter Plan Name</p>
-                            </TooltipContent>
-                          </Tooltip>
-                        </TooltipProvider> */}
                         <TooltipProvider>
                     <Tooltip>
                       <TooltipTrigger asChild>
@@ -1467,21 +1428,10 @@ const handleDietPlanSearch = async () => {
                       </TooltipTrigger>
 
                       <TooltipContent>
-                        <p>Select Assigned Faculty</p>
+                        <p>Select Trainer ID - Name</p>
                       </TooltipContent>
                     </Tooltip>
                   </TooltipProvider>
-                      </div>
-                      
-                      <div className="flex items-center space-x-2">
-                        <Switch
-                          id="isActive"
-                          checked={DietPlanForm.Is_Active}
-                          onCheckedChange={(checked) =>
-                            setDietPlanForm({ ...DietPlanForm, Is_Active: checked })
-                          }
-                        />
-                        <Label htmlFor="isActive">Active Diet Plan</Label>
                       </div>
                       
                     </div>
@@ -1811,6 +1761,17 @@ const handleDietPlanSearch = async () => {
                         </div>
                       ))}
                     </div>
+
+                    <div className="flex items-center space-x-2">
+                        <Switch
+                          id="isActive"
+                          checked={DietPlanForm.Is_Active}
+                          onCheckedChange={(checked) =>
+                            setDietPlanForm({ ...DietPlanForm, Is_Active: checked })
+                          }
+                        />
+                        <Label htmlFor="isActive">Active Diet Plan</Label>
+                      </div>
 
                   <div className="flex justify-end gap-2">
                     <Button variant="outline" onClick={() => setIsAddDialogOpen(false)}>
