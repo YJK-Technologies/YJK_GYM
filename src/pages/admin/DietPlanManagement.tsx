@@ -6,7 +6,7 @@ import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger, DialogFooter } from '@/components/ui/dialog';
 import { useNavigate } from 'react-router-dom';
 import { ArrowLeft, Plus, Edit, Trash2, Utensils, Flame, Target, Clock, Copy, Users } from 'lucide-react';
 import {
@@ -95,7 +95,7 @@ interface WorkoutDietPlan {
   Goals: string;
   Restrictions: string;
   TrainerID: string;
-  Is_Active: string;          // <-- string, not boolean
+  Is_Active: string;          
   DietPlanDetails: PlanDetails[];
   DietPlanMeals: PlanMeals[];
   Calories: string;
@@ -116,6 +116,14 @@ useState<WorkoutDietPlan | null>(null);
   // Const - Needed
   const { companyCode, locationCode, userCode } = useCompany();
   const { toast } = useToast();
+
+  // For cards data - Backend
+  const [dietPlanCards, setDietPlanCards] = useState({
+  TotalPlans: 0,
+  MembersOnPlans: 0,
+  AvgCalories: 0,
+  ActivePlans: 0,
+});
 
   // DietPlan Dialog States
     const [dietPlans, setDietPlans] = useState<WorkoutDietPlan[]>([]);
@@ -388,6 +396,7 @@ const updateMealRow = (
             fetchDuration(),
             fetchTrainers(),
             fetchStatus(),
+            getDietPlanCardData(),
           ]);
         };
     
@@ -440,11 +449,34 @@ const updateMealRow = (
   // ===========================
   // Basic Validation
   // ===========================
+
+  const hasInvalidDetails = dietPlanDetails.some(
+  (detail) =>
+    !detail.Essentials.trim() ||
+    !detail.Daily_Calories_Target.trim() ||
+    !detail.Duration.trim()
+);
+
+  const hasInvalidMeals = mealRows.some(
+  (meal) =>
+    !meal.Meal_Type.trim() ||
+    !meal.Meal_Name.trim() ||
+    !meal.Quantity.trim() ||
+    !meal.Calories.trim() ||
+    !meal.Protein.trim() ||
+    !meal.Carbs.trim() ||
+    !meal.Fats.trim() ||
+    !meal.Time_Slot.trim()
+);
+
   if (
     !DietPlanForm.Diet_Name.trim() ||
     !DietPlanForm.Category.trim() ||
     !DietPlanForm.Goals.trim() ||
-    !DietPlanForm.Restrictions.trim()
+    !DietPlanForm.Restrictions.trim() ||
+     DietPlanForm.TrainerID.length === 0 ||
+     hasInvalidDetails ||
+     hasInvalidMeals
   ) {
     toast({
         title: "Required Fields",
@@ -514,6 +546,7 @@ const updateMealRow = (
           Location_Code: locationCode,
           company_code: companyCode,
           created_by: userCode,
+          UpdateMode: "UI"
         }),
       });
     }
@@ -546,6 +579,7 @@ const updateMealRow = (
           modified_by: userCode,
           created_date: currentDate,
           modified_date: currentDate,
+          UpdateMode: "UI"
         }),
       });
     }
@@ -620,6 +654,7 @@ const updateMealRow = (
       });
 
     handleDietPlanSearch(); // Refresh the list after deletion
+    getDietPlanCardData();
     setSubmittedDietPlans(false);
     setIsDietPlanDialogOpen(false);
 
@@ -632,6 +667,53 @@ const updateMealRow = (
         description: error.message,
         variant: "destructive",
       });
+  }
+};
+
+const handleViewDietPlan = async (plan: WorkoutDietPlan) => {
+  try {
+    const detailsResponse = await fetch(`${BASE_URL}/Diet_Plans_DetailsSearch`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        DietPlanID: plan.DietPlanID,
+        company_code: companyCode,
+        Location_Code: locationCode,
+      }),
+    });
+
+    const detailsResult = await detailsResponse.json();
+
+    const mealsResponse = await fetch(`${BASE_URL}/Diet_Plans_MealsSearch`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        DietPlanID: plan.DietPlanID,
+        company_code: companyCode,
+        Location_Code: locationCode,
+      }),
+    });
+
+    const mealsResult = await mealsResponse.json();
+    console.log("Header", plan);
+    console.log("Details", detailsResult);
+    console.log("Meals", mealsResult);
+    const viewData = {
+  ...plan,
+  DietPlanDetails: detailsResult,
+  DietPlanMeals: mealsResult,
+};
+
+console.log("Selected Plan", viewData);
+
+setSelectedPlan(viewData);
+
+  } catch (err) {
+    console.log(err);
   }
 };
 
@@ -731,6 +813,47 @@ setMealRows(meals);
 };
 
   const handleUpdateDietPlan = () => {
+    setSubmittedDietPlans(true);
+  // ===========================
+  // Basic Validation
+  // ===========================
+
+  const hasInvalidDetails = dietPlanDetails.some(
+    (detail) =>
+      !detail.Essentials.trim() ||
+      !detail.Daily_Calories_Target.trim() ||
+      !detail.Duration.trim()
+  );
+
+  const hasInvalidMeals = mealRows.some(
+    (meal) =>
+      !meal.Meal_Type.trim() ||
+      !meal.Meal_Name.trim() ||
+      !meal.Quantity.trim() ||
+      !meal.Calories.trim() ||
+      !meal.Protein.trim() ||
+      !meal.Carbs.trim() ||
+      !meal.Fats.trim() ||
+      !meal.Time_Slot.trim()
+  );
+
+  if (
+    !DietPlanForm.Diet_Name.trim() ||
+    !DietPlanForm.Category.trim() ||
+    !DietPlanForm.Goals.trim() ||
+    !DietPlanForm.Restrictions.trim() ||
+    DietPlanForm.TrainerID.length === 0 ||
+    hasInvalidDetails ||
+    hasInvalidMeals
+  ) {
+    toast({
+      title: "Required Fields",
+      description: "Please fill all required fields.",
+      variant: "destructive",
+    });
+
+    return;
+  }
   updateDietPlan();
 };
 
@@ -796,6 +919,7 @@ const updateDietPlan = async () => {
           Location_Code: locationCode,
           company_code: companyCode,
           modified_by: userCode,
+          updatemode: "UD"
         }),
       }
     );
@@ -829,6 +953,7 @@ const updateDietPlan = async () => {
             Location_Code: locationCode,
             company_code: companyCode,
             created_by: userCode,
+            UpdateMode: "UI"
           }),
         }
       );
@@ -861,6 +986,7 @@ const updateDietPlan = async () => {
           Location_Code: locationCode,
           company_code: companyCode,
           modified_by: userCode,
+          updatemode: "UD"
         }),
       }
     );
@@ -905,6 +1031,7 @@ const updateDietPlan = async () => {
 
             created_date: currentDate,
             modified_date: currentDate,
+            UpdateMode: "UI"
           }),
         }
       );
@@ -932,7 +1059,7 @@ const updateDietPlan = async () => {
     // Reload data
     // getDietPlans();
     handleDietPlanSearch(); // Refresh the list after deletion
-
+    getDietPlanCardData();
     setSubmittedDietPlans(false);
     setIsDietPlanDialogOpen(false);
     setEditingDietPlan(null);
@@ -974,6 +1101,7 @@ const deleteDietPlan = async (dietPlan: any) => {
           Location_Code: locationCode,
           company_code: companyCode,
           modified_by: userCode,
+          updatemode: "UD"
         }),
       }
     );
@@ -1004,6 +1132,7 @@ const deleteDietPlan = async (dietPlan: any) => {
           Location_Code: locationCode,
           company_code: companyCode,
           modified_by: userCode,
+          updatemode: "UD"
         }),
       }
     );
@@ -1054,7 +1183,7 @@ const deleteDietPlan = async (dietPlan: any) => {
     );
 
     handleDietPlanSearch(); // Refresh the list after deletion
-
+    getDietPlanCardData();
     // Refresh Data
     // getDietPlans();
 
@@ -1131,6 +1260,29 @@ const handleDietPlanSearch = async () => {
       });
     }
   };
+
+  const getDietPlanCardData = async () => {
+  try {
+    const response = await fetch(`${BASE_URL}/getDietPlanCardData`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        Company_code: companyCode,
+        Location_code: locationCode,
+      }),
+    });
+
+    const result = await response.json();
+
+    if (result.success) {
+      setDietPlanCards(result.data);
+    }
+  } catch (err) {
+    console.error(err);
+  }
+};
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -1319,7 +1471,7 @@ const handleDietPlanSearch = async () => {
                             <TooltipTrigger asChild>
                               <Textarea
                                 id="Email"
-                                maxLength={40}
+                                maxLength={255}
                                 rows={3}
                                 value={DietPlanForm.Description}
                                 onChange={(e) =>
@@ -1353,7 +1505,7 @@ const handleDietPlanSearch = async () => {
                             <TooltipTrigger asChild>
                               <Input
                                 id="Email"
-                                maxLength={40}
+                                maxLength={250}
                                 value={DietPlanForm.Goals}
                                 onChange={(e) =>
                                   setDietPlanForm({
@@ -1379,7 +1531,7 @@ const handleDietPlanSearch = async () => {
                             <TooltipTrigger asChild>
                               <Input
                                 id="Email"
-                                maxLength={40}
+                                maxLength={250}
                                 value={DietPlanForm.Restrictions}
                                 onChange={(e) =>
                                   setDietPlanForm({
@@ -1404,11 +1556,11 @@ const handleDietPlanSearch = async () => {
                         <Label
                           htmlFor="name"
                           className={
-                            submittedDietPlans && !DietPlanForm.TrainerID
+                            submittedDietPlans && DietPlanForm.TrainerID.length === 0
                               ? "text-red-500"
                               : ""
                           }
-                         >Trainer ID - Name</Label>
+                         >Trainer ID - Name*</Label>
                         <TooltipProvider>
                     <Tooltip>
                       <TooltipTrigger asChild>
@@ -1453,7 +1605,15 @@ const handleDietPlanSearch = async () => {
                           <div className="grid grid-cols-3 gap-4 flex-1">
 
                             <div className="space-y-2">
-                              <Label>Essentials</Label>
+                              <Label
+                                className={
+                                  submittedDietPlans && !PlanDetails.Essentials
+                                    ? "text-red-500"
+                                    : ""
+                                }
+                              >
+                                Essentials*
+                              </Label>
                               <Select
                                 value={PlanDetails.Essentials}
                                 onValueChange={(value) =>
@@ -1488,20 +1648,34 @@ const handleDietPlanSearch = async () => {
                             </div>
                               
                             <div className="space-y-2">
-                              <Label>Daily Calories Target</Label>
+                              <Label
+                                className={
+                                  submittedDietPlans && !PlanDetails.Daily_Calories_Target
+                                    ? "text-red-500"
+                                    : ""
+                                }
+                              >
+                                Daily Calories Target*</Label>
                               
                               <TooltipProvider>
                                 <Tooltip>
                                   <TooltipTrigger asChild>
                                     <Input
+                                        type="text"
+                                        inputMode="numeric"
+                                        placeholder="e.g. 2000"
+                                        maxLength={6}
                                         value={PlanDetails.Daily_Calories_Target}
-                                        onChange={(e)=>
-                                            updateDietPlanDetail(
-                                                index,
-                                                "Daily_Calories_Target",
-                                                e.target.value
-                                            )
-                                        }
+                                        onChange={(e) => {
+                                          // Allow only numbers
+                                          const value = e.target.value.replace(/\D/g, "");
+
+                                          updateDietPlanDetail(
+                                            index,
+                                            "Daily_Calories_Target",
+                                            value
+                                          );
+                                        }}
                                     />
                                   </TooltipTrigger>
                                     
@@ -1513,7 +1687,14 @@ const handleDietPlanSearch = async () => {
                             </div>
                               
                             <div className="space-y-2">
-                              <Label>Duration (Week)</Label>
+                              <Label
+                                className={
+                                  submittedDietPlans && !PlanDetails.Duration
+                                    ? "text-red-500"
+                                    : ""
+                                }
+                              >
+                                Duration (Week)*</Label>
                               <Select
                                   value={PlanDetails.Duration}
                                   onValueChange={(value)=>
@@ -1599,7 +1780,15 @@ const handleDietPlanSearch = async () => {
                       
                             {/* Meal Type */}
                             <div className="space-y-2">
-                              <Label>Meal Type</Label>
+                              <Label
+                                 className={
+                                   submittedDietPlans && !meal.Meal_Type
+                                     ? "text-red-500"
+                                     : ""
+                                 }
+                               >
+                                 Meal Type*
+                               </Label>
                               <Select
                                   value={meal.Meal_Type}
                                   onValueChange={(value)=>
@@ -1614,7 +1803,7 @@ const handleDietPlanSearch = async () => {
                                   <Tooltip>
                                     <TooltipTrigger asChild>
                                       <SelectTrigger>
-                                        <SelectValue placeholder="Select Meal Type" />
+                                        <SelectValue placeholder="e.g. Breakfast" />
                                       </SelectTrigger>
                                     </TooltipTrigger>
       
@@ -1639,103 +1828,260 @@ const handleDietPlanSearch = async () => {
                               
                             {/* Meal Name */}
                             <div className="space-y-2">
-                              <Label>Meal Name</Label>
-                              
+                              <Label
+                                 className={
+                                   submittedDietPlans && !meal.Meal_Name
+                                     ? "text-red-500"
+                                     : ""
+                                 }
+                               >Meal Name*</Label>
+                              <TooltipProvider>
+                                <Tooltip>
+                                  <TooltipTrigger asChild>
                               <Input
                                 value={meal.Meal_Name}
-                                placeholder="Meal Name"
+                                placeholder="e.g. Fruits"
                                 maxLength={100}
                                       onChange={(e) =>
                                         updateMealRow(index, "Meal_Name", e.target.value)
                                       }
                                       className="bg-white"
                               />
+                              </TooltipTrigger>
+                                    
+                                  <TooltipContent>
+                                    <p>Enter Meal Name</p>
+                                  </TooltipContent>
+                                </Tooltip>
+                              </TooltipProvider>
                             </div>
                               
                             {/* Quantity */}
                               
                             <div className="space-y-2">
-                              <Label>Quantity</Label>
-                              
+                              <Label
+                                 className={
+                                   submittedDietPlans && !meal.Quantity
+                                     ? "text-red-500"
+                                     : ""
+                                 }
+                               >Quantity*</Label>
+                              <TooltipProvider>
+                                <Tooltip>
+                                  <TooltipTrigger asChild>
                               <Input
+                                type="text"
+                                inputMode="numeric"
                                 value={meal.Quantity}
-                                placeholder="Quantity"
-                                maxLength={100}
-                                      onChange={(e) =>
-                                        updateMealRow(index, "Quantity", e.target.value)
-                                      }
-                                      className="bg-white"
+                                placeholder="e.g. 3 counts"
+                                maxLength={4}
+                                onChange={(e) => {
+                                  const value = e.target.value.replace(/\D/g, ""); // Numbers only
+                              
+                                  updateMealRow(index, "Quantity", value);
+                                }}
                               />
+                              </TooltipTrigger>
+                                    
+                                  <TooltipContent>
+                                    <p>Enter Quantity</p>
+                                  </TooltipContent>
+                                </Tooltip>
+                              </TooltipProvider>
                             </div>
                               
                             {/* Calories */}
                               
                             <div className="space-y-2">
-                              <Label>Calories</Label>
-                              
-                              <Input
+                              <Label
+                                 className={
+                                   submittedDietPlans && !meal.Calories
+                                     ? "text-red-500"
+                                     : ""
+                                 }
+                               >Calories*</Label>
+                              <TooltipProvider>
+                                <Tooltip>
+                                  <TooltipTrigger asChild>
+                              {/* <Input
                                 value={meal.Calories}
                                 placeholder="Calories"
                                 onChange={(e) =>
                                   updateMealRow(index, "Calories", e.target.value)
                                 }
+                              /> */}
+                              <Input
+                                type="text"
+                                inputMode="numeric"
+                                value={meal.Calories}
+                                placeholder="e.g. 200"
+                                maxLength={5}
+                                onChange={(e) => {
+                                  const value = e.target.value.replace(/\D/g, ""); // Numbers only
+                              
+                                  updateMealRow(index, "Calories", value);
+                                }}
                               />
+                              </TooltipTrigger>
+                                    
+                                  <TooltipContent>
+                                    <p>Enter Calories</p>
+                                  </TooltipContent>
+                                </Tooltip>
+                              </TooltipProvider>
                             </div>
                               
                             {/* Protein */}
                               
                             <div className="space-y-2">
-                              <Label>Protein</Label>
-                              
-                              <Input
+                              <Label
+                                 className={
+                                   submittedDietPlans && !meal.Protein
+                                     ? "text-red-500"
+                                     : ""
+                                 }
+                               >Protein*</Label>
+                              <TooltipProvider>
+                                <Tooltip>
+                                  <TooltipTrigger asChild>
+                              {/* <Input
                                 value={meal.Protein}
                                 placeholder="Protein"
                                 onChange={(e) =>
                                   updateMealRow(index, "Protein", e.target.value)
                                 }
+                              /> */}
+                              <Input
+                                type="text"
+                                inputMode="numeric"
+                                value={meal.Protein}
+                                placeholder="e.g. 200"
+                                maxLength={5}
+                                onChange={(e) => {
+                                  const value = e.target.value.replace(/\D/g, ""); // Numbers only
+                              
+                                  updateMealRow(index, "Protein", value);
+                                }}
                               />
+                              </TooltipTrigger>
+                                    
+                                  <TooltipContent>
+                                    <p>Enter Protein</p>
+                                  </TooltipContent>
+                                </Tooltip>
+                              </TooltipProvider>
                             </div>
                               
                             {/* Carbs */}
                               
                             <div className="space-y-2">
-                              <Label>Carbs</Label>
-                              
-                              <Input
+                              <Label
+                                 className={
+                                   submittedDietPlans && !meal.Carbs
+                                     ? "text-red-500"
+                                     : ""
+                                 }
+                               >Carbs*</Label>
+                              <TooltipProvider>
+                                <Tooltip>
+                                  <TooltipTrigger asChild>
+                              {/* <Input
                                 value={meal.Carbs}
                                 placeholder="Carbs"
                                 onChange={(e) =>
                                   updateMealRow(index, "Carbs", e.target.value)
                                 }
+                              /> */}
+                              <Input
+                                type="text"
+                                inputMode="numeric"
+                                value={meal.Carbs}
+                                placeholder="e.g. 200"
+                                maxLength={5}
+                                onChange={(e) => {
+                                  const value = e.target.value.replace(/\D/g, ""); // Numbers only
+                              
+                                  updateMealRow(index, "Carbs", value);
+                                }}
                               />
+                              </TooltipTrigger>
+                                    
+                                  <TooltipContent>
+                                    <p>Enter Carbs</p>
+                                  </TooltipContent>
+                                </Tooltip>
+                              </TooltipProvider>
                             </div>
                               
                             {/* Fats */}
                               
                             <div className="space-y-2">
-                              <Label>Fats</Label>
-                              
-                              <Input
+                              <Label
+                                 className={
+                                   submittedDietPlans && !meal.Fats
+                                     ? "text-red-500"
+                                     : ""
+                                 }
+                               >Fats*</Label>
+                              <TooltipProvider>
+                                <Tooltip>
+                                  <TooltipTrigger asChild>
+                              {/* <Input
                                 value={meal.Fats}
                                 placeholder="Fats"
                                 onChange={(e) =>
                                   updateMealRow(index, "Fats", e.target.value)
                                 }
+                              /> */}
+                              <Input
+                                type="text"
+                                inputMode="numeric"
+                                value={meal.Fats}
+                                placeholder="e.g. 200"
+                                maxLength={5}
+                                onChange={(e) => {
+                                  const value = e.target.value.replace(/\D/g, ""); // Numbers only
+                              
+                                  updateMealRow(index, "Fats", value);
+                                }}
                               />
+                              </TooltipTrigger>
+                                    
+                                  <TooltipContent>
+                                    <p>Enter Fats</p>
+                                  </TooltipContent>
+                                </Tooltip>
+                              </TooltipProvider>
                             </div>
                               
                             {/* Time Slot */}
                               
                             <div className="space-y-2">
-                              <Label>Time Slot</Label>
-                              
+                              <Label
+                                 className={
+                                   submittedDietPlans && !meal.Time_Slot
+                                     ? "text-red-500"
+                                     : ""
+                                 }
+                               >Time Slot*</Label>
+                              <TooltipProvider>
+                                <Tooltip>
+                                  <TooltipTrigger asChild>
                               <Input
                                 value={meal.Time_Slot}
-                                placeholder="Time Slot"
+                                maxLength={50}
+                                placeholder="2PM - 6PM"
                                 onChange={(e) =>
                                   updateMealRow(index, "Time_Slot", e.target.value)
                                 }
                               />
+                              </TooltipTrigger>
+                                    
+                                  <TooltipContent>
+                                    <p>Enter Time Slot</p>
+                                  </TooltipContent>
+                                </Tooltip>
+                              </TooltipProvider>
                             </div>
                           </div>
                               
@@ -1790,7 +2136,7 @@ const handleDietPlanSearch = async () => {
 
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Stats Overview */}
-        {/* <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
           <Card>
             <CardContent className="p-6">
               <div className="flex items-center">
@@ -1799,7 +2145,7 @@ const handleDietPlanSearch = async () => {
                 </div>
                 <div>
                   <p className="text-sm font-medium text-gray-600">Total Plans</p>
-                  <p className="text-2xl font-bold text-gray-900">{dietPlans.length}</p>
+                  <p className="text-2xl font-bold text-gray-900">{dietPlanCards.TotalPlans}</p>
                 </div>
               </div>
             </CardContent>
@@ -1812,7 +2158,7 @@ const handleDietPlanSearch = async () => {
                 </div>
                 <div>
                   <p className="text-sm font-medium text-gray-600">Members on Plans</p>
-                  <p className="text-2xl font-bold text-gray-900">{dietPlans.reduce((sum, p) => sum + p.assignedMembers, 0)}</p>
+                  <p className="text-2xl font-bold text-gray-900">{dietPlanCards.MembersOnPlans}</p>
                 </div>
               </div>
             </CardContent>
@@ -1825,7 +2171,7 @@ const handleDietPlanSearch = async () => {
                 </div>
                 <div>
                   <p className="text-sm font-medium text-gray-600">Avg. Calories</p>
-                  <p className="text-2xl font-bold text-gray-900">{Math.round(dietPlans.reduce((sum, p) => sum + p.dailyCalories, 0) / dietPlans.length)}</p>
+                  <p className="text-2xl font-bold text-gray-900">{Math.round(dietPlanCards.AvgCalories)}</p>
                 </div>
               </div>
             </CardContent>
@@ -1838,12 +2184,12 @@ const handleDietPlanSearch = async () => {
                 </div>
                 <div>
                   <p className="text-sm font-medium text-gray-600">Active Plans</p>
-                  <p className="text-2xl font-bold text-gray-900">{dietPlans.filter(p => p.isActive).length}</p>
+                  <p className="text-2xl font-bold text-gray-900">{dietPlanCards.ActivePlans}</p>
                 </div>
               </div>
             </CardContent>
           </Card>
-        </div> */}
+        </div>
 
         <Card className="mb-6">
           <CardContent className="p-6">
@@ -1858,7 +2204,7 @@ const handleDietPlanSearch = async () => {
                       <Input
                         placeholder="Enter Diet Plan ID"
                         value={DietPlanSearchForm.DietPlanID}
-                        maxLength={250}
+                        maxLength={30}
                         onChange={(e) =>
                           setDietPlanSearchForm({
                             ...DietPlanSearchForm,
@@ -1884,7 +2230,7 @@ const handleDietPlanSearch = async () => {
                       <Input
                         placeholder="Enter Plan Name"
                         value={DietPlanSearchForm.Diet_Name}
-                        maxLength={250}
+                        maxLength={100}
                         onChange={(e) =>
                           setDietPlanSearchForm({
                             ...DietPlanSearchForm,
@@ -1910,7 +2256,7 @@ const handleDietPlanSearch = async () => {
                       <Input
                         placeholder="Enter Category"
                         value={DietPlanSearchForm.Category}
-                        maxLength={250}
+                        maxLength={40}
                         onChange={(e) =>
                           setDietPlanSearchForm({
                             ...DietPlanSearchForm,
@@ -1936,7 +2282,7 @@ const handleDietPlanSearch = async () => {
                       <Input
                         placeholder="Enter Description"
                         value={DietPlanSearchForm.Description}
-                        maxLength={250}
+                        maxLength={255}
                         onChange={(e) =>
                           setDietPlanSearchForm({
                             ...DietPlanSearchForm,
@@ -2230,7 +2576,7 @@ const handleDietPlanSearch = async () => {
                       <Button 
                         variant="outline" 
                         className="w-full mt-4"
-                        onClick={() => setSelectedPlan(plan)}
+                        onClick={() => handleViewDietPlan(plan)}
                       >
                         View Full Plan
                       </Button>
@@ -2280,6 +2626,285 @@ const handleDietPlanSearch = async () => {
             )}
           </DialogContent>
         </Dialog> */}
+
+        {/* <Dialog
+          open={!!selectedPlan}
+          onOpenChange={() => setSelectedPlan(null)}
+        >
+          <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
+                
+            {selectedPlan && (
+              <>
+                <DialogHeader>
+                  <DialogTitle>
+                    {selectedPlan.Diet_Name}
+                  </DialogTitle>
+            
+                  <DialogDescription>
+                    {selectedPlan.Description}
+                  </DialogDescription>
+                </DialogHeader> */}
+            
+                {/* Header */}
+            
+                {/* Details */}
+            
+                {/* <h3 className="font-semibold mb-2">
+                  Diet Plan Details
+                </h3>
+            
+                {selectedPlan.DietPlanDetails.map((detail, index) => (
+                
+                  <Card
+                    key={index}
+                    className="mb-3"
+                  >
+                    <CardContent className="grid grid-cols-3 gap-4 pt-4">
+                
+                      <div>
+                
+                        <strong>Essentials</strong>
+                
+                        <br />
+                
+                        {detail.Essentials}
+                
+                      </div>
+                
+                      <div>
+                
+                        <strong>Calories Target</strong>
+                
+                        <br />
+                
+                        {detail.Daily_Calories_Target}
+                
+                      </div>
+                
+                      <div>
+                
+                        <strong>Duration</strong>
+                
+                        <br />
+                
+                        {detail.Duration}
+                
+                      </div>
+                
+                    </CardContent>
+                  </Card>
+        
+                ))} */}
+        
+                {/* Meals */}
+              
+                {/* <h3 className="font-semibold mt-6 mb-2">
+                  Meals
+                </h3>
+              
+                {selectedPlan.DietPlanMeals.map((meal, index) => (
+                
+                  <Card
+                    key={index}
+                    className="mb-3"
+                  >
+                    <CardContent className="grid grid-cols-4 gap-4 pt-4">
+                
+                      <div>
+                
+                        <strong>Meal Type</strong>
+                
+                        <br />
+                
+                        {meal.Meal_Type}
+                
+                      </div>
+                
+                      <div>
+                
+                        <strong>Meal Name</strong>
+                
+                        <br />
+                
+                        {meal.Meal_Name}
+                
+                      </div>
+                
+                      <div>
+                
+                        <strong>Quantity</strong>
+                
+                        <br />
+                
+                        {meal.Quantity}
+                
+                      </div>
+                
+                      <div>
+                
+                        <strong>Calories</strong>
+                
+                        <br />
+                
+                        {meal.Calories}
+                
+                      </div>
+                
+                      <div>
+                
+                        <strong>Protein</strong>
+                
+                        <br />
+                
+                        {meal.Protein}
+                
+                      </div>
+                
+                      <div>
+                
+                        <strong>Carbs</strong>
+                
+                        <br />
+                
+                        {meal.Carbs}
+                
+                      </div>
+                
+                      <div>
+                
+                        <strong>Fats</strong>
+                
+                        <br />
+                
+                        {meal.Fats}
+                
+                      </div>
+                
+                      <div>
+                
+                        <strong>Time Slot</strong>
+                
+                        <br />
+                
+                        {meal.Time_Slot}
+                
+                      </div>
+                
+                    </CardContent>
+                  </Card>
+        
+                ))}
+        
+              </>
+            )}
+        
+          </DialogContent>
+        </Dialog> */}
+
+        <Dialog open={!!selectedPlan} onOpenChange={() => setSelectedPlan(null)}>
+  <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+    {selectedPlan && (
+      <>
+        <DialogHeader>
+          <DialogTitle>{selectedPlan.Diet_Name}</DialogTitle>
+          <DialogDescription>
+            Diet Plan ID: {selectedPlan.DietPlanID}
+          </DialogDescription>
+        </DialogHeader>
+
+        <div className="space-y-6 py-4">
+          {/* Header Summary Section */}
+          <div className="flex items-center justify-between">
+            <div>
+              <h2 className="text-2xl font-bold">{selectedPlan.Diet_Name}</h2>
+              <Badge
+                variant={String(selectedPlan.Is_Active) === "Active" ? "default" : "secondary"}
+                className="mt-2"
+              >
+                {String(selectedPlan.Is_Active)}
+              </Badge>
+              <Badge variant="outline" className="ml-2">
+                {selectedPlan.Category}
+              </Badge>
+            </div>
+          </div>
+
+          {/* Core Information Stack (One by One) */}
+          <div className="flex flex-col gap-6">
+            {/* Overview Card */}
+            <Card>
+              <CardHeader className="pb-2">
+                <CardTitle className="text-sm font-medium text-gray-500">Overview & Goals</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-2">
+                <p><span className="font-medium">Description:</span> {selectedPlan.Description}</p>
+                <p><span className="font-medium">Goals:</span> {selectedPlan.Goals}</p>
+                <p><span className="font-medium">Restrictions:</span> {selectedPlan.Restrictions}</p>
+                <p><span className="font-medium">Trainer ID:</span> {selectedPlan.TrainerID}</p>
+              </CardContent>
+            </Card>
+
+            {/* Diet Plan Details Stack */}
+            <div>
+              <h3 className="text-sm font-semibold text-gray-500 mb-3 px-1 uppercase tracking-wider">
+                Diet Plan Details
+              </h3>
+              <div className="flex flex-col gap-4">
+                {selectedPlan.DietPlanDetails?.map((detail, index) => (
+                  <Card key={index}>
+                    <CardHeader className="pb-2">
+                      <CardTitle className="text-xs font-medium text-gray-400">Phase {index + 1}</CardTitle>
+                    </CardHeader>
+                    <CardContent className="space-y-2">
+                      <p><span className="font-medium">Essentials:</span> {detail.Essentials}</p>
+                      <p><span className="font-medium">Daily Calories Target:</span> {detail.Daily_Calories_Target}</p>
+                      <p><span className="font-medium">Duration (Weeks):</span> {detail.Duration}</p>
+                    </CardContent>
+                  </Card>
+                ))}
+              </div>
+            </div>
+
+            {/* Meals Stack */}
+            <div>
+              <h3 className="text-sm font-semibold text-gray-500 mb-3 px-1 uppercase tracking-wider">
+                Meals Schedule
+              </h3>
+              <div className="flex flex-col gap-4">
+                {selectedPlan.DietPlanMeals?.map((meal, index) => (
+                  <Card key={index}>
+                    <CardHeader className="pb-2 flex flex-row items-center justify-between space-y-0">
+                      <CardTitle className="text-sm font-bold text-gray-800">
+                        {meal.Meal_Name}
+                      </CardTitle>
+                      <Badge variant="secondary">{meal.Meal_Type}</Badge>
+                    </CardHeader>
+                    <CardContent className="space-y-2">
+                      <p><span className="font-medium">Time Slot:</span> {meal.Time_Slot}</p>
+                      <p><span className="font-medium">Quantity:</span> {meal.Quantity}</p>
+                      <div className="pt-2 grid grid-cols-2 sm:grid-cols-4 gap-2 border-t border-gray-100 text-sm">
+                        <div><span className="text-gray-500">Calories:</span> <span className="font-medium">{meal.Calories}</span></div>
+                        <div><span className="text-gray-500">Protein:</span> <span className="font-medium">{meal.Protein}</span></div>
+                        <div><span className="text-gray-500">Carbs:</span> <span className="font-medium">{meal.Carbs}</span></div>
+                        <div><span className="text-gray-500">Fats:</span> <span className="font-medium">{meal.Fats}</span></div>
+                      </div>
+                    </CardContent>
+                  </Card>
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <DialogFooter>
+          <Button variant="outline" onClick={() => setSelectedPlan(null)}>
+            Close
+          </Button>
+        </DialogFooter>
+      </>
+    )}
+  </DialogContent>
+</Dialog>
       </main>
     </div>
   );
