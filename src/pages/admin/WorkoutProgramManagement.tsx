@@ -4694,7 +4694,8 @@ const handleReset = () => {
               </div>
               {/* Package Details */}
               <div className="space-y-2">
-                <Label htmlFor="pkgName">Package Name</Label>
+                <Label htmlFor="pkgName" className={ submittedPackage && !packageForm.name ? "text-red-500" : "" }>
+                Package Name*</Label>
                 <TooltipProvider>
                   <Tooltip>
                     <TooltipTrigger asChild>
@@ -4718,15 +4719,8 @@ const handleReset = () => {
               <div className="grid grid-cols-2 gap-4">
 
                 <div className="space-y-2">
-                  <Label
-                    htmlFor="pkgType"
-                    className={
-                      submittedPackage && !packageForm.packageType
-                        ? "text-red-500"
-                        : ""
-                    }
-                  >
-                    Package Type
+                  <Label htmlFor="pkgType" className={ submittedPackage && !packageForm.packageType ? "text-red-500" : "" } >
+                    Package Type*
                   </Label>
                   <TooltipProvider>
                     <Tooltip>
@@ -4769,7 +4763,8 @@ const handleReset = () => {
 
 
                 <div className="space-y-2">
-                  <Label htmlFor="price">Price</Label>
+                  <Label htmlFor="price" className={ submittedPackage && !packageForm.price ? "text-red-500": "" }>
+                  Price*</Label>
                   <TooltipProvider>
                     <Tooltip>
                       <TooltipTrigger asChild>
@@ -4825,7 +4820,7 @@ const handleReset = () => {
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="pkgdays">Duration Days</Label>
+                  <Label htmlFor="pkgdays" className={ submittedPackage && !packageForm.duration_days ? "text-red-500": "" }>Duration Days*</Label>
                   <TooltipProvider>
                     <Tooltip>
                       <TooltipTrigger asChild>
@@ -4963,15 +4958,8 @@ const handleReset = () => {
               </div> */}
 
               <div className="space-y-4">
-                <Label
-                  className={
-                    submittedPackage &&
-                      packageForm.associatedPrograms.some((p) => !p.programId)
-                      ? "text-red-500"
-                      : ""
-                  }
-                >
-                  Associated Program
+                <Label className={ submittedPackage && packageForm.associatedPrograms.some((p) => !p.programId) ? "text-red-500" : "" } >
+                  Associated Program*
                 </Label>
 
                 {packageForm.associatedPrograms.map((program, index) => (
