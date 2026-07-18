@@ -6,12 +6,15 @@ import { Progress } from '@/components/ui/progress';
 import { useNavigate } from 'react-router-dom';
 import { Calendar, DollarSign, TrendingUp, Bell, Activity } from 'lucide-react';
 import { showConfirmToast } from "@/components/ui/show-confirm-toast";
+import { useCompany } from "../CompanyContext";
 
 const MemberDashboard = () => {
+  const { userName } = useCompany();
+
   const navigate = useNavigate();
 
   const memberInfo = {
-    name: "John Doe",
+    name: userName,
     membershipType: "Premium",
     validUntil: "Dec 31, 2024",
     lastLogin: "Yesterday at 6:30 PM",

@@ -5225,6 +5225,263 @@ const getDietPlanCardData = async (req, res) => {
 };
 //Code ended by Dinesh Gokul on 17-07-2026
 
+//Code added by Dinesh Gokul on 18-07-2026
+const MemberShipTypeHdrInsert = async (req, res) => {
+  const { MemberShipType_id, MemberShipType_Name, Status, Company_code, Location_code, Keyfield, created_by } = req.body;
+
+  try {
+    const pool = await sql.connect(dbConfig);
+
+    const result = await pool.request()
+      .input("mode", sql.NVarChar, "I")
+      .input("MemberShipType_id", sql.NVarChar, MemberShipType_id)
+      .input("MemberShipType_Name", sql.NVarChar, MemberShipType_Name)
+      .input("Status", sql.NVarChar, Status)
+      .input("Company_code", sql.NVarChar, Company_code)
+      .input("Location_code", sql.NVarChar, Location_code)
+      .input("created_by", sql.NVarChar, created_by)
+      .query(` EXEC sp_MemberShipType_Hdr @mode, @MemberShipType_id, @MemberShipType_Name, @Status, @Company_code, @Location_code, '', '', @created_by, ''
+      `);
+
+    const generatedMemberShipTypeID = result.recordset[0].MemberShipType_id;
+
+    res.status(200).json({
+      success: true,
+      message: "Membership Type inserted successfully",
+      MemberShipType_id: generatedMemberShipTypeID
+    });
+
+  } catch (err) {
+    console.error("Error during Membership Type insert:", err);
+    res.status(500).json({
+      message: err.message || "Internal Server Error"
+    });
+  }
+};
+
+const MemberShipTypeHdrUpdate = async (req, res) => {
+  const { MemberShipType_id, MemberShipType_Name, Status, Company_code, Location_code, Keyfield, modified_by } = req.body;
+
+  try {
+    const pool = await sql.connect(dbConfig);
+
+    await pool.request()
+      .input("mode", sql.NVarChar, "U")
+      .input("MemberShipType_id", sql.NVarChar, MemberShipType_id)
+      .input("MemberShipType_Name", sql.NVarChar, MemberShipType_Name)
+      .input("Status", sql.NVarChar, Status)
+      .input("Company_code", sql.NVarChar, Company_code)
+      .input("Location_code", sql.NVarChar, Location_code)
+      .input("Keyfield", sql.NVarChar, Keyfield)
+      .input("created_by", sql.NVarChar, "")
+      .input("modified_by", sql.NVarChar, modified_by)
+      .query(` EXEC sp_MemberShipType_Hdr @mode, @MemberShipType_id, @MemberShipType_Name, @Status, @Company_code, @Location_code, @Keyfield, '', @created_by, @modified_by
+      `);
+
+    res.status(200).json({
+      success: true,
+      message: "Membership Type updated successfully"
+    });
+
+  } catch (err) {
+    console.error("Error during Membership Type update:", err);
+    res.status(500).json({
+      message: err.message || "Internal Server Error"
+    });
+  }
+};
+
+const MemberShipTypeHdrDelete = async (req, res) => {
+  const { MemberShipType_id, Company_code, Location_code, Keyfield, modified_by } = req.body;
+
+  try {
+    const pool = await sql.connect(dbConfig);
+
+    await pool.request()
+      .input("mode", sql.NVarChar, "D")
+      .input("MemberShipType_id", sql.NVarChar, MemberShipType_id)
+      .input("MemberShipType_Name", sql.NVarChar, "")
+      .input("Status", sql.NVarChar, "")
+      .input("Company_code", sql.NVarChar, Company_code)
+      .input("Location_code", sql.NVarChar, Location_code)
+      .input("Keyfield", sql.NVarChar, Keyfield)
+      .input("created_by", sql.NVarChar, "")
+      .input("modified_by", sql.NVarChar, modified_by)
+      .query(` EXEC sp_MemberShipType_Hdr @mode, @MemberShipType_id, @MemberShipType_Name, @Status, @Company_code, @Location_code, @Keyfield, '', @created_by, @modified_by
+      `);
+
+    res.status(200).json({
+      success: true,
+      message: "Membership Type deleted successfully"
+    });
+
+  } catch (err) {
+    console.error("Error during Membership Type delete:", err);
+    res.status(500).json({
+      message: err.message || "Internal Server Error"
+    });
+  }
+};
+
+const MemberShipTypeDetailsInsert = async (req, res) => {
+  const { package_ID, Company_code, Location_code, MemberShipType_id, Keyfield_header, Keyfield, created_by, UpdateMode
+  } = req.body;
+
+  try {
+    const pool = await sql.connect(dbConfig);
+
+    await pool.request()
+      .input("mode", sql.NVarChar, "I")
+      .input("Sno", sql.Int, 0)
+      .input("package_ID", sql.NVarChar, package_ID)
+      .input("Company_code", sql.NVarChar, Company_code)
+      .input("Location_code", sql.NVarChar, Location_code)
+      .input("MemberShipType_id", sql.NVarChar, MemberShipType_id)
+      .input("Keyfield_header", sql.NVarChar, Keyfield_header)
+      .input("Keyfield", sql.NVarChar, Keyfield)
+      .input("created_by", sql.NVarChar, created_by)
+      .input("UpdateMode", sql.NVarChar, UpdateMode)
+      .query(` EXEC sp_MemberShipType_Details @mode, @Sno, @package_ID, @Company_code, @Location_code, @MemberShipType_id, @Keyfield_header, @Keyfield, @created_by, '', @UpdateMode
+      `);
+
+    res.status(200).json({
+      success: true,
+      message: "Membership Type Details inserted successfully"
+    });
+
+  } catch (err) {
+    console.error("Error during Membership Type Details insert:", err);
+    res.status(500).json({
+      message: err.message || "Internal Server Error"
+    });
+  }
+};
+
+const MemberShipTypeDetailsUpdate = async (req, res) => {
+  const { Sno, package_ID, Company_code, Location_code, MemberShipType_id, Keyfield_header, Keyfield, modified_by
+  } = req.body;
+
+  try {
+    const pool = await sql.connect(dbConfig);
+
+    await pool.request()
+      .input("mode", sql.NVarChar, "U")
+      .input("Sno", sql.Int, Sno)
+      .input("package_ID", sql.NVarChar, package_ID)
+      .input("Company_code", sql.NVarChar, Company_code)
+      .input("Location_code", sql.NVarChar, Location_code)
+      .input("MemberShipType_id", sql.NVarChar, MemberShipType_id)
+      .input("Keyfield_header", sql.NVarChar, Keyfield_header)
+      .input("Keyfield", sql.NVarChar, Keyfield)
+      .input("created_by", sql.NVarChar, "")
+      .input("modified_by", sql.NVarChar, modified_by)
+      .input("UpdateMode", sql.NVarChar, "")
+      .query(` EXEC sp_MemberShipType_Details @mode, @Sno, @package_ID, @Company_code, @Location_code, @MemberShipType_id, @Keyfield_header, @Keyfield, @created_by, @modified_by, @UpdateMode
+      `);
+
+    res.status(200).json({
+      success: true,
+      message: "Membership Type Details updated successfully"
+    });
+
+  } catch (err) {
+    console.error("Error during Membership Type Details update:", err);
+    res.status(500).json({
+      message: err.message || "Internal Server Error"
+    });
+  }
+};
+
+const MemberShipTypeDetailsDelete = async (req, res) => {
+  const { Sno, Company_code, Location_code, MemberShipType_id, Keyfield_header, Keyfield, modified_by, UpdateMode
+  } = req.body;
+
+  try {
+    const pool = await sql.connect(dbConfig);
+
+    await pool.request()
+      .input("mode", sql.NVarChar, "D")
+      .input("Sno", sql.Int, Sno)
+      .input("package_ID", sql.NVarChar, "")
+      .input("Company_code", sql.NVarChar, Company_code)
+      .input("Location_code", sql.NVarChar, Location_code)
+      .input("MemberShipType_id", sql.NVarChar, MemberShipType_id)
+      .input("Keyfield_header", sql.NVarChar, Keyfield_header)
+      .input("Keyfield", sql.NVarChar, Keyfield)
+      .input("created_by", sql.NVarChar, "")
+      .input("modified_by", sql.NVarChar, modified_by)
+      .input("UpdateMode", sql.NVarChar, UpdateMode)
+      .query(` EXEC sp_MemberShipType_Details @mode, @Sno, @package_ID, @Company_code, @Location_code, @MemberShipType_id, @Keyfield_header, @Keyfield, @created_by, @modified_by, @UpdateMode
+      `);
+
+    res.status(200).json({
+      success: true,
+      message: "Membership Type Details deleted successfully"
+    });
+
+  } catch (err) {
+    console.error("Error during Membership Type Details delete:", err);
+    res.status(500).json({
+      message: err.message || "Internal Server Error"
+    });
+  }
+};
+
+const getMeberShipPackages = async (req, res) => {
+  const { Company_code, Location_code } = req.body;
+  try {
+    const pool = await connection.connectToDatabase();
+
+    const result = await pool
+      .request()
+      .input("mode", sql.NVarChar, "PIN")
+      .input("Company_code", sql.NVarChar, Company_code)
+      .input("Location_code", sql.NVarChar, Location_code)
+      .query(`EXEC sp_MemberShipType_Hdr @mode, '', '', '', @Company_code, @Location_code, '', '', '', ''`);
+
+    if (result.recordset.length > 0) {
+      res.status(200).json(result.recordset);
+    } else {
+      res.status(404).json("Data not found");
+    }
+  } catch (err) {
+    console.error("Error:", err.message);
+    return res.status(500).json({
+      message: err.message || "Internal Server Error",
+    });
+  }
+};
+
+const membershipSearchData = async (req, res) => {
+  const { MemberShipType_id, MemberShipType_Name, Status, package_ID, Company_code, Location_code } = req.body;
+
+  try {
+    const pool = await connection.connectToDatabase();
+    const result = await pool
+      .request()
+      .input("mode", sql.NVarChar, "SC")
+      .input("MemberShipType_id", sql.NVarChar, MemberShipType_id)
+      .input("MemberShipType_Name", sql.NVarChar, MemberShipType_Name)
+      .input("Status", sql.NVarChar, Status)
+      .input("package_ID", sql.NVarChar, package_ID)
+      .input("Company_code", sql.NVarChar, Company_code)
+      .input("Location_code", sql.NVarChar, Location_code)
+      .query(`EXEC sp_MemberShipType_Hdr @mode, @MemberShipType_id, @MemberShipType_Name, @Status, @Company_code, @Location_code, '', @package_ID, '', ''`);
+
+    if (result.recordset.length > 0) {
+      res.status(200).json(result.recordset);
+    } else {
+      res.status(404).json("Data not found");
+    }
+  } catch (err) {
+    console.error("Error", err.message);
+    return res
+      .status(500)
+      .json({ message: err.message || "Internal Server Error" });
+  }
+};
+//Code ended by Dinesh Gokul on 18-07-2026
+
 
 module.exports = {
   getCompanyno,
@@ -5390,6 +5647,14 @@ module.exports = {
   getAppPackages,
   Diet_Plans_DetailsSearch,
   Diet_Plans_MealsSearch,
-  getDietPlanCardData
+  getDietPlanCardData,
+  MemberShipTypeHdrInsert,
+  MemberShipTypeHdrUpdate,
+  MemberShipTypeHdrDelete,
+  MemberShipTypeDetailsInsert,
+  MemberShipTypeDetailsUpdate,
+  MemberShipTypeDetailsDelete,
+  getMeberShipPackages,
+  membershipSearchData
 
 };
