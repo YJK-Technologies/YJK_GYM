@@ -48,7 +48,15 @@ const PermissionRoute = ({
     (item: any) => item.screen_type === screenType
   );
 
-  return hasPermission ? element : <Navigate to="/AdminDashboard" replace />;
+  if (!hasPermission) {
+    const loginType = sessionStorage.getItem("loginType");
+
+    return loginType === "member"
+      ? <Navigate to="/MemberDashboard" replace />
+      : <Navigate to="/AdminDashboard" replace />;
+  }
+
+  return element;
 };
 
 const App = () => (
@@ -61,6 +69,8 @@ const App = () => (
           <Route path="/" element={<Home />} />
           <Route path="/login" element={<Login />} />
           <Route path="/quotation" element={<Quotation />} />
+          <Route path="/AdminCompanies" element={<CompaniesList />} />
+          <Route path="/AdminSettings" element={<SettingScreen />} />
 
           <Route
             path="/AdminDashboard"
@@ -156,7 +166,7 @@ const App = () => (
             path="/MemberDashboard"
             element={
               <PermissionRoute
-                screenType="Member"
+                screenType="MemberDashboard"
                 element={<MemberDashboard />}
               />
             }
@@ -202,7 +212,7 @@ const App = () => (
             }
           />
 
-          <Route
+          {/* <Route
             path="/AdminCompanies"
             element={
               <PermissionRoute
@@ -211,16 +221,17 @@ const App = () => (
               />
             }
           />
+          
           <Route
-            path="/admin/settings"
+            path="/AdminSettings"
             element={
               <PermissionRoute
-                screenType="AdminCompanies"
+                screenType="AdminSettings"
                 element={<SettingScreen />}
               />
             }
-          />
-          
+          /> */}
+
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>
