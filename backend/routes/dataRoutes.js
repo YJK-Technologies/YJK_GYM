@@ -189,6 +189,14 @@ router.post("/PackageDetailsDeleteData", dataController.PackageDetailsDeleteData
 router.post("/Diet_Plans_DetailsSearch", dataController.Diet_Plans_DetailsSearch)
 router.post("/Diet_Plans_MealsSearch", dataController.Diet_Plans_MealsSearch)
 router.post("/getDietPlanCardData", dataController.getDietPlanCardData)
+router.post("/MemberShipTypeHdrInsert", dataController.MemberShipTypeHdrInsert)
+router.post("/MemberShipTypeHdrUpdate", dataController.MemberShipTypeHdrUpdate)
+router.post("/MemberShipTypeHdrDelete", dataController.MemberShipTypeHdrDelete)
+router.post("/MemberShipTypeDetailsInsert", dataController.MemberShipTypeDetailsInsert)
+router.post("/MemberShipTypeDetailsUpdate", dataController.MemberShipTypeDetailsUpdate)
+router.post("/MemberShipTypeDetailsDelete", dataController.MemberShipTypeDetailsDelete)
+router.post("/getMeberShipPackages", dataController.getMeberShipPackages)
+router.post("/membershipSearchData", dataController.membershipSearchData)
 
 
 
