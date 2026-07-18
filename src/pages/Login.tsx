@@ -1,11 +1,5 @@
 import React, { useState } from "react";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -15,9 +9,13 @@ import ruwLogo from "@/assets/ruw-logo-full.png";
 import CryptoJS from "crypto-js";
 import { BASE_URL } from "./ApiConfig";
 import { useCompany } from "./CompanyContext";
+import { Eye, EyeOff } from "lucide-react";
 
 const Login = () => {
   const { setCompanyData } = useCompany();
+
+  const [showMemberPassword, setShowMemberPassword] = useState(false);
+  const [showAdminPassword, setShowAdminPassword] = useState(false);
 
   const [email, setEmail] = useState("");
   const [userCode, setUserCode] = useState("");
@@ -35,7 +33,7 @@ const Login = () => {
     return window.btoa(binary);
   };
 
-  const handleLogin = async (role: "admin" | "member") => {
+  const handleLogin = async (loginType: "admin" | "member") => {
     setLoading(true);
     setLoginError("");
 
@@ -85,15 +83,17 @@ const Login = () => {
         sessionStorage.setItem("isLoggedIn", "true");
         sessionStorage.setItem("user_code", user_code);
         sessionStorage.setItem("role_id", role_id);
+        sessionStorage.setItem("loginType", loginType);
 
         await UserPermission(role_id);
         await fetchUserData(user_code);
 
-        if (role === "admin") {
-          navigate("/AdminDashboard", { replace: true });
-        } else {
+        if (loginType === "member") {
           navigate("/MemberDashboard", { replace: true });
+        } else {
+          navigate("/AdminDashboard", { replace: true });
         }
+
       } else {
         setLoginError(data.message || "Invalid Email ID or Password");
       }
@@ -108,10 +108,10 @@ const Login = () => {
   // Handle Enter key press for both email and password fields
   const handleEnterKey = (
     e: React.KeyboardEvent<HTMLInputElement>,
-    role: "admin" | "member"
+    loginType: "admin" | "member"
   ) => {
     if (e.key === "Enter" && !loading) {
-      handleLogin(role);
+      handleLogin(loginType);
     }
   };
 
@@ -223,17 +223,33 @@ const Login = () => {
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="member-password">Password</Label>
-                  <Input
-                    id="member-password"
-                    type="password"
-                    placeholder="Enter your password"
-                    value={password}
-                    onChange={(e) => {
-                      setPassword(e.target.value);
-                      setLoginError("");
-                    }}
-                    onKeyDown={(e) => handleEnterKey(e, "member")}
-                  />
+
+                  <div className="relative">
+                    <Input
+                      id="member-password"
+                      type={showMemberPassword ? "text" : "password"}
+                      placeholder="Enter your password"
+                      value={password}
+                      onChange={(e) => {
+                        setPassword(e.target.value);
+                        setLoginError("");
+                      }}
+                      onKeyDown={(e) => handleEnterKey(e, "member")}
+                      className="pr-10"
+                    />
+
+                    <button
+                      type="button"
+                      onClick={() => setShowMemberPassword(!showMemberPassword)}
+                      className="absolute inset-y-0 right-3 flex items-center text-gray-500 hover:text-gray-700"
+                    >
+                      {showMemberPassword ? (
+                        <EyeOff size={18} />
+                      ) : (
+                        <Eye size={18} />
+                      )}
+                    </button>
+                  </div>
                 </div>
                 {loginError && (
                   <p className="text-red-500 text-sm">{loginError}</p>
@@ -266,17 +282,33 @@ const Login = () => {
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="admin-password">Admin Password</Label>
-                  <Input
-                    id="admin-password"
-                    type="password"
-                    placeholder="Enter admin password"
-                    value={password}
-                    onChange={(e) => {
-                      setPassword(e.target.value);
-                      setLoginError("");
-                    }}
-                    onKeyDown={(e) => handleEnterKey(e, "admin")}
-                  />
+
+                  <div className="relative">
+                    <Input
+                      id="admin-password"
+                      type={showAdminPassword ? "text" : "password"}
+                      placeholder="Enter admin password"
+                      value={password}
+                      onChange={(e) => {
+                        setPassword(e.target.value);
+                        setLoginError("");
+                      }}
+                      onKeyDown={(e) => handleEnterKey(e, "admin")}
+                      className="pr-10"
+                    />
+
+                    <button
+                      type="button"
+                      onClick={() => setShowAdminPassword(!showAdminPassword)}
+                      className="absolute inset-y-0 right-3 flex items-center text-gray-500 hover:text-gray-700"
+                    >
+                      {showAdminPassword ? (
+                        <EyeOff size={18} />
+                      ) : (
+                        <Eye size={18} />
+                      )}
+                    </button>
+                  </div>
                 </div>
                 {loginError && (
                   <p className="text-red-500 text-sm">{loginError}</p>
