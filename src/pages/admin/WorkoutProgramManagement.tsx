@@ -452,13 +452,15 @@ const WorkoutProgramManagement = () => {
     },
     {
       title: "Total Packages",
-      value: packages.length.toString(),
+      // value: packages.length.toString(),
+      value: statsData[0]?.TotalPackages ?? 0,
       icon: Package,
       color: "bg-purple-500",
     },
     {
       title: "Active Packages",
-      value: packages.filter((p) => p.isActive).length.toString(),
+      // value: packages.filter((p) => p.isActive).length.toString(),
+      value: statsData[0]?.ActivePackages ?? 0,
       icon: Calendar,
       color: "bg-orange-500",
     },
@@ -1190,6 +1192,91 @@ const WorkoutProgramManagement = () => {
 
   setIsPackageDialogOpen(true);
 };
+
+const validatePackage = () => {
+
+  // Required Fields Validation
+  if (
+    !packageForm.name.trim() ||
+    !packageForm.packageType.trim() ||
+    Number(packageForm.price) <= 0 ||
+    Number(packageForm.duration_days) <= 0 ||
+    packageForm.associatedPrograms.length === 0 ||
+    packageForm.associatedPrograms.some(
+      (program) => !program.programId.trim()
+    )
+  ) {
+    toast({
+      title: "Required Fields",
+      description: "Please fill all required fields.",
+      variant: "destructive",
+    });
+
+    setSubmittedPackage(true);
+
+    return false;
+  }
+
+  // Discount Validation
+  if (
+    Number(packageForm.discountPercentage) < 0 ||
+    Number(packageForm.discountPercentage) > 100
+  ) {
+    toast({
+      title: "Invalid Discount",
+      description: "Discount Percentage must be between 0 and 100.",
+      variant: "destructive",
+    });
+
+    return false;
+  }
+
+  // Price Validation
+  if (Number(packageForm.price) <= 0) {
+    toast({
+      title: "Invalid Price",
+      description: "Price must be greater than zero.",
+      variant: "destructive",
+    });
+
+    return false;
+  }
+
+  // Duration Validation
+  if (Number(packageForm.duration_days) <= 0) {
+    toast({
+      title: "Invalid Duration",
+      description: "Duration Days must be greater than zero.",
+      variant: "destructive",
+    });
+
+    return false;
+  }
+
+  // Duplicate Program Validation
+  const programIds = packageForm.associatedPrograms
+    .map((item) => item.programId.trim())
+    .filter((id) => id !== "");
+
+  const duplicateProgram = programIds.some(
+    (id, index) => programIds.indexOf(id) !== index
+  );
+
+  if (duplicateProgram) {
+    toast({
+      title: "Duplicate Program",
+      description: "Duplicate Associated Program is not allowed.",
+      variant: "destructive",
+    });
+
+    setSubmittedPackage(true);
+
+    return false;
+  }
+
+  return true;
+};
+
   const handleSavePackage = async () => {
     if (editingPackage) {
        await handleUpdatePackage();
@@ -1209,7 +1296,7 @@ const WorkoutProgramManagement = () => {
 const updatePackage = async () => {
   if (!editingPackage) return;
 
-  // if (!validatePackage()) return;
+   if (!validatePackage()) return;
 
   try {
 
@@ -1415,7 +1502,7 @@ const updatePackage = async () => {
   // };
 
   const handleCreatePackage = async () => {
-    // if (!validatePackage()) return;
+     if (!validatePackage()) return;
 
     let packageID = "";
     let keyFieldHeader = "";
@@ -1504,8 +1591,8 @@ const updatePackage = async () => {
         variant: "success",
       });
 
-      // handlePackageSearch();
-      // fetchWorkoutData();
+      handlePackageSearch();
+      fetchWorkoutData();
 
       setSubmittedPackage(false);
       setIsPackageDialogOpen(false);
@@ -2369,11 +2456,11 @@ const updatePackage = async () => {
               placeholder="Enter Discount %"
               value={packageSearchForm.discountPercentage}
               onChange={(e) =>
-  setPackageSearchForm({
-    ...packageSearchForm,
-    discountPercentage: parseInt(e.target.value) || 0,
-  })
-}
+                setPackageSearchForm({
+                  ...packageSearchForm,
+                  discountPercentage: parseInt(e.target.value) || 0,
+                })
+              }
               // onChange={(e) => {
               //   const value = e.target.value.replace(/\D/g, "");
 
@@ -2479,7 +2566,7 @@ const updatePackage = async () => {
           <TooltipTrigger asChild>
             <Input
               placeholder="Enter Features"
-              maxLength={250}
+              maxLength={500}
               value={packageSearchForm.features}
               onChange={(e) =>
                 setPackageSearchForm({
@@ -3994,7 +4081,11 @@ const handleReset = () => {
         {/* Add/Edit Package Dialog */}
         <Dialog
           open={isPackageDialogOpen}
-          onOpenChange={setIsPackageDialogOpen}
+          onOpenChange={(open) => {
+            if (!open) {
+              setSubmittedPackage(false);
+            }
+             setIsPackageDialogOpen (open) } }
         >
           <DialogContent className="max-w-lg">
             <DialogHeader>
@@ -4034,12 +4125,14 @@ const handleReset = () => {
               </div>
               {/* Package Details */}
               <div className="space-y-2">
-                <Label htmlFor="pkgName">Package Name</Label>
+                <Label htmlFor="pkgName" className={ submittedPackage && !packageForm.name ? "text-red-500" : "" }>
+                Package Name</Label>
                 <TooltipProvider>
                   <Tooltip>
                     <TooltipTrigger asChild>
                       <Input
                         id="pkgName"
+                        maxLength={100}
                         value={packageForm.name}
                         onChange={(e) =>
                           setPackageForm({ ...packageForm, name: e.target.value })
@@ -4058,14 +4151,7 @@ const handleReset = () => {
               <div className="grid grid-cols-2 gap-4">
 
                 <div className="space-y-2">
-                  <Label
-                    htmlFor="pkgType"
-                    className={
-                      submittedPackage && !packageForm.packageType
-                        ? "text-red-500"
-                        : ""
-                    }
-                  >
+                  <Label htmlFor="pkgType" className={ submittedPackage && !packageForm.packageType ? "text-red-500" : "" } >
                     Package Type
                   </Label>
                   <TooltipProvider>
@@ -4109,7 +4195,8 @@ const handleReset = () => {
 
 
                 <div className="space-y-2">
-                  <Label htmlFor="price">Price</Label>
+                  <Label htmlFor="price" className={ submittedPackage && !packageForm.price ? "text-red-500": "" }>
+                  Price</Label>
                   <TooltipProvider>
                     <Tooltip>
                       <TooltipTrigger asChild>
@@ -4139,7 +4226,7 @@ const handleReset = () => {
               <div className="grid grid-cols-2 gap-4">
 
                 <div className="space-y-2">
-                  <Label htmlFor="discount">Discount %</Label>
+                  <Label htmlFor="discount" >Discount % </Label>
                   <TooltipProvider>
                     <Tooltip>
                       <TooltipTrigger asChild>
@@ -4165,7 +4252,7 @@ const handleReset = () => {
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="pkgdays">Duration Days</Label>
+                  <Label htmlFor="pkgdays" className={ submittedPackage && !packageForm.duration_days ? "text-red-500": "" }>Duration Days</Label>
                   <TooltipProvider>
                     <Tooltip>
                       <TooltipTrigger asChild>
@@ -4193,124 +4280,8 @@ const handleReset = () => {
 
               </div>
 
-              {/* <div className="space-y-2">
-                  <Label htmlFor="program">Associated Program</Label>
-                  <Select
-                    value={packageForm.programId}
-                    onValueChange={(value) =>
-                      setPackageForm({ ...packageForm, programId: value })
-                    }
-                  >
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select program" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {programs.map((program) => (
-                        <SelectItem key={program.id} value={program.id}>
-                          {program.name}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div> */}
-
-              {/* Associated Program */}
-              {/* <div className="space-y-2">
-                  <Label
-                    htmlFor="program"
-                    className={
-                      submittedPackage && !packageForm.programId
-                        ? "text-red-500"
-                        : ""
-                    }
-                  >
-                    Associated Program
-                  </Label>
-                  <TooltipProvider>
-                    <Tooltip>
-                      <TooltipTrigger asChild>
-                        <div>
-                          <Select
-                            value={packageForm.programId}
-                            onValueChange={(value) =>
-                              setPackageForm({
-                                ...packageForm,
-                                programId: value,
-                              })
-                            }
-                          >
-                            <SelectTrigger>
-                              <SelectValue placeholder="Select Package Type" />
-                            </SelectTrigger>
-                            <SelectContent>
-                              {ProgramsID.map((ProgramsID: any) => (
-                                <SelectItem
-                                  key={ProgramsID.ProgramID}
-                                  value={
-                                    ProgramsID.ProgramID
-                                  }
-                                >
-                                  {ProgramsID.ProgramID}
-                                </SelectItem>
-                              ))}
-                            </SelectContent>
-                          </Select>
-                        </div>
-                      </TooltipTrigger>
-
-                      <TooltipContent>
-                        <p>Select Package Type</p>
-                      </TooltipContent>
-                    </Tooltip>
-                  </TooltipProvider>
-                </div> */}
-
-              {/* <div className="space-y-2">
-                <Label
-                  htmlFor="program"
-                  className={
-                    submittedPackage && packageForm.programId.length === 0
-                      ? "text-red-500"
-                      : ""
-                  }
-                >
-                  Associated Program*
-                </Label>
-
-                <TooltipProvider>
-                  <Tooltip>
-                    <TooltipTrigger asChild>
-                      <div>
-                        <ReactMultiSelect
-                          options={programOptions}
-                          value={packageForm.programId}
-                          placeholder="Select Associated Program"
-                          onChange={(selected) =>
-                            setPackageForm({
-                              ...packageForm,
-                              programId: selected,
-                            })
-                          }
-                        />
-                      </div>
-                    </TooltipTrigger>
-
-                    <TooltipContent>
-                      <p>Select Associated Program</p>
-                    </TooltipContent>
-                  </Tooltip>
-                </TooltipProvider>
-              </div> */}
-
               <div className="space-y-4">
-                <Label
-                  className={
-                    submittedPackage &&
-                      packageForm.associatedPrograms.some((p) => !p.programId)
-                      ? "text-red-500"
-                      : ""
-                  }
-                >
+                <Label className={ submittedPackage && packageForm.associatedPrograms.some((p) => !p.programId) ? "text-red-500" : "" } >
                   Associated Program
                 </Label>
 
@@ -4373,6 +4344,7 @@ const handleReset = () => {
                       <Textarea
                         id="features"
                         value={packageForm.features}
+                        maxLength={500}
                         onChange={(e) =>
                           setPackageForm({ ...packageForm, features: e.target.value })
                         }
@@ -4402,7 +4374,7 @@ const handleReset = () => {
             <DialogFooter>
               <Button
                 variant="outline"
-                onClick={() => setIsPackageDialogOpen(false)}
+                onClick={() => { setIsPackageDialogOpen(false); setSubmittedPackage(false); } }
               >
                 Cancel
               </Button>
