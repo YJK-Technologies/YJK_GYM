@@ -4289,28 +4289,40 @@ const handleReset = () => {
                   <div key={index} className="flex items-center gap-3">
 
                     <div className="flex-1">
-                      <Select
-                        value={program.programId}
-                        onValueChange={(value) =>
-                          updatePrograms(index, value)
-                        }
-                      >
-                        <SelectTrigger>
-                          <SelectValue placeholder="Select Program" />
-                        </SelectTrigger>
+  <TooltipProvider>
+    <Tooltip>
+      <TooltipTrigger asChild>
+        <div>
+          <Select
+            value={program.programId}
+            onValueChange={(value) =>
+              updatePrograms(index, value)
+            }
+          >
+            <SelectTrigger>
+              <SelectValue placeholder="Select Program" />
+            </SelectTrigger>
 
-                        <SelectContent>
-                          {ProgramsID.map((item: any) => (
-                            <SelectItem
-                              key={item.ProgramID}
-                              value={item.ProgramID}
-                            >
-                              {item.ProgramID} - {item.ProgramName}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                    </div>
+            <SelectContent>
+              {ProgramsID.map((item: any) => (
+                <SelectItem
+                  key={item.ProgramID}
+                  value={item.ProgramID}
+                >
+                  {item.ProgramID} - {item.ProgramName}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
+      </TooltipTrigger>
+
+      <TooltipContent>
+        <p>Select Associated Program</p>
+      </TooltipContent>
+    </Tooltip>
+  </TooltipProvider>
+</div>
 
                     <Button
                       type="button"
@@ -4371,18 +4383,42 @@ const handleReset = () => {
               </div>
 
             </div>
+
             <DialogFooter>
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger asChild>
               <Button
                 variant="outline"
                 onClick={() => { setIsPackageDialogOpen(false); setSubmittedPackage(false); } }
               >
                 Cancel
               </Button>
+              </TooltipTrigger>
+
+                  <TooltipContent>
+                    <p>Cancel without saving changes.</p>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger asChild>
               <Button
                 onClick={handleSavePackage}
               >
                 {editingPackage ? "Update" : "Create"} Package
               </Button>
+              </TooltipTrigger>
+
+                  <TooltipContent>
+                    <p>
+                      {editingProgram ? "Update Package" : "Create a Package"}
+                    </p>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
             </DialogFooter>
           </DialogContent>
         </Dialog>
