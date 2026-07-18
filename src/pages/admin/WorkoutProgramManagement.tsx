@@ -65,6 +65,16 @@ interface WorkoutPackage {
   KeyField: string;
 }
 
+// For MemberShip
+interface WorkoutMemberShip {
+  MemberShipType_id: string;
+  MemberShipType_Name: string;
+  Status: boolean;
+  Sno: number;
+  package_ID: string;
+  Keyfield: string;
+}
+
 // Sample Faculty Data
 const sampleFaculty = [
   { id: "FAC001", name: "Ahmed Al-Rashid" },
@@ -99,6 +109,12 @@ const WorkoutProgramManagement = () => {
       screenType: "Packages",
       icon: Package,
     },
+    {
+      value: "memberships",
+      label: "Memberships",
+      screenType: "Memberships",
+      icon: Package,
+    },
   ];
 
   const [activeTab, setActiveTab] = useState("");
@@ -117,7 +133,7 @@ const WorkoutProgramManagement = () => {
     }
   }, []);
 
-  const tabPermissions = ["Programs", "Packages"];
+  const tabPermissions = ["Programs", "Packages", "Memberships"];
 
   const hasAnyTabPermission = tabPermissions.some((tab) =>
     allowedScreens.includes(tab),
@@ -159,6 +175,7 @@ const WorkoutProgramManagement = () => {
     TotalPackages: 0,
     ActivePackages: 0,
   });
+  const [GetPackages, setGetPackages] = useState<any[]>([]);
   // Start packages useEffect
   const fetchPackageTypes = async () => {
     try {
@@ -344,6 +361,34 @@ const WorkoutProgramManagement = () => {
     }
   };
 
+  // For membership
+  const fetchPackages = async () => {
+    try {
+      const response = await fetch(`${BASE_URL}/getMeberShipPackages`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          Company_code: companyCode,
+          Location_code: locationCode,
+        }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        setGetPackages(data);
+
+        console.log(data);
+      } else {
+        console.error("Failed to fetch status");
+      }
+    } catch (error) {
+      console.error("Error fetching status:", error);
+    }
+  };
+
   useEffect(() => {
     const loadData = async () => {
       await Promise.all([
@@ -354,6 +399,7 @@ const WorkoutProgramManagement = () => {
         fetchWorkoutData(),
         fetchPackageTypes(), //packges
         fetchPrograms(), //packges
+        fetchPackages(), //membership
       ]);
     };
 
@@ -436,6 +482,35 @@ const WorkoutProgramManagement = () => {
   associatedProgram: "",
   isActive: "",
 });
+
+  // MemberShip Dialog States
+  const [MemberShips, setMemberShips] = useState<WorkoutMemberShip[]>([]);
+  const [submittedMemberShips, setSubmittedMemberShips] = useState(false);
+  const [isMemberShipDialogOpen, setIsMemberShipDialogOpen] = useState(false);
+  const [editingMemberShip, setEditingMemberShip] = useState<WorkoutMemberShip | null>(
+    null,
+  );
+  const [MemberShipForm, setMemberShipForm] = useState({
+    MemberShipType_id: "",
+    MemberShipType_Name: "",
+    Status: true,
+    Sno: "",
+    PackageIDName: [
+      {
+        package_ID: "",
+      },
+    ],
+    Keyfield: "",
+    });
+
+  const [MemberShipSearchForm, setMemberShipSearchForm] = useState({
+    MemberShipType_id: "",
+    MemberShipType_Name: "",
+    Status: "",
+    Sno: "",
+    package_ID: "",
+    Keyfield: "",
+  });
 
   const stats = [
     {
@@ -1749,6 +1824,278 @@ const updatePackage = async () => {
     });
   };
 
+  // MemberShip CRUD Functions
+  const handleAddMemberShip = () => {
+    setEditingMemberShip(null);
+    setMemberShipForm({
+      MemberShipType_id: "",
+      MemberShipType_Name: "",
+      Status: true,
+      Sno: "",
+      PackageIDName: [
+      {
+        package_ID: "",
+      },
+      ],
+      Keyfield: "",
+    });
+    setIsMemberShipDialogOpen(true);
+  };
+
+  const handleEditMemberShip = (MemberShip: any) => {
+    setEditingMemberShip(MemberShip);
+    // console.log(Trainer);
+
+    setMemberShipForm({
+      MemberShipType_id: MemberShip.MemberShipType_id,
+      MemberShipType_Name: MemberShip.MemberShipType_Name,
+      Status: MemberShip.Status,
+      Sno: MemberShip.Sno,
+      PackageIDName: MemberShip.package_ID,
+      Keyfield: MemberShip.Keyfield,
+    });
+
+    setIsMemberShipDialogOpen(true);
+  };
+
+  const validateMemberShip = () => {
+    if (
+      !MemberShipForm.MemberShipType_Name ||
+      // !MemberShipForm.Sno ||
+      !MemberShipForm.PackageIDName
+    ) {
+      toast({
+        title: "Required Fields",
+        description: "Please fill all required fields.",
+        variant: "destructive",
+      });
+      return false;
+    }
+
+    return true;
+  };
+
+  const handleSaveMemberShip = async () => {
+    if (editingMemberShip) {
+      // await handleUpdateMemberShip();
+    } else {
+      await handleCreateMemberShip();
+    }
+  };
+
+  const handleCreateMemberShip = async () => {
+  // setSubmittedMemberShips(true);
+  if (!validateMemberShip()) return;
+
+  try {
+    // ======================================
+    // 1. SAVE HEADER
+    // ======================================
+
+    const hdrResponse = await fetch(
+      `${BASE_URL}/MemberShipTypeHdrInsert`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          MemberShipType_id: "",
+          MemberShipType_Name: MemberShipForm.MemberShipType_Name,
+          Status: MemberShipForm.Status ? "Active" : "Close",
+          Company_code: companyCode,
+          Location_code: locationCode,
+          Keyfield: "",
+          created_by: userCode,
+          modified_by: "",
+        }),
+      }
+    );
+
+    const hdrData = await hdrResponse.json();
+
+    if (!hdrResponse.ok || !hdrData.success) {
+      throw new Error(
+        hdrData.message || "Unable to save Membership Type."
+      );
+    }
+
+    // Generated Membership Type ID
+    const generatedMemberShipTypeID =
+      hdrData.MemberShipType_id;
+
+    // ======================================
+    // 2. SAVE DETAILS
+    // ======================================
+
+    for (const item of MemberShipForm.PackageIDName) {
+      await fetch(
+        `${BASE_URL}/MemberShipTypeDetailsInsert`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            package_ID: item.package_ID,
+            Company_code: companyCode,
+            Location_code: locationCode,
+            MemberShipType_id: generatedMemberShipTypeID,
+            Keyfield_header: "",
+            Keyfield: "",
+            created_by: userCode,
+            UpdateMode: "UI",
+          }),
+        }
+      );
+    }
+
+    // ======================================
+    // SUCCESS
+    // ======================================
+
+    setSubmittedMemberShips(false);
+    setIsMemberShipDialogOpen(false);
+
+    // Reset Form
+    setMemberShipForm({
+      MemberShipType_id: "",
+      MemberShipType_Name: "",
+      Status: true,
+      Sno: "",
+      PackageIDName: [
+        {
+          package_ID: "",
+        },
+      ],
+      Keyfield: "",
+    });
+
+    toast({
+      title: "Membership Type Added",
+      description: "Membership Type Added Successfully",
+      variant: "success",
+    });
+
+    // Refresh Grid / Cards
+    // handleMemberShipSearch();
+    // getMemberShipCardData();
+
+  } catch (error: any) {
+    toast({
+      title: "Error",
+      description: error.message,
+      variant: "destructive",
+    });
+  }
+};
+
+const addPackageField = () => {
+    setMemberShipForm({
+      ...MemberShipForm,
+      PackageIDName: [
+        ...MemberShipForm.PackageIDName,
+        {
+          package_ID: "",
+        },
+      ],
+    });
+  };
+
+  const updatePackages = (index: number, value: string) => {
+    const updatedPackages = [...MemberShipForm.PackageIDName];
+
+    updatedPackages[index].package_ID = value;
+
+    setMemberShipForm({
+      ...MemberShipForm,
+      PackageIDName: updatedPackages,
+    });
+  };
+
+  const removePackageField = (index: number) => {
+    if (MemberShipForm.PackageIDName.length === 1) {
+      setMemberShipForm({
+        ...MemberShipForm,
+        PackageIDName: [
+          {
+            package_ID: "",
+          },
+        ],
+      });
+      return;
+    }
+
+    const updatedPackages = MemberShipForm.PackageIDName.filter(
+      (_, i) => i !== index
+    );
+
+    setMemberShipForm({
+      ...MemberShipForm,
+      PackageIDName: updatedPackages,
+    });
+  };
+
+  const handleMemberShipSearch = async () => {
+  try {
+    const response = await fetch(`${BASE_URL}/membershipSearchData`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        MemberShipType_id: MemberShipSearchForm.MemberShipType_id,
+        MemberShipType_Name: MemberShipSearchForm.MemberShipType_Name,
+        Status: MemberShipSearchForm.Status,
+        package_ID: MemberShipSearchForm.package_ID,
+        Company_code: companyCode,
+        Location_code: locationCode,
+      }),
+    });
+
+    const data = await response.json();
+
+    if (response.ok) {
+      const formattedPackages = data.map((pkg: any) => ({
+  ...pkg,
+  Programs: pkg.Programs
+    ? pkg.Programs.split(",")
+    : [],
+}));
+
+      setMemberShips(formattedPackages);
+    } else if (response.status === 404) {
+      setMemberShips([]);
+
+      toast({
+        title: "Data Not Found",
+        description: data?.message || "No matching packages found.",
+        variant: "destructive",
+      });
+    } else {
+      setMemberShips([]);
+
+      toast({
+        title: "Search Failed",
+        description: data?.message || "Something went wrong while searching.",
+        variant: "destructive",
+      });
+    }
+  } catch (error: any) {
+    console.error("Search Error:", error);
+
+    setPackages([]);
+
+    toast({
+      title: "Server Error",
+      description:
+        error?.message ||
+        "Unable to connect to the server. Please try again later.",
+      variant: "destructive",
+    });
+  }
+};
+
   const renderProgramSearch = () => (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-x-4 gap-y-6">
       <div className="space-y-2">
@@ -2542,6 +2889,153 @@ const updatePackage = async () => {
   </div>
 );
 
+const renderMemberShipSearch = () => (
+  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-x-4 gap-y-6">
+
+    {/* Package ID */}
+    <div className="space-y-2">
+      <Label>Membership Type Name</Label>
+      <TooltipProvider>
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <Input
+              placeholder="Enter Membership Type Name"
+              value={MemberShipSearchForm.MemberShipType_id}
+              maxLength={30}
+              onChange={(e) =>
+                setMemberShipSearchForm({
+                  ...MemberShipSearchForm,
+                  MemberShipType_id: e.target.value,
+                })
+              }
+            />
+          </TooltipTrigger>
+
+          <TooltipContent>
+            <p>Enter Membership Type Name</p>
+          </TooltipContent>
+        </Tooltip>
+      </TooltipProvider>
+    </div>
+
+    {/* Package Name */}
+    <div className="space-y-2">
+      <Label>Membership Type Name</Label>
+      <TooltipProvider>
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <Input
+              placeholder="Enter Membership Type Name"
+              value={MemberShipSearchForm.MemberShipType_Name}
+              maxLength={100}
+              onChange={(e) => {
+                const value = e.target.value.replace(
+                  /[^a-zA-Z0-9 ]/g,
+                  ""
+                );
+
+                setMemberShipSearchForm({
+                  ...MemberShipSearchForm,
+                  MemberShipType_Name: value,
+                });
+              }}
+            />
+          </TooltipTrigger>
+
+          <TooltipContent>
+            <p>Enter Membership Type Name</p>
+          </TooltipContent>
+        </Tooltip>
+      </TooltipProvider>
+    </div>
+
+    {/* Package Type */}
+    <div className="space-y-2">
+      <Label>Package ID - Name</Label>
+
+      <TooltipProvider>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <div>
+                <Select
+                  value={MemberShipSearchForm.package_ID}
+                  onValueChange={(value) =>
+                    setMemberShipSearchForm({
+                      ...MemberShipSearchForm,
+                      package_ID: value,
+                    })
+                  }
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select Package ID - Name" />
+                  </SelectTrigger>
+
+                  <SelectContent>
+                    {GetPackages.map((item: any) => (
+                      <SelectItem
+                        key={item.package_ID}
+                        value={item.package_ID}
+                      >
+                        {item.package_ID} - {item.package_Name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+            </TooltipTrigger>
+
+            <TooltipContent>
+              <p>Select Package ID - Name</p>
+            </TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
+    </div>
+
+    {/* Status */}
+    <div className="space-y-2">
+      <Label>Status</Label>
+
+      <TooltipProvider>
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <div>
+              <Select
+                value={MemberShipSearchForm.Status}
+                onValueChange={(value) =>
+                  setMemberShipSearchForm({
+                    ...MemberShipSearchForm,
+                    Status: value,
+                  })
+                }
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder="Select Status" />
+                </SelectTrigger>
+
+                <SelectContent>
+                  {status.map((item: any) => (
+                    <SelectItem
+                      key={item.attributedetails_name}
+                      value={item.attributedetails_name}
+                    >
+                      {item.attributedetails_name}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+          </TooltipTrigger>
+
+          <TooltipContent>
+            <p>Select Status</p>
+          </TooltipContent>
+        </Tooltip>
+      </TooltipProvider>
+    </div>
+
+  </div>
+);
+
   const handleSearch = () => {
     switch (activeTab) {
       case "programs":
@@ -2550,6 +3044,10 @@ const updatePackage = async () => {
 
         case "packages":
       handlePackageSearch();
+      break;
+
+        case "memberships":
+      handleMemberShipSearch();
       break;
 
       default:
@@ -2596,6 +3094,19 @@ const handleReset = () => {
       setPackages([]);
       break;
 
+    case "memberships":
+      setMemberShipSearchForm({
+        MemberShipType_id: "",
+        MemberShipType_Name: "",
+        Status: "",
+        Sno: "",
+        package_ID: "",
+        Keyfield: "",
+      });
+
+      setMemberShips([]);
+      break;
+
     default:
       break;
   }
@@ -2604,12 +3115,14 @@ const handleReset = () => {
   const addLabels = {
     programs: "Programs",
     packages: "Packages",
+    memberships: "Memberships",
   };
 
   //Tab Screen Mapping
   const tabScreenMap = {
     programs: "Programs",
     packages: "Packages",
+    memberships: "Memberships",
   };
 
   const currentScreen = tabScreenMap[activeTab as keyof typeof tabScreenMap];
@@ -2621,6 +3134,9 @@ const handleReset = () => {
         break;
       case "packages":
         handleAddPackage();
+        break;
+      case "memberships":
+        handleAddMemberShip();
         break;
       default:
         break;
@@ -2683,6 +3199,7 @@ const handleReset = () => {
           <CardContent className="p-6">
             {activeTab === "programs" && renderProgramSearch()}
             {activeTab === "packages" && renderPackageSearch()}
+            {activeTab === "memberships" && renderMemberShipSearch()}
 
             <div className="flex justify-end gap-4 mt-6">
               <TooltipProvider>
@@ -3373,6 +3890,149 @@ const handleReset = () => {
 
                           </div>
 
+                        </CardContent>
+                      </Card>
+                    );
+                  })}
+                </div>
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          <TabsContent value="memberships">
+            <Card>
+              <CardHeader>
+                <CardTitle>Workout Memberships</CardTitle>
+                <CardDescription>
+                  Manage all workout Memberships and their details
+                </CardDescription>
+              </CardHeader>
+
+              <CardContent>
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                  {MemberShips.map((membership: any) => {
+                    const isActive = membership.Status === "Active";
+                  
+                    const statusBadgeColor = isActive
+                      ? "bg-green-50 text-green-700 border-green-200"
+                      : "bg-gray-100 text-gray-600 border-gray-200";
+                  
+                    return (
+                      <Card
+                        key={membership.Keyfield}
+                        className="overflow-hidden border-t-4 border-t-violet-600 hover:shadow-xl transition-all duration-300 bg-white"
+                      >
+                        <CardContent className="p-6 space-y-5">
+                    
+                          {/* ================= HEADER ================= */}
+                          <div className="flex justify-between items-start pb-3 border-b border-gray-100">
+                            <div className="space-y-1">
+                              <h3 className="text-xl font-bold text-slate-900 tracking-tight">
+                                {membership.MemberShipType_Name}
+                              </h3>
+                              <p className="text-xs font-mono text-gray-500 flex items-center gap-1">
+                                <span className="font-semibold text-slate-700">
+                                  Membership ID:
+                                </span>
+                                {membership.MemberShipType_id || "N/A"}
+                              </p>
+                            </div>
+                    
+                            <div className="flex gap-1 bg-slate-50 p-1 rounded-lg border border-gray-100">
+                              <TooltipProvider>
+                                <Tooltip>
+                                  <TooltipTrigger asChild>
+                                    {hasActionPermission("Memberships", "edit") && (
+                                      <Button
+                                        variant="ghost"
+                                        size="icon"
+                                        className="h-8 w-8 text-gray-600 hover:text-violet-600 hover:bg-violet-50"
+                                        // onClick={() => handleEditMembership(membership)}
+                                      >
+                                        <Edit className="h-4 w-4" />
+                                      </Button>
+                                    )}
+                                  </TooltipTrigger>
+                                  <TooltipContent>
+                                    <p>Edit</p>
+                                  </TooltipContent>
+                                </Tooltip>
+                              </TooltipProvider>
+                                  
+                              <TooltipProvider>
+                                <Tooltip>
+                                  <TooltipTrigger asChild>
+                                    {hasActionPermission("Memberships", "delete") && (
+                                      <Button
+                                        variant="ghost"
+                                        size="icon"
+                                        className="h-8 w-8 text-red-500 hover:text-red-700 hover:bg-red-50"
+                                        // onClick={() => handleDeleteMembership(membership)}
+                                      >
+                                        <Trash2 className="h-4 w-4" />
+                                      </Button>
+                                    )}
+                                  </TooltipTrigger>
+                                  <TooltipContent>
+                                    <p>Delete</p>
+                                  </TooltipContent>
+                                </Tooltip>
+                              </TooltipProvider>
+                            </div>
+                          </div>
+                                  
+                          {/* ================= STATUS BAR ================= */}
+                          <div className="flex items-center justify-between bg-violet-50/40 px-4 py-2.5 rounded-lg border border-violet-50">
+                            <span className="text-xs text-slate-600 font-semibold uppercase tracking-wider">
+                              Membership Status
+                            </span>
+                            <Badge
+                              variant="outline"
+                              className={`font-medium text-xs ${statusBadgeColor}`}
+                            >
+                              <span
+                                className={`w-1.5 h-1.5 rounded-full mr-1.5 ${
+                                  isActive ? "bg-green-500" : "bg-gray-400"
+                                }`}
+                              ></span>
+                              {membership.Status || "Inactive"}
+                            </Badge>
+                          </div>
+                              
+                          {/* ================= ASSOCIATED PACKAGES (MULTIPLE DATA) ================= */}
+                          <div className="space-y-2">
+                            <p className="text-xs font-bold text-gray-400 uppercase tracking-wider flex items-center border-b border-slate-100 pb-1.5">
+                              <Dumbbell className="w-3.5 h-3.5 mr-1.5 text-violet-600" />
+                              Linked Packages
+                            </p>
+                              
+                            <div className="flex flex-wrap gap-2">
+                              {membership.Packages && membership.Packages.length > 0 ? (
+                                membership.Packages.map((pkg: any, index: number) => (
+                                  <TooltipProvider key={pkg.package_ID || index}>
+                                    <Tooltip>
+                                      <TooltipTrigger asChild>
+                                        <Badge
+                                          variant="secondary"
+                                          className="bg-violet-50 text-violet-700 border border-violet-100 px-2.5 py-1 text-xs rounded-md font-medium shadow-sm cursor-help transition-colors hover:bg-violet-100"
+                                        >
+                                          {pkg.package_Name}
+                                        </Badge>
+                                      </TooltipTrigger>
+                                      <TooltipContent>
+                                        <p className="font-mono text-xs">ID: {pkg.package_ID}</p>
+                                      </TooltipContent>
+                                    </Tooltip>
+                                  </TooltipProvider>
+                                ))
+                              ) : (
+                                <span className="text-xs text-gray-400 italic">
+                                  No Packages Linked
+                                </span>
+                              )}
+                            </div>
+                          </div>
+                            
                         </CardContent>
                       </Card>
                     );
@@ -4437,6 +5097,198 @@ const handleReset = () => {
                 onClick={handleSavePackage}
               >
                 {editingPackage ? "Update" : "Create"} Package
+              </Button>
+              </TooltipTrigger>
+
+                  <TooltipContent>
+                    <p>
+                      {editingProgram ? "Update Package" : "Create a Package"}
+                    </p>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
+
+        {/* Add/Edit MemberShip Dialog */}
+        <Dialog
+          open={isMemberShipDialogOpen}
+          onOpenChange={setIsMemberShipDialogOpen}
+        >
+          <DialogContent className="max-w-lg">
+            <DialogHeader>
+              <DialogTitle>
+                {editingPackage ? "Edit Membership" : "Add New Membership"}
+              </DialogTitle>
+              <DialogDescription>
+                {editingPackage
+                  ? "Update the Membership details"
+                  : "Create a new workout Membership"}
+              </DialogDescription>
+            </DialogHeader>
+            <div className="grid gap-4 py-4">
+
+              <div className="space-y-4">
+                <div className="space-y-2">
+                  <Label htmlFor="faculty">Membership ID</Label>
+                  <TooltipProvider>
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <Input
+                          id="name"
+                          value={MemberShipForm.MemberShipType_id}
+                          readOnly
+                          className="bg-gray-100 cursor-not-allowed"
+                          // onChange={(e) => setPackageForm({ ...packageForm, id: e.target.value })}
+                          placeholder="Auto Generated"
+                        />
+                      </TooltipTrigger>
+
+                      <TooltipContent>
+                        <p>Membership ID is Auto Generated</p>
+                      </TooltipContent>
+                    </Tooltip>
+                  </TooltipProvider>
+                </div>
+              </div>
+
+              {/* Package Details */}
+              <div className="space-y-2">
+                <Label htmlFor="pkgName">Membership Type Name</Label>
+                <TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Input
+                        id="pkgName"
+                        value={MemberShipForm.MemberShipType_Name}
+                        onChange={(e) =>
+                          setMemberShipForm({ ...MemberShipForm, MemberShipType_Name: e.target.value })
+                        }
+                        placeholder="e.g., Weight Loss - Monthly"
+                      />
+                    </TooltipTrigger>
+
+                    <TooltipContent>
+                      <p>Enter Membership Type Name</p>
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
+              </div>
+
+              <div className="space-y-4">
+                <Label
+                  className={
+                    submittedPackage &&
+                      MemberShipForm.PackageIDName.some((p) => !p.package_ID)
+                      ? "text-red-500"
+                      : ""
+                  }
+                >
+                  Package ID - Name
+                </Label>
+
+                {MemberShipForm.PackageIDName.map((program, index) => (
+                  <div key={index} className="flex items-center gap-3">
+
+                    <div className="flex-1">
+                      <TooltipProvider>
+                        <Tooltip>
+                          <TooltipTrigger asChild>
+                            <div>
+                              <Select
+                                value={program.package_ID}
+                                onValueChange={(value) =>
+                                  updatePackages(index, value)
+                                }
+                              >
+                                <SelectTrigger>
+                                  <SelectValue placeholder="Select Package ID - Name" />
+                                </SelectTrigger>
+                              
+                                <SelectContent>
+                                  {GetPackages.map((item: any) => (
+                                    <SelectItem
+                                      key={item.package_ID}
+                                      value={item.package_ID}
+                                    >
+                                      {item.package_ID} - {item.package_Name}
+                                    </SelectItem>
+                                  ))}
+                                </SelectContent>
+                              </Select>
+                            </div>
+                          </TooltipTrigger>
+                                
+                          <TooltipContent>
+                            <p>Select Package ID - Name</p>
+                          </TooltipContent>
+                        </Tooltip>
+                      </TooltipProvider>
+                    </div>
+
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="icon"
+                      onClick={addPackageField}
+                      className="h-9 w-9 text-blue-600 hover:bg-blue-50 border"
+                    >
+                      <Plus className="h-4 w-4" />
+                    </Button>
+
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="icon"
+                      onClick={() => removePackageField(index)}
+                      className="h-9 w-9 text-red-500 hover:bg-red-50 border"
+                    >
+                      <Minus className="h-4 w-4" />
+                    </Button>
+
+                  </div>
+                ))}
+              </div>
+
+              <div className="flex items-center space-x-2">
+                <Switch
+                  id="pkgActive"
+                  checked={MemberShipForm.Status}
+                  onCheckedChange={(checked) =>
+                    setMemberShipForm({ ...MemberShipForm, Status: checked })
+                  }
+                />
+                <Label htmlFor="pkgActive">Active</Label>
+              </div>
+
+            </div>
+
+            <DialogFooter>
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+              <Button
+                variant="outline"
+                onClick={() => setIsPackageDialogOpen(false)}
+              >
+                Cancel
+              </Button>
+              </TooltipTrigger>
+
+                  <TooltipContent>
+                    <p>Cancel without saving changes.</p>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+              <Button
+                onClick={handleSaveMemberShip}
+              >
+                {editingPackage ? "Update" : "Create"} Membership
               </Button>
               </TooltipTrigger>
 
