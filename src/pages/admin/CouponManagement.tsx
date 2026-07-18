@@ -18,7 +18,7 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/comp
 import { showConfirmToast } from '../../components/ui/show-confirm-toast';
 import { useCompany } from "../CompanyContext";
 import { ArrowLeft, Plus, Pencil, Trash2, Tag, Percent, DollarSign, Calendar, CheckCircle, XCircle, Clock, Copy, RefreshCw, RotateCcw, Search } from 'lucide-react';
-import ReactMultiSelect, {MultiSelectOption,} from "@/components/ui/react-multi-select";
+import ReactMultiSelect, { MultiSelectOption, } from "@/components/ui/react-multi-select";
 // Types
 interface Coupon {
   id: string;
@@ -73,32 +73,32 @@ const CouponManagement = () => {
   };
 
   const fetchAppPackages = async () => {
-  try {
-    const response = await fetch(`${BASE_URL}/getAppPackages`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        Company_Code: companyCode,
-        Location_Code: locationCode,
-      }),
-    });
-    const data = await response.json();
-    if (response.ok) {
-      setAppPackages(data);
-    } else {
-      console.error("Failed to fetch packages");
+    try {
+      const response = await fetch(`${BASE_URL}/getAppPackages`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          Company_Code: companyCode,
+          Location_Code: locationCode,
+        }),
+      });
+      const data = await response.json();
+      if (response.ok) {
+        setAppPackages(data);
+      } else {
+        console.error("Failed to fetch packages");
+      }
+    } catch (error) {
+      console.error("Error fetching packages:", error);
     }
-  } catch (error) {
-    console.error("Error fetching packages:", error);
-  }
-};
+  };
 
-const packageOptions = AppPackages.map((item: any) => ({
-  label: `${item.package_ID} - ${item.package_Name}`,
-  value: item.package_ID,
-}));
+  const packageOptions = AppPackages.map((item: any) => ({
+    label: `${item.package_ID} - ${item.package_Name}`,
+    value: item.package_ID,
+  }));
 
 
   useEffect(() => {
@@ -343,7 +343,7 @@ const packageOptions = AppPackages.map((item: any) => ({
       maxUses: coupon.Max_Uses != null ? Number(coupon.Max_Uses) : null,
       // applicablePackages: coupon.Applicable_Packages ?? "",
       applicablePackages: coupon.Applicable_Packages
-      ? coupon.Applicable_Packages.split(",").map((id: string) => {
+        ? coupon.Applicable_Packages.split(",").map((id: string) => {
           const pkg = AppPackages.find(
             (item: any) => item.package_ID === id
           );
@@ -354,7 +354,7 @@ const packageOptions = AppPackages.map((item: any) => ({
               : id,
           };
         })
-      : [],
+        : [],
       isActive:
         coupon.Status === "Active" ||
         coupon.Status === true ||
@@ -369,7 +369,9 @@ const packageOptions = AppPackages.map((item: any) => ({
   const handleCreateCoupon = async () => {
     setSubmittedCoupon(true);
 
-    if (!formData.code || !formData.description || !formData.discountType) {
+    if (!formData.code || !formData.description || !formData.discountType || !formData.maxUses
+      || !formData.validFrom || !formData.validUntil || !formData.applicablePackages
+    ) {
       toast({
         title: "Validation Error",
         description: "Please fill all required fields.",
@@ -396,7 +398,7 @@ const packageOptions = AppPackages.map((item: any) => ({
           Current_Uses: 0,
           // Applicable_Packages: formData.applicablePackages,
           Applicable_Packages: formData.applicablePackages
-          .map((item: any) => item.value) .join(","),
+            .map((item: any) => item.value).join(","),
           Status: formData.isActive ? "Active" : "Inactive",
           Company_Code: companyCode,
           Location_Code: locationCode,
@@ -472,7 +474,7 @@ const packageOptions = AppPackages.map((item: any) => ({
           Max_Uses: formData.maxUses || 0,
           // Applicable_Packages: formData.applicablePackages,
           Applicable_Packages: formData.applicablePackages
-          .map((item) => item.value) .join(","),
+            .map((item) => item.value).join(","),
           Status: formData.isActive ? "Active" : "Inactive",
           Company_Code: companyCode,
           Location_Code: locationCode,
@@ -958,15 +960,15 @@ const packageOptions = AppPackages.map((item: any) => ({
                           </SelectTrigger>
 
                           <SelectContent>
-                            {AppPackages.map((AppPackages: any) => (
-                              <SelectItem
-                                key={AppPackages.attributedetails_name}
-                                value={AppPackages.attributedetails_name}
-                              >
-                                {AppPackages.attributedetails_name}
-                              </SelectItem>
-                            ))}
-                          </SelectContent>
+                          {AppPackages.map((item: any) => (
+                            <SelectItem
+                              key={item.package_ID}
+                              value={item.package_ID}
+                            >
+                              {item.package_ID} - {item.package_Name}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
                         </Select>
                       </div>
                     </TooltipTrigger>
@@ -1042,7 +1044,12 @@ const packageOptions = AppPackages.map((item: any) => ({
       </main>
 
       {/* Add/Edit Coupon Dialog */}
-      <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+      <Dialog open={isDialogOpen} onOpenChange={(open) => {
+        if (!open) {
+          setSubmittedCoupon(false);
+        }
+        setIsDialogOpen(open)
+      }}>
         <DialogContent className="max-w-2xl">
           <DialogHeader>
             <DialogTitle>{editingCoupon ? 'Edit Coupon' : 'Create New Coupon'}</DialogTitle>
@@ -1053,7 +1060,7 @@ const packageOptions = AppPackages.map((item: any) => ({
           <div className="grid gap-4 py-4">
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
-                <Label htmlFor="code">Coupon Code *</Label>
+                <Label htmlFor="code" className={submittedCoupon && !formData.code ? "text-red-500" : ""}>Coupon Code*</Label>
                 <TooltipProvider>
                   <Tooltip>
                     <TooltipTrigger asChild>
@@ -1079,7 +1086,7 @@ const packageOptions = AppPackages.map((item: any) => ({
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="discountType" className={submittedCoupon && !formData.discountType ? "text-red-500" : ""}>Discount Type *</Label>
+                <Label htmlFor="discountType" className={submittedCoupon && !formData.discountType ? "text-red-500" : ""}>Discount Type*</Label>
                 <TooltipProvider>
                   <Tooltip>
                     <TooltipTrigger asChild>
@@ -1114,7 +1121,7 @@ const packageOptions = AppPackages.map((item: any) => ({
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="description">Description *</Label>
+              <Label htmlFor="description">Description</Label>
               <TooltipProvider>
                 <Tooltip>
                   <TooltipTrigger asChild>
@@ -1135,8 +1142,8 @@ const packageOptions = AppPackages.map((item: any) => ({
 
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
-                <Label htmlFor="discountValue">
-                  Discount Value ({formData.discountType === 'percentage' ? '%' : 'BHD'}) *
+                <Label htmlFor="discountValue" className={submittedCoupon && !formData.discountValue ? "text-red-500" : ""}>
+                  Discount Value* ({formData.discountType === 'percentage' ? '%' : 'BHD'})
                 </Label>
                 <TooltipProvider>
                   <Tooltip>
@@ -1182,7 +1189,7 @@ const packageOptions = AppPackages.map((item: any) => ({
 
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
-                <Label htmlFor="validFrom">Valid From *</Label>
+                <Label htmlFor="validFrom" className={submittedCoupon && !formData.validFrom ? "text-red-500" : ""}>Valid From*</Label>
                 <TooltipProvider>
                   <Tooltip>
                     <TooltipTrigger asChild>
@@ -1201,7 +1208,7 @@ const packageOptions = AppPackages.map((item: any) => ({
                 </TooltipProvider>
               </div>
               <div className="space-y-2">
-                <Label htmlFor="validUntil">Valid Until *</Label>
+                <Label htmlFor="validUntil" className={submittedCoupon && !formData.validUntil ? "text-red-500" : ""}>Valid Until*</Label>
                 <TooltipProvider>
                   <Tooltip>
                     <TooltipTrigger asChild>
@@ -1223,7 +1230,7 @@ const packageOptions = AppPackages.map((item: any) => ({
 
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
-                <Label htmlFor="maxUses">Maximum Uses (leave empty for unlimited)</Label>
+                <Label htmlFor="maxUses" className={submittedCoupon && !formData.maxUses ? "text-red-500" : ""}>Maximum Uses*</Label>
                 <TooltipProvider>
                   <Tooltip>
                     <TooltipTrigger asChild>
@@ -1243,74 +1250,33 @@ const packageOptions = AppPackages.map((item: any) => ({
                 </TooltipProvider>
               </div>
 
-              {/* <div className="space-y-2">
-                <Label htmlFor="packages">Applicable Packages</Label>
+              <div className="space-y-2">
+                <Label htmlFor="packages" className={submittedCoupon && formData.applicablePackages.length === 0 ? "text-red-500" : ""}>
+                  Applicable Packages*</Label>
+
                 <TooltipProvider>
                   <Tooltip>
                     <TooltipTrigger asChild>
                       <div>
-                        <Select
+                        <ReactMultiSelect
+                          options={packageOptions}
                           value={formData.applicablePackages}
-                          onValueChange={(value) =>
+                          placeholder="Select Applicable Packages"
+                          onChange={(selected) =>
                             setFormData({
                               ...formData,
-                              applicablePackages: value,
+                              applicablePackages: selected,
                             })
                           }
-                        >
-                          <SelectTrigger>
-                            <SelectValue placeholder="Select Package" />
-                          </SelectTrigger>
-
-                          <SelectContent>
-                            {AppPackages.map((item: any) => (
-                              <SelectItem
-                                key={item.package_ID}
-                                value={item.package_ID}
-                              >
-                                {item.package_ID}
-                              </SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
+                        />
                       </div>
                     </TooltipTrigger>
-
                     <TooltipContent>
                       <p>Select Applicable Packages</p>
                     </TooltipContent>
                   </Tooltip>
                 </TooltipProvider>
-              </div> */}
-
-              <div className="space-y-2">
-  <Label htmlFor="packages">Applicable Packages</Label>
-
-  <TooltipProvider>
-    <Tooltip>
-      <TooltipTrigger asChild>
-        <div>
-          <ReactMultiSelect
-  options={packageOptions}
-  value={formData.applicablePackages}
-  placeholder="Select Applicable Packages"
-  onChange={(selected) =>
-    setFormData({
-      ...formData,
-      applicablePackages: selected,
-    })
-  }
-/>
-        </div>
-      </TooltipTrigger>
-
-      <TooltipContent>
-        <p>Select Applicable Packages</p>
-      </TooltipContent>
-    </Tooltip>
-  </TooltipProvider>
-</div>
-
+              </div>
             </div>
 
             <div className="flex items-center space-x-2">
@@ -1323,12 +1289,35 @@ const packageOptions = AppPackages.map((item: any) => ({
             </div>
           </div>
           <DialogFooter>
-            <Button variant="outline" onClick={() => setIsDialogOpen(false)}>
-              Cancel
-            </Button>
-            <Button onClick={handleSaveCoupon}>
-              {editingCoupon ? 'Update Coupon' : 'Create Coupon'}
-            </Button>
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button variant="outline" onClick={() => { setIsDialogOpen(false); setSubmittedCoupon(false); }}>
+                    Cancel
+                  </Button>
+                </TooltipTrigger>
+
+                <TooltipContent>
+                  <p>Cancel without saving changes.</p>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
+
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button onClick={handleSaveCoupon}>
+                    {editingCoupon ? 'Update Coupon' : 'Create Coupon'}
+                  </Button>
+                </TooltipTrigger>
+
+                <TooltipContent>
+                  <p>
+                    {editingCoupon ? "Update Coupon" : "Create a Coupon"}
+                  </p>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
           </DialogFooter>
         </DialogContent>
       </Dialog>
