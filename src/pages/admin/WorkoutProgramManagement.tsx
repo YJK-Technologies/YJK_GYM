@@ -2096,6 +2096,137 @@ const addPackageField = () => {
   }
 };
 
+// const handleUpdateMemberShip = () => {
+//   showConfirmToast({
+//     title: "Update Membership Type",
+//     description: `Are you sure you want to update "${MemberShipForm.MemberShipType_Name}"?`,
+//     onConfirm: updateMemberShip,
+//   });
+// };
+
+// const updateMemberShip = async () => {
+//   if (!editingMemberShip) return;
+
+//   try {
+//     // =====================================
+//     // 1. UPDATE HEADER
+//     // =====================================
+
+//     const headerPayload = {
+//       MemberShipType_id: MemberShipForm.MemberShipType_id,
+//       MemberShipType_Name: MemberShipForm.MemberShipType_Name,
+//       Status: MemberShipForm.Status,
+//       Company_code: companyCode,
+//       Location_code: locationCode,
+//       Keyfield: editingMemberShip.Keyfield,
+//       modified_by: userCode,
+//     };
+
+//     const response = await fetch(
+//       `${BASE_URL}/MemberShipTypeHdrUpdate`,
+//       {
+//         method: "POST",
+//         headers: {
+//           "Content-Type": "application/json",
+//         },
+//         body: JSON.stringify(headerPayload),
+//       }
+//     );
+
+//     const result = await response.json();
+
+//     if (!response.ok || !result.success) {
+//       throw new Error(
+//         result.message || "Membership Type update failed."
+//       );
+//     }
+
+//     // =====================================
+//     // 2. DELETE EXISTING DETAILS
+//     // =====================================
+
+//     for (let i = 0; i < editingMemberShip.PackageIDName.length; i++) {
+//       await fetch(
+//         `${BASE_URL}/MemberShipTypeDetailsDelete`,
+//         {
+//           method: "POST",
+//           headers: {
+//             "Content-Type": "application/json",
+//           },
+//           body: JSON.stringify({
+//             Sno: i + 1,
+//             Company_code: companyCode,
+//             Location_code: locationCode,
+//             MemberShipType_id: editingMemberShip.MemberShipType_id,
+//             Keyfield_header: "",
+//             Keyfield: "",
+//             modified_by: userCode,
+//             UpdateMode: "UD",
+//           }),
+//         }
+//       );
+//     }
+
+//     // =====================================
+//     // 3. INSERT UPDATED DETAILS
+//     // =====================================
+
+//     for (const item of MemberShipForm.PackageIDName) {
+//       if (!item.package_ID) continue;
+
+//       await fetch(
+//         `${BASE_URL}/MemberShipTypeDetailsInsert`,
+//         {
+//           method: "POST",
+//           headers: {
+//             "Content-Type": "application/json",
+//           },
+//           body: JSON.stringify({
+//             package_ID: item.package_ID,
+//             Company_code: companyCode,
+//             Location_code: locationCode,
+//             MemberShipType_id: MemberShipForm.MemberShipType_id,
+//             Keyfield_header: "",
+//             Keyfield: "",
+//             created_by: userCode,
+//             UpdateMode: "UI",
+//           }),
+//         }
+//       );
+//     }
+
+//     // =====================================
+//     // SUCCESS
+//     // =====================================
+
+//     toast({
+//       title: "Membership Type Updated",
+//       description: "Membership Type Updated Successfully",
+//       variant: "success",
+//     });
+
+//     handleMemberShipSearch();
+
+//     getMemberShipCardData();
+
+//     setSubmittedMemberShips(false);
+
+//     setEditingMemberShip(null);
+
+//     setIsMemberShipDialogOpen(false);
+
+//   } catch (err: any) {
+//     toast({
+//       title: "Error",
+//       description:
+//         err.message || "Membership Type Update Failed",
+//       variant: "destructive",
+//     });
+
+//     console.error("Membership Update Error :", err);
+//   }
+// };
+
   const renderProgramSearch = () => (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-x-4 gap-y-6">
       <div className="space-y-2">
