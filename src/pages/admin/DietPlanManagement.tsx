@@ -523,13 +523,7 @@ const DietPlanManagement = () => {
     }
   };
 
-  const handleCreateDietPlan = async () => {
-    setSubmittedDietPlans(true);
-
-    // ===========================
-    // Basic Validation
-    // ===========================
-
+  const validateDietPlan = () => {
     const hasInvalidDetails = dietPlanDetails.some(
       (detail) =>
         !detail.Essentials.trim() ||
@@ -562,8 +556,17 @@ const DietPlanManagement = () => {
         description: "Please fill all required fields.",
         variant: "destructive",
       });
-      return;
+
+      return false;
     }
+
+    return true;
+  };
+
+  const handleCreateDietPlan = async () => {
+    setSubmittedDietPlans(true);
+
+    if (!validateDietPlan()) return;
 
     try {
       const currentDate = new Date().toISOString();
@@ -884,51 +887,19 @@ const DietPlanManagement = () => {
   };
 
   const handleUpdateDietPlan = () => {
-    setSubmittedDietPlans(true);
-    // ===========================
-    // Basic Validation
-    // ===========================
-
-    const hasInvalidDetails = dietPlanDetails.some(
-      (detail) =>
-        !detail.Essentials.trim() ||
-        !detail.Daily_Calories_Target.trim() ||
-        !detail.Duration.trim(),
-    );
-
-    const hasInvalidMeals = mealRows.some(
-      (meal) =>
-        !meal.Meal_Type.trim() ||
-        !meal.Meal_Name.trim() ||
-        !meal.Quantity.trim() ||
-        !meal.Calories.trim() ||
-        !meal.Protein.trim() ||
-        !meal.Carbs.trim() ||
-        !meal.Fats.trim() ||
-        !meal.Time_Slot.trim(),
-    );
-
-    if (
-      !DietPlanForm.Diet_Name.trim() ||
-      !DietPlanForm.Category.trim() ||
-      !DietPlanForm.Goals.trim() ||
-      DietPlanForm.TrainerID.length === 0 ||
-      hasInvalidDetails ||
-      hasInvalidMeals
-    ) {
-      toast({
-        title: "Required Fields",
-        description: "Please fill all required fields.",
-        variant: "destructive",
-      });
-
-      return;
-    }
-    updateDietPlan();
+    showConfirmToast({
+      title: "Update Diet Plan",
+      description: "Do you want to update these changes?",
+      onConfirm: updateDietPlan,
+    });
   };
 
   const updateDietPlan = async () => {
     if (!editingDietPlan) return;
+
+    setSubmittedDietPlans(true);
+
+    if (!validateDietPlan()) return;
 
     try {
       const currentDate = new Date().toISOString();
@@ -1119,7 +1090,7 @@ const DietPlanManagement = () => {
 
       // Reload data
       // getDietPlans();
-      handleDietPlanSearch(); // Refresh the list after deletion
+      handleDietPlanSearch();
       getDietPlanCardData();
       setSubmittedDietPlans(false);
       setIsDietPlanDialogOpen(false);
