@@ -161,8 +161,8 @@ const Home = () => {
               <h4 className="font-semibold mb-4">Contact</h4>
               <ul className="space-y-2 text-gray-400">
                 <li>Tel.: +91 95004 36787</li>
-                <li>Toll Free: +973 80008900</li>
-                <li>Fax.: +973 17764445</li>
+                {/* <li>Toll Free: +973 80008900</li>
+                <li>Fax.: +973 17764445</li> */}
                 <li>E-mail: Support@yjktechnologies.com</li>
               </ul>
             </div>

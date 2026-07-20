@@ -491,6 +491,27 @@ const DietPlanManagement = () => {
       ],
       KeyField: "",
     });
+
+    setDietPlanDetails([
+      {
+        Essentials: "",
+        Daily_Calories_Target: "",
+        Duration: "",
+      },
+    ]);
+
+    setMealRows([
+      {
+        Meal_Type: "",
+        Meal_Name: "",
+        Quantity: "",
+        Calories: "",
+        Protein: "",
+        Carbs: "",
+        Fats: "",
+        Time_Slot: "",
+      },
+    ]);
     setIsDietPlanDialogOpen(true);
   };
 
@@ -532,7 +553,6 @@ const DietPlanManagement = () => {
       !DietPlanForm.Diet_Name.trim() ||
       !DietPlanForm.Category.trim() ||
       !DietPlanForm.Goals.trim() ||
-      !DietPlanForm.Restrictions.trim() ||
       DietPlanForm.TrainerID.length === 0 ||
       hasInvalidDetails ||
       hasInvalidMeals
@@ -645,7 +665,7 @@ const DietPlanManagement = () => {
       // SUCCESS
       // ====================================================
 
-      setIsAddDialogOpen(false);
+      setIsDietPlanDialogOpen(false);
 
       setSubmittedDietPlans(false);
 
@@ -892,7 +912,6 @@ const DietPlanManagement = () => {
       !DietPlanForm.Diet_Name.trim() ||
       !DietPlanForm.Category.trim() ||
       !DietPlanForm.Goals.trim() ||
-      !DietPlanForm.Restrictions.trim() ||
       DietPlanForm.TrainerID.length === 0 ||
       hasInvalidDetails ||
       hasInvalidMeals
@@ -1011,7 +1030,7 @@ const DietPlanManagement = () => {
         if (!detailInsert.ok || !detailInsertResult.success) {
           throw new Error(
             detailInsertResult.message ||
-              "Failed while inserting diet plan details.",
+            "Failed while inserting diet plan details.",
           );
         }
       }
@@ -1083,7 +1102,7 @@ const DietPlanManagement = () => {
         if (!mealInsert.ok || !mealInsertResult.success) {
           throw new Error(
             mealInsertResult.message ||
-              "Failed while inserting diet plan meals.",
+            "Failed while inserting diet plan meals.",
           );
         }
       }
@@ -1117,7 +1136,7 @@ const DietPlanManagement = () => {
   const handleDeleteDietPlan = (dietPlan: any) => {
     showConfirmToast({
       title: "Delete Diet Plan",
-      description: `Are you sure you want to delete "${dietPlan.name}"?`,
+      description: `Are you sure you want to delete "${dietPlan.Diet_Name}"?`,
       onConfirm: () => deleteDietPlan(dietPlan),
     });
   };
@@ -1336,861 +1355,20 @@ const DietPlanManagement = () => {
             </div>
             <div className="flex items-center space-x-4">
               {/* <Badge variant="secondary">Admin</Badge> */}
-              <Dialog
-                open={isDietPlanDialogOpen}
-                onOpenChange={setIsDietPlanDialogOpen}
-              >
-                <DialogTrigger asChild>
+              <Tooltip>
+                <TooltipTrigger asChild>
                   {hasActionPermission("AdminDietPlans", "add") && (
-                  <Button
-                    className="shrink-0 px-2 sm:px-4"
-                    onClick={() => {
-                      setEditingDietPlan(null);
-
-                      setDietPlanForm({
-                        DietPlanID: "",
-                        Diet_Name: "",
-                        Category: "",
-                        Description: "",
-                        Goals: "",
-                        Restrictions: "",
-                        TrainerID: [] as MultiSelectOption[],
-                        Is_Active: true,
-                        PlanDetails: [
-                          {
-                            Essentials: "",
-                            Daily_Calories_Target: "",
-                            Duration: "",
-                          },
-                        ],
-                        PlanMeals: [
-                          {
-                            Meal_Type: "",
-                            Meal_Name: "",
-                            Quantity: "",
-                            Calories: "",
-                            Protein: "",
-                            Carbs: "",
-                            Fats: "",
-                            Time_Slot: "",
-                          },
-                        ],
-                        KeyField: "",
-                      });
-
-                      setDietPlanDetails([
-                        {
-                          Essentials: "",
-                          Daily_Calories_Target: "",
-                          Duration: "",
-                        },
-                      ]);
-
-                      setMealRows([
-                        {
-                          Meal_Type: "",
-                          Meal_Name: "",
-                          Quantity: "",
-                          Calories: "",
-                          Protein: "",
-                          Carbs: "",
-                          Fats: "",
-                          Time_Slot: "",
-                        },
-                      ]);
-
-                      setIsDietPlanDialogOpen(true);
-                    }}
-                  >
-                    <Plus className="h-4 w-4 sm:mr-2" />
-                    <span className="hidden sm:inline">Add Diet Plan</span>
-                  </Button>
-                  )}
-                </DialogTrigger>
-                <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
-                  <DialogHeader>
-                    <DialogTitle>
-                      {editingDietPlan
-                        ? "Update Diet Plan"
-                        : "Create New Diet Plan"}
-                    </DialogTitle>
-                    <DialogDescription>
-                      {editingDietPlan
-                        ? "Update diet plan information."
-                        : "Design a comprehensive nutrition plan for members."}
-                    </DialogDescription>
-                  </DialogHeader>
-
-                  <div className="grid gap-4 py-4">
-                    {/* Faculty Assignment */}
-                    <div className="space-y-4">
-                      <div className="space-y-2">
-                        <Label htmlFor="faculty">Diet Plan ID</Label>
-                        <TooltipProvider>
-                          <Tooltip>
-                            <TooltipTrigger asChild>
-                              <Input
-                                id="name"
-                                // value={programForm.id}
-                                readOnly
-                                className="bg-gray-100 cursor-not-allowed"
-                                // onChange={(e) => setProgramForm({ ...programForm, id: e.target.value })}
-                                placeholder="Auto Generated"
-                              />
-                            </TooltipTrigger>
-
-                            <TooltipContent>
-                              <p>Diet Plan ID is Auto Generated</p>
-                            </TooltipContent>
-                          </Tooltip>
-                        </TooltipProvider>
-                      </div>
-                    </div>
-
-                    <div className="grid grid-cols-2 gap-4">
-                      <div className="space-y-2">
-                        <Label
-                          htmlFor="name"
-                          className={
-                            submittedDietPlans && !DietPlanForm.Diet_Name
-                              ? "text-red-500"
-                              : ""
-                          }
-                        >
-                          Plan Name*
-                        </Label>
-                        <TooltipProvider>
-                          <Tooltip>
-                            <TooltipTrigger asChild>
-                              <Input
-                                id="Email"
-                                maxLength={100}
-                                value={DietPlanForm.Diet_Name}
-                                onChange={(e) =>
-                                  setDietPlanForm({
-                                    ...DietPlanForm,
-                                    Diet_Name: e.target.value,
-                                  })
-                                }
-                                placeholder="e.g., Plan Name"
-                              />
-                            </TooltipTrigger>
-
-                            <TooltipContent>
-                              <p>Enter Plan Name</p>
-                            </TooltipContent>
-                          </Tooltip>
-                        </TooltipProvider>
-                      </div>
-
-                      <div className="space-y-2">
-                        <Label
-                          htmlFor="name"
-                          className={
-                            submittedDietPlans && !DietPlanForm.Category
-                              ? "text-red-500"
-                              : ""
-                          }
-                        >
-                          Category*
-                        </Label>
-                        <TooltipProvider>
-                          <Tooltip>
-                            <TooltipTrigger asChild>
-                              <Input
-                                id="Email"
-                                maxLength={40}
-                                value={DietPlanForm.Category}
-                                onChange={(e) =>
-                                  setDietPlanForm({
-                                    ...DietPlanForm,
-                                    Category: e.target.value,
-                                  })
-                                }
-                                placeholder="e.g., Weight Loss, Muscle Gain, etc."
-                              />
-                            </TooltipTrigger>
-
-                            <TooltipContent>
-                              <p>Enter Category</p>
-                            </TooltipContent>
-                          </Tooltip>
-                        </TooltipProvider>
-                      </div>
-                    </div>
-
-                    <div className="space-y-2">
-                      <Label>Description</Label>
-                      <TooltipProvider>
-                        <Tooltip>
-                          <TooltipTrigger asChild>
-                            <Textarea
-                              id="Email"
-                              maxLength={255}
-                              rows={3}
-                              value={DietPlanForm.Description}
-                              onChange={(e) =>
-                                setDietPlanForm({
-                                  ...DietPlanForm,
-                                  Description: e.target.value,
-                                })
-                              }
-                              placeholder="e.g., Detailed description of the diet plan..."
-                            />
-                          </TooltipTrigger>
-
-                          <TooltipContent>
-                            <p>Enter Description</p>
-                          </TooltipContent>
-                        </Tooltip>
-                      </TooltipProvider>
-                    </div>
-
-                    <div className="space-y-2">
-                      <Label
-                        htmlFor="name"
-                        className={
-                          submittedDietPlans && !DietPlanForm.Goals
-                            ? "text-red-500"
-                            : ""
-                        }
-                      >
-                        Goals* (comma-separated)
-                      </Label>
-                      <TooltipProvider>
-                        <Tooltip>
-                          <TooltipTrigger asChild>
-                            <Input
-                              id="Email"
-                              maxLength={250}
-                              value={DietPlanForm.Goals}
-                              onChange={(e) =>
-                                setDietPlanForm({
-                                  ...DietPlanForm,
-                                  Goals: e.target.value,
-                                })
-                              }
-                              placeholder="e.g., Lose weight, Build muscle, etc"
-                            />
-                          </TooltipTrigger>
-
-                          <TooltipContent>
-                            <p>Enter Goals</p>
-                          </TooltipContent>
-                        </Tooltip>
-                      </TooltipProvider>
-                    </div>
-
-                    <div className="space-y-2">
-                      <Label>Dietary Restrictions (comma-separated)</Label>
-                      <TooltipProvider>
-                        <Tooltip>
-                          <TooltipTrigger asChild>
-                            <Input
-                              id="Email"
-                              maxLength={250}
-                              value={DietPlanForm.Restrictions}
-                              onChange={(e) =>
-                                setDietPlanForm({
-                                  ...DietPlanForm,
-                                  Restrictions: e.target.value,
-                                })
-                              }
-                              placeholder="e.g., Vegetarian, Gluten-free, etc."
-                            />
-                          </TooltipTrigger>
-
-                          <TooltipContent>
-                            <p>Enter Dietary Restrictions</p>
-                          </TooltipContent>
-                        </Tooltip>
-                      </TooltipProvider>
-                    </div>
-
-                    <div className="grid grid-cols-2 gap-4">
-                      <div className="space-y-2">
-                        <Label
-                          htmlFor="name"
-                          className={
-                            submittedDietPlans &&
-                            DietPlanForm.TrainerID.length === 0
-                              ? "text-red-500"
-                              : ""
-                          }
-                        >
-                          Trainer ID - Name*
-                        </Label>
-                        <TooltipProvider>
-                          <Tooltip>
-                            <TooltipTrigger asChild>
-                              <div>
-                                <ReactMultiSelect
-                                  options={trainerOptions}
-                                  value={DietPlanForm.TrainerID}
-                                  placeholder="Select assigned faculty"
-                                  onChange={(selected) =>
-                                    setDietPlanForm({
-                                      ...DietPlanForm,
-                                      TrainerID: selected,
-                                    })
-                                  }
-                                />
-                              </div>
-                            </TooltipTrigger>
-
-                            <TooltipContent>
-                              <p>Select Trainer ID - Name</p>
-                            </TooltipContent>
-                          </Tooltip>
-                        </TooltipProvider>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="space-y-4">
-                    <div className="flex justify-between items-center">
-                      <h4 className="font-medium text-sm text-gray-700">
-                        Diet Plan Details
-                      </h4>
-                    </div>
-
-                    <div className="space-y-3">
-                      {dietPlanDetails.map((PlanDetails, index) => (
-                        <div key={index} className="flex items-end gap-3">
-                          <div className="grid grid-cols-3 gap-4 flex-1">
-                            <div className="space-y-2">
-                              <Label
-                                className={
-                                  submittedDietPlans && !PlanDetails.Essentials
-                                    ? "text-red-500"
-                                    : ""
-                                }
-                              >
-                                Essentials*
-                              </Label>
-                              <Select
-                                value={PlanDetails.Essentials}
-                                onValueChange={(value) =>
-                                  updateDietPlanDetail(
-                                    index,
-                                    "Essentials",
-                                    value,
-                                  )
-                                }
-                              >
-                                <TooltipProvider>
-                                  <Tooltip>
-                                    <TooltipTrigger asChild>
-                                      <SelectTrigger>
-                                        <SelectValue placeholder="Select Essentials" />
-                                      </SelectTrigger>
-                                    </TooltipTrigger>
-
-                                    <TooltipContent>
-                                      <p>Select Essentials</p>
-                                    </TooltipContent>
-                                  </Tooltip>
-                                </TooltipProvider>
-
-                                <SelectContent>
-                                  {EssentialsDrop.map((status: any) => (
-                                    <SelectItem
-                                      key={status.attributedetails_code}
-                                      value={status.attributedetails_code}
-                                    >
-                                      {status.attributedetails_name}
-                                    </SelectItem>
-                                  ))}
-                                </SelectContent>
-                              </Select>
-                            </div>
-
-                            <div className="space-y-2">
-                              <Label
-                                className={
-                                  submittedDietPlans &&
-                                  !PlanDetails.Daily_Calories_Target
-                                    ? "text-red-500"
-                                    : ""
-                                }
-                              >
-                                Daily Calories Target*
-                              </Label>
-
-                              <TooltipProvider>
-                                <Tooltip>
-                                  <TooltipTrigger asChild>
-                                    <Input
-                                      type="text"
-                                      inputMode="numeric"
-                                      placeholder="e.g. 2000"
-                                      maxLength={6}
-                                      value={PlanDetails.Daily_Calories_Target}
-                                      onChange={(e) => {
-                                        // Allow only numbers
-                                        const value = e.target.value.replace(
-                                          /\D/g,
-                                          "",
-                                        );
-
-                                        updateDietPlanDetail(
-                                          index,
-                                          "Daily_Calories_Target",
-                                          value,
-                                        );
-                                      }}
-                                    />
-                                  </TooltipTrigger>
-
-                                  <TooltipContent>
-                                    <p>Enter Daily Calories Target</p>
-                                  </TooltipContent>
-                                </Tooltip>
-                              </TooltipProvider>
-                            </div>
-
-                            <div className="space-y-2">
-                              <Label
-                                className={
-                                  submittedDietPlans && !PlanDetails.Duration
-                                    ? "text-red-500"
-                                    : ""
-                                }
-                              >
-                                Duration (Week)*
-                              </Label>
-                              <Select
-                                value={PlanDetails.Duration}
-                                onValueChange={(value) =>
-                                  updateDietPlanDetail(index, "Duration", value)
-                                }
-                              >
-                                <TooltipProvider>
-                                  <Tooltip>
-                                    <TooltipTrigger asChild>
-                                      <SelectTrigger>
-                                        <SelectValue placeholder="Select Duration" />
-                                      </SelectTrigger>
-                                    </TooltipTrigger>
-
-                                    <TooltipContent>
-                                      <p>Select Duration</p>
-                                    </TooltipContent>
-                                  </Tooltip>
-                                </TooltipProvider>
-
-                                <SelectContent>
-                                  {DurationDrop.map((status: any) => (
-                                    <SelectItem
-                                      key={status.attributedetails_code}
-                                      value={status.attributedetails_code}
-                                    >
-                                      {status.attributedetails_name}
-                                    </SelectItem>
-                                  ))}
-                                </SelectContent>
-                              </Select>
-                            </div>
-                          </div>
-
-                          <div className="flex items-center gap-1.5 shrink-0">
-                            {/* Add */}
-                            <Button
-                              type="button"
-                              variant="ghost"
-                              size="icon"
-                              onClick={addDietPlanDetail}
-                              className="h-9 w-9 text-blue-600 hover:bg-blue-50 border rounded-md"
-                            >
-                              <Plus className="h-4 w-4" />
-                            </Button>
-
-                            {/* Remove */}
-                            <Button
-                              type="button"
-                              variant="ghost"
-                              size="icon"
-                              onClick={() => removeDietPlanDetail(index)}
-                              className="h-9 w-9 text-red-500 hover:bg-red-50 border rounded-md"
-                            >
-                              <Minus className="h-4 w-4" />
-                            </Button>
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-
-                  <h4 className="font-medium text-sm text-gray-700">
-                    Diet Plan Meals
-                  </h4>
-
-                  <div className="space-y-4">
-                    {mealRows.map((meal, index) => (
-                      <div
-                        key={index}
-                        className="border rounded-lg p-4 space-y-4 bg-gray-50"
-                      >
-                        <div className="grid grid-cols-4 gap-4">
-                          {/* Meal Type */}
-                          <div className="space-y-2">
-                            <Label
-                              className={
-                                submittedDietPlans && !meal.Meal_Type
-                                  ? "text-red-500"
-                                  : ""
-                              }
-                            >
-                              Meal Type*
-                            </Label>
-                            <Select
-                              value={meal.Meal_Type}
-                              onValueChange={(value) =>
-                                updateMealRow(index, "Meal_Type", value)
-                              }
-                            >
-                              <TooltipProvider>
-                                <Tooltip>
-                                  <TooltipTrigger asChild>
-                                    <SelectTrigger>
-                                      <SelectValue placeholder="e.g. Breakfast" />
-                                    </SelectTrigger>
-                                  </TooltipTrigger>
-
-                                  <TooltipContent>
-                                    <p>Select Meal Type</p>
-                                  </TooltipContent>
-                                </Tooltip>
-                              </TooltipProvider>
-
-                              <SelectContent>
-                                {MealTypeDrop.map((status: any) => (
-                                  <SelectItem
-                                    key={status.attributedetails_code}
-                                    value={status.attributedetails_code}
-                                  >
-                                    {status.attributedetails_name}
-                                  </SelectItem>
-                                ))}
-                              </SelectContent>
-                            </Select>
-                          </div>
-
-                          {/* Meal Name */}
-                          <div className="space-y-2">
-                            <Label
-                              className={
-                                submittedDietPlans && !meal.Meal_Name
-                                  ? "text-red-500"
-                                  : ""
-                              }
-                            >
-                              Meal Name*
-                            </Label>
-                            <TooltipProvider>
-                              <Tooltip>
-                                <TooltipTrigger asChild>
-                                  <Input
-                                    value={meal.Meal_Name}
-                                    placeholder="e.g. Fruits"
-                                    maxLength={100}
-                                    onChange={(e) =>
-                                      updateMealRow(
-                                        index,
-                                        "Meal_Name",
-                                        e.target.value,
-                                      )
-                                    }
-                                    className="bg-white"
-                                  />
-                                </TooltipTrigger>
-
-                                <TooltipContent>
-                                  <p>Enter Meal Name</p>
-                                </TooltipContent>
-                              </Tooltip>
-                            </TooltipProvider>
-                          </div>
-
-                          {/* Quantity */}
-
-                          <div className="space-y-2">
-                            <Label
-                              className={
-                                submittedDietPlans && !meal.Quantity
-                                  ? "text-red-500"
-                                  : ""
-                              }
-                            >
-                              Quantity*
-                            </Label>
-                            <TooltipProvider>
-                              <Tooltip>
-                                <TooltipTrigger asChild>
-                                  <Input
-                                    type="text"
-                                    inputMode="numeric"
-                                    value={meal.Quantity}
-                                    placeholder="e.g. 3 counts"
-                                    maxLength={4}
-                                    onChange={(e) => {
-                                      const value = e.target.value.replace(
-                                        /\D/g,
-                                        "",
-                                      ); // Numbers only
-
-                                      updateMealRow(index, "Quantity", value);
-                                    }}
-                                  />
-                                </TooltipTrigger>
-
-                                <TooltipContent>
-                                  <p>Enter Quantity</p>
-                                </TooltipContent>
-                              </Tooltip>
-                            </TooltipProvider>
-                          </div>
-
-                          {/* Calories */}
-
-                          <div className="space-y-2">
-                            <Label
-                              className={
-                                submittedDietPlans && !meal.Calories
-                                  ? "text-red-500"
-                                  : ""
-                              }
-                            >
-                              Calories*
-                            </Label>
-                            <TooltipProvider>
-                              <Tooltip>
-                                <TooltipTrigger asChild>
-                                  <Input
-                                    type="text"
-                                    inputMode="numeric"
-                                    value={meal.Calories}
-                                    placeholder="e.g. 200"
-                                    maxLength={5}
-                                    onChange={(e) => {
-                                      const value = e.target.value.replace(
-                                        /\D/g,
-                                        "",
-                                      ); // Numbers only
-
-                                      updateMealRow(index, "Calories", value);
-                                    }}
-                                  />
-                                </TooltipTrigger>
-
-                                <TooltipContent>
-                                  <p>Enter Calories</p>
-                                </TooltipContent>
-                              </Tooltip>
-                            </TooltipProvider>
-                          </div>
-
-                          {/* Protein */}
-
-                          <div className="space-y-2">
-                            <Label
-                              className={
-                                submittedDietPlans && !meal.Protein
-                                  ? "text-red-500"
-                                  : ""
-                              }
-                            >
-                              Protein*
-                            </Label>
-                            <TooltipProvider>
-                              <Tooltip>
-                                <TooltipTrigger asChild>
-                                  <Input
-                                    type="text"
-                                    inputMode="numeric"
-                                    value={meal.Protein}
-                                    placeholder="e.g. 200"
-                                    maxLength={5}
-                                    onChange={(e) => {
-                                      const value = e.target.value.replace(
-                                        /\D/g,
-                                        "",
-                                      ); // Numbers only
-
-                                      updateMealRow(index, "Protein", value);
-                                    }}
-                                  />
-                                </TooltipTrigger>
-
-                                <TooltipContent>
-                                  <p>Enter Protein</p>
-                                </TooltipContent>
-                              </Tooltip>
-                            </TooltipProvider>
-                          </div>
-
-                          {/* Carbs */}
-
-                          <div className="space-y-2">
-                            <Label
-                              className={
-                                submittedDietPlans && !meal.Carbs
-                                  ? "text-red-500"
-                                  : ""
-                              }
-                            >
-                              Carbs*
-                            </Label>
-                            <TooltipProvider>
-                              <Tooltip>
-                                <TooltipTrigger asChild>
-                                  <Input
-                                    type="text"
-                                    inputMode="numeric"
-                                    value={meal.Carbs}
-                                    placeholder="e.g. 200"
-                                    maxLength={5}
-                                    onChange={(e) => {
-                                      const value = e.target.value.replace(
-                                        /\D/g,
-                                        "",
-                                      ); // Numbers only
-
-                                      updateMealRow(index, "Carbs", value);
-                                    }}
-                                  />
-                                </TooltipTrigger>
-
-                                <TooltipContent>
-                                  <p>Enter Carbs</p>
-                                </TooltipContent>
-                              </Tooltip>
-                            </TooltipProvider>
-                          </div>
-
-                          {/* Fats */}
-
-                          <div className="space-y-2">
-                            <Label
-                              className={
-                                submittedDietPlans && !meal.Fats
-                                  ? "text-red-500"
-                                  : ""
-                              }
-                            >
-                              Fats*
-                            </Label>
-                            <TooltipProvider>
-                              <Tooltip>
-                                <TooltipTrigger asChild>
-                                  <Input
-                                    type="text"
-                                    inputMode="numeric"
-                                    value={meal.Fats}
-                                    placeholder="e.g. 200"
-                                    maxLength={5}
-                                    onChange={(e) => {
-                                      const value = e.target.value.replace(
-                                        /\D/g,
-                                        "",
-                                      ); // Numbers only
-
-                                      updateMealRow(index, "Fats", value);
-                                    }}
-                                  />
-                                </TooltipTrigger>
-
-                                <TooltipContent>
-                                  <p>Enter Fats</p>
-                                </TooltipContent>
-                              </Tooltip>
-                            </TooltipProvider>
-                          </div>
-
-                          {/* Time Slot */}
-
-                          <div className="space-y-2">
-                            <Label
-                              className={
-                                submittedDietPlans && !meal.Time_Slot
-                                  ? "text-red-500"
-                                  : ""
-                              }
-                            >
-                              Time Slot*
-                            </Label>
-                            <TooltipProvider>
-                              <Tooltip>
-                                <TooltipTrigger asChild>
-                                  <Input
-                                    value={meal.Time_Slot}
-                                    maxLength={50}
-                                    placeholder="2PM - 6PM"
-                                    onChange={(e) =>
-                                      updateMealRow(
-                                        index,
-                                        "Time_Slot",
-                                        e.target.value,
-                                      )
-                                    }
-                                  />
-                                </TooltipTrigger>
-
-                                <TooltipContent>
-                                  <p>Enter Time Slot</p>
-                                </TooltipContent>
-                              </Tooltip>
-                            </TooltipProvider>
-                          </div>
-                        </div>
-
-                        {/* Buttons */}
-
-                        <div className="flex justify-end gap-2">
-                          <Button
-                            type="button"
-                            variant="outline"
-                            onClick={addMealRow}
-                          >
-                            <Plus className="h-4 w-4" />
-                          </Button>
-
-                          <Button
-                            type="button"
-                            variant="outline"
-                            onClick={() => removeMealRow(index)}
-                          >
-                            <Minus className="h-4 w-4" />
-                          </Button>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-
-                  <div className="flex items-center space-x-2">
-                    <Switch
-                      id="isActive"
-                      checked={DietPlanForm.Is_Active}
-                      onCheckedChange={(checked) =>
-                        setDietPlanForm({ ...DietPlanForm, Is_Active: checked })
-                      }
-                    />
-                    <Label htmlFor="isActive">Active Diet Plan</Label>
-                  </div>
-
-                  <div className="flex justify-end gap-2">
                     <Button
-                      variant="outline"
-                      onClick={() => setIsAddDialogOpen(false)}
+                      className="shrink-0 px-2 sm:px-4"
+                      onClick={handleAddDietPlan}
                     >
-                      Cancel
+                      <Plus className="h-4 w-4 sm:mr-2" />
+                      <span className="hidden sm:inline">Add Diet Plan</span>
                     </Button>
-                    <Button onClick={handleSaveDietPlan}>
-                      {editingDietPlan ? "Update Plan" : "Create Plan"}
-                    </Button>
-                  </div>
-                </DialogContent>
-              </Dialog>
+                  )}
+                </TooltipTrigger>
+                <TooltipContent>Add Diet Plan</TooltipContent>
+              </Tooltip>
             </div>
           </div>
         </div>
@@ -2612,13 +1790,13 @@ const DietPlanManagement = () => {
                             <Tooltip>
                               <TooltipTrigger asChild>
                                 {hasActionPermission("AdminDietPlans", "edit") && (
-                                <Button
-                                  variant="ghost"
-                                  size="icon"
-                                  onClick={() => handleEditDietPlan(plan)}
-                                >
-                                  <Edit className="h-4 w-4" />
-                                </Button>
+                                  <Button
+                                    variant="ghost"
+                                    size="icon"
+                                    onClick={() => handleEditDietPlan(plan)}
+                                  >
+                                    <Edit className="h-4 w-4" />
+                                  </Button>
                                 )}
                               </TooltipTrigger>
 
@@ -2632,14 +1810,14 @@ const DietPlanManagement = () => {
                             <Tooltip>
                               <TooltipTrigger asChild>
                                 {hasActionPermission("AdminDietPlans", "edit") && (
-                                <Button
-                                  variant="ghost"
-                                  size="icon"
-                                  onClick={() => handleDeleteDietPlan(plan)}
-                                  className="text-red-500 hover:text-red-700"
-                                >
-                                  <Trash2 className="h-4 w-4" />
-                                </Button>
+                                  <Button
+                                    variant="ghost"
+                                    size="icon"
+                                    onClick={() => handleDeleteDietPlan(plan)}
+                                    className="text-red-500 hover:text-red-700"
+                                  >
+                                    <Trash2 className="h-4 w-4" />
+                                  </Button>
                                 )}
                               </TooltipTrigger>
 
@@ -2740,6 +1918,826 @@ const DietPlanManagement = () => {
             </div>
           </CardContent>
         </Card>
+
+        {/* Diet Plans Add */}
+        <Dialog
+          open={isDietPlanDialogOpen}
+          onOpenChange={(open) => {
+            if (!open) {
+              setSubmittedDietPlans(false);
+            }
+            setIsDietPlanDialogOpen(open)
+          }}
+        >
+          <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+            <DialogHeader>
+              <DialogTitle>
+                {editingDietPlan
+                  ? "Update Diet Plan"
+                  : "Create New Diet Plan"}
+              </DialogTitle>
+              <DialogDescription>
+                {editingDietPlan
+                  ? "Update diet plan information."
+                  : "Design a comprehensive nutrition plan for members."}
+              </DialogDescription>
+            </DialogHeader>
+
+            <div className="grid gap-4 py-4">
+              {/* Faculty Assignment */}
+              <div className="space-y-4">
+                <div className="space-y-2">
+                  <Label htmlFor="faculty">Diet Plan ID</Label>
+                  <TooltipProvider>
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <Input
+                          id="name"
+                          value={DietPlanForm.DietPlanID}
+                          readOnly
+                          className="bg-gray-100 cursor-not-allowed"
+                          // onChange={(e) => setProgramForm({ ...programForm, id: e.target.value })}
+                          placeholder="Auto Generated"
+                        />
+                      </TooltipTrigger>
+
+                      <TooltipContent>
+                        <p>Diet Plan ID is Auto Generated</p>
+                      </TooltipContent>
+                    </Tooltip>
+                  </TooltipProvider>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label
+                    htmlFor="name"
+                    className={
+                      submittedDietPlans && !DietPlanForm.Diet_Name
+                        ? "text-red-500"
+                        : ""
+                    }
+                  >
+                    Plan Name*
+                  </Label>
+                  <TooltipProvider>
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <Input
+                          id="Email"
+                          maxLength={100}
+                          value={DietPlanForm.Diet_Name}
+                          onChange={(e) =>
+                            setDietPlanForm({
+                              ...DietPlanForm,
+                              Diet_Name: e.target.value,
+                            })
+                          }
+                          placeholder="e.g., Plan Name"
+                        />
+                      </TooltipTrigger>
+
+                      <TooltipContent>
+                        <p>Enter Plan Name</p>
+                      </TooltipContent>
+                    </Tooltip>
+                  </TooltipProvider>
+                </div>
+
+                <div className="space-y-2">
+                  <Label
+                    htmlFor="name"
+                    className={
+                      submittedDietPlans && !DietPlanForm.Category
+                        ? "text-red-500"
+                        : ""
+                    }
+                  >
+                    Category*
+                  </Label>
+                  <TooltipProvider>
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <Input
+                          id="Email"
+                          maxLength={40}
+                          value={DietPlanForm.Category}
+                          onChange={(e) =>
+                            setDietPlanForm({
+                              ...DietPlanForm,
+                              Category: e.target.value,
+                            })
+                          }
+                          placeholder="e.g., Weight Loss, Muscle Gain, etc."
+                        />
+                      </TooltipTrigger>
+
+                      <TooltipContent>
+                        <p>Enter Category</p>
+                      </TooltipContent>
+                    </Tooltip>
+                  </TooltipProvider>
+                </div>
+              </div>
+
+              <div className="space-y-2">
+                <Label>Description</Label>
+                <TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Textarea
+                        id="Email"
+                        maxLength={255}
+                        rows={3}
+                        value={DietPlanForm.Description}
+                        onChange={(e) =>
+                          setDietPlanForm({
+                            ...DietPlanForm,
+                            Description: e.target.value,
+                          })
+                        }
+                        placeholder="e.g., Detailed description of the diet plan..."
+                      />
+                    </TooltipTrigger>
+
+                    <TooltipContent>
+                      <p>Enter Description</p>
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
+              </div>
+
+              <div className="space-y-2">
+                <Label
+                  htmlFor="name"
+                  className={
+                    submittedDietPlans && !DietPlanForm.Goals
+                      ? "text-red-500"
+                      : ""
+                  }
+                >
+                  Goals* (comma-separated)
+                </Label>
+                <TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Input
+                        id="Email"
+                        maxLength={250}
+                        value={DietPlanForm.Goals}
+                        onChange={(e) =>
+                          setDietPlanForm({
+                            ...DietPlanForm,
+                            Goals: e.target.value,
+                          })
+                        }
+                        placeholder="e.g., Lose weight, Build muscle, etc"
+                      />
+                    </TooltipTrigger>
+
+                    <TooltipContent>
+                      <p>Enter Goals</p>
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
+              </div>
+
+              <div className="space-y-2">
+                <Label>Dietary Restrictions (comma-separated)</Label>
+                <TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Input
+                        id="Email"
+                        maxLength={250}
+                        value={DietPlanForm.Restrictions}
+                        onChange={(e) =>
+                          setDietPlanForm({
+                            ...DietPlanForm,
+                            Restrictions: e.target.value,
+                          })
+                        }
+                        placeholder="e.g., Vegetarian, Gluten-free, etc."
+                      />
+                    </TooltipTrigger>
+
+                    <TooltipContent>
+                      <p>Enter Dietary Restrictions</p>
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
+              </div>
+
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label
+                    htmlFor="name"
+                    className={
+                      submittedDietPlans &&
+                        DietPlanForm.TrainerID.length === 0
+                        ? "text-red-500"
+                        : ""
+                    }
+                  >
+                    Trainer ID - Name*
+                  </Label>
+                  <TooltipProvider>
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <div>
+                          <ReactMultiSelect
+                            options={trainerOptions}
+                            value={DietPlanForm.TrainerID}
+                            placeholder="Select assigned faculty"
+                            onChange={(selected) =>
+                              setDietPlanForm({
+                                ...DietPlanForm,
+                                TrainerID: selected,
+                              })
+                            }
+                          />
+                        </div>
+                      </TooltipTrigger>
+
+                      <TooltipContent>
+                        <p>Select Trainer ID - Name</p>
+                      </TooltipContent>
+                    </Tooltip>
+                  </TooltipProvider>
+                </div>
+              </div>
+            </div>
+
+            <div className="space-y-4">
+              <div className="flex justify-between items-center">
+                <h4 className="font-medium text-sm text-gray-700">
+                  Diet Plan Details
+                </h4>
+              </div>
+
+              <div className="space-y-3">
+                {dietPlanDetails.map((PlanDetails, index) => (
+                  <div key={index} className="flex items-end gap-3">
+                    <div className="grid grid-cols-3 gap-4 flex-1">
+                      <div className="space-y-2">
+                        <Label
+                          className={
+                            submittedDietPlans && !PlanDetails.Essentials
+                              ? "text-red-500"
+                              : ""
+                          }
+                        >
+                          Essentials*
+                        </Label>
+                        <Select
+                          value={PlanDetails.Essentials}
+                          onValueChange={(value) =>
+                            updateDietPlanDetail(
+                              index,
+                              "Essentials",
+                              value,
+                            )
+                          }
+                        >
+                          <TooltipProvider>
+                            <Tooltip>
+                              <TooltipTrigger asChild>
+                                <SelectTrigger>
+                                  <SelectValue placeholder="Select Essentials" />
+                                </SelectTrigger>
+                              </TooltipTrigger>
+
+                              <TooltipContent>
+                                <p>Select Essentials</p>
+                              </TooltipContent>
+                            </Tooltip>
+                          </TooltipProvider>
+
+                          <SelectContent>
+                            {EssentialsDrop.map((status: any) => (
+                              <SelectItem
+                                key={status.attributedetails_code}
+                                value={status.attributedetails_code}
+                              >
+                                {status.attributedetails_name}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      </div>
+
+                      <div className="space-y-2">
+                        <Label
+                          className={
+                            submittedDietPlans &&
+                              !PlanDetails.Daily_Calories_Target
+                              ? "text-red-500"
+                              : ""
+                          }
+                        >
+                          Daily Calories Target*
+                        </Label>
+
+                        <TooltipProvider>
+                          <Tooltip>
+                            <TooltipTrigger asChild>
+                              <Input
+                                type="text"
+                                inputMode="numeric"
+                                placeholder="e.g. 2000"
+                                maxLength={6}
+                                value={PlanDetails.Daily_Calories_Target}
+                                onChange={(e) => {
+                                  // Allow only numbers
+                                  const value = e.target.value.replace(
+                                    /\D/g,
+                                    "",
+                                  );
+
+                                  updateDietPlanDetail(
+                                    index,
+                                    "Daily_Calories_Target",
+                                    value,
+                                  );
+                                }}
+                              />
+                            </TooltipTrigger>
+
+                            <TooltipContent>
+                              <p>Enter Daily Calories Target</p>
+                            </TooltipContent>
+                          </Tooltip>
+                        </TooltipProvider>
+                      </div>
+
+                      <div className="space-y-2">
+                        <Label
+                          className={
+                            submittedDietPlans && !PlanDetails.Duration
+                              ? "text-red-500"
+                              : ""
+                          }
+                        >
+                          Duration (Week)*
+                        </Label>
+                        <Select
+                          value={PlanDetails.Duration}
+                          onValueChange={(value) =>
+                            updateDietPlanDetail(index, "Duration", value)
+                          }
+                        >
+                          <TooltipProvider>
+                            <Tooltip>
+                              <TooltipTrigger asChild>
+                                <SelectTrigger>
+                                  <SelectValue placeholder="Select Duration" />
+                                </SelectTrigger>
+                              </TooltipTrigger>
+
+                              <TooltipContent>
+                                <p>Select Duration</p>
+                              </TooltipContent>
+                            </Tooltip>
+                          </TooltipProvider>
+
+                          <SelectContent>
+                            {DurationDrop.map((status: any) => (
+                              <SelectItem
+                                key={status.attributedetails_code}
+                                value={status.attributedetails_code}
+                              >
+                                {status.attributedetails_name}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      </div>
+                    </div>
+
+                    <div className="flex items-center gap-1.5 shrink-0">
+                      {/* Add */}
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        size="icon"
+                        onClick={addDietPlanDetail}
+                        className="h-9 w-9 text-blue-600 hover:bg-blue-50 border rounded-md"
+                      >
+                        <Plus className="h-4 w-4" />
+                      </Button>
+
+                      {/* Remove */}
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        size="icon"
+                        onClick={() => removeDietPlanDetail(index)}
+                        className="h-9 w-9 text-red-500 hover:bg-red-50 border rounded-md"
+                      >
+                        <Minus className="h-4 w-4" />
+                      </Button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <h4 className="font-medium text-sm text-gray-700">
+              Diet Plan Meals
+            </h4>
+
+            <div className="space-y-4">
+              {mealRows.map((meal, index) => (
+                <div
+                  key={index}
+                  className="border rounded-lg p-4 space-y-4 bg-gray-50"
+                >
+                  <div className="grid grid-cols-4 gap-4">
+                    {/* Meal Type */}
+                    <div className="space-y-2">
+                      <Label
+                        className={
+                          submittedDietPlans && !meal.Meal_Type
+                            ? "text-red-500"
+                            : ""
+                        }
+                      >
+                        Meal Type*
+                      </Label>
+                      <Select
+                        value={meal.Meal_Type}
+                        onValueChange={(value) =>
+                          updateMealRow(index, "Meal_Type", value)
+                        }
+                      >
+                        <TooltipProvider>
+                          <Tooltip>
+                            <TooltipTrigger asChild>
+                              <SelectTrigger>
+                                <SelectValue placeholder="e.g. Breakfast" />
+                              </SelectTrigger>
+                            </TooltipTrigger>
+
+                            <TooltipContent>
+                              <p>Select Meal Type</p>
+                            </TooltipContent>
+                          </Tooltip>
+                        </TooltipProvider>
+
+                        <SelectContent>
+                          {MealTypeDrop.map((status: any) => (
+                            <SelectItem
+                              key={status.attributedetails_code}
+                              value={status.attributedetails_code}
+                            >
+                              {status.attributedetails_name}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+
+                    {/* Meal Name */}
+                    <div className="space-y-2">
+                      <Label
+                        className={
+                          submittedDietPlans && !meal.Meal_Name
+                            ? "text-red-500"
+                            : ""
+                        }
+                      >
+                        Meal Name*
+                      </Label>
+                      <TooltipProvider>
+                        <Tooltip>
+                          <TooltipTrigger asChild>
+                            <Input
+                              value={meal.Meal_Name}
+                              placeholder="e.g. Fruits"
+                              maxLength={100}
+                              onChange={(e) =>
+                                updateMealRow(
+                                  index,
+                                  "Meal_Name",
+                                  e.target.value,
+                                )
+                              }
+                              className="bg-white"
+                            />
+                          </TooltipTrigger>
+
+                          <TooltipContent>
+                            <p>Enter Meal Name</p>
+                          </TooltipContent>
+                        </Tooltip>
+                      </TooltipProvider>
+                    </div>
+
+                    {/* Quantity */}
+
+                    <div className="space-y-2">
+                      <Label
+                        className={
+                          submittedDietPlans && !meal.Quantity
+                            ? "text-red-500"
+                            : ""
+                        }
+                      >
+                        Quantity*
+                      </Label>
+                      <TooltipProvider>
+                        <Tooltip>
+                          <TooltipTrigger asChild>
+                            <Input
+                              type="text"
+                              inputMode="numeric"
+                              value={meal.Quantity}
+                              placeholder="e.g. 3 counts"
+                              maxLength={4}
+                              onChange={(e) => {
+                                const value = e.target.value.replace(
+                                  /\D/g,
+                                  "",
+                                ); // Numbers only
+
+                                updateMealRow(index, "Quantity", value);
+                              }}
+                            />
+                          </TooltipTrigger>
+
+                          <TooltipContent>
+                            <p>Enter Quantity</p>
+                          </TooltipContent>
+                        </Tooltip>
+                      </TooltipProvider>
+                    </div>
+
+                    {/* Calories */}
+
+                    <div className="space-y-2">
+                      <Label
+                        className={
+                          submittedDietPlans && !meal.Calories
+                            ? "text-red-500"
+                            : ""
+                        }
+                      >
+                        Calories*
+                      </Label>
+                      <TooltipProvider>
+                        <Tooltip>
+                          <TooltipTrigger asChild>
+                            <Input
+                              type="text"
+                              inputMode="numeric"
+                              value={meal.Calories}
+                              placeholder="e.g. 200"
+                              maxLength={5}
+                              onChange={(e) => {
+                                const value = e.target.value.replace(
+                                  /\D/g,
+                                  "",
+                                ); // Numbers only
+
+                                updateMealRow(index, "Calories", value);
+                              }}
+                            />
+                          </TooltipTrigger>
+
+                          <TooltipContent>
+                            <p>Enter Calories</p>
+                          </TooltipContent>
+                        </Tooltip>
+                      </TooltipProvider>
+                    </div>
+
+                    {/* Protein */}
+
+                    <div className="space-y-2">
+                      <Label
+                        className={
+                          submittedDietPlans && !meal.Protein
+                            ? "text-red-500"
+                            : ""
+                        }
+                      >
+                        Protein*
+                      </Label>
+                      <TooltipProvider>
+                        <Tooltip>
+                          <TooltipTrigger asChild>
+                            <Input
+                              type="text"
+                              inputMode="numeric"
+                              value={meal.Protein}
+                              placeholder="e.g. 200"
+                              maxLength={5}
+                              onChange={(e) => {
+                                const value = e.target.value.replace(
+                                  /\D/g,
+                                  "",
+                                ); // Numbers only
+
+                                updateMealRow(index, "Protein", value);
+                              }}
+                            />
+                          </TooltipTrigger>
+
+                          <TooltipContent>
+                            <p>Enter Protein</p>
+                          </TooltipContent>
+                        </Tooltip>
+                      </TooltipProvider>
+                    </div>
+
+                    {/* Carbs */}
+
+                    <div className="space-y-2">
+                      <Label
+                        className={
+                          submittedDietPlans && !meal.Carbs
+                            ? "text-red-500"
+                            : ""
+                        }
+                      >
+                        Carbs*
+                      </Label>
+                      <TooltipProvider>
+                        <Tooltip>
+                          <TooltipTrigger asChild>
+                            <Input
+                              type="text"
+                              inputMode="numeric"
+                              value={meal.Carbs}
+                              placeholder="e.g. 200"
+                              maxLength={5}
+                              onChange={(e) => {
+                                const value = e.target.value.replace(
+                                  /\D/g,
+                                  "",
+                                ); // Numbers only
+
+                                updateMealRow(index, "Carbs", value);
+                              }}
+                            />
+                          </TooltipTrigger>
+
+                          <TooltipContent>
+                            <p>Enter Carbs</p>
+                          </TooltipContent>
+                        </Tooltip>
+                      </TooltipProvider>
+                    </div>
+
+                    {/* Fats */}
+
+                    <div className="space-y-2">
+                      <Label
+                        className={
+                          submittedDietPlans && !meal.Fats
+                            ? "text-red-500"
+                            : ""
+                        }
+                      >
+                        Fats*
+                      </Label>
+                      <TooltipProvider>
+                        <Tooltip>
+                          <TooltipTrigger asChild>
+                            <Input
+                              type="text"
+                              inputMode="numeric"
+                              value={meal.Fats}
+                              placeholder="e.g. 200"
+                              maxLength={5}
+                              onChange={(e) => {
+                                const value = e.target.value.replace(
+                                  /\D/g,
+                                  "",
+                                ); // Numbers only
+
+                                updateMealRow(index, "Fats", value);
+                              }}
+                            />
+                          </TooltipTrigger>
+
+                          <TooltipContent>
+                            <p>Enter Fats</p>
+                          </TooltipContent>
+                        </Tooltip>
+                      </TooltipProvider>
+                    </div>
+
+                    {/* Time Slot */}
+
+                    <div className="space-y-2">
+                      <Label
+                        className={
+                          submittedDietPlans && !meal.Time_Slot
+                            ? "text-red-500"
+                            : ""
+                        }
+                      >
+                        Time Slot*
+                      </Label>
+                      <TooltipProvider>
+                        <Tooltip>
+                          <TooltipTrigger asChild>
+                            <Input
+                              value={meal.Time_Slot}
+                              maxLength={50}
+                              placeholder="2PM - 6PM"
+                              onChange={(e) =>
+                                updateMealRow(
+                                  index,
+                                  "Time_Slot",
+                                  e.target.value,
+                                )
+                              }
+                            />
+                          </TooltipTrigger>
+
+                          <TooltipContent>
+                            <p>Enter Time Slot</p>
+                          </TooltipContent>
+                        </Tooltip>
+                      </TooltipProvider>
+                    </div>
+                  </div>
+
+                  {/* Buttons */}
+
+                  <div className="flex justify-end gap-2">
+                    <Button
+                      type="button"
+                      variant="outline"
+                      onClick={addMealRow}
+                    >
+                      <Plus className="h-4 w-4" />
+                    </Button>
+
+                    <Button
+                      type="button"
+                      variant="outline"
+                      onClick={() => removeMealRow(index)}
+                    >
+                      <Minus className="h-4 w-4" />
+                    </Button>
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            <div className="flex items-center space-x-2">
+              <Switch
+                id="isActive"
+                checked={DietPlanForm.Is_Active}
+                onCheckedChange={(checked) =>
+                  setDietPlanForm({ ...DietPlanForm, Is_Active: checked })
+                }
+              />
+              <Label htmlFor="isActive">Active Diet Plan</Label>
+            </div>
+
+            <div className="flex justify-end gap-2">
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Button
+                      variant="outline"
+                      onClick={() => {
+                        setSubmittedDietPlans(false);
+                        setIsDietPlanDialogOpen(false)
+                      }}>
+                      Cancel
+                    </Button>
+                  </TooltipTrigger>
+
+                  <TooltipContent>
+                    <p>Cancel without saving changes.</p>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Button onClick={handleSaveDietPlan}>
+                      {editingDietPlan ? "Update Plan" : "Create Plan"}
+                    </Button>
+                  </TooltipTrigger>
+
+                  <TooltipContent>
+                    <p>
+                      {editingDietPlan ? "Update Plan" : "Create Plan"}
+                    </p>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+            </div>
+          </DialogContent>
+        </Dialog>
 
         <Dialog
           open={!!selectedPlan}
