@@ -1,5 +1,11 @@
 import React, { useState, useEffect } from "react";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle, } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
@@ -7,15 +13,57 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger,} from "@/components/ui/dialog";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue, } from "@/components/ui/select";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { useNavigate } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
-import { ArrowLeft, Plus, Minus, Search, Phone, Mail, TrendingUp, RotateCcw, Dumbbell, Package, Users, Clock, Edit, Trash2, Eye, Calendar, DollarSign, CheckCircle, XCircle, IndianRupee, BadgePercent,
+import {
+  ArrowLeft,
+  Plus,
+  Minus,
+  Search,
+  Phone,
+  Mail,
+  TrendingUp,
+  RotateCcw,
+  Dumbbell,
+  Package,
+  Users,
+  Clock,
+  Edit,
+  Trash2,
+  Eye,
+  Calendar,
+  DollarSign,
+  CheckCircle,
+  XCircle,
+  IndianRupee,
+  BadgePercent,
 } from "lucide-react";
 import { BASE_URL } from "../ApiConfig";
-import ReactMultiSelect, {  MultiSelectOption,} from "@/components/ui/react-multi-select";
-import {Tooltip,TooltipContent,TooltipProvider,TooltipTrigger,} from "@/components/ui/tooltip";
+import ReactMultiSelect, {
+  MultiSelectOption,
+} from "@/components/ui/react-multi-select";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import { showConfirmToast } from "../../components/ui/show-confirm-toast";
 import { useCompany } from "../CompanyContext";
 import { hasActionPermission } from "@/utils/permission";
@@ -71,7 +119,10 @@ interface WorkoutMemberShip {
   MemberShipType_Name: string;
   Status: boolean;
   Sno: number;
-  package_ID: string;
+  Packages: {
+    package_ID: string;
+    package_Name: string;
+  }[];
   Keyfield: string;
 }
 
@@ -150,7 +201,8 @@ const WorkoutProgramManagement = () => {
           </h2>
 
           <p className="mt-2 text-gray-500">
-            You don't have permission to access any module in Workout Programs Management.
+            You don't have permission to access any module in Workout Programs
+            Management.
           </p>
 
           <Button className="mt-6" onClick={() => navigate("/AdminDashboard")}>
@@ -164,8 +216,8 @@ const WorkoutProgramManagement = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [packages, setPackages] = useState<WorkoutPackage[]>([]);
   const [category, setCategory] = useState<any[]>([]);
-  const [PackageTypes, setPackageTypes] = useState<any[]>([]);//Package
-  const [ProgramsID, setProgramsID] = useState<any[]>([]);//Package drop
+  const [PackageTypes, setPackageTypes] = useState<any[]>([]); //Package
+  const [ProgramsID, setProgramsID] = useState<any[]>([]); //Package drop
   const [difficultyLevel, setDifficultyLevel] = useState<any[]>([]);
   const [trainers, setTrainers] = useState<any[]>([]);
   const [status, setStatus] = useState<any[]>([]);
@@ -226,10 +278,12 @@ const WorkoutProgramManagement = () => {
     }
   };
 
-  const programOptions: MultiSelectOption[] = ProgramsID.map((program: any) => ({
-    value: program.ProgramID,
-    label: `${program.ProgramID} - ${program.ProgramName}`,
-  }));
+  const programOptions: MultiSelectOption[] = ProgramsID.map(
+    (program: any) => ({
+      value: program.ProgramID,
+      label: `${program.ProgramID} - ${program.ProgramName}`,
+    }),
+  );
   //End packages useeffect
 
   const fetchCategory = async () => {
@@ -472,24 +526,23 @@ const WorkoutProgramManagement = () => {
   });
 
   const [packageSearchForm, setPackageSearchForm] = useState({
-  id: "",
-  name: "",
-  packageType: "",
-  durationDays: "",
-  price: 0,
-  features: "",
-  discountPercentage: 0,
-  associatedProgram: "",
-  isActive: "",
-});
+    id: "",
+    name: "",
+    packageType: "",
+    durationDays: "",
+    price: 0,
+    features: "",
+    discountPercentage: 0,
+    associatedProgram: "",
+    isActive: "",
+  });
 
   // MemberShip Dialog States
   const [MemberShips, setMemberShips] = useState<WorkoutMemberShip[]>([]);
   const [submittedMemberShips, setSubmittedMemberShips] = useState(false);
   const [isMemberShipDialogOpen, setIsMemberShipDialogOpen] = useState(false);
-  const [editingMemberShip, setEditingMemberShip] = useState<WorkoutMemberShip | null>(
-    null,
-  );
+  const [editingMemberShip, setEditingMemberShip] =
+    useState<WorkoutMemberShip | null>(null);
   const [MemberShipForm, setMemberShipForm] = useState({
     MemberShipType_id: "",
     MemberShipType_Name: "",
@@ -501,7 +554,7 @@ const WorkoutProgramManagement = () => {
       },
     ],
     Keyfield: "",
-    });
+  });
 
   const [MemberShipSearchForm, setMemberShipSearchForm] = useState({
     MemberShipType_id: "",
@@ -619,10 +672,10 @@ const WorkoutProgramManagement = () => {
     const selectedExercises =
       program.Exercises.length > 0
         ? program.Exercises.map((exercise: any) => ({
-          name: exercise.Exercises_Name,
-          sets: exercise.Exercises_Count,
-          reps: exercise.Exercises_Repetitions,
-        }))
+            name: exercise.Exercises_Name,
+            sets: exercise.Exercises_Count,
+            reps: exercise.Exercises_Repetitions,
+          }))
         : [{ name: "", sets: 3, reps: "" }];
 
     setProgramForm({
@@ -893,7 +946,7 @@ const WorkoutProgramManagement = () => {
           location_code: locationCode,
           modified_by: userCode,
           programid: programForm.id,
-          updatemode: "UD"
+          updatemode: "UD",
         },
         body: JSON.stringify({
           ProgramFacultys: [editingProgram.Keyfield],
@@ -914,7 +967,7 @@ const WorkoutProgramManagement = () => {
             Company_code: companyCode,
             Location_code: locationCode,
             created_by: userCode,
-            UpdateMode: "UI"
+            UpdateMode: "UI",
           }),
         });
       }
@@ -928,7 +981,7 @@ const WorkoutProgramManagement = () => {
           location_code: locationCode,
           modified_by: userCode,
           programid: programForm.id,
-          updatemode: "UD"
+          updatemode: "UD",
         },
         body: JSON.stringify({
           ProgramExercises: [editingProgram.Keyfield],
@@ -954,7 +1007,7 @@ const WorkoutProgramManagement = () => {
             Company_code: companyCode,
             Location_code: locationCode,
             created_by: userCode,
-            UpdateMode: "UI"
+            UpdateMode: "UI",
           }),
         });
       }
@@ -1200,7 +1253,7 @@ const WorkoutProgramManagement = () => {
     }
 
     const updatedPrograms = packageForm.associatedPrograms.filter(
-      (_, i) => i !== index
+      (_, i) => i !== index,
     );
 
     setPackageForm({
@@ -1238,167 +1291,159 @@ const WorkoutProgramManagement = () => {
   //   setIsPackageDialogOpen(true);
   // };
 
-
   const handleEditPackage = (pkg: any) => {
-  setEditingPackage(pkg);
+    setEditingPackage(pkg);
 
-  const associatedPrograms =
-    pkg.Programs && pkg.Programs.length > 0
-      ? pkg.Programs.map((id: string) => ({
-          programId: id.trim(),
-        }))
-      : [
-          {
-            programId: "",
-          },
-        ];
+    const associatedPrograms =
+      pkg.Programs && pkg.Programs.length > 0
+        ? pkg.Programs.map((id: string) => ({
+            programId: id.trim(),
+          }))
+        : [
+            {
+              programId: "",
+            },
+          ];
 
-  setPackageForm({
-    id: pkg.package_ID,
-    name: pkg.package_Name,
-    packageType: pkg.package_type,
-    price: pkg.price,
-    associatedPrograms,
-    duration_days: pkg.duration_days,
-    discountPercentage: pkg.discount_percentage,
-    isActive: pkg.is_active === "Active",
-    features: pkg.features ?? "",
-  });
+    setPackageForm({
+      id: pkg.package_ID,
+      name: pkg.package_Name,
+      packageType: pkg.package_type,
+      price: pkg.price,
+      associatedPrograms,
+      duration_days: pkg.duration_days,
+      discountPercentage: pkg.discount_percentage,
+      isActive: pkg.is_active === "Active",
+      features: pkg.features ?? "",
+    });
 
-  setIsPackageDialogOpen(true);
-};
+    setIsPackageDialogOpen(true);
+  };
   const handleSavePackage = async () => {
     if (editingPackage) {
-       await handleUpdatePackage();
+      await handleUpdatePackage();
     } else {
       await handleCreatePackage();
     }
   };
 
   const handleUpdatePackage = () => {
-  showConfirmToast({
-    title: "Update Package",
-    description: `Are you sure you want to update "${packageForm.name}"?`,
-    onConfirm: updatePackage,
-  });
-};
-
-const updatePackage = async () => {
-  if (!editingPackage) return;
-
-  // if (!validatePackage()) return;
-
-  try {
-
-    const packagePayload = {
-      package_ID: packageForm.id,
-      package_Name: packageForm.name,
-      package_type: packageForm.packageType,
-      duration_days: packageForm.duration_days,
-      price: packageForm.price,
-      features: packageForm.features,
-      discount_percentage: packageForm.discountPercentage,
-      is_active: packageForm.isActive ? "Active" : "Close",
-      Company_Code: companyCode,
-      Location_Code: locationCode,
-      modified_by: userCode,
-    };
-
-    // ----------------------------
-    // Update Package Header
-    // ----------------------------
-
-    const response = await fetch(`${BASE_URL}/PackageUpdateData`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(packagePayload),
+    showConfirmToast({
+      title: "Update Package",
+      description: `Are you sure you want to update "${packageForm.name}"?`,
+      onConfirm: updatePackage,
     });
+  };
 
-    const result = await response.json();
+  const updatePackage = async () => {
+    if (!editingPackage) return;
 
-    if (!response.ok) {
-      throw new Error(result.message || "Package update failed.");
-    }
+    // if (!validatePackage()) return;
 
-        // ---------------------------------------
-    // Delete Existing Package Details
-    // ---------------------------------------
-
-    await fetch(`${BASE_URL}/PackageDetailsDeleteData`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        company_code: companyCode,
-        location_code: locationCode,
+    try {
+      const packagePayload = {
+        package_ID: packageForm.id,
+        package_Name: packageForm.name,
+        package_type: packageForm.packageType,
+        duration_days: packageForm.duration_days,
+        price: packageForm.price,
+        features: packageForm.features,
+        discount_percentage: packageForm.discountPercentage,
+        is_active: packageForm.isActive ? "Active" : "Close",
+        Company_Code: companyCode,
+        Location_Code: locationCode,
         modified_by: userCode,
-        updatemode: "UD",
-      },
-      body: JSON.stringify({
-        KeyFieldHeaders: [editingPackage.KeyField],
-        
-      }),
-    });
+      };
 
-    // ---------------------------------------
-    // Insert Updated Programs
-    // ---------------------------------------
+      // ----------------------------
+      // Update Package Header
+      // ----------------------------
 
-    for (let i = 0; i < packageForm.associatedPrograms.length; i++) {
-
-      const program = packageForm.associatedPrograms[i];
-
-      if (!program.programId) continue;
-
-      await fetch(`${BASE_URL}/PackageDetailsInsertData`, {
+      const response = await fetch(`${BASE_URL}/PackageUpdateData`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
+        body: JSON.stringify(packagePayload),
+      });
+
+      const result = await response.json();
+
+      if (!response.ok) {
+        throw new Error(result.message || "Package update failed.");
+      }
+
+      // ---------------------------------------
+      // Delete Existing Package Details
+      // ---------------------------------------
+
+      await fetch(`${BASE_URL}/PackageDetailsDeleteData`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          company_code: companyCode,
+          location_code: locationCode,
+          modified_by: userCode,
+          updatemode: "UD",
+        },
         body: JSON.stringify({
-          Sno: i + 1,
-          package_ID: packageForm.id,
-          Program_ID: program.programId,
-          Company_Code: companyCode,
-          Location_Code: locationCode,
-          created_by: userCode,
+          KeyFieldHeaders: [editingPackage.KeyField],
         }),
       });
+
+      // ---------------------------------------
+      // Insert Updated Programs
+      // ---------------------------------------
+
+      for (let i = 0; i < packageForm.associatedPrograms.length; i++) {
+        const program = packageForm.associatedPrograms[i];
+
+        if (!program.programId) continue;
+
+        await fetch(`${BASE_URL}/PackageDetailsInsertData`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            Sno: i + 1,
+            package_ID: packageForm.id,
+            Program_ID: program.programId,
+            Company_Code: companyCode,
+            Location_Code: locationCode,
+            created_by: userCode,
+          }),
+        });
+      }
+
+      toast({
+        title: "Package Updated",
+        description: "Workout Package Updated Successfully",
+        variant: "success",
+      });
+
+      // Refresh Package List
+      handlePackageSearch();
+
+      // Refresh Dashboard Counts / Cards
+      fetchWorkoutData();
+
+      // Reset Dialog State
+      setSubmittedPackage(false);
+      setEditingPackage(null);
+
+      // Close Dialog
+      setIsPackageDialogOpen(false);
+    } catch (err: any) {
+      toast({
+        title: "Error",
+        description: err.message || "Package Update Failed",
+        variant: "destructive",
+      });
+
+      console.error("Package Update Error :", err);
     }
-
-        toast({
-      title: "Package Updated",
-      description: "Workout Package Updated Successfully",
-      variant: "success",
-    });
-
-    // Refresh Package List
-    handlePackageSearch();
-
-    // Refresh Dashboard Counts / Cards
-    fetchWorkoutData();
-
-    // Reset Dialog State
-    setSubmittedPackage(false);
-    setEditingPackage(null);
-
-    // Close Dialog
-    setIsPackageDialogOpen(false);
-
-  } catch (err: any) {
-
-    toast({
-      title: "Error",
-      description: err.message || "Package Update Failed",
-      variant: "destructive",
-    });
-
-    console.error("Package Update Error :", err);
-
-  }
-};
-
+  };
 
   // const handleCreatePackage = async () => {
   //   // if (!validatePackage()) return;
@@ -1524,7 +1569,6 @@ const updatePackage = async () => {
 
       const result = await response.json();
 
-
       // Save values for rollback
       const packageID = result.PackageID;
 
@@ -1536,7 +1580,6 @@ const updatePackage = async () => {
       if (!response.ok) {
         throw new Error(result.message || "Package insert failed.");
       }
-
 
       // ============================================
       // INSERT PACKAGE DETAILS
@@ -1560,14 +1603,14 @@ const updatePackage = async () => {
               Location_Code: locationCode,
               created_by: userCode,
             }),
-          }
+          },
         );
 
         const detailResult = await detailResponse.json();
 
         if (!detailResponse.ok) {
           throw new Error(
-            detailResult.message || "Package Details insert failed."
+            detailResult.message || "Package Details insert failed.",
           );
         }
       }
@@ -1618,159 +1661,149 @@ const updatePackage = async () => {
   };
 
   const handlePackageSearch = async () => {
-  try {
-    const response = await fetch(`${BASE_URL}/PackageSearchData`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        package_ID: packageSearchForm.id,
-        package_Name: packageSearchForm.name,
-        package_type: packageSearchForm.packageType,
-        duration_days: packageSearchForm.durationDays,
-        price: packageSearchForm.price,
-        features: packageSearchForm.features,
-        discount_percentage: packageSearchForm.discountPercentage,
-        is_active: packageSearchForm.isActive,
-        program_id: packageSearchForm.associatedProgram,
-        Company_Code: companyCode,
-        Location_Code: locationCode,
-      }),
-    });
-
-    const data = await response.json();
-
-    if (response.ok) {
-      const formattedPackages = data.map((pkg: any) => ({
-  ...pkg,
-  Programs: pkg.Programs
-    ? pkg.Programs.split(",")
-    : [],
-}));
-
-      setPackages(formattedPackages);
-    } else if (response.status === 404) {
-      setPackages([]);
-
-      toast({
-        title: "Data Not Found",
-        description: data?.message || "No matching packages found.",
-        variant: "destructive",
+    try {
+      const response = await fetch(`${BASE_URL}/PackageSearchData`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          package_ID: packageSearchForm.id,
+          package_Name: packageSearchForm.name,
+          package_type: packageSearchForm.packageType,
+          duration_days: packageSearchForm.durationDays,
+          price: packageSearchForm.price,
+          features: packageSearchForm.features,
+          discount_percentage: packageSearchForm.discountPercentage,
+          is_active: packageSearchForm.isActive,
+          program_id: packageSearchForm.associatedProgram,
+          Company_Code: companyCode,
+          Location_Code: locationCode,
+        }),
       });
-    } else {
+
+      const data = await response.json();
+
+      if (response.ok) {
+        const formattedPackages = data.map((pkg: any) => ({
+          ...pkg,
+          Programs: pkg.Programs ? pkg.Programs.split(",") : [],
+        }));
+
+        setPackages(formattedPackages);
+      } else if (response.status === 404) {
+        setPackages([]);
+
+        toast({
+          title: "Data Not Found",
+          description: data?.message || "No matching packages found.",
+          variant: "destructive",
+        });
+      } else {
+        setPackages([]);
+
+        toast({
+          title: "Search Failed",
+          description: data?.message || "Something went wrong while searching.",
+          variant: "destructive",
+        });
+      }
+    } catch (error: any) {
+      console.error("Search Error:", error);
+
       setPackages([]);
 
       toast({
-        title: "Search Failed",
-        description: data?.message || "Something went wrong while searching.",
+        title: "Server Error",
+        description:
+          error?.message ||
+          "Unable to connect to the server. Please try again later.",
         variant: "destructive",
       });
     }
-  } catch (error: any) {
-    console.error("Search Error:", error);
-
-    setPackages([]);
-
-    toast({
-      title: "Server Error",
-      description:
-        error?.message ||
-        "Unable to connect to the server. Please try again later.",
-      variant: "destructive",
-    });
-  }
-};
+  };
 
   const handleDeletePackage = (pkg: any) => {
-
-  showConfirmToast({
-    title: "Delete Package",
-    description: `Are you sure you want to delete "${pkg.package_Name}"?`,
-    onConfirm: () => deletePackage(pkg),
-  });
-
-};
+    showConfirmToast({
+      title: "Delete Package",
+      description: `Are you sure you want to delete "${pkg.package_Name}"?`,
+      onConfirm: () => deletePackage(pkg),
+    });
+  };
 
   const deletePackage = async (pkg: any) => {
+    try {
+      // ----------------------------------
+      // Delete Package Details
+      // ----------------------------------
 
-  try {
+      await fetch(`${BASE_URL}/PackageDetailsDeleteData`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          company_code: companyCode,
+          location_code: locationCode,
+          modified_by: userCode,
+          updatemode: "D",
+        },
+        body: JSON.stringify({
+          KeyFieldHeaders: [pkg.KeyField],
+        }),
+      });
 
-    // ----------------------------------
-    // Delete Package Details
-    // ----------------------------------
+      // ----------------------------------
+      // Delete Package Header
+      // ----------------------------------
 
-    await fetch(`${BASE_URL}/PackageDetailsDeleteData`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        company_code: companyCode,
-        location_code: locationCode,
-        modified_by: userCode,
-        updatemode: "D",
-      },
-      body: JSON.stringify({
-        KeyFieldHeaders: [pkg.KeyField],
-      }),
-    });
+      const response = await fetch(`${BASE_URL}/PackageDeleteData`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          package_ID: pkg.package_ID,
+          Company_Code: companyCode,
+          Location_Code: locationCode,
+          KeyField: pkg.KeyField,
+        }),
+      });
 
-    // ----------------------------------
-    // Delete Package Header
-    // ----------------------------------
+      const result = await response.json();
 
-    const response = await fetch(`${BASE_URL}/PackageDeleteData`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        package_ID: pkg.package_ID,
-        Company_Code: companyCode,
-        Location_Code: locationCode,
-        KeyField: pkg.KeyField,
-      }),
-    });
+      if (!response.ok) {
+        throw new Error(result.message || "Delete failed");
+      }
 
-    const result = await response.json();
+      // ----------------------------------
+      // Remove from UI
+      // ----------------------------------
 
-    if (!response.ok) {
-      throw new Error(result.message || "Delete failed");
+      setPackages((prev: any) =>
+        prev.filter((item: any) => item.KeyField !== pkg.KeyField),
+      );
+
+      // ----------------------------------
+      // Refresh Data
+      // ----------------------------------
+
+      handlePackageSearch();
+      fetchWorkoutData();
+
+      toast({
+        title: "Package Deleted",
+        description: "Workout Package deleted successfully.",
+        variant: "success",
+      });
+    } catch (error: any) {
+      console.error(error);
+
+      toast({
+        title: "Delete Failed",
+        description: error.message || "Something went wrong.",
+        variant: "destructive",
+      });
     }
-
-    // ----------------------------------
-    // Remove from UI
-    // ----------------------------------
-
-    setPackages((prev: any) =>
-      prev.filter((item: any) => item.KeyField !== pkg.KeyField)
-    );
-
-    // ----------------------------------
-    // Refresh Data
-    // ----------------------------------
-
-    handlePackageSearch();
-    fetchWorkoutData();
-
-    toast({
-      title: "Package Deleted",
-      description: "Workout Package deleted successfully.",
-      variant: "success",
-    });
-
-  } catch (error: any) {
-
-    console.error(error);
-
-    toast({
-      title: "Delete Failed",
-      description: error.message || "Something went wrong.",
-      variant: "destructive",
-    });
-
-  }
-
-};
+  };
 
   const addExerciseField = () => {
     setProgramForm({
@@ -1790,16 +1823,16 @@ const updatePackage = async () => {
   };
 
   const filteredPackages = packages.filter((p: any) => {
-  const search = searchTerm.toLowerCase();
+    const search = searchTerm.toLowerCase();
 
-  return (
-    (p.package_ID ?? "").toLowerCase().includes(search) ||
-    (p.package_Name ?? "").toLowerCase().includes(search) ||
-    (p.package_type ?? "").toLowerCase().includes(search) ||
-    (p.features ?? "").toLowerCase().includes(search) ||
-    (p.Programs ?? []).join(", ").toLowerCase().includes(search)
-  );
-});
+    return (
+      (p.package_ID ?? "").toLowerCase().includes(search) ||
+      (p.package_Name ?? "").toLowerCase().includes(search) ||
+      (p.package_type ?? "").toLowerCase().includes(search) ||
+      (p.features ?? "").toLowerCase().includes(search) ||
+      (p.Programs ?? []).join(", ").toLowerCase().includes(search)
+    );
+  });
 
   // const filteredPackages = packages.filter(
   //   (p) =>
@@ -1836,9 +1869,9 @@ const updatePackage = async () => {
       Status: true,
       Sno: "",
       PackageIDName: [
-      {
-        package_ID: "",
-      },
+        {
+          package_ID: "",
+        },
       ],
       Keyfield: "",
     });
@@ -1854,7 +1887,9 @@ const updatePackage = async () => {
       MemberShipType_Name: MemberShip.MemberShipType_Name,
       Status: MemberShip.Status,
       Sno: MemberShip.Sno,
-      PackageIDName: MemberShip.package_ID,
+      PackageIDName: MemberShip.Packages?.map((pkg: any) => ({
+        package_ID: pkg.package_ID,
+      })) || [{ package_ID: "" }],
       Keyfield: MemberShip.Keyfield,
     });
 
@@ -1862,16 +1897,17 @@ const updatePackage = async () => {
   };
 
   const validateMemberShip = () => {
-    if (
-      !MemberShipForm.MemberShipType_Name ||
-      // !MemberShipForm.Sno ||
-      !MemberShipForm.PackageIDName
-    ) {
+    const hasInvalidPackage = MemberShipForm.PackageIDName.some(
+      (item) => !item.package_ID.trim(),
+    );
+
+    if (!MemberShipForm.MemberShipType_Name.trim() || hasInvalidPackage) {
       toast({
         title: "Required Fields",
         description: "Please fill all required fields.",
         variant: "destructive",
       });
+      setSubmittedMemberShips(true);
       return false;
     }
 
@@ -1880,24 +1916,23 @@ const updatePackage = async () => {
 
   const handleSaveMemberShip = async () => {
     if (editingMemberShip) {
-      // await handleUpdateMemberShip();
+      await handleUpdateMemberShip();
     } else {
       await handleCreateMemberShip();
     }
   };
 
   const handleCreateMemberShip = async () => {
-  // setSubmittedMemberShips(true);
-  if (!validateMemberShip()) return;
+    // setSubmittedMemberShips(true);
 
-  try {
-    // ======================================
-    // 1. SAVE HEADER
-    // ======================================
+    if (!validateMemberShip()) return;
 
-    const hdrResponse = await fetch(
-      `${BASE_URL}/MemberShipTypeHdrInsert`,
-      {
+    try {
+      // ======================================
+      // 1. SAVE HEADER
+      // ======================================
+
+      const hdrResponse = await fetch(`${BASE_URL}/MemberShipTypeHdrInsert`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -1912,29 +1947,23 @@ const updatePackage = async () => {
           created_by: userCode,
           modified_by: "",
         }),
+      });
+
+      const hdrData = await hdrResponse.json();
+
+      if (!hdrResponse.ok || !hdrData.success) {
+        throw new Error(hdrData.message || "Unable to save Membership Type.");
       }
-    );
 
-    const hdrData = await hdrResponse.json();
+      // Generated Membership Type ID
+      const generatedMemberShipTypeID = hdrData.MemberShipType_id;
 
-    if (!hdrResponse.ok || !hdrData.success) {
-      throw new Error(
-        hdrData.message || "Unable to save Membership Type."
-      );
-    }
+      // ======================================
+      // 2. SAVE DETAILS
+      // ======================================
 
-    // Generated Membership Type ID
-    const generatedMemberShipTypeID =
-      hdrData.MemberShipType_id;
-
-    // ======================================
-    // 2. SAVE DETAILS
-    // ======================================
-
-    for (const item of MemberShipForm.PackageIDName) {
-      await fetch(
-        `${BASE_URL}/MemberShipTypeDetailsInsert`,
-        {
+      for (const item of MemberShipForm.PackageIDName) {
+        await fetch(`${BASE_URL}/MemberShipTypeDetailsInsert`, {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -1949,51 +1978,49 @@ const updatePackage = async () => {
             created_by: userCode,
             UpdateMode: "UI",
           }),
-        }
-      );
+        });
+      }
+
+      // ======================================
+      // SUCCESS
+      // ======================================
+
+      setSubmittedMemberShips(false);
+      setIsMemberShipDialogOpen(false);
+
+      // Reset Form
+      setMemberShipForm({
+        MemberShipType_id: "",
+        MemberShipType_Name: "",
+        Status: true,
+        Sno: "",
+        PackageIDName: [
+          {
+            package_ID: "",
+          },
+        ],
+        Keyfield: "",
+      });
+
+      toast({
+        title: "Membership Type Added",
+        description: "Membership Type Added Successfully",
+        variant: "success",
+      });
+
+      // Refresh Grid / Cards
+      handleMemberShipSearch();
+      // getMemberShipCardData();
+    } catch (error: any) {
+      toast({
+        title: "Error",
+        description: error.message,
+        variant: "destructive",
+      });
     }
+  };
 
-    // ======================================
-    // SUCCESS
-    // ======================================
-
-    setSubmittedMemberShips(false);
-    setIsMemberShipDialogOpen(false);
-
-    // Reset Form
-    setMemberShipForm({
-      MemberShipType_id: "",
-      MemberShipType_Name: "",
-      Status: true,
-      Sno: "",
-      PackageIDName: [
-        {
-          package_ID: "",
-        },
-      ],
-      Keyfield: "",
-    });
-
-    toast({
-      title: "Membership Type Added",
-      description: "Membership Type Added Successfully",
-      variant: "success",
-    });
-
-    // Refresh Grid / Cards
-    // handleMemberShipSearch();
-    // getMemberShipCardData();
-
-  } catch (error: any) {
-    toast({
-      title: "Error",
-      description: error.message,
-      variant: "destructive",
-    });
-  }
-};
-
-const addPackageField = () => {
+  const addPackageField = () => {
     setMemberShipForm({
       ...MemberShipForm,
       PackageIDName: [
@@ -2006,6 +2033,26 @@ const addPackageField = () => {
   };
 
   const updatePackages = (index: number, value: string) => {
+    const alreadySelected = MemberShipForm.PackageIDName.some(
+      (pkg, i) => i !== index && pkg.package_ID === value,
+    );
+    if (alreadySelected) {
+      toast({
+        title: "Package Already Selected",
+        description: "This package has already been selected.",
+        variant: "destructive",
+      });
+
+      const updatedPackages = [...MemberShipForm.PackageIDName];
+      updatedPackages[index].package_ID = "";
+
+      setMemberShipForm({
+        ...MemberShipForm,
+        PackageIDName: updatedPackages,
+      });
+
+      return;
+    }
     const updatedPackages = [...MemberShipForm.PackageIDName];
 
     updatedPackages[index].package_ID = value;
@@ -2030,7 +2077,7 @@ const addPackageField = () => {
     }
 
     const updatedPackages = MemberShipForm.PackageIDName.filter(
-      (_, i) => i !== index
+      (_, i) => i !== index,
     );
 
     setMemberShipForm({
@@ -2040,64 +2087,295 @@ const addPackageField = () => {
   };
 
   const handleMemberShipSearch = async () => {
-  try {
-    const response = await fetch(`${BASE_URL}/membershipSearchData`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        MemberShipType_id: MemberShipSearchForm.MemberShipType_id,
-        MemberShipType_Name: MemberShipSearchForm.MemberShipType_Name,
-        Status: MemberShipSearchForm.Status,
-        package_ID: MemberShipSearchForm.package_ID,
-        Company_code: companyCode,
-        Location_code: locationCode,
-      }),
-    });
-
-    const data = await response.json();
-
-    if (response.ok) {
-      const formattedPackages = data.map((pkg: any) => ({
-  ...pkg,
-  Programs: pkg.Programs
-    ? pkg.Programs.split(",")
-    : [],
-}));
-
-      setMemberShips(formattedPackages);
-    } else if (response.status === 404) {
-      setMemberShips([]);
-
-      toast({
-        title: "Data Not Found",
-        description: data?.message || "No matching packages found.",
-        variant: "destructive",
+    try {
+      const response = await fetch(`${BASE_URL}/membershipSearchData`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          MemberShipType_id: MemberShipSearchForm.MemberShipType_id,
+          MemberShipType_Name: MemberShipSearchForm.MemberShipType_Name,
+          Status: MemberShipSearchForm.Status,
+          package_ID: MemberShipSearchForm.package_ID,
+          Company_code: companyCode,
+          Location_code: locationCode,
+        }),
       });
-    } else {
-      setMemberShips([]);
+
+      const data = await response.json();
+
+      if (response.ok) {
+        const formattedPackages = data.map((pkg: any) => ({
+          ...pkg,
+          Programs: pkg.Programs ? pkg.Programs.split(",") : [],
+        }));
+
+        setMemberShips(formattedPackages);
+      } else if (response.status === 404) {
+        setMemberShips([]);
+
+        toast({
+          title: "Data Not Found",
+          description: data?.message || "No matching packages found.",
+          variant: "destructive",
+        });
+      } else {
+        setMemberShips([]);
+
+        toast({
+          title: "Search Failed",
+          description: data?.message || "Something went wrong while searching.",
+          variant: "destructive",
+        });
+      }
+    } catch (error: any) {
+      console.error("Search Error:", error);
+
+      setPackages([]);
 
       toast({
-        title: "Search Failed",
-        description: data?.message || "Something went wrong while searching.",
+        title: "Server Error",
+        description:
+          error?.message ||
+          "Unable to connect to the server. Please try again later.",
         variant: "destructive",
       });
     }
-  } catch (error: any) {
-    console.error("Search Error:", error);
+  };
 
-    setPackages([]);
-
-    toast({
-      title: "Server Error",
-      description:
-        error?.message ||
-        "Unable to connect to the server. Please try again later.",
-      variant: "destructive",
+  const handleUpdateMemberShip = () => {
+    showConfirmToast({
+      title: "Update Membership Type",
+      description: `Are you sure you want to update "${MemberShipForm.MemberShipType_Name}"?`,
+      onConfirm: updateMemberShip,
     });
-  }
-};
+  };
+
+  const updateMemberShip = async () => {
+    if (!validateMemberShip()) return;
+    if (!editingMemberShip) return;
+
+    try {
+      // =====================================
+      // 1. UPDATE HEADER
+      // =====================================
+
+      const headerPayload = {
+        MemberShipType_id: MemberShipForm.MemberShipType_id,
+        MemberShipType_Name: MemberShipForm.MemberShipType_Name,
+        Status: MemberShipForm.Status,
+        Company_code: companyCode,
+        Location_code: locationCode,
+        Keyfield: editingMemberShip.Keyfield,
+        modified_by: userCode,
+      };
+
+      const response = await fetch(`${BASE_URL}/MemberShipTypeHdrUpdate`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(headerPayload),
+      });
+
+      const result = await response.json();
+
+      if (!response.ok || !result.success) {
+        throw new Error(result.message || "Membership Type update failed.");
+      }
+
+      // =====================================
+      // 2. DELETE EXISTING DETAILS
+      // =====================================
+
+      for (let i = 0; i < (editingMemberShip.Packages?.length || 0); i++) {
+        await fetch(`${BASE_URL}/MemberShipTypeDetailsDelete`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            Sno: i + 1,
+            Company_code: companyCode,
+            Location_code: locationCode,
+            MemberShipType_id: editingMemberShip.MemberShipType_id,
+            Keyfield_header: editingMemberShip.Keyfield,
+            Keyfield: "",
+            modified_by: userCode,
+            UpdateMode: "UD",
+          }),
+        });
+      }
+
+      // =====================================
+      // 3. INSERT UPDATED DETAILS
+      // =====================================
+
+      for (const item of MemberShipForm.PackageIDName) {
+        if (!item.package_ID) continue;
+
+        await fetch(`${BASE_URL}/MemberShipTypeDetailsInsert`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            package_ID: item.package_ID,
+            Company_code: companyCode,
+            Location_code: locationCode,
+            MemberShipType_id: MemberShipForm.MemberShipType_id,
+            Keyfield_header: "",
+            Keyfield: "",
+            created_by: userCode,
+            UpdateMode: "UI",
+          }),
+        });
+      }
+
+      // =====================================
+      // SUCCESS
+      // =====================================
+
+      toast({
+        title: "Membership Type Updated",
+        description: "Membership Type Updated Successfully",
+        variant: "success",
+      });
+
+      handleMemberShipSearch();
+
+      // getMemberShipCardData();
+
+      setSubmittedMemberShips(false);
+
+      setEditingMemberShip(null);
+
+      setIsMemberShipDialogOpen(false);
+    } catch (err: any) {
+      toast({
+        title: "Error",
+        description: err.message || "Membership Type Update Failed",
+        variant: "destructive",
+      });
+
+      console.error("Membership Update Error :", err);
+    }
+  };
+
+  const groupedMemberShips = Object.values(
+    MemberShips.reduce((acc: any, item: any) => {
+      const id = item.MemberShipType_id;
+
+      if (!acc[id]) {
+        acc[id] = {
+          ...item,
+          Packages: [],
+        };
+      }
+
+      // Avoid duplicate packages
+      if (
+        item.package_ID &&
+        !acc[id].Packages.some((pkg: any) => pkg.package_ID === item.package_ID)
+      ) {
+        acc[id].Packages.push({
+          package_ID: item.package_ID,
+          package_Name: item.package_Name,
+        });
+      }
+
+      return acc;
+    }, {}),
+  );
+
+  const handleDeleteMembership = (membership: any) => {
+    showConfirmToast({
+      title: "Delete Membership Type",
+      description: `Are you sure you want to delete "${membership.MemberShipType_Name}"?`,
+      onConfirm: () => deleteMembership(membership),
+    });
+  };
+
+  const deleteMembership = async (membership: any) => {
+    try {
+      // ======================================
+      // Delete Membership Details
+      // ======================================
+
+      await fetch(`${BASE_URL}/MemberShipTypeDetailsDelete`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          Sno: 1, // Not used when deleting by Keyfield_header
+          Company_code: companyCode,
+          Location_code: locationCode,
+          MemberShipType_id: membership.MemberShipType_id,
+          Keyfield_header: membership.Keyfield,
+          Keyfield: "",
+          modified_by: userCode,
+          UpdateMode: "D",
+        }),
+      });
+
+      // ======================================
+      // Delete Membership Header
+      // ======================================
+
+      const response = await fetch(`${BASE_URL}/MemberShipTypeHdrDelete`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          MemberShipType_id: membership.MemberShipType_id,
+          Company_code: companyCode,
+          Location_code: locationCode,
+          Keyfield: membership.Keyfield,
+          modified_by: userCode,
+        }),
+      });
+
+      const result = await response.json();
+
+      if (!response.ok || !result.success) {
+        throw new Error(result.message || "Delete failed");
+      }
+
+      // ======================================
+      // Remove from UI
+      // ======================================
+
+      setMemberShips((prev: any) =>
+        prev.filter((item: any) => item.Keyfield !== membership.Keyfield),
+      );
+
+      // ======================================
+      // Refresh Data
+      // ======================================
+
+      handleMemberShipSearch();
+
+      // If you have membership cards/dashboard count API
+      // getMemberShipCardData();
+
+      toast({
+        title: "Membership Type Deleted",
+        description: "Membership Type deleted successfully.",
+        variant: "success",
+      });
+    } catch (error: any) {
+      console.error("Membership Delete Error:", error);
+
+      toast({
+        title: "Delete Failed",
+        description: error.message || "Something went wrong.",
+        variant: "destructive",
+      });
+    }
+  };
 
   const renderProgramSearch = () => (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-x-4 gap-y-6">
@@ -2568,218 +2846,214 @@ const addPackageField = () => {
   );
 
   const renderPackageSearch = () => (
-  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-x-4 gap-y-6">
-
-    {/* Package ID */}
-    <div className="space-y-2">
-      <Label>Package ID</Label>
-      <TooltipProvider>
-        <Tooltip>
-          <TooltipTrigger asChild>
-            <Input
-              placeholder="Enter Package ID"
-              value={packageSearchForm.id}
-              maxLength={30}
-              onChange={(e) =>
-                setPackageSearchForm({
-                  ...packageSearchForm,
-                  id: e.target.value,
-                })
-              }
-            />
-          </TooltipTrigger>
-
-          <TooltipContent>
-            <p>Enter Package ID</p>
-          </TooltipContent>
-        </Tooltip>
-      </TooltipProvider>
-    </div>
-
-    {/* Package Name */}
-    <div className="space-y-2">
-      <Label>Package Name</Label>
-      <TooltipProvider>
-        <Tooltip>
-          <TooltipTrigger asChild>
-            <Input
-              placeholder="Enter Package Name"
-              value={packageSearchForm.name}
-              maxLength={100}
-              onChange={(e) => {
-                const value = e.target.value.replace(
-                  /[^a-zA-Z0-9 ]/g,
-                  ""
-                );
-
-                setPackageSearchForm({
-                  ...packageSearchForm,
-                  name: value,
-                });
-              }}
-            />
-          </TooltipTrigger>
-
-          <TooltipContent>
-            <p>Enter Package Name</p>
-          </TooltipContent>
-        </Tooltip>
-      </TooltipProvider>
-    </div>
-
-    {/* Package Type */}
-    <div className="space-y-2">
-      <Label>Package Type</Label>
-
-      <TooltipProvider>
-        <Tooltip>
-          <TooltipTrigger asChild>
-            <div>
-              <Select
-                value={packageSearchForm.packageType}
-                onValueChange={(value) =>
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-x-4 gap-y-6">
+      {/* Package ID */}
+      <div className="space-y-2">
+        <Label>Package ID</Label>
+        <TooltipProvider>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Input
+                placeholder="Enter Package ID"
+                value={packageSearchForm.id}
+                maxLength={30}
+                onChange={(e) =>
                   setPackageSearchForm({
                     ...packageSearchForm,
-                    packageType: value,
+                    id: e.target.value,
                   })
                 }
-              >
-                <SelectTrigger>
-                  <SelectValue placeholder="Select Package Type" />
-                </SelectTrigger>
+              />
+            </TooltipTrigger>
 
-                <SelectContent>
-                  {PackageTypes.map((item: any) => (
-                    <SelectItem
-                      key={item.attributedetails_name}
-                      value={item.attributedetails_name}
-                    >
-                      {item.attributedetails_name}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-          </TooltipTrigger>
+            <TooltipContent>
+              <p>Enter Package ID</p>
+            </TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
+      </div>
 
-          <TooltipContent>
-            <p>Select Package Type</p>
-          </TooltipContent>
-        </Tooltip>
-      </TooltipProvider>
-    </div>
+      {/* Package Name */}
+      <div className="space-y-2">
+        <Label>Package Name</Label>
+        <TooltipProvider>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Input
+                placeholder="Enter Package Name"
+                value={packageSearchForm.name}
+                maxLength={100}
+                onChange={(e) => {
+                  const value = e.target.value.replace(/[^a-zA-Z0-9 ]/g, "");
 
-    {/* Price */}
-    <div className="space-y-2">
-      <Label>Price</Label>
+                  setPackageSearchForm({
+                    ...packageSearchForm,
+                    name: value,
+                  });
+                }}
+              />
+            </TooltipTrigger>
 
-      <TooltipProvider>
-        <Tooltip>
-          <TooltipTrigger asChild>
-            <Input
-              type="text"
-              inputMode="decimal"
-              placeholder="Enter Price"
-              value={packageSearchForm.price}
-              onChange={(e) =>
-              setPackageSearchForm({
-                ...packageSearchForm,
-                price: parseFloat(e.target.value) || 0,
-              })
-              }
-              // onChange={(e) => {
-              //   const value = e.target.value.replace(/[^\d.]/g, "");
+            <TooltipContent>
+              <p>Enter Package Name</p>
+            </TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
+      </div>
 
-              //   setPackageSearchForm({
-              //     ...packageSearchForm,
-              //     price: value,
-              //   });
-              // }}
-            />
-          </TooltipTrigger>
+      {/* Package Type */}
+      <div className="space-y-2">
+        <Label>Package Type</Label>
 
-          <TooltipContent>
-            <p>Enter Package Price</p>
-          </TooltipContent>
-        </Tooltip>
-      </TooltipProvider>
-    </div>
+        <TooltipProvider>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <div>
+                <Select
+                  value={packageSearchForm.packageType}
+                  onValueChange={(value) =>
+                    setPackageSearchForm({
+                      ...packageSearchForm,
+                      packageType: value,
+                    })
+                  }
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select Package Type" />
+                  </SelectTrigger>
 
-    {/* Discount Percentage */}
-    <div className="space-y-2">
-      <Label>Discount %</Label>
+                  <SelectContent>
+                    {PackageTypes.map((item: any) => (
+                      <SelectItem
+                        key={item.attributedetails_name}
+                        value={item.attributedetails_name}
+                      >
+                        {item.attributedetails_name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+            </TooltipTrigger>
 
-      <TooltipProvider>
-        <Tooltip>
-          <TooltipTrigger asChild>
-            <Input
-              type="text"
-              inputMode="numeric"
-              maxLength={3}
-              placeholder="Enter Discount %"
-              value={packageSearchForm.discountPercentage}
-              onChange={(e) =>
-  setPackageSearchForm({
-    ...packageSearchForm,
-    discountPercentage: parseInt(e.target.value) || 0,
-  })
-}
-              // onChange={(e) => {
-              //   const value = e.target.value.replace(/\D/g, "");
+            <TooltipContent>
+              <p>Select Package Type</p>
+            </TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
+      </div>
 
-              //   if (
-              //     value === "" ||
-              //     (Number(value) >= 0 && Number(value) <= 100)
-              //   ) {
-              //     setPackageSearchForm({
-              //       ...packageSearchForm,
-              //       discountPercentage: value,
-              //     });
-              //   }
-              // }}
-            />
-          </TooltipTrigger>
+      {/* Price */}
+      <div className="space-y-2">
+        <Label>Price</Label>
 
-          <TooltipContent>
-            <p>Enter Discount Percentage</p>
-          </TooltipContent>
-        </Tooltip>
-      </TooltipProvider>
-    </div>
+        <TooltipProvider>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Input
+                type="text"
+                inputMode="decimal"
+                placeholder="Enter Price"
+                value={packageSearchForm.price}
+                onChange={(e) =>
+                  setPackageSearchForm({
+                    ...packageSearchForm,
+                    price: parseFloat(e.target.value) || 0,
+                  })
+                }
+                // onChange={(e) => {
+                //   const value = e.target.value.replace(/[^\d.]/g, "");
 
-    {/* Duration Days */}
-    <div className="space-y-2">
-      <Label>Duration Days</Label>
+                //   setPackageSearchForm({
+                //     ...packageSearchForm,
+                //     price: value,
+                //   });
+                // }}
+              />
+            </TooltipTrigger>
 
-      <TooltipProvider>
-        <Tooltip>
-          <TooltipTrigger asChild>
-            <Input
-              type="text"
-              inputMode="numeric"
-              maxLength={3}
-              placeholder="Enter Duration Days"
-              value={packageSearchForm.durationDays}
-              onChange={(e) => {
-                const value = e.target.value.replace(/\D/g, "");
+            <TooltipContent>
+              <p>Enter Package Price</p>
+            </TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
+      </div>
 
-                setPackageSearchForm({
-                  ...packageSearchForm,
-                  durationDays: value,
-                });
-              }}
-            />
-          </TooltipTrigger>
+      {/* Discount Percentage */}
+      <div className="space-y-2">
+        <Label>Discount %</Label>
 
-          <TooltipContent>
-            <p>Enter Duration Days</p>
-          </TooltipContent>
-        </Tooltip>
-      </TooltipProvider>
-    </div>
+        <TooltipProvider>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Input
+                type="text"
+                inputMode="numeric"
+                maxLength={3}
+                placeholder="Enter Discount %"
+                value={packageSearchForm.discountPercentage}
+                onChange={(e) =>
+                  setPackageSearchForm({
+                    ...packageSearchForm,
+                    discountPercentage: parseInt(e.target.value) || 0,
+                  })
+                }
+                // onChange={(e) => {
+                //   const value = e.target.value.replace(/\D/g, "");
 
-        {/* Associated Program */}
-    {/* <div className="space-y-2">
+                //   if (
+                //     value === "" ||
+                //     (Number(value) >= 0 && Number(value) <= 100)
+                //   ) {
+                //     setPackageSearchForm({
+                //       ...packageSearchForm,
+                //       discountPercentage: value,
+                //     });
+                //   }
+                // }}
+              />
+            </TooltipTrigger>
+
+            <TooltipContent>
+              <p>Enter Discount Percentage</p>
+            </TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
+      </div>
+
+      {/* Duration Days */}
+      <div className="space-y-2">
+        <Label>Duration Days</Label>
+
+        <TooltipProvider>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Input
+                type="text"
+                inputMode="numeric"
+                maxLength={3}
+                placeholder="Enter Duration Days"
+                value={packageSearchForm.durationDays}
+                onChange={(e) => {
+                  const value = e.target.value.replace(/\D/g, "");
+
+                  setPackageSearchForm({
+                    ...packageSearchForm,
+                    durationDays: value,
+                  });
+                }}
+              />
+            </TooltipTrigger>
+
+            <TooltipContent>
+              <p>Enter Duration Days</p>
+            </TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
+      </div>
+
+      {/* Associated Program */}
+      {/* <div className="space-y-2">
       <Label>Associated Program</Label>
 
       <TooltipProvider>
@@ -2820,143 +3094,138 @@ const addPackageField = () => {
       </TooltipProvider>
     </div> */}
 
-    {/* Features */}
-    <div className="space-y-2">
-      <Label>Features</Label>
+      {/* Features */}
+      <div className="space-y-2">
+        <Label>Features</Label>
 
-      <TooltipProvider>
-        <Tooltip>
-          <TooltipTrigger asChild>
-            <Input
-              placeholder="Enter Features"
-              maxLength={250}
-              value={packageSearchForm.features}
-              onChange={(e) =>
-                setPackageSearchForm({
-                  ...packageSearchForm,
-                  features: e.target.value,
-                })
-              }
-            />
-          </TooltipTrigger>
-
-          <TooltipContent>
-            <p>Enter Features</p>
-          </TooltipContent>
-        </Tooltip>
-      </TooltipProvider>
-    </div>
-
-    {/* Status */}
-    <div className="space-y-2">
-      <Label>Status</Label>
-
-      <TooltipProvider>
-        <Tooltip>
-          <TooltipTrigger asChild>
-            <div>
-              <Select
-                value={packageSearchForm.isActive}
-                onValueChange={(value) =>
+        <TooltipProvider>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Input
+                placeholder="Enter Features"
+                maxLength={250}
+                value={packageSearchForm.features}
+                onChange={(e) =>
                   setPackageSearchForm({
                     ...packageSearchForm,
-                    isActive: value,
+                    features: e.target.value,
                   })
                 }
-              >
-                <SelectTrigger>
-                  <SelectValue placeholder="Select Status" />
-                </SelectTrigger>
+              />
+            </TooltipTrigger>
 
-                <SelectContent>
-                  {status.map((item: any) => (
-                    <SelectItem
-                      key={item.attributedetails_name}
-                      value={item.attributedetails_name}
-                    >
-                      {item.attributedetails_name}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-          </TooltipTrigger>
+            <TooltipContent>
+              <p>Enter Features</p>
+            </TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
+      </div>
 
-          <TooltipContent>
-            <p>Select Status</p>
-          </TooltipContent>
-        </Tooltip>
-      </TooltipProvider>
+      {/* Status */}
+      <div className="space-y-2">
+        <Label>Status</Label>
+
+        <TooltipProvider>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <div>
+                <Select
+                  value={packageSearchForm.isActive}
+                  onValueChange={(value) =>
+                    setPackageSearchForm({
+                      ...packageSearchForm,
+                      isActive: value,
+                    })
+                  }
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select Status" />
+                  </SelectTrigger>
+
+                  <SelectContent>
+                    {status.map((item: any) => (
+                      <SelectItem
+                        key={item.attributedetails_name}
+                        value={item.attributedetails_name}
+                      >
+                        {item.attributedetails_name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+            </TooltipTrigger>
+
+            <TooltipContent>
+              <p>Select Status</p>
+            </TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
+      </div>
     </div>
+  );
 
-  </div>
-);
+  const renderMemberShipSearch = () => (
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-x-4 gap-y-6">
+      {/* Package ID */}
+      <div className="space-y-2">
+        <Label>Membership ID</Label>
+        <TooltipProvider>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Input
+                placeholder="Enter Membership ID"
+                value={MemberShipSearchForm.MemberShipType_id}
+                maxLength={30}
+                onChange={(e) =>
+                  setMemberShipSearchForm({
+                    ...MemberShipSearchForm,
+                    MemberShipType_id: e.target.value,
+                  })
+                }
+              />
+            </TooltipTrigger>
 
-const renderMemberShipSearch = () => (
-  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-x-4 gap-y-6">
+            <TooltipContent>
+              <p>Enter Membership ID</p>
+            </TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
+      </div>
 
-    {/* Package ID */}
-    <div className="space-y-2">
-      <Label>Membership Type Name</Label>
-      <TooltipProvider>
-        <Tooltip>
-          <TooltipTrigger asChild>
-            <Input
-              placeholder="Enter Membership Type Name"
-              value={MemberShipSearchForm.MemberShipType_id}
-              maxLength={30}
-              onChange={(e) =>
-                setMemberShipSearchForm({
-                  ...MemberShipSearchForm,
-                  MemberShipType_id: e.target.value,
-                })
-              }
-            />
-          </TooltipTrigger>
+      {/* Package Name */}
+      <div className="space-y-2">
+        <Label>Membership Type Name</Label>
+        <TooltipProvider>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Input
+                placeholder="Enter Membership Type Name"
+                value={MemberShipSearchForm.MemberShipType_Name}
+                maxLength={100}
+                onChange={(e) => {
+                  const value = e.target.value.replace(/[^a-zA-Z0-9 ]/g, "");
 
-          <TooltipContent>
-            <p>Enter Membership Type Name</p>
-          </TooltipContent>
-        </Tooltip>
-      </TooltipProvider>
-    </div>
+                  setMemberShipSearchForm({
+                    ...MemberShipSearchForm,
+                    MemberShipType_Name: value,
+                  });
+                }}
+              />
+            </TooltipTrigger>
 
-    {/* Package Name */}
-    <div className="space-y-2">
-      <Label>Membership Type Name</Label>
-      <TooltipProvider>
-        <Tooltip>
-          <TooltipTrigger asChild>
-            <Input
-              placeholder="Enter Membership Type Name"
-              value={MemberShipSearchForm.MemberShipType_Name}
-              maxLength={100}
-              onChange={(e) => {
-                const value = e.target.value.replace(
-                  /[^a-zA-Z0-9 ]/g,
-                  ""
-                );
+            <TooltipContent>
+              <p>Enter Membership Type Name</p>
+            </TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
+      </div>
 
-                setMemberShipSearchForm({
-                  ...MemberShipSearchForm,
-                  MemberShipType_Name: value,
-                });
-              }}
-            />
-          </TooltipTrigger>
+      {/* Package Type */}
+      <div className="space-y-2">
+        <Label>Package ID - Name</Label>
 
-          <TooltipContent>
-            <p>Enter Membership Type Name</p>
-          </TooltipContent>
-        </Tooltip>
-      </TooltipProvider>
-    </div>
-
-    {/* Package Type */}
-    <div className="space-y-2">
-      <Label>Package ID - Name</Label>
-
-      <TooltipProvider>
+        <TooltipProvider>
           <Tooltip>
             <TooltipTrigger asChild>
               <div>
@@ -2975,10 +3244,7 @@ const renderMemberShipSearch = () => (
 
                   <SelectContent>
                     {GetPackages.map((item: any) => (
-                      <SelectItem
-                        key={item.package_ID}
-                        value={item.package_ID}
-                      >
+                      <SelectItem key={item.package_ID} value={item.package_ID}>
                         {item.package_ID} - {item.package_Name}
                       </SelectItem>
                     ))}
@@ -2992,52 +3258,51 @@ const renderMemberShipSearch = () => (
             </TooltipContent>
           </Tooltip>
         </TooltipProvider>
+      </div>
+
+      {/* Status */}
+      <div className="space-y-2">
+        <Label>Status</Label>
+
+        <TooltipProvider>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <div>
+                <Select
+                  value={MemberShipSearchForm.Status}
+                  onValueChange={(value) =>
+                    setMemberShipSearchForm({
+                      ...MemberShipSearchForm,
+                      Status: value,
+                    })
+                  }
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select Status" />
+                  </SelectTrigger>
+
+                  <SelectContent>
+                    {status.map((item: any) => (
+                      <SelectItem
+                        key={item.attributedetails_name}
+                        value={item.attributedetails_name}
+                      >
+                        {item.attributedetails_name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+            </TooltipTrigger>
+
+            <TooltipContent>
+              <p>Select Status</p>
+            </TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
+      </div>
     </div>
-
-    {/* Status */}
-    <div className="space-y-2">
-      <Label>Status</Label>
-
-      <TooltipProvider>
-        <Tooltip>
-          <TooltipTrigger asChild>
-            <div>
-              <Select
-                value={MemberShipSearchForm.Status}
-                onValueChange={(value) =>
-                  setMemberShipSearchForm({
-                    ...MemberShipSearchForm,
-                    Status: value,
-                  })
-                }
-              >
-                <SelectTrigger>
-                  <SelectValue placeholder="Select Status" />
-                </SelectTrigger>
-
-                <SelectContent>
-                  {status.map((item: any) => (
-                    <SelectItem
-                      key={item.attributedetails_name}
-                      value={item.attributedetails_name}
-                    >
-                      {item.attributedetails_name}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-          </TooltipTrigger>
-
-          <TooltipContent>
-            <p>Select Status</p>
-          </TooltipContent>
-        </Tooltip>
-      </TooltipProvider>
-    </div>
-
-  </div>
-);
+  );
 
   const handleSearch = () => {
     switch (activeTab) {
@@ -3045,75 +3310,75 @@ const renderMemberShipSearch = () => (
         handleProgramSearch();
         break;
 
-        case "packages":
-      handlePackageSearch();
-      break;
+      case "packages":
+        handlePackageSearch();
+        break;
 
-        case "memberships":
-      handleMemberShipSearch();
-      break;
+      case "memberships":
+        handleMemberShipSearch();
+        break;
 
       default:
         break;
     }
   };
 
-const handleReset = () => {
-  switch (activeTab) {
-    case "programs":
-      setProgramSearchForm({
-        id: "",
-        name: "",
-        description: "",
-        category: "",
-        difficultyLevel: "",
-        durationPerSession: "",
-        sessionsPerWeek: "",
-        assignedFaculty: "",
-        workingHours: "",
-        isActive: "",
-        goals: "",
-        exercisesName: "",
-        exercisesCount: "",
-        exercisesReps: "",
-      });
+  const handleReset = () => {
+    switch (activeTab) {
+      case "programs":
+        setProgramSearchForm({
+          id: "",
+          name: "",
+          description: "",
+          category: "",
+          difficultyLevel: "",
+          durationPerSession: "",
+          sessionsPerWeek: "",
+          assignedFaculty: "",
+          workingHours: "",
+          isActive: "",
+          goals: "",
+          exercisesName: "",
+          exercisesCount: "",
+          exercisesReps: "",
+        });
 
-      setPrograms([]);
-      break;
+        setPrograms([]);
+        break;
 
-    case "packages":
-      setPackageSearchForm({
-        id: "",
-        name: "",
-        packageType: "",
-        durationDays: "",
-        price: 0,
-        features: "",
-        discountPercentage: 0,
-        associatedProgram: "",
-        isActive: "",
-      });
+      case "packages":
+        setPackageSearchForm({
+          id: "",
+          name: "",
+          packageType: "",
+          durationDays: "",
+          price: 0,
+          features: "",
+          discountPercentage: 0,
+          associatedProgram: "",
+          isActive: "",
+        });
 
-      setPackages([]);
-      break;
+        setPackages([]);
+        break;
 
-    case "memberships":
-      setMemberShipSearchForm({
-        MemberShipType_id: "",
-        MemberShipType_Name: "",
-        Status: "",
-        Sno: "",
-        package_ID: "",
-        Keyfield: "",
-      });
+      case "memberships":
+        setMemberShipSearchForm({
+          MemberShipType_id: "",
+          MemberShipType_Name: "",
+          Status: "",
+          Sno: "",
+          package_ID: "",
+          Keyfield: "",
+        });
 
-      setMemberShips([]);
-      break;
+        setMemberShips([]);
+        break;
 
-    default:
-      break;
-  }
-};
+      default:
+        break;
+    }
+  };
 
   const addLabels = {
     programs: "Programs",
@@ -3278,9 +3543,7 @@ const handleReset = () => {
                       </Button>
                     </TooltipTrigger>
 
-                    <TooltipContent>
-                      Add {addLabels[activeTab]}
-                    </TooltipContent>
+                    <TooltipContent>Add {addLabels[activeTab]}</TooltipContent>
                   </Tooltip>
                 </TooltipProvider>
               )}
@@ -3328,12 +3591,17 @@ const handleReset = () => {
                               <TooltipProvider>
                                 <Tooltip>
                                   <TooltipTrigger asChild>
-                                    {hasActionPermission("Programs", "edit") && (
+                                    {hasActionPermission(
+                                      "Programs",
+                                      "edit",
+                                    ) && (
                                       <Button
                                         variant="ghost"
                                         size="icon"
                                         className="h-8 w-8 text-gray-600 hover:text-violet-600 hover:bg-violet-50"
-                                        onClick={() => handleEditProgram(program)}
+                                        onClick={() =>
+                                          handleEditProgram(program)
+                                        }
                                       >
                                         <Edit className="h-4 w-4" />
                                       </Button>
@@ -3349,7 +3617,10 @@ const handleReset = () => {
                               <TooltipProvider>
                                 <Tooltip>
                                   <TooltipTrigger asChild>
-                                    {hasActionPermission("Programs", "delete") && (
+                                    {hasActionPermission(
+                                      "Programs",
+                                      "delete",
+                                    ) && (
                                       <Button
                                         variant="ghost"
                                         size="icon"
@@ -3647,11 +3918,9 @@ const handleReset = () => {
                         className="overflow-hidden border-t-4 border-t-violet-600 hover:shadow-xl transition-all duration-300 bg-white"
                       >
                         <CardContent className="p-6 space-y-5">
-
                           {/* ================= HEADER ================= */}
 
                           <div className="flex justify-between items-start pb-3 border-b border-gray-100">
-
                             <div className="space-y-1">
                               <h3 className="text-xl font-bold text-slate-900 tracking-tight">
                                 {pkg.package_Name}
@@ -3667,12 +3936,13 @@ const handleReset = () => {
                             </div>
 
                             <div className="flex gap-1 bg-slate-50 p-1 rounded-lg border border-gray-100">
-
                               <TooltipProvider>
                                 <Tooltip>
                                   <TooltipTrigger asChild>
-
-                                    {hasActionPermission("Packages", "edit") && (
+                                    {hasActionPermission(
+                                      "Packages",
+                                      "edit",
+                                    ) && (
                                       <Button
                                         variant="ghost"
                                         size="icon"
@@ -3682,7 +3952,6 @@ const handleReset = () => {
                                         <Edit className="h-4 w-4" />
                                       </Button>
                                     )}
-
                                   </TooltipTrigger>
 
                                   <TooltipContent>
@@ -3694,8 +3963,10 @@ const handleReset = () => {
                               <TooltipProvider>
                                 <Tooltip>
                                   <TooltipTrigger asChild>
-
-                                    {hasActionPermission("Packages", "delete") && (
+                                    {hasActionPermission(
+                                      "Packages",
+                                      "delete",
+                                    ) && (
                                       <Button
                                         variant="ghost"
                                         size="icon"
@@ -3705,7 +3976,6 @@ const handleReset = () => {
                                         <Trash2 className="h-4 w-4" />
                                       </Button>
                                     )}
-
                                   </TooltipTrigger>
 
                                   <TooltipContent>
@@ -3713,14 +3983,12 @@ const handleReset = () => {
                                   </TooltipContent>
                                 </Tooltip>
                               </TooltipProvider>
-
                             </div>
                           </div>
 
                           {/* ================= PRICE + STATUS ================= */}
 
                           <div className="flex items-center justify-between bg-violet-50/40 px-4 py-2.5 rounded-lg border border-violet-50">
-
                             <div className="flex items-center gap-2">
                               <IndianRupee className="w-4 h-4 text-violet-600" />
 
@@ -3738,19 +4006,17 @@ const handleReset = () => {
                               className={`font-medium text-xs ${statusBadgeColor}`}
                             >
                               <span
-                                className={`w-1.5 h-1.5 rounded-full mr-1.5 ${isActive ? "bg-green-500" : "bg-gray-400"
-                                  }`}
+                                className={`w-1.5 h-1.5 rounded-full mr-1.5 ${
+                                  isActive ? "bg-green-500" : "bg-gray-400"
+                                }`}
                               ></span>
 
                               {pkg.is_active || "Close"}
-
                             </Badge>
-
                           </div>
                           {/* ================= PACKAGE INFORMATION ================= */}
 
                           <div className="grid grid-cols-3 gap-2 bg-slate-50 p-3 rounded-xl border border-slate-100 text-center sm:text-left">
-
                             {/* Package Type */}
                             <div className="space-y-0.5 border-r border-gray-200 last:border-none px-2">
                               <p className="text-[11px] text-gray-400 uppercase tracking-wider font-semibold">
@@ -3788,51 +4054,46 @@ const handleReset = () => {
                                 {pkg.discount_percentage}%
                               </p>
                             </div>
-
                           </div>
 
                           {/* ================= ASSOCIATED PROGRAMS ================= */}
 
                           <div className="space-y-2">
-
                             <p className="text-xs font-bold text-gray-400 uppercase tracking-wider flex items-center">
                               <Dumbbell className="w-3.5 h-3.5 mr-1.5 text-violet-600" />
                               Associated Programs
                             </p>
 
                             <div className="flex flex-wrap gap-1.5">
-
                               {pkg.Programs && pkg.Programs.length > 0 ? (
-                                pkg.Programs.map((program: string, index: number) => (
-                                  <Badge
-                                    key={index}
-                                    variant="secondary"
-                                    className="bg-violet-50 text-violet-700 border border-violet-100 px-2.5 py-0.5 text-xs rounded-md"
-                                  >
-                                    {program}
-                                  </Badge>
-                                ))
+                                pkg.Programs.map(
+                                  (program: string, index: number) => (
+                                    <Badge
+                                      key={index}
+                                      variant="secondary"
+                                      className="bg-violet-50 text-violet-700 border border-violet-100 px-2.5 py-0.5 text-xs rounded-md"
+                                    >
+                                      {program}
+                                    </Badge>
+                                  ),
+                                )
                               ) : (
                                 <span className="text-xs text-gray-400 italic">
                                   No Programs Assigned
                                 </span>
                               )}
                             </div>
-
                           </div>
                           {/* ================= FEATURES ================= */}
 
                           <div className="space-y-2">
-
                             <p className="text-xs font-bold text-slate-400 uppercase tracking-wider flex items-center border-b border-slate-100 pb-1.5">
                               <CheckCircle className="w-3.5 h-3.5 mr-1.5 text-emerald-500" />
                               Package Features
                             </p>
 
                             <div className="flex flex-wrap gap-2">
-
                               {pkg.features ? (
-
                                 pkg.features
                                   .split(",")
                                   .map((feature: string, index: number) => (
@@ -3844,27 +4105,19 @@ const handleReset = () => {
                                       {feature.trim()}
                                     </Badge>
                                   ))
-
                               ) : (
-
                                 <span className="text-xs text-gray-400 italic">
                                   No Features Available
                                 </span>
-
                               )}
-
                             </div>
-
                           </div>
 
                           {/* ================= PACKAGE SUMMARY ================= */}
 
                           <div className="pt-3 border-t border-gray-100">
-
                             <div className="grid grid-cols-2 gap-3">
-
                               <div className="bg-slate-50 rounded-lg border p-3">
-
                                 <p className="text-[11px] uppercase tracking-wider text-gray-400 font-semibold">
                                   Created By
                                 </p>
@@ -3872,27 +4125,23 @@ const handleReset = () => {
                                 <p className="text-sm font-semibold text-slate-700 mt-1">
                                   {pkg.created_by || "-"}
                                 </p>
-
                               </div>
 
                               <div className="bg-slate-50 rounded-lg border p-3">
-
                                 <p className="text-[11px] uppercase tracking-wider text-gray-400 font-semibold">
                                   Created Date
                                 </p>
 
                                 <p className="text-sm font-semibold text-slate-700 mt-1">
                                   {pkg.created_date
-                                    ? new Date(pkg.created_date).toLocaleDateString()
+                                    ? new Date(
+                                        pkg.created_date,
+                                      ).toLocaleDateString()
                                     : "-"}
                                 </p>
-
                               </div>
-
                             </div>
-
                           </div>
-
                         </CardContent>
                       </Card>
                     );
@@ -3913,20 +4162,19 @@ const handleReset = () => {
 
               <CardContent>
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                  {MemberShips.map((membership: any) => {
+                  {groupedMemberShips.map((membership: any) => {
                     const isActive = membership.Status === "Active";
-                  
+
                     const statusBadgeColor = isActive
                       ? "bg-green-50 text-green-700 border-green-200"
                       : "bg-gray-100 text-gray-600 border-gray-200";
-                  
+
                     return (
                       <Card
                         key={membership.Keyfield}
                         className="overflow-hidden border-t-4 border-t-violet-600 hover:shadow-xl transition-all duration-300 bg-white"
                       >
                         <CardContent className="p-6 space-y-5">
-                    
                           {/* ================= HEADER ================= */}
                           <div className="flex justify-between items-start pb-3 border-b border-gray-100">
                             <div className="space-y-1">
@@ -3940,17 +4188,22 @@ const handleReset = () => {
                                 {membership.MemberShipType_id || "N/A"}
                               </p>
                             </div>
-                    
+
                             <div className="flex gap-1 bg-slate-50 p-1 rounded-lg border border-gray-100">
                               <TooltipProvider>
                                 <Tooltip>
                                   <TooltipTrigger asChild>
-                                    {hasActionPermission("Memberships", "edit") && (
+                                    {hasActionPermission(
+                                      "Memberships",
+                                      "edit",
+                                    ) && (
                                       <Button
                                         variant="ghost"
                                         size="icon"
                                         className="h-8 w-8 text-gray-600 hover:text-violet-600 hover:bg-violet-50"
-                                        // onClick={() => handleEditMembership(membership)}
+                                        onClick={() =>
+                                          handleEditMemberShip(membership)
+                                        }
                                       >
                                         <Edit className="h-4 w-4" />
                                       </Button>
@@ -3961,16 +4214,21 @@ const handleReset = () => {
                                   </TooltipContent>
                                 </Tooltip>
                               </TooltipProvider>
-                                  
+
                               <TooltipProvider>
                                 <Tooltip>
                                   <TooltipTrigger asChild>
-                                    {hasActionPermission("Memberships", "delete") && (
+                                    {hasActionPermission(
+                                      "Memberships",
+                                      "delete",
+                                    ) && (
                                       <Button
                                         variant="ghost"
                                         size="icon"
                                         className="h-8 w-8 text-red-500 hover:text-red-700 hover:bg-red-50"
-                                        // onClick={() => handleDeleteMembership(membership)}
+                                        onClick={() =>
+                                          handleDeleteMembership(membership)
+                                        }
                                       >
                                         <Trash2 className="h-4 w-4" />
                                       </Button>
@@ -3983,7 +4241,7 @@ const handleReset = () => {
                               </TooltipProvider>
                             </div>
                           </div>
-                                  
+
                           {/* ================= STATUS BAR ================= */}
                           <div className="flex items-center justify-between bg-violet-50/40 px-4 py-2.5 rounded-lg border border-violet-50">
                             <span className="text-xs text-slate-600 font-semibold uppercase tracking-wider">
@@ -4001,33 +4259,40 @@ const handleReset = () => {
                               {membership.Status || "Inactive"}
                             </Badge>
                           </div>
-                              
+
                           {/* ================= ASSOCIATED PACKAGES (MULTIPLE DATA) ================= */}
                           <div className="space-y-2">
                             <p className="text-xs font-bold text-gray-400 uppercase tracking-wider flex items-center border-b border-slate-100 pb-1.5">
                               <Dumbbell className="w-3.5 h-3.5 mr-1.5 text-violet-600" />
                               Linked Packages
                             </p>
-                              
+
                             <div className="flex flex-wrap gap-2">
-                              {membership.Packages && membership.Packages.length > 0 ? (
-                                membership.Packages.map((pkg: any, index: number) => (
-                                  <TooltipProvider key={pkg.package_ID || index}>
-                                    <Tooltip>
-                                      <TooltipTrigger asChild>
-                                        <Badge
-                                          variant="secondary"
-                                          className="bg-violet-50 text-violet-700 border border-violet-100 px-2.5 py-1 text-xs rounded-md font-medium shadow-sm cursor-help transition-colors hover:bg-violet-100"
-                                        >
-                                          {pkg.package_Name}
-                                        </Badge>
-                                      </TooltipTrigger>
-                                      <TooltipContent>
-                                        <p className="font-mono text-xs">ID: {pkg.package_ID}</p>
-                                      </TooltipContent>
-                                    </Tooltip>
-                                  </TooltipProvider>
-                                ))
+                              {membership.Packages &&
+                              membership.Packages.length > 0 ? (
+                                membership.Packages.map(
+                                  (pkg: any, index: number) => (
+                                    <TooltipProvider
+                                      key={pkg.package_ID || index}
+                                    >
+                                      <Tooltip>
+                                        <TooltipTrigger asChild>
+                                          <Badge
+                                            variant="secondary"
+                                            className="bg-violet-50 text-violet-700 border border-violet-100 px-2.5 py-1 text-xs rounded-md font-medium shadow-sm cursor-help transition-colors hover:bg-violet-100"
+                                          >
+                                            {pkg.package_Name}
+                                          </Badge>
+                                        </TooltipTrigger>
+                                        <TooltipContent>
+                                          <p className="font-mono text-xs">
+                                            ID: {pkg.package_ID}
+                                          </p>
+                                        </TooltipContent>
+                                      </Tooltip>
+                                    </TooltipProvider>
+                                  ),
+                                )
                               ) : (
                                 <span className="text-xs text-gray-400 italic">
                                   No Packages Linked
@@ -4035,7 +4300,6 @@ const handleReset = () => {
                               )}
                             </div>
                           </div>
-                            
                         </CardContent>
                       </Card>
                     );
@@ -4311,7 +4575,10 @@ const handleReset = () => {
                             maxLength={20}
                             value={programForm.durationPerSession}
                             onChange={(e) => {
-                              const value = e.target.value.replace(/[^a-zA-Z0-9 ]/g, "");
+                              const value = e.target.value.replace(
+                                /[^a-zA-Z0-9 ]/g,
+                                "",
+                              );
                               setProgramForm({
                                 ...programForm,
                                 durationPerSession: value,
@@ -4390,7 +4657,10 @@ const handleReset = () => {
                             maxLength={50}
                             value={programForm.workingHours}
                             onChange={(e) => {
-                              const value = e.target.value.replace(/[^a-zA-Z0-9\s,:-]/g, "");
+                              const value = e.target.value.replace(
+                                /[^a-zA-Z0-9\s,:-]/g,
+                                "",
+                              );
                               setProgramForm({
                                 ...programForm,
                                 workingHours: value,
@@ -4420,7 +4690,7 @@ const handleReset = () => {
                     htmlFor="faculty"
                     className={
                       submittedPrograms &&
-                        programForm.assignedFaculty.length === 0
+                      programForm.assignedFaculty.length === 0
                         ? "text-red-500"
                         : ""
                     }
@@ -4457,13 +4727,14 @@ const handleReset = () => {
               <div className="space-y-4">
                 <div className="flex justify-between items-center">
                   <h4
-                    className={`font-medium text-sm text-gray-700 ${submittedPrograms &&
+                    className={`font-medium text-sm text-gray-700 ${
+                      submittedPrograms &&
                       programForm.exercises.some(
                         (e) => !e.name.trim() || !e.sets || !e.reps,
                       )
-                      ? "text-red-500"
-                      : "text-gray-700"
-                      }`}
+                        ? "text-red-500"
+                        : "text-gray-700"
+                    }`}
                   >
                     Exercises*
                   </h4>
@@ -4481,7 +4752,10 @@ const handleReset = () => {
                                 value={exercise.name}
                                 maxLength={100}
                                 onChange={(e) => {
-                                  const value = e.target.value.replace(/[^a-zA-Z0-9 ]/g, "");
+                                  const value = e.target.value.replace(
+                                    /[^a-zA-Z0-9 ]/g,
+                                    "",
+                                  );
                                   updateExercise(index, "name", value);
                                 }}
                                 className="bg-white"
@@ -4674,7 +4948,6 @@ const handleReset = () => {
               </DialogDescription>
             </DialogHeader>
             <div className="grid gap-4 py-4">
-
               <div className="space-y-4">
                 <div className="space-y-2">
                   <Label htmlFor="faculty">Package ID</Label>
@@ -4700,8 +4973,7 @@ const handleReset = () => {
               </div>
               {/* Package Details */}
               <div className="space-y-2">
-                <Label htmlFor="pkgName" className={ submittedPackage && !packageForm.name ? "text-red-500" : "" }>
-                Package Name*</Label>
+                <Label htmlFor="pkgName">Package Name</Label>
                 <TooltipProvider>
                   <Tooltip>
                     <TooltipTrigger asChild>
@@ -4709,7 +4981,10 @@ const handleReset = () => {
                         id="pkgName"
                         value={packageForm.name}
                         onChange={(e) =>
-                          setPackageForm({ ...packageForm, name: e.target.value })
+                          setPackageForm({
+                            ...packageForm,
+                            name: e.target.value,
+                          })
                         }
                         placeholder="e.g., Weight Loss - Monthly"
                       />
@@ -4723,10 +4998,16 @@ const handleReset = () => {
               </div>
 
               <div className="grid grid-cols-2 gap-4">
-
                 <div className="space-y-2">
-                  <Label htmlFor="pkgType" className={ submittedPackage && !packageForm.packageType ? "text-red-500" : "" } >
-                    Package Type*
+                  <Label
+                    htmlFor="pkgType"
+                    className={
+                      submittedPackage && !packageForm.packageType
+                        ? "text-red-500"
+                        : ""
+                    }
+                  >
+                    Package Type
                   </Label>
                   <TooltipProvider>
                     <Tooltip>
@@ -4748,9 +5029,7 @@ const handleReset = () => {
                               {PackageTypes.map((PackageTypes: any) => (
                                 <SelectItem
                                   key={PackageTypes.attributedetails_name}
-                                  value={
-                                    PackageTypes.attributedetails_name
-                                  }
+                                  value={PackageTypes.attributedetails_name}
                                 >
                                   {PackageTypes.attributedetails_name}
                                 </SelectItem>
@@ -4767,10 +5046,8 @@ const handleReset = () => {
                   </TooltipProvider>
                 </div>
 
-
                 <div className="space-y-2">
-                  <Label htmlFor="price" className={ submittedPackage && !packageForm.price ? "text-red-500": "" }>
-                  Price*</Label>
+                  <Label htmlFor="price">Price</Label>
                   <TooltipProvider>
                     <Tooltip>
                       <TooltipTrigger asChild>
@@ -4794,11 +5071,9 @@ const handleReset = () => {
                     </Tooltip>
                   </TooltipProvider>
                 </div>
-
               </div>
 
               <div className="grid grid-cols-2 gap-4">
-
                 <div className="space-y-2">
                   <Label htmlFor="discount">Discount %</Label>
                   <TooltipProvider>
@@ -4826,7 +5101,7 @@ const handleReset = () => {
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="pkgdays" className={ submittedPackage && !packageForm.duration_days ? "text-red-500": "" }>Duration Days*</Label>
+                  <Label htmlFor="pkgdays">Duration Days</Label>
                   <TooltipProvider>
                     <Tooltip>
                       <TooltipTrigger asChild>
@@ -4851,7 +5126,6 @@ const handleReset = () => {
                     </Tooltip>
                   </TooltipProvider>
                 </div>
-
               </div>
 
               {/* <div className="space-y-2">
@@ -4964,48 +5238,54 @@ const handleReset = () => {
               </div> */}
 
               <div className="space-y-4">
-                <Label className={ submittedPackage && packageForm.associatedPrograms.some((p) => !p.programId) ? "text-red-500" : "" } >
-                  Associated Program*
+                <Label
+                  className={
+                    submittedPackage &&
+                    packageForm.associatedPrograms.some((p) => !p.programId)
+                      ? "text-red-500"
+                      : ""
+                  }
+                >
+                  Associated Program
                 </Label>
 
                 {packageForm.associatedPrograms.map((program, index) => (
                   <div key={index} className="flex items-center gap-3">
-
                     <div className="flex-1">
-  <TooltipProvider>
-    <Tooltip>
-      <TooltipTrigger asChild>
-        <div>
-          <Select
-            value={program.programId}
-            onValueChange={(value) =>
-              updatePrograms(index, value)
-            }
-          >
-            <SelectTrigger>
-              <SelectValue placeholder="Select Program" />
-            </SelectTrigger>
+                      <TooltipProvider>
+                        <Tooltip>
+                          <TooltipTrigger asChild>
+                            <div>
+                              <Select
+                                value={program.programId}
+                                onValueChange={(value) =>
+                                  updatePrograms(index, value)
+                                }
+                              >
+                                <SelectTrigger>
+                                  <SelectValue placeholder="Select Program" />
+                                </SelectTrigger>
 
-            <SelectContent>
-              {ProgramsID.map((item: any) => (
-                <SelectItem
-                  key={item.ProgramID}
-                  value={item.ProgramID}
-                >
-                  {item.ProgramID} - {item.ProgramName}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        </div>
-      </TooltipTrigger>
+                                <SelectContent>
+                                  {ProgramsID.map((item: any) => (
+                                    <SelectItem
+                                      key={item.ProgramID}
+                                      value={item.ProgramID}
+                                    >
+                                      {item.ProgramID} - {item.ProgramName}
+                                    </SelectItem>
+                                  ))}
+                                </SelectContent>
+                              </Select>
+                            </div>
+                          </TooltipTrigger>
 
-      <TooltipContent>
-        <p>Select Associated Program</p>
-      </TooltipContent>
-    </Tooltip>
-  </TooltipProvider>
-</div>
+                          <TooltipContent>
+                            <p>Select Associated Program</p>
+                          </TooltipContent>
+                        </Tooltip>
+                      </TooltipProvider>
+                    </div>
 
                     <Button
                       type="button"
@@ -5026,7 +5306,6 @@ const handleReset = () => {
                     >
                       <Minus className="h-4 w-4" />
                     </Button>
-
                   </div>
                 ))}
               </div>
@@ -5040,7 +5319,10 @@ const handleReset = () => {
                         id="features"
                         value={packageForm.features}
                         onChange={(e) =>
-                          setPackageForm({ ...packageForm, features: e.target.value })
+                          setPackageForm({
+                            ...packageForm,
+                            features: e.target.value,
+                          })
                         }
                         placeholder="e.g., Personalized diet plan, Weekly check-ins, Full gym access"
                       />
@@ -5063,20 +5345,19 @@ const handleReset = () => {
                 />
                 <Label htmlFor="pkgActive">Active Package</Label>
               </div>
-
             </div>
 
             <DialogFooter>
               <TooltipProvider>
                 <Tooltip>
                   <TooltipTrigger asChild>
-              <Button
-                variant="outline"
-                onClick={() => setIsPackageDialogOpen(false)}
-              >
-                Cancel
-              </Button>
-              </TooltipTrigger>
+                    <Button
+                      variant="outline"
+                      onClick={() => setIsPackageDialogOpen(false)}
+                    >
+                      Cancel
+                    </Button>
+                  </TooltipTrigger>
 
                   <TooltipContent>
                     <p>Cancel without saving changes.</p>
@@ -5087,12 +5368,10 @@ const handleReset = () => {
               <TooltipProvider>
                 <Tooltip>
                   <TooltipTrigger asChild>
-              <Button
-                onClick={handleSavePackage}
-              >
-                {editingPackage ? "Update" : "Create"} Package
-              </Button>
-              </TooltipTrigger>
+                    <Button onClick={handleSavePackage}>
+                      {editingPackage ? "Update" : "Create"} Package
+                    </Button>
+                  </TooltipTrigger>
 
                   <TooltipContent>
                     <p>
@@ -5108,7 +5387,28 @@ const handleReset = () => {
         {/* Add/Edit MemberShip Dialog */}
         <Dialog
           open={isMemberShipDialogOpen}
-          onOpenChange={setIsMemberShipDialogOpen}
+          onOpenChange={(open) => {
+            setIsMemberShipDialogOpen(open);
+
+            if (!open) {
+              setSubmittedMemberShips(false);
+
+              if (!editingMemberShip) {
+                setMemberShipForm({
+                  MemberShipType_id: "",
+                  MemberShipType_Name: "",
+                  Status: true,
+                  Sno: "",
+                  PackageIDName: [
+                    {
+                      package_ID: "",
+                    },
+                  ],
+                  Keyfield: "",
+                });
+              }
+            }
+          }}
         >
           <DialogContent className="max-w-lg">
             <DialogHeader>
@@ -5122,7 +5422,6 @@ const handleReset = () => {
               </DialogDescription>
             </DialogHeader>
             <div className="grid gap-4 py-4">
-
               <div className="space-y-4">
                 <div className="space-y-2">
                   <Label htmlFor="faculty">Membership ID</Label>
@@ -5149,15 +5448,28 @@ const handleReset = () => {
 
               {/* Package Details */}
               <div className="space-y-2">
-                <Label htmlFor="pkgName">Membership Type Name</Label>
+                <Label
+                  htmlFor="name"
+                  className={
+                    submittedMemberShips && !MemberShipForm.MemberShipType_Name
+                      ? "text-red-500"
+                      : ""
+                  }
+                >
+                  Membership Type Name*
+                </Label>
                 <TooltipProvider>
                   <Tooltip>
                     <TooltipTrigger asChild>
                       <Input
                         id="pkgName"
                         value={MemberShipForm.MemberShipType_Name}
+                        maxLength={100}
                         onChange={(e) =>
-                          setMemberShipForm({ ...MemberShipForm, MemberShipType_Name: e.target.value })
+                          setMemberShipForm({
+                            ...MemberShipForm,
+                            MemberShipType_Name: e.target.value,
+                          })
                         }
                         placeholder="e.g., Weight Loss - Monthly"
                       />
@@ -5173,18 +5485,17 @@ const handleReset = () => {
               <div className="space-y-4">
                 <Label
                   className={
-                    submittedPackage &&
-                      MemberShipForm.PackageIDName.some((p) => !p.package_ID)
+                    submittedMemberShips &&
+                    MemberShipForm.PackageIDName.some((p) => !p.package_ID)
                       ? "text-red-500"
                       : ""
                   }
                 >
-                  Package ID - Name
+                  Package ID - Name*
                 </Label>
 
                 {MemberShipForm.PackageIDName.map((program, index) => (
                   <div key={index} className="flex items-center gap-3">
-
                     <div className="flex-1">
                       <TooltipProvider>
                         <Tooltip>
@@ -5199,7 +5510,7 @@ const handleReset = () => {
                                 <SelectTrigger>
                                   <SelectValue placeholder="Select Package ID - Name" />
                                 </SelectTrigger>
-                              
+
                                 <SelectContent>
                                   {GetPackages.map((item: any) => (
                                     <SelectItem
@@ -5213,7 +5524,7 @@ const handleReset = () => {
                               </Select>
                             </div>
                           </TooltipTrigger>
-                                
+
                           <TooltipContent>
                             <p>Select Package ID - Name</p>
                           </TooltipContent>
@@ -5240,7 +5551,6 @@ const handleReset = () => {
                     >
                       <Minus className="h-4 w-4" />
                     </Button>
-
                   </div>
                 ))}
               </div>
@@ -5255,20 +5565,22 @@ const handleReset = () => {
                 />
                 <Label htmlFor="pkgActive">Active</Label>
               </div>
-
             </div>
 
             <DialogFooter>
               <TooltipProvider>
                 <Tooltip>
                   <TooltipTrigger asChild>
-              <Button
-                variant="outline"
-                onClick={() => setIsPackageDialogOpen(false)}
-              >
-                Cancel
-              </Button>
-              </TooltipTrigger>
+                    <Button
+                      variant="outline"
+                      onClick={() => {
+                        setIsMemberShipDialogOpen(false);
+                        setSubmittedMemberShips(false);
+                      }}
+                    >
+                      Cancel
+                    </Button>
+                  </TooltipTrigger>
 
                   <TooltipContent>
                     <p>Cancel without saving changes.</p>
@@ -5279,16 +5591,16 @@ const handleReset = () => {
               <TooltipProvider>
                 <Tooltip>
                   <TooltipTrigger asChild>
-              <Button
-                onClick={handleSaveMemberShip}
-              >
-                {editingPackage ? "Update" : "Create"} Membership
-              </Button>
-              </TooltipTrigger>
+                    <Button onClick={handleSaveMemberShip}>
+                      {editingMemberShip ? "Update" : "Create"} Membership
+                    </Button>
+                  </TooltipTrigger>
 
                   <TooltipContent>
                     <p>
-                      {editingProgram ? "Update Package" : "Create a Package"}
+                      {editingMemberShip
+                        ? "Update Membership"
+                        : "Create a Membership"}
                     </p>
                   </TooltipContent>
                 </Tooltip>
