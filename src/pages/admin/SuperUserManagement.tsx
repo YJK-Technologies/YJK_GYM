@@ -2699,45 +2699,50 @@ const WorkoutProgramManagement = () => {
   };
 
   const deleteLocation = async (location_no: string) => {
-    try {
-      const response = await fetch(`${BASE_URL}/deletelocation`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "modified-by": userCode,
-        },
-        body: JSON.stringify({
-          location_nos: [location_no],
-        }),
+  try {
+    const response = await fetch(`${BASE_URL}/deletelocation`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "modified-by": userCode,
+      },
+      body: JSON.stringify({
+        location_nos: [location_no],
+      }),
+    });
+
+    const data = await response.json();
+
+    if (response.ok) {
+      toast({
+        title: "Success",
+        description: data.message || "Location deleted successfully.",
+        variant: "success",
       });
 
-      const data = await response.json();
-
-      if (response.ok) {
-        toast({
-          title: "Success",
-          description: data.message || "Location deleted successfully.",
-          variant: "success",
-        });
-
-        handleLocationSearch();
-      } else {
-        toast({
-          title: "Error",
-          description: data.message || "Failed to delete location.",
-          variant: "destructive",
-        });
-      }
-    } catch (err: any) {
-      console.error(err);
-
+      handleLocationSearch();
+    } else {
       toast({
-        title: "Server Error",
-        description: err.message || "Something went wrong.",
+        title: "Error",
+        description:
+          data?.message ||
+          data?.error ||
+          data?.detail ||
+          data?.title ||
+          "Failed to delete location.",
         variant: "destructive",
       });
     }
-  };
+  } catch (err: any) {
+    console.error(err);
+
+    toast({
+      title: "Server Error",
+      description: err.message || "Something went wrong.",
+      variant: "destructive",
+    });
+  }
+};
 
   const handleSaveLocation = async () => {
     if (editingLocation) {
