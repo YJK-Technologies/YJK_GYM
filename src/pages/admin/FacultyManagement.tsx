@@ -109,6 +109,7 @@ const FacultyManagement = () => {
   const [status, setStatus] = useState<any[]>([]);
   const [trainerCardData, setTrainerCardData] = useState({
     TotalTrainers: 0,
+    assignedMembers: 0,
     AvgExperience: 0,
     ActiveTrainers: 0,
   });
@@ -678,6 +679,7 @@ const FacultyManagement = () => {
       } else {
         setTrainerCardData({
           TotalTrainers: 0,
+          assignedMembers: 0,
           AvgExperience: 0,
           ActiveTrainers: 0,
         });
@@ -687,6 +689,7 @@ const FacultyManagement = () => {
 
       setTrainerCardData({
         TotalTrainers: 0,
+        assignedMembers: 0,
         AvgExperience: 0,
         ActiveTrainers: 0,
       });
@@ -1312,7 +1315,8 @@ const FacultyManagement = () => {
                     Assigned Members
                   </p>
                   <p className="text-2xl font-bold text-gray-900">
-                    {Trainers.reduce((sum, t) => sum + t.assignedMembers, 0)}
+                    {trainerCardData.assignedMembers || 0}
+                    {/* {Trainers.reduce((sum, t) => sum + t.assignedMembers, 0)} */}
                   </p>
                 </div>
               </div>

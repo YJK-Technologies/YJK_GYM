@@ -1,10 +1,8 @@
-
-import React from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { useNavigate } from 'react-router-dom';
 import { Users, Calendar, DollarSign, TrendingUp, GraduationCap, Utensils } from 'lucide-react';
-import ruwLogo from '@/assets/ruw-logo.png';
+import yjkLogo from '@/assets/yjk-logo.png';
 
 const Home = () => {
   const navigate = useNavigate();
@@ -49,8 +47,8 @@ const Home = () => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center py-4">
             <div className="flex items-center">
-              <img src={ruwLogo} alt="RUW Logo" className="h-12 mr-3" />
-              <h1 className="text-2xl font-bold text-gray-900">RUW FitnessPro</h1>
+              <img src={yjkLogo} alt="RUW Logo" className="h-12 mr-3" />
+              <h1 className="text-2xl font-bold text-gray-900">YJK FitnessPro</h1>
             </div>
             <Button onClick={() => navigate('/login')}>
               Sign In
@@ -135,8 +133,8 @@ const Home = () => {
           <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
             <div>
               <div className="flex items-center mb-4">
-                <img src={ruwLogo} alt="RUW Logo" className="h-10 mr-2" />
-                <h3 className="text-lg font-semibold">RUW FitnessPro</h3>
+                <img src={yjkLogo} alt="RUW Logo" className="h-10 mr-2" />
+                <h3 className="text-lg font-semibold">YJK FitnessPro</h3>
               </div>
               <p className="text-gray-400">
                 Complete gym management solution for modern fitness centers.
@@ -154,23 +152,23 @@ const Home = () => {
             <div>
               <h4 className="font-semibold mb-4">Address</h4>
               <ul className="space-y-2 text-gray-400">
-                <li>366 Muaskar Highway</li>
-                <li>West Riffa 942</li>
-                <li>Kingdom of Bahrain</li>
+                <li>No 290,11(54, Neeli Appadurai St),</li>
+                <li>NGO Nagar Extension, Ponneri-601204,</li>
+                <li>Chennai, Tamil Nadu.</li>
               </ul>
             </div>
             <div>
               <h4 className="font-semibold mb-4">Contact</h4>
               <ul className="space-y-2 text-gray-400">
-                <li>Tel.: +973 17764444</li>
-                <li>Toll Free: +973 80008900</li>
-                <li>Fax.: +973 17764445</li>
-                <li>E-mail: info@ruw.edu.bh</li>
+                <li>Tel.: +91 95004 36787</li>
+                {/* <li>Toll Free: +973 80008900</li>
+                <li>Fax.: +973 17764445</li> */}
+                <li>E-mail: Support@yjktechnologies.com</li>
               </ul>
             </div>
           </div>
           <div className="border-t border-gray-800 mt-8 pt-8 text-center text-gray-400">
-            <p>&copy; 2024 RUW FitnessPro. All rights reserved. | V-1.0-2026</p>
+            <p>&copy; 2024 YJK FitnessPro. All rights reserved. | V-1.0-2026</p>
           </div>
         </div>
       </footer>

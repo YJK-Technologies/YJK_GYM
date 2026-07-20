@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect } from "react";
 import {
   Card,
   CardContent,
@@ -17,7 +17,6 @@ import {
   ChevronDown,
   Building2,
   LogOut,
-  Shield,
   Settings,
 } from "lucide-react";
 import GymFloorActivity from "@/components/admin/GymFloorActivity";
@@ -205,7 +204,7 @@ const AdminDashboard = () => {
                   <button
                     onClick={() => {
                       setIsMenuOpen(false);
-                      navigate("/admin/settings");
+                      navigate("/AdminSettings");
                     }}
                     className="w-full text-left flex items-center px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 transition-colors group"
                   >

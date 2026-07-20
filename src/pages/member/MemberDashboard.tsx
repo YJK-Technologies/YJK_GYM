@@ -1,17 +1,20 @@
 
-import React from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
 import { useNavigate } from 'react-router-dom';
-import { User, Calendar, DollarSign, TrendingUp, Bell, Activity } from 'lucide-react';
+import { Calendar, DollarSign, TrendingUp, Bell, Activity } from 'lucide-react';
+import { showConfirmToast } from "@/components/ui/show-confirm-toast";
+import { useCompany } from "../CompanyContext";
 
 const MemberDashboard = () => {
+  const { userName } = useCompany();
+
   const navigate = useNavigate();
 
   const memberInfo = {
-    name: "John Doe",
+    name: userName,
     membershipType: "Premium",
     validUntil: "Dec 31, 2024",
     lastLogin: "Yesterday at 6:30 PM",
@@ -27,18 +30,57 @@ const MemberDashboard = () => {
   ];
 
   const quickActions = [
-    { title: 'Payment History', description: 'View all payments and receipts', route: '/MemberPayments' },
-    { title: 'Daily Workouts', description: 'Check your personalized workout plan', route: '/MemberWorkouts' },
-    { title: 'Workout Programs', description: 'Browse available programs and packages', route: '/MemberPrograms' },
-    { title: 'Body Progress', description: 'Track your fitness journey', route: '/MemberProgress' },
-    { title: 'Attendance', description: 'View your gym check-in history', route: '/' },
+    {
+      title: "Payment History",
+      description: "View all payments and receipts",
+      route: "/MemberPayments",
+      screenType: "MemberPayments",
+    },
+    {
+      title: "Daily Workouts",
+      description: "Check your personalized workout plan",
+      route: "/MemberWorkouts",
+      screenType: "MemberWorkouts",
+    },
+    {
+      title: "Workout Programs",
+      description: "Browse available programs and packages",
+      route: "/MemberPrograms",
+      screenType: "MemberPrograms",
+    },
+    {
+      title: "Body Progress",
+      description: "Track your fitness journey",
+      route: "/MemberProgress",
+      screenType: "MemberProgress",
+    },
+    {
+      title: "Attendance",
+      description: "View your gym check-in history",
+      route: "/MemberAttendance",
+      screenType: "MemberAttendance",
+    },
   ];
+
+  const permissions = JSON.parse(sessionStorage.getItem("permissions") || "[]");
+
+  const permittedActions = quickActions.filter((action) =>
+    permissions.some(
+      (permission: any) =>
+        permission.screen_type === action.screenType
+    )
+  );
 
   const recentAlerts = [
     { type: 'reminder', message: 'Membership renewal due in 15 days', time: '2 hours ago' },
     { type: 'workout', message: 'Missed chest workout yesterday', time: '1 day ago' },
     { type: 'achievement', message: 'Congratulations! 10 workouts completed this month', time: '2 days ago' },
   ];
+
+  const performLogout = () => {
+    sessionStorage.clear();
+    navigate("/");
+  };
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -51,7 +93,17 @@ const MemberDashboard = () => {
             </div>
             <div className="flex items-center space-x-4">
               <Badge>{memberInfo.membershipType}</Badge>
-              <Button variant="outline" onClick={() => navigate('/')}>
+              <Button variant="outline"
+                onClick={() => {
+                  showConfirmToast({
+                    title: "Confirm Logout",
+                    description: "Are you sure you want to logout?",
+                    onConfirm: () => {
+                      performLogout();
+                    },
+                  });
+                }}
+              >
                 Logout
               </Button>
             </div>
@@ -93,7 +145,7 @@ const MemberDashboard = () => {
             </CardHeader>
             <CardContent>
               <div className="space-y-4">
-                {quickActions.map((action, index) => (
+                {permittedActions.map((action, index) => (
                   <div key={index} className="flex items-center justify-between p-4 border rounded-lg hover:bg-gray-50">
                     <div>
                       <h3 className="font-medium">{action.title}</h3>
