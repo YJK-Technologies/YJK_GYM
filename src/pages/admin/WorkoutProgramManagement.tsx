@@ -1140,6 +1140,7 @@ const WorkoutProgramManagement = () => {
   // Package CRUD Functions
   const handleAddPackage = () => {
     setEditingPackage(null);
+    fetchPrograms();
     setPackageForm({
       id: "",
       name: "",
@@ -1827,6 +1828,7 @@ const updatePackage = async () => {
   // MemberShip CRUD Functions
   const handleAddMemberShip = () => {
     setEditingMemberShip(null);
+    fetchPackages();
     setMemberShipForm({
       MemberShipType_id: "",
       MemberShipType_Name: "",
@@ -4307,12 +4309,13 @@ const handleReset = () => {
                             id="duration"
                             maxLength={20}
                             value={programForm.durationPerSession}
-                            onChange={(e) =>
+                            onChange={(e) => {
+                              const value = e.target.value.replace(/-/g, ""); // Remove all '-' characters
                               setProgramForm({
                                 ...programForm,
-                                durationPerSession: e.target.value,
+                                durationPerSession: value,
                               })
-                            }
+                            }}
                             placeholder="e.g., 45 minutes"
                           />
                         </TooltipTrigger>
