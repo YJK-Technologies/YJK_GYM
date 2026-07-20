@@ -24,6 +24,7 @@ import GymFloorActivity from "@/components/admin/GymFloorActivity";
 import { showConfirmToast } from "@/components/ui/show-confirm-toast";
 import { useCompany } from "../CompanyContext";
 
+
 const AdminDashboard = () => {
   const { userCode } = useCompany();
   const userImage = sessionStorage.getItem("user_image");

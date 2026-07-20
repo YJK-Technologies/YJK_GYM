@@ -175,6 +175,7 @@ router.post("/getMealType", dataController.getMealType)
 router.post("/getEssentials", dataController.getEssentials)
 router.post("/getDuration", dataController.getDuration)
 router.post("/dietPlanSearchData", dataController.dietPlanSearchData)
+router.post("/adminDashboard", dataController.adminDashboard)
 
 
 

@@ -4802,6 +4802,40 @@ const dietPlanSearchData = async (req, res) => {
 };
 //Code ended by Dinesh Gokul on 15-07-2026
 
+//Code added by Ramya on 20-07-2026
+
+const adminDashboardData = async (req, res) => {
+  const { Company_code, Location_code } = req.body;
+
+  try {
+    const pool = await connection.connectToDatabase();
+
+    const result = await pool
+      .request()
+      .input("mode", sql.NVarChar, "S")
+      .input("Company_code", sql.NVarChar, Company_code)
+      .input("Location_code", sql.NVarChar, Location_code)
+      .query(`
+        EXEC SP_AdminDashboard
+            @mode,
+            @Company_code,
+            @Location_code
+      `);
+
+    res.status(200).json(result.recordset);
+  } catch (err) {
+    console.error("Error", err.message);
+    return res.status(500).json({
+      message: err.message || "Internal Server Error",
+    });
+  }
+};
+
+  
+//Code ended by Ramya on 20-07-2026
+
+
+
 module.exports = {
   getCompanyno,
   getsearchdata,
@@ -4946,12 +4980,14 @@ module.exports = {
   getDuration,
   dietPlanSearchData,
   couponInsertData,
-couponUpdateData,
-couponDeleteData,
-couponSearchData,
-getDisType,
-getAppPackages,
-couponDashboard
+  couponUpdateData,
+  couponDeleteData,
+  couponSearchData,
+  getDisType,
+  getAppPackages,
+  couponDashboard,
+  adminDashboardData
+ 
 
 
 };
