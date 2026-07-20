@@ -175,7 +175,6 @@ router.post("/getMealType", dataController.getMealType)
 router.post("/getEssentials", dataController.getEssentials)
 router.post("/getDuration", dataController.getDuration)
 router.post("/dietPlanSearchData", dataController.dietPlanSearchData)
-router.post("/adminDashboard", dataController.adminDashboardData)
 router.post("/getPrograms", dataController.getPrograms)
 router.post("/getPackageTypes", dataController.getPackageTypes)
 router.post("/PackageInsertData", dataController.PackageInsertData)
@@ -198,6 +197,7 @@ router.post("/MemberShipTypeDetailsUpdate", dataController.MemberShipTypeDetails
 router.post("/MemberShipTypeDetailsDelete", dataController.MemberShipTypeDetailsDelete)
 router.post("/getMeberShipPackages", dataController.getMeberShipPackages)
 router.post("/membershipSearchData", dataController.membershipSearchData)
+router.post("/adminDashboardCardData", dataController.adminDashboardCardData)
 
 
 

@@ -4757,7 +4757,7 @@ const dietPlanSearchData = async (req, res) => {
 
 //Code added by Ramya on 20-07-2026
 
-const adminDashboardData = async (req, res) => {
+const adminDashboardCardData = async (req, res) => {
   const { Company_code, Location_code } = req.body;
 
   try {
@@ -5676,6 +5676,6 @@ module.exports = {
   MemberShipTypeDetailsDelete,
   getMeberShipPackages,
   membershipSearchData,
-  adminDashboardData
+  adminDashboardCardData
 
 };
