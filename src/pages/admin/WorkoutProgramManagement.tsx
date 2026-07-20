@@ -653,6 +653,7 @@ const WorkoutProgramManagement = () => {
       !programForm.category.trim() ||
       !programForm.difficultyLevel.trim() ||
       !programForm.durationPerSession.trim() ||
+      !programForm.sessionsPerWeek.trim() ||
       !programForm.workingHours ||
       !programForm.goals.trim() ||
       programForm.assignedFaculty.length === 0 ||
@@ -1143,6 +1144,7 @@ const WorkoutProgramManagement = () => {
   // Package CRUD Functions
   const handleAddPackage = () => {
     setEditingPackage(null);
+    fetchPrograms();
     setPackageForm({
       id: "",
       name: "",
@@ -1830,6 +1832,7 @@ const updatePackage = async () => {
   // MemberShip CRUD Functions
   const handleAddMemberShip = () => {
     setEditingMemberShip(null);
+    fetchPackages();
     setMemberShipForm({
       MemberShipType_id: "",
       MemberShipType_Name: "",
@@ -4587,12 +4590,13 @@ const handleReset = () => {
                             id="duration"
                             maxLength={20}
                             value={programForm.durationPerSession}
-                            onChange={(e) =>
+                            onChange={(e) => {
+                              const value = e.target.value.replace(/[^a-zA-Z0-9 ]/g, "");
                               setProgramForm({
                                 ...programForm,
-                                durationPerSession: e.target.value,
-                              })
-                            }
+                                durationPerSession: value,
+                              });
+                            }}
                             placeholder="e.g., 45 minutes"
                           />
                         </TooltipTrigger>
@@ -4665,12 +4669,13 @@ const handleReset = () => {
                             id="workingHours"
                             maxLength={50}
                             value={programForm.workingHours}
-                            onChange={(e) =>
+                            onChange={(e) => {
+                              const value = e.target.value.replace(/[^a-zA-Z0-9\s,:-]/g, "");
                               setProgramForm({
                                 ...programForm,
-                                workingHours: e.target.value,
-                              })
-                            }
+                                workingHours: value,
+                              });
+                            }}
                             placeholder="e.g., 6AM-10AM, 5PM-9PM"
                           />
                         </TooltipTrigger>
@@ -4755,9 +4760,10 @@ const handleReset = () => {
                                 placeholder="Exercise name"
                                 value={exercise.name}
                                 maxLength={100}
-                                onChange={(e) =>
-                                  updateExercise(index, "name", e.target.value)
-                                }
+                                onChange={(e) => {
+                                  const value = e.target.value.replace(/[^a-zA-Z0-9 ]/g, "");
+                                  updateExercise(index, "name", value);
+                                }}
                                 className="bg-white"
                               />
                             </TooltipTrigger>

@@ -807,7 +807,6 @@ const locationdeleteData = async (req, res) => {
     const pool = await connection.connectToDatabase();
 
     for (const location_no of location_nosToDelete) {
-      try {
         await pool
           .request()
           .input("location_no", location_no)
@@ -815,19 +814,6 @@ const locationdeleteData = async (req, res) => {
           .query(
             `EXEC sp_location_info 'D',@location_no, '', '', '', '', '', '', '', '', '', '','',  '', '',@modified_by, '', NULL, NULL, NULL, NULL,NULL, NULL, NULL, NULL`,
           );
-      } catch (err) {
-        if (err.number === 50000) {
-          // Foreign key constraint violation
-          res
-            .status(400)
-            .json(
-              "The location cannot be deleted due to a link with another record",
-            );
-          return;
-        } else {
-          throw err; // Rethrow other SQL errors
-        }
-      }
     }
 
     res.status(200).json("Companies deleted successfully");
