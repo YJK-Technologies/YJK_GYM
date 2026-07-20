@@ -71,7 +71,10 @@ interface WorkoutMemberShip {
   MemberShipType_Name: string;
   Status: boolean;
   Sno: number;
-  package_ID: string;
+  Packages: {
+    package_ID: string;
+    package_Name: string;
+  }[];
   Keyfield: string;
 }
 
@@ -1851,7 +1854,10 @@ const updatePackage = async () => {
       MemberShipType_Name: MemberShip.MemberShipType_Name,
       Status: MemberShip.Status,
       Sno: MemberShip.Sno,
-      PackageIDName: MemberShip.package_ID,
+      PackageIDName:
+  MemberShip.Packages?.map((pkg: any) => ({
+    package_ID: pkg.package_ID,
+  })) || [{ package_ID: "" }],
       Keyfield: MemberShip.Keyfield,
     });
 
@@ -1859,16 +1865,20 @@ const updatePackage = async () => {
   };
 
   const validateMemberShip = () => {
-    if (
-      !MemberShipForm.MemberShipType_Name ||
-      // !MemberShipForm.Sno ||
-      !MemberShipForm.PackageIDName
-    ) {
+    const hasInvalidPackage = MemberShipForm.PackageIDName.some(
+  (item) => !item.package_ID.trim()
+);
+
+if (
+  !MemberShipForm.MemberShipType_Name.trim() ||
+  hasInvalidPackage
+) {
       toast({
         title: "Required Fields",
         description: "Please fill all required fields.",
         variant: "destructive",
       });
+      setSubmittedMemberShips(true);
       return false;
     }
 
@@ -1877,7 +1887,7 @@ const updatePackage = async () => {
 
   const handleSaveMemberShip = async () => {
     if (editingMemberShip) {
-      // await handleUpdateMemberShip();
+      await handleUpdateMemberShip();
     } else {
       await handleCreateMemberShip();
     }
@@ -1978,7 +1988,7 @@ const updatePackage = async () => {
     });
 
     // Refresh Grid / Cards
-    // handleMemberShipSearch();
+    handleMemberShipSearch();
     // getMemberShipCardData();
 
   } catch (error: any) {
@@ -2003,6 +2013,26 @@ const addPackageField = () => {
   };
 
   const updatePackages = (index: number, value: string) => {
+    const alreadySelected = MemberShipForm.PackageIDName.some(
+    (pkg, i) => i !== index && pkg.package_ID === value
+  );
+    if (alreadySelected) {
+  toast({
+    title: "Package Already Selected",
+    description: "This package has already been selected.",
+    variant: "destructive",
+  });
+
+  const updatedPackages = [...MemberShipForm.PackageIDName];
+  updatedPackages[index].package_ID = "";
+
+  setMemberShipForm({
+    ...MemberShipForm,
+    PackageIDName: updatedPackages,
+  });
+
+  return;
+}
     const updatedPackages = [...MemberShipForm.PackageIDName];
 
     updatedPackages[index].package_ID = value;
@@ -2096,136 +2126,255 @@ const addPackageField = () => {
   }
 };
 
-// const handleUpdateMemberShip = () => {
-//   showConfirmToast({
-//     title: "Update Membership Type",
-//     description: `Are you sure you want to update "${MemberShipForm.MemberShipType_Name}"?`,
-//     onConfirm: updateMemberShip,
-//   });
-// };
+const handleUpdateMemberShip = () => {
+  showConfirmToast({
+    title: "Update Membership Type",
+    description: `Are you sure you want to update "${MemberShipForm.MemberShipType_Name}"?`,
+    onConfirm: updateMemberShip,
+  });
+};
 
-// const updateMemberShip = async () => {
-//   if (!editingMemberShip) return;
+const updateMemberShip = async () => {
+  if (!validateMemberShip()) return;
+  if (!editingMemberShip) return;
 
-//   try {
-//     // =====================================
-//     // 1. UPDATE HEADER
-//     // =====================================
+  try {
+    // =====================================
+    // 1. UPDATE HEADER
+    // =====================================
 
-//     const headerPayload = {
-//       MemberShipType_id: MemberShipForm.MemberShipType_id,
-//       MemberShipType_Name: MemberShipForm.MemberShipType_Name,
-//       Status: MemberShipForm.Status,
-//       Company_code: companyCode,
-//       Location_code: locationCode,
-//       Keyfield: editingMemberShip.Keyfield,
-//       modified_by: userCode,
-//     };
+    const headerPayload = {
+      MemberShipType_id: MemberShipForm.MemberShipType_id,
+      MemberShipType_Name: MemberShipForm.MemberShipType_Name,
+      Status: MemberShipForm.Status,
+      Company_code: companyCode,
+      Location_code: locationCode,
+      Keyfield: editingMemberShip.Keyfield,
+      modified_by: userCode,
+    };
 
-//     const response = await fetch(
-//       `${BASE_URL}/MemberShipTypeHdrUpdate`,
-//       {
-//         method: "POST",
-//         headers: {
-//           "Content-Type": "application/json",
-//         },
-//         body: JSON.stringify(headerPayload),
-//       }
-//     );
+    const response = await fetch(
+      `${BASE_URL}/MemberShipTypeHdrUpdate`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(headerPayload),
+      }
+    );
 
-//     const result = await response.json();
+    const result = await response.json();
 
-//     if (!response.ok || !result.success) {
-//       throw new Error(
-//         result.message || "Membership Type update failed."
-//       );
-//     }
+    if (!response.ok || !result.success) {
+      throw new Error(
+        result.message || "Membership Type update failed."
+      );
+    }
 
-//     // =====================================
-//     // 2. DELETE EXISTING DETAILS
-//     // =====================================
+    // =====================================
+    // 2. DELETE EXISTING DETAILS
+    // =====================================
 
-//     for (let i = 0; i < editingMemberShip.PackageIDName.length; i++) {
-//       await fetch(
-//         `${BASE_URL}/MemberShipTypeDetailsDelete`,
-//         {
-//           method: "POST",
-//           headers: {
-//             "Content-Type": "application/json",
-//           },
-//           body: JSON.stringify({
-//             Sno: i + 1,
-//             Company_code: companyCode,
-//             Location_code: locationCode,
-//             MemberShipType_id: editingMemberShip.MemberShipType_id,
-//             Keyfield_header: "",
-//             Keyfield: "",
-//             modified_by: userCode,
-//             UpdateMode: "UD",
-//           }),
-//         }
-//       );
-//     }
+    for (let i = 0; i < (editingMemberShip.Packages?.length || 0); i++) {
+      await fetch(
+        `${BASE_URL}/MemberShipTypeDetailsDelete`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            Sno: i + 1,
+            Company_code: companyCode,
+            Location_code: locationCode,
+            MemberShipType_id: editingMemberShip.MemberShipType_id,
+            Keyfield_header: editingMemberShip.Keyfield,
+            Keyfield: "",
+            modified_by: userCode,
+            UpdateMode: "UD",
+          }),
+        }
+      );
+    }
 
-//     // =====================================
-//     // 3. INSERT UPDATED DETAILS
-//     // =====================================
+    // =====================================
+    // 3. INSERT UPDATED DETAILS
+    // =====================================
 
-//     for (const item of MemberShipForm.PackageIDName) {
-//       if (!item.package_ID) continue;
+    for (const item of MemberShipForm.PackageIDName) {
+      if (!item.package_ID) continue;
 
-//       await fetch(
-//         `${BASE_URL}/MemberShipTypeDetailsInsert`,
-//         {
-//           method: "POST",
-//           headers: {
-//             "Content-Type": "application/json",
-//           },
-//           body: JSON.stringify({
-//             package_ID: item.package_ID,
-//             Company_code: companyCode,
-//             Location_code: locationCode,
-//             MemberShipType_id: MemberShipForm.MemberShipType_id,
-//             Keyfield_header: "",
-//             Keyfield: "",
-//             created_by: userCode,
-//             UpdateMode: "UI",
-//           }),
-//         }
-//       );
-//     }
+      await fetch(
+        `${BASE_URL}/MemberShipTypeDetailsInsert`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            package_ID: item.package_ID,
+            Company_code: companyCode,
+            Location_code: locationCode,
+            MemberShipType_id: MemberShipForm.MemberShipType_id,
+            Keyfield_header: "",
+            Keyfield: "",
+            created_by: userCode,
+            UpdateMode: "UI",
+          }),
+        }
+      );
+    }
 
-//     // =====================================
-//     // SUCCESS
-//     // =====================================
+    // =====================================
+    // SUCCESS
+    // =====================================
 
-//     toast({
-//       title: "Membership Type Updated",
-//       description: "Membership Type Updated Successfully",
-//       variant: "success",
-//     });
+    toast({
+      title: "Membership Type Updated",
+      description: "Membership Type Updated Successfully",
+      variant: "success",
+    });
 
-//     handleMemberShipSearch();
+    handleMemberShipSearch();
 
-//     getMemberShipCardData();
+    // getMemberShipCardData();
 
-//     setSubmittedMemberShips(false);
+    setSubmittedMemberShips(false);
 
-//     setEditingMemberShip(null);
+    setEditingMemberShip(null);
 
-//     setIsMemberShipDialogOpen(false);
+    setIsMemberShipDialogOpen(false);
 
-//   } catch (err: any) {
-//     toast({
-//       title: "Error",
-//       description:
-//         err.message || "Membership Type Update Failed",
-//       variant: "destructive",
-//     });
+  } catch (err: any) {
+    toast({
+      title: "Error",
+      description:
+        err.message || "Membership Type Update Failed",
+      variant: "destructive",
+    });
 
-//     console.error("Membership Update Error :", err);
-//   }
-// };
+    console.error("Membership Update Error :", err);
+  }
+};
+
+const groupedMemberShips = Object.values(
+  MemberShips.reduce((acc: any, item: any) => {
+    const id = item.MemberShipType_id;
+
+    if (!acc[id]) {
+      acc[id] = {
+        ...item,
+        Packages: [],
+      };
+    }
+
+    // Avoid duplicate packages
+    if (
+      item.package_ID &&
+      !acc[id].Packages.some(
+        (pkg: any) => pkg.package_ID === item.package_ID
+      )
+    ) {
+      acc[id].Packages.push({
+        package_ID: item.package_ID,
+        package_Name: item.package_Name,
+      });
+    }
+
+    return acc;
+  }, {})
+);
+
+const handleDeleteMembership = (membership: any) => {
+  showConfirmToast({
+    title: "Delete Membership Type",
+    description: `Are you sure you want to delete "${membership.MemberShipType_Name}"?`,
+    onConfirm: () => deleteMembership(membership),
+  });
+};
+
+const deleteMembership = async (membership: any) => {
+  try {
+    // ======================================
+    // Delete Membership Details
+    // ======================================
+
+    await fetch(`${BASE_URL}/MemberShipTypeDetailsDelete`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        Sno: 1, // Not used when deleting by Keyfield_header
+        Company_code: companyCode,
+        Location_code: locationCode,
+        MemberShipType_id: membership.MemberShipType_id,
+        Keyfield_header: membership.Keyfield,
+        Keyfield: "",
+        modified_by: userCode,
+        UpdateMode: "D",
+      }),
+    });
+
+    // ======================================
+    // Delete Membership Header
+    // ======================================
+
+    const response = await fetch(`${BASE_URL}/MemberShipTypeHdrDelete`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        MemberShipType_id: membership.MemberShipType_id,
+        Company_code: companyCode,
+        Location_code: locationCode,
+        Keyfield: membership.Keyfield,
+        modified_by: userCode,
+      }),
+    });
+
+    const result = await response.json();
+
+    if (!response.ok || !result.success) {
+      throw new Error(result.message || "Delete failed");
+    }
+
+    // ======================================
+    // Remove from UI
+    // ======================================
+
+    setMemberShips((prev: any) =>
+      prev.filter(
+        (item: any) => item.Keyfield !== membership.Keyfield
+      )
+    );
+
+    // ======================================
+    // Refresh Data
+    // ======================================
+
+    handleMemberShipSearch();
+
+    // If you have membership cards/dashboard count API
+    // getMemberShipCardData();
+
+    toast({
+      title: "Membership Type Deleted",
+      description: "Membership Type deleted successfully.",
+      variant: "success",
+    });
+  } catch (error: any) {
+    console.error("Membership Delete Error:", error);
+
+    toast({
+      title: "Delete Failed",
+      description: error.message || "Something went wrong.",
+      variant: "destructive",
+    });
+  }
+};
 
   const renderProgramSearch = () => (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-x-4 gap-y-6">
@@ -3025,12 +3174,12 @@ const renderMemberShipSearch = () => (
 
     {/* Package ID */}
     <div className="space-y-2">
-      <Label>Membership Type Name</Label>
+      <Label>Membership ID</Label>
       <TooltipProvider>
         <Tooltip>
           <TooltipTrigger asChild>
             <Input
-              placeholder="Enter Membership Type Name"
+              placeholder="Enter Membership ID"
               value={MemberShipSearchForm.MemberShipType_id}
               maxLength={30}
               onChange={(e) =>
@@ -3043,7 +3192,7 @@ const renderMemberShipSearch = () => (
           </TooltipTrigger>
 
           <TooltipContent>
-            <p>Enter Membership Type Name</p>
+            <p>Enter Membership ID</p>
           </TooltipContent>
         </Tooltip>
       </TooltipProvider>
@@ -4041,7 +4190,7 @@ const handleReset = () => {
 
               <CardContent>
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                  {MemberShips.map((membership: any) => {
+                  {groupedMemberShips.map((membership: any) => {
                     const isActive = membership.Status === "Active";
                   
                     const statusBadgeColor = isActive
@@ -4078,7 +4227,7 @@ const handleReset = () => {
                                         variant="ghost"
                                         size="icon"
                                         className="h-8 w-8 text-gray-600 hover:text-violet-600 hover:bg-violet-50"
-                                        // onClick={() => handleEditMembership(membership)}
+                                        onClick={() => handleEditMemberShip(membership)}
                                       >
                                         <Edit className="h-4 w-4" />
                                       </Button>
@@ -4098,7 +4247,7 @@ const handleReset = () => {
                                         variant="ghost"
                                         size="icon"
                                         className="h-8 w-8 text-red-500 hover:text-red-700 hover:bg-red-50"
-                                        // onClick={() => handleDeleteMembership(membership)}
+                                        onClick={() => handleDeleteMembership(membership)}
                                       >
                                         <Trash2 className="h-4 w-4" />
                                       </Button>
@@ -4825,8 +4974,7 @@ const handleReset = () => {
               </div>
               {/* Package Details */}
               <div className="space-y-2">
-                <Label htmlFor="pkgName" className={ submittedPackage && !packageForm.name ? "text-red-500" : "" }>
-                Package Name*</Label>
+                <Label htmlFor="pkgName">Package Name</Label>
                 <TooltipProvider>
                   <Tooltip>
                     <TooltipTrigger asChild>
@@ -4850,8 +4998,15 @@ const handleReset = () => {
               <div className="grid grid-cols-2 gap-4">
 
                 <div className="space-y-2">
-                  <Label htmlFor="pkgType" className={ submittedPackage && !packageForm.packageType ? "text-red-500" : "" } >
-                    Package Type*
+                  <Label
+                    htmlFor="pkgType"
+                    className={
+                      submittedPackage && !packageForm.packageType
+                        ? "text-red-500"
+                        : ""
+                    }
+                  >
+                    Package Type
                   </Label>
                   <TooltipProvider>
                     <Tooltip>
@@ -4894,8 +5049,7 @@ const handleReset = () => {
 
 
                 <div className="space-y-2">
-                  <Label htmlFor="price" className={ submittedPackage && !packageForm.price ? "text-red-500": "" }>
-                  Price*</Label>
+                  <Label htmlFor="price">Price</Label>
                   <TooltipProvider>
                     <Tooltip>
                       <TooltipTrigger asChild>
@@ -4951,7 +5105,7 @@ const handleReset = () => {
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="pkgdays" className={ submittedPackage && !packageForm.duration_days ? "text-red-500": "" }>Duration Days*</Label>
+                  <Label htmlFor="pkgdays">Duration Days</Label>
                   <TooltipProvider>
                     <Tooltip>
                       <TooltipTrigger asChild>
@@ -5089,8 +5243,15 @@ const handleReset = () => {
               </div> */}
 
               <div className="space-y-4">
-                <Label className={ submittedPackage && packageForm.associatedPrograms.some((p) => !p.programId) ? "text-red-500" : "" } >
-                  Associated Program*
+                <Label
+                  className={
+                    submittedPackage &&
+                      packageForm.associatedPrograms.some((p) => !p.programId)
+                      ? "text-red-500"
+                      : ""
+                  }
+                >
+                  Associated Program
                 </Label>
 
                 {packageForm.associatedPrograms.map((program, index) => (
@@ -5274,13 +5435,21 @@ const handleReset = () => {
 
               {/* Package Details */}
               <div className="space-y-2">
-                <Label htmlFor="pkgName">Membership Type Name</Label>
+                <Label
+                      htmlFor="name"
+                      className={
+                        submittedMemberShips && !MemberShipForm.MemberShipType_Name
+                          ? "text-red-500"
+                          : ""
+                      }
+                    >Membership Type Name*</Label>
                 <TooltipProvider>
                   <Tooltip>
                     <TooltipTrigger asChild>
                       <Input
                         id="pkgName"
                         value={MemberShipForm.MemberShipType_Name}
+                        maxLength={100}
                         onChange={(e) =>
                           setMemberShipForm({ ...MemberShipForm, MemberShipType_Name: e.target.value })
                         }
@@ -5298,13 +5467,13 @@ const handleReset = () => {
               <div className="space-y-4">
                 <Label
                   className={
-                    submittedPackage &&
+                    submittedMemberShips &&
                       MemberShipForm.PackageIDName.some((p) => !p.package_ID)
                       ? "text-red-500"
                       : ""
                   }
                 >
-                  Package ID - Name
+                  Package ID - Name*
                 </Label>
 
                 {MemberShipForm.PackageIDName.map((program, index) => (
@@ -5389,7 +5558,10 @@ const handleReset = () => {
                   <TooltipTrigger asChild>
               <Button
                 variant="outline"
-                onClick={() => setIsPackageDialogOpen(false)}
+                onClick={() => {
+                        setIsMemberShipDialogOpen(false);
+                        setSubmittedMemberShips(false);
+                      }}
               >
                 Cancel
               </Button>
@@ -5407,13 +5579,13 @@ const handleReset = () => {
               <Button
                 onClick={handleSaveMemberShip}
               >
-                {editingPackage ? "Update" : "Create"} Membership
+                {editingMemberShip ? "Update" : "Create"} Membership
               </Button>
               </TooltipTrigger>
 
                   <TooltipContent>
                     <p>
-                      {editingProgram ? "Update Package" : "Create a Package"}
+                      {editingMemberShip ? "Update Membership" : "Create a Membership"}
                     </p>
                   </TooltipContent>
                 </Tooltip>
