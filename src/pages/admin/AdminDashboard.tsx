@@ -22,6 +22,8 @@ import {
 import GymFloorActivity from "@/components/admin/GymFloorActivity";
 import { showConfirmToast } from "@/components/ui/show-confirm-toast";
 import { useCompany } from "../CompanyContext";
+import { BASE_URL } from "../ApiConfig";
+
 
 const AdminDashboard = () => {
   const { userCode } = useCompany();
@@ -33,46 +35,108 @@ const AdminDashboard = () => {
   const menuRef = useRef(null);
   const navigate = useNavigate();
 
+   const { companyCode, locationCode, } = useCompany();
+
+  // For admin 
+  const [dashboardData, setDashboardData] = useState({
+  TotalMembers: 0,
+  ActivePrograms: 0,
+});
+
+const getDashboardData = async () => {
+  try {
+    const response = await fetch(`${BASE_URL}/adminDashboardCardData`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        Company_code: companyCode,
+        Location_code: locationCode,
+      }),
+    });
+
+    const result = await response.json();
+
+    setDashboardData(result[0]);
+  } catch (error) {
+    console.error(error);
+  }
+};
+
   useEffect(() => {
-    const handleClickOutside = (event) => {
-      if (menuRef.current && !menuRef.current.contains(event.target)) {
-        setIsMenuOpen(false);
-      }
-    };
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, []);
+  getDashboardData();
+
+  const handleClickOutside = (event) => {
+    if (menuRef.current && !menuRef.current.contains(event.target)) {
+      setIsMenuOpen(false);
+    }
+  };
+
+  document.addEventListener("mousedown", handleClickOutside);
+
+  return () => {
+    document.removeEventListener("mousedown", handleClickOutside);
+  };
+}, []);
 
   const permissions = JSON.parse(sessionStorage.getItem("permissions") || "[]");
 
   const allowedScreens = permissions.map((item: any) => item.screen_type);
 
+  // const stats = [
+  //   {
+  //     title: "Total Members",
+  //     value: "1,234",
+  //     icon: Users,
+  //     color: "bg-purple-500",
+  //   },
+  //   {
+  //     title: "Monthly Revenue",
+  //     value: "BHD 12,500",
+  //     icon: DollarSign,
+  //     color: "bg-green-500",
+  //   },
+  //   {
+  //     title: "Active Programs",
+  //     value: "28",
+  //     icon: Calendar,
+  //     color: "bg-purple-500",
+  //   },
+  //   {
+  //     title: "Growth Rate",
+  //     value: "+15%",
+  //     icon: TrendingUp,
+  //     color: "bg-orange-500",
+  //   },
+  // ];
+
   const stats = [
-    {
-      title: "Total Members",
-      value: "1,234",
-      icon: Users,
-      color: "bg-purple-500",
-    },
-    {
-      title: "Monthly Revenue",
-      value: "BHD 12,500",
-      icon: DollarSign,
-      color: "bg-green-500",
-    },
-    {
-      title: "Active Programs",
-      value: "28",
-      icon: Calendar,
-      color: "bg-purple-500",
-    },
-    {
-      title: "Growth Rate",
-      value: "+15%",
-      icon: TrendingUp,
-      color: "bg-orange-500",
-    },
-  ];
+  {
+    title: "Total Members",
+    value: dashboardData.TotalMembers,
+    icon: Users,
+    color: "bg-purple-500",
+  },
+  {
+    title: "Monthly Revenue",
+    value: "BHD 12,500",
+    icon: DollarSign,
+    color: "bg-green-500",
+  },
+  {
+    title: "Active Programs",
+    value: dashboardData.ActivePrograms,
+    icon: Calendar,
+    color: "bg-purple-500",
+  },
+  {
+    title: "Growth Rate",
+    value: "+15%",
+    icon: TrendingUp,
+    color: "bg-orange-500",
+  },
+];
 
   const quickActions = [
     {

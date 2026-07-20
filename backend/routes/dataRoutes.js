@@ -198,6 +198,7 @@ router.post("/MemberShipTypeDetailsDelete", dataController.MemberShipTypeDetails
 router.post("/getMeberShipPackages", dataController.getMeberShipPackages)
 router.post("/membershipSearchData", dataController.membershipSearchData)
 router.post("/getMeberShipTypeName", dataController.getMeberShipTypeName)
+router.post("/adminDashboardCardData", dataController.adminDashboardCardData)
 
 
 
