@@ -5,7 +5,6 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Switch } from '@/components/ui/switch';
@@ -366,19 +365,37 @@ const CouponManagement = () => {
     setIsDialogOpen(true);
   };
 
-  const handleCreateCoupon = async () => {
-    setSubmittedCoupon(true);
-
-    if (!formData.code || !formData.description || !formData.discountType || !formData.maxUses
-      || !formData.validFrom || !formData.validUntil || !formData.applicablePackages
+  const validateCoupon = () => {
+    if (!formData.code || !formData.discountType || !formData.maxUses
+      || !formData.validFrom || !formData.validUntil || formData.applicablePackages.length === 0
     ) {
       toast({
-        title: "Validation Error",
+        title: "Required Fields",
         description: "Please fill all required fields.",
         variant: "destructive",
       });
-      return;
+      return false;
     }
+
+    const validFrom = new Date(formData.validFrom);
+    const validUntil = new Date(formData.validUntil);
+
+    if (validUntil < validFrom) {
+      toast({
+        title: "Validation Error",
+        description: "Valid Until date cannot be earlier than Valid From date.",
+        variant: "destructive",
+      });
+      return false;
+    }
+
+    return true;
+  };
+
+  const handleCreateCoupon = async () => {
+    setSubmittedCoupon(true);
+
+    if (!validateCoupon()) return;
 
     try {
       const response = await fetch(`${BASE_URL}/couponInsertData`, {
@@ -447,14 +464,7 @@ const CouponManagement = () => {
   const updateCoupon = async () => {
     setSubmittedCoupon(true);
 
-    if (!formData.code || !formData.description || !formData.discountType) {
-      toast({
-        title: "Validation Error",
-        description: "Please fill all required fields.",
-        variant: "destructive",
-      });
-      return;
-    }
+    if (!validateCoupon()) return;
 
     try {
       const response = await fetch(`${BASE_URL}/couponUpdateData`, {
@@ -960,15 +970,15 @@ const CouponManagement = () => {
                           </SelectTrigger>
 
                           <SelectContent>
-                          {AppPackages.map((item: any) => (
-                            <SelectItem
-                              key={item.package_ID}
-                              value={item.package_ID}
-                            >
-                              {item.package_ID} - {item.package_Name}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
+                            {AppPackages.map((item: any) => (
+                              <SelectItem
+                                key={item.package_ID}
+                                value={item.package_ID}
+                              >
+                                {item.package_ID} - {item.package_Name}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
                         </Select>
                       </div>
                     </TooltipTrigger>
@@ -1143,7 +1153,7 @@ const CouponManagement = () => {
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
                 <Label htmlFor="discountValue" className={submittedCoupon && !formData.discountValue ? "text-red-500" : ""}>
-                  Discount Value* ({formData.discountType === 'percentage' ? '%' : 'BHD'})
+                  Discount Value* {/*({formData.discountType === 'percentage' ? '%' : 'BHD'})*/}
                 </Label>
                 <TooltipProvider>
                   <Tooltip>
@@ -1165,7 +1175,7 @@ const CouponManagement = () => {
                 </TooltipProvider>
               </div>
               <div className="space-y-2">
-                <Label htmlFor="minimumPurchase">Minimum Purchase (BHD)</Label>
+                <Label htmlFor="minimumPurchase">Minimum Purchase</Label>
                 <TooltipProvider>
                   <Tooltip>
                     <TooltipTrigger asChild>
@@ -1180,7 +1190,7 @@ const CouponManagement = () => {
                     </TooltipTrigger>
 
                     <TooltipContent>
-                      <p>Select Minimum Purchase (BHD)</p>
+                      <p>Select Minimum Purchase</p>
                     </TooltipContent>
                   </Tooltip>
                 </TooltipProvider>
