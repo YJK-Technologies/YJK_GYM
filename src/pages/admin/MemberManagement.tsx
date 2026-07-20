@@ -1,25 +1,68 @@
-
-import { useState, useEffect } from 'react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Checkbox } from '@/components/ui/checkbox';
-import { Textarea } from '@/components/ui/textarea';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger, DialogFooter } from '@/components/ui/dialog';
-import { Switch } from '@/components/ui/switch';
-import { useNavigate } from 'react-router-dom';
-import { useToast } from '@/hooks/use-toast';
-import { format } from 'date-fns';
-import { cn } from '@/lib/utils';
-import { ArrowLeft, Search, RotateCcw, Users, UserCheck, UserX, Clock, Plus, Eye, EyeOff, Pencil, Trash2, Phone, Mail, MapPin, AlertCircle, Bell, Megaphone } from 'lucide-react';
-import { BASE_URL } from '../ApiConfig';
+import { useState, useEffect } from "react";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Textarea } from "@/components/ui/textarea";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+  DialogFooter,
+} from "@/components/ui/dialog";
+import { Switch } from "@/components/ui/switch";
+import { useNavigate } from "react-router-dom";
+import { useToast } from "@/hooks/use-toast";
+import { format } from "date-fns";
+import { cn } from "@/lib/utils";
+import {
+  ArrowLeft,
+  Search,
+  RotateCcw,
+  Users,
+  UserCheck,
+  UserX,
+  Clock,
+  Plus,
+  Eye,
+  EyeOff,
+  Pencil,
+  Trash2,
+  Phone,
+  Mail,
+  MapPin,
+  AlertCircle,
+  Bell,
+  Megaphone,
+} from "lucide-react";
+import { BASE_URL } from "../ApiConfig";
 import AgGridTable from "@/components/ui/ag-grid-table";
 import ImageUpload from "../ImageUpload";
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
-import { showConfirmToast } from '../../components/ui/show-confirm-toast';
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
+import { showConfirmToast } from "../../components/ui/show-confirm-toast";
 import { useCompany } from "../CompanyContext";
 import { hasActionPermission } from "@/utils/permission";
 
@@ -60,29 +103,29 @@ const MemberManagement = () => {
   const { companyCode, locationCode, userCode } = useCompany();
 
   const emptyMember: Member = {
-    MemberID: '',
-    Identity_No: '',
-    Full_name: '',
-    DOB: '',
-    Gender: '',
-    Mobile: '',
-    WhatsApp_Number: '',
-    Password: '',
-    Email: '',
-    Address: '',
-    Emergency_contact_name: '',
-    Emergency_contact_phone: '',
-    Emergency_contact_relation: '',
-    Membership_type: 'Standard',
-    Joined_date: '',
-    Plan_expiry_date: '',
+    MemberID: "",
+    Identity_No: "",
+    Full_name: "",
+    DOB: "",
+    Gender: "",
+    Mobile: "",
+    WhatsApp_Number: "",
+    Password: "",
+    Email: "",
+    Address: "",
+    Emergency_contact_name: "",
+    Emergency_contact_phone: "",
+    Emergency_contact_relation: "",
+    Membership_type: "",
+    Joined_date: "",
+    Plan_expiry_date: "",
     is_active: false,
     Receive_promotions: false,
     Receive_notifications: false,
     Company_code: companyCode,
     Location_code: locationCode,
     created_by: userCode,
-    modified_by: userCode
+    modified_by: userCode,
   };
 
   const navigate = useNavigate();
@@ -127,13 +170,14 @@ const MemberManagement = () => {
 
   const fetchMembershipType = async () => {
     try {
-      const response = await fetch(`${BASE_URL}/getMembershipType`, {
+      const response = await fetch(`${BASE_URL}/getMeberShipTypeName`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          company_code: companyCode,
+          Company_code: companyCode,
+          Location_code: locationCode,
         }),
       });
 
@@ -191,7 +235,7 @@ const MemberManagement = () => {
       if (response.ok) {
         setStatsData(data);
 
-        console.log(data)
+        console.log(data);
       } else {
         console.error("Failed to fetch status");
       }
@@ -231,7 +275,7 @@ const MemberManagement = () => {
         fetchMembershipType(),
         fetchRelationship(),
         fetchMembersData(),
-        fetchStatus()
+        fetchStatus(),
       ]);
     };
 
@@ -245,7 +289,10 @@ const MemberManagement = () => {
   const [viewingMember, setViewingMember] = useState<Member | null>(null);
   const [formData, setFormData] = useState<Member>(emptyMember as Member);
   const [showPassword, setShowPassword] = useState(false);
-  const [memberImages, setMemberImages] = useState<(string | null)[]>([null, null]);
+  const [memberImages, setMemberImages] = useState<(string | null)[]>([
+    null,
+    null,
+  ]);
   const [submittedMember, setSubmittedMember] = useState(false);
 
   const [memberSearchForm, setMemberSearchForm] = useState({
@@ -263,7 +310,7 @@ const MemberManagement = () => {
     Joined_date_from: "",
     Joined_date_to: "",
     expiry_date_from: "",
-    expiry_date_to: ""
+    expiry_date_to: "",
   });
 
   const handleMemberFiles = async (files: (File | null)[]) => {
@@ -285,7 +332,7 @@ const MemberManagement = () => {
 
           reader.readAsDataURL(file);
         });
-      })
+      }),
     );
 
     setMemberImages(convertedImages);
@@ -399,10 +446,20 @@ const MemberManagement = () => {
     {
       headerName: "Membership",
       field: "Membership_type",
-      minWidth: 140,
-      cellRenderer: (params: any) => (
-        <Badge variant="outline">{params.value}</Badge>
-      ),
+      minWidth: 220,
+      cellRenderer: (params: any) => {
+        const membership = membershipType.find(
+          (item: any) => item.MemberShipType_id === params.value,
+        );
+
+        return (
+          <Badge variant="outline">
+            {membership
+              ? `${membership.MemberShipType_id} - ${membership.MemberShipType_Name}`
+              : params.value}
+          </Badge>
+        );
+      },
     },
     {
       headerName: "Status",
@@ -420,68 +477,68 @@ const MemberManagement = () => {
     },
     ...(showActionColumn
       ? [
-        {
-          headerName: "Actions",
-          width: 170,
-          minWidth: 170,
-          maxWidth: 170,
-          sortable: false,
-          filter: false,
-          cellStyle: {
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
+          {
+            headerName: "Actions",
+            width: 170,
+            minWidth: 170,
+            maxWidth: 170,
+            sortable: false,
+            filter: false,
+            cellStyle: {
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+            },
+            cellRenderer: (params: any) => (
+              <div className="flex gap-2">
+                {hasActionPermission("AdminMembers", "view") && (
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => handleViewMember(params.data)}
+                      >
+                        <Eye className="h-4 w-4" />
+                      </Button>
+                    </TooltipTrigger>
+                    <TooltipContent>View</TooltipContent>
+                  </Tooltip>
+                )}
+
+                {hasActionPermission("AdminMembers", "edit") && (
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => handleEditMember(params.data)}
+                      >
+                        <Pencil className="h-4 w-4" />
+                      </Button>
+                    </TooltipTrigger>
+                    <TooltipContent>Edit</TooltipContent>
+                  </Tooltip>
+                )}
+
+                {hasActionPermission("AdminMembers", "delete") && (
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => handleDeleteMember(params.data.MemberID)}
+                      >
+                        <Trash2 className="h-4 w-4 text-red-500" />
+                      </Button>
+                    </TooltipTrigger>
+                    <TooltipContent>Delete</TooltipContent>
+                  </Tooltip>
+                )}
+              </div>
+            ),
           },
-          cellRenderer: (params: any) => (
-            <div className="flex gap-2">
-              {hasActionPermission("AdminMembers", "view") && (
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => handleViewMember(params.data)}
-                    >
-                      <Eye className="h-4 w-4" />
-                    </Button>
-                  </TooltipTrigger>
-                  <TooltipContent>View</TooltipContent>
-                </Tooltip>
-              )}
-
-              {hasActionPermission("AdminMembers", "edit") && (
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => handleEditMember(params.data)}
-                    >
-                      <Pencil className="h-4 w-4" />
-                    </Button>
-                  </TooltipTrigger>
-                  <TooltipContent>Edit</TooltipContent>
-                </Tooltip>
-              )}
-
-              {hasActionPermission("AdminMembers", "delete") && (
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => handleDeleteMember(params.data.MemberID)}
-                    >
-                      <Trash2 className="h-4 w-4 text-red-500" />
-                    </Button>
-                  </TooltipTrigger>
-                  <TooltipContent>Delete</TooltipContent>
-                </Tooltip>
-              )}
-            </div>
-          ),
-        },
-      ]
+        ]
       : []),
   ];
 
@@ -546,9 +603,7 @@ const MemberManagement = () => {
         member.Receive_notifications === "Yes" ||
         member.Receive_notifications === true,
 
-      is_active:
-        member.is_active === "Active" ||
-        member.is_active === true,
+      is_active: member.is_active === "Active" || member.is_active === true,
     });
 
     if (member.Photo?.data) {
@@ -556,7 +611,7 @@ const MemberManagement = () => {
 
       const binary = uint8Array.reduce(
         (acc, byte) => acc + String.fromCharCode(byte),
-        ""
+        "",
       );
 
       const base64 = btoa(binary);
@@ -607,7 +662,6 @@ const MemberManagement = () => {
         });
 
         handleMemberSearch();
-
       } else {
         toast({
           title: "Error",
@@ -683,7 +737,8 @@ const MemberManagement = () => {
     if (!isValidPhoneNumber(formData.Mobile)) {
       toast({
         title: "Invalid Mobile Number",
-        description: "Mobile number must contain only digits and be between 8 and 15 digits.",
+        description:
+          "Mobile number must contain only digits and be between 8 and 15 digits.",
         variant: "destructive",
       });
       return false;
@@ -695,7 +750,8 @@ const MemberManagement = () => {
     ) {
       toast({
         title: "Invalid WhatsApp Number",
-        description: "WhatsApp number must contain only digits and be between 8 and 15 digits.",
+        description:
+          "WhatsApp number must contain only digits and be between 8 and 15 digits.",
         variant: "destructive",
       });
       return false;
@@ -704,7 +760,8 @@ const MemberManagement = () => {
     if (!isValidPhoneNumber(formData.Emergency_contact_phone)) {
       toast({
         title: "Invalid Contact Phone",
-        description: "Contact phone must contain only digits and be between 8 and 15 digits.",
+        description:
+          "Contact phone must contain only digits and be between 8 and 15 digits.",
         variant: "destructive",
       });
       return false;
@@ -727,24 +784,15 @@ const MemberManagement = () => {
       Object.entries(formData).forEach(([key, value]) => {
         switch (key) {
           case "Receive_promotions":
-            form.append(
-              key,
-              value === true ? "Yes" : "No"
-            );
+            form.append(key, value === true ? "Yes" : "No");
             break;
 
           case "Receive_notifications":
-            form.append(
-              key,
-              value === true ? "Yes" : "No"
-            );
+            form.append(key, value === true ? "Yes" : "No");
             break;
 
           case "is_active":
-            form.append(
-              key,
-              value ? "Active" : "Close"
-            );
+            form.append(key, value ? "Active" : "Close");
             break;
 
           default:
@@ -762,7 +810,7 @@ const MemberManagement = () => {
         const byteCharacters = atob(base64);
 
         const byteNumbers = Array.from(byteCharacters, (char) =>
-          char.charCodeAt(0)
+          char.charCodeAt(0),
         );
 
         const byteArray = new Uint8Array(byteNumbers);
@@ -774,11 +822,7 @@ const MemberManagement = () => {
         const extension = mimeType.split("/")[1] || "png";
 
         if (index === 0) {
-          form.append(
-            "Photo",
-            blob,
-            `Photo.${extension}`
-          );
+          form.append("Photo", blob, `Photo.${extension}`);
         }
       });
 
@@ -839,7 +883,8 @@ const MemberManagement = () => {
     if (!isValidPhoneNumber(formData.Mobile)) {
       toast({
         title: "Invalid Mobile Number",
-        description: "Mobile number must contain only digits and be between 8 and 15 digits.",
+        description:
+          "Mobile number must contain only digits and be between 8 and 15 digits.",
         variant: "destructive",
       });
       return false;
@@ -851,7 +896,8 @@ const MemberManagement = () => {
     ) {
       toast({
         title: "Invalid WhatsApp Number",
-        description: "WhatsApp number must contain only digits and be between 8 and 15 digits.",
+        description:
+          "WhatsApp number must contain only digits and be between 8 and 15 digits.",
         variant: "destructive",
       });
       return false;
@@ -860,7 +906,8 @@ const MemberManagement = () => {
     if (!isValidPhoneNumber(formData.Emergency_contact_phone)) {
       toast({
         title: "Invalid Contact Phone",
-        description: "Contact phone must contain only digits and be between 8 and 15 digits.",
+        description:
+          "Contact phone must contain only digits and be between 8 and 15 digits.",
         variant: "destructive",
       });
       return false;
@@ -882,24 +929,15 @@ const MemberManagement = () => {
       Object.entries(formData).forEach(([key, value]) => {
         switch (key) {
           case "Receive_promotions":
-            form.append(
-              key,
-              value === true ? "Yes" : "No"
-            );
+            form.append(key, value === true ? "Yes" : "No");
             break;
 
           case "Receive_notifications":
-            form.append(
-              key,
-              value === true ? "Yes" : "No"
-            );
+            form.append(key, value === true ? "Yes" : "No");
             break;
 
           case "is_active":
-            form.append(
-              key,
-              value ? "Active" : "Close"
-            );
+            form.append(key, value ? "Active" : "Close");
             break;
 
           default:
@@ -917,7 +955,7 @@ const MemberManagement = () => {
         const byteCharacters = atob(base64);
 
         const byteNumbers = Array.from(byteCharacters, (char) =>
-          char.charCodeAt(0)
+          char.charCodeAt(0),
         );
 
         const byteArray = new Uint8Array(byteNumbers);
@@ -929,11 +967,7 @@ const MemberManagement = () => {
         const extension = mimeType.split("/")[1] || "png";
 
         if (index === 0) {
-          form.append(
-            "Photo",
-            blob,
-            `Photo.${extension}`
-          );
+          form.append("Photo", blob, `Photo.${extension}`);
         }
       });
 
@@ -987,7 +1021,7 @@ const MemberManagement = () => {
 
   const handlePhoneNumberChange = (
     e: React.ChangeEvent<HTMLInputElement>,
-    field: keyof typeof formData
+    field: keyof typeof formData,
   ) => {
     const value = e.target.value.replace(/\D/g, "").slice(0, 15);
 
@@ -1013,7 +1047,7 @@ const MemberManagement = () => {
       Joined_date_from: "",
       Joined_date_to: "",
       expiry_date_from: "",
-      expiry_date_to: ""
+      expiry_date_to: "",
     });
     setMembers([]);
   };
@@ -1094,7 +1128,8 @@ const MemberManagement = () => {
     if (from > to) {
       toast({
         title: "Invalid Joined Date Range",
-        description: "'Joined Date From' cannot be greater than 'Joined Date To'.",
+        description:
+          "'Joined Date From' cannot be greater than 'Joined Date To'.",
         variant: "destructive",
       });
 
@@ -1115,7 +1150,8 @@ const MemberManagement = () => {
     if (from > to) {
       toast({
         title: "Invalid Expiry Date Range",
-        description: "'Expiry Date From' cannot be greater than 'Expiry Date To'.",
+        description:
+          "'Expiry Date From' cannot be greater than 'Expiry Date To'.",
         variant: "destructive",
       });
 
@@ -1147,7 +1183,6 @@ const MemberManagement = () => {
   };
 
   const handleMemberSearch = async () => {
-
     if (!validateSearchEmail()) return;
 
     if (!validatePhoneNumbers()) return;
@@ -1221,7 +1256,7 @@ const MemberManagement = () => {
 
   const handleSearchNumberChange = (
     e: React.ChangeEvent<HTMLInputElement>,
-    field: keyof typeof memberSearchForm
+    field: keyof typeof memberSearchForm,
   ) => {
     const value = e.target.value.replace(/\D/g, "").slice(0, 15);
 
@@ -1233,20 +1268,21 @@ const MemberManagement = () => {
 
   return (
     <div className="min-h-screen bg-gray-50">
-
       <header className="bg-white shadow-sm border-b">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center py-4">
             <div className="flex items-center gap-2 sm:gap-4 min-w-0">
               <Button
                 variant="ghost"
-                onClick={() => navigate('/AdminDashboard')}
+                onClick={() => navigate("/AdminDashboard")}
                 className="flex items-center px-2 sm:px-4"
               >
                 <ArrowLeft className="h-4 w-4 mr-2" />
                 <span className="hidden sm:inline ml-2">Back</span>
               </Button>
-              <h1 className="text-lg sm:text-xl lg:text-2xl font-bold text-gray-900 truncate">Member Management</h1>
+              <h1 className="text-lg sm:text-xl lg:text-2xl font-bold text-gray-900 truncate">
+                Member Management
+              </h1>
             </div>
 
             <Tooltip>
@@ -1257,9 +1293,7 @@ const MemberManagement = () => {
                     className="shrink-0 px-2 sm:px-4"
                   >
                     <Plus className="h-4 w-4 sm:mr-2" />
-                    <span className="hidden sm:inline">
-                      Add Member
-                    </span>
+                    <span className="hidden sm:inline">Add Member</span>
                   </Button>
                 )}
               </TooltipTrigger>
@@ -1276,12 +1310,18 @@ const MemberManagement = () => {
             <Card key={index}>
               <CardContent className="p-6">
                 <div className="flex items-center">
-                  <div className={`p-2 rounded-lg ${stat.color} text-white mr-4`}>
+                  <div
+                    className={`p-2 rounded-lg ${stat.color} text-white mr-4`}
+                  >
                     <stat.icon className="h-6 w-6" />
                   </div>
                   <div>
-                    <p className="text-sm font-medium text-gray-600">{stat.title}</p>
-                    <p className="text-2xl font-bold text-gray-900">{stat.value}</p>
+                    <p className="text-sm font-medium text-gray-600">
+                      {stat.title}
+                    </p>
+                    <p className="text-2xl font-bold text-gray-900">
+                      {stat.value}
+                    </p>
                   </div>
                 </div>
               </CardContent>
@@ -1293,7 +1333,6 @@ const MemberManagement = () => {
         <Card className="mb-6">
           <CardContent className="p-4">
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-x-4 gap-y-6">
-
               <div className="space-y-2">
                 <Label>Member ID</Label>
                 <TooltipProvider>
@@ -1303,7 +1342,13 @@ const MemberManagement = () => {
                         placeholder="Enter member id"
                         value={memberSearchForm.MemberID}
                         maxLength={30}
-                        onChange={(e) => setMemberSearchForm({ ...memberSearchForm, MemberID: e.target.value, })} />
+                        onChange={(e) =>
+                          setMemberSearchForm({
+                            ...memberSearchForm,
+                            MemberID: e.target.value,
+                          })
+                        }
+                      />
                     </TooltipTrigger>
 
                     <TooltipContent>
@@ -1322,7 +1367,13 @@ const MemberManagement = () => {
                         maxLength={20}
                         placeholder="Enter identity number"
                         value={memberSearchForm.Identity_No}
-                        onChange={(e) => setMemberSearchForm({ ...memberSearchForm, Identity_No: e.target.value, })} />
+                        onChange={(e) =>
+                          setMemberSearchForm({
+                            ...memberSearchForm,
+                            Identity_No: e.target.value,
+                          })
+                        }
+                      />
                     </TooltipTrigger>
 
                     <TooltipContent>
@@ -1341,7 +1392,13 @@ const MemberManagement = () => {
                         placeholder="Enter full name"
                         maxLength={100}
                         value={memberSearchForm.Full_name}
-                        onChange={(e) => setMemberSearchForm({ ...memberSearchForm, Full_name: e.target.value, })} />
+                        onChange={(e) =>
+                          setMemberSearchForm({
+                            ...memberSearchForm,
+                            Full_name: e.target.value,
+                          })
+                        }
+                      />
                     </TooltipTrigger>
 
                     <TooltipContent>
@@ -1360,7 +1417,10 @@ const MemberManagement = () => {
                         maxLength={3}
                         placeholder="Enter age from"
                         value={memberSearchForm.age_from}
-                        onChange={(e) => handleSearchNumberChange(e, "age_from")} />
+                        onChange={(e) =>
+                          handleSearchNumberChange(e, "age_from")
+                        }
+                      />
                     </TooltipTrigger>
 
                     <TooltipContent>
@@ -1379,7 +1439,8 @@ const MemberManagement = () => {
                         maxLength={3}
                         placeholder="Enter age to"
                         value={memberSearchForm.age_to}
-                        onChange={(e) => handleSearchNumberChange(e, "age_to")} />
+                        onChange={(e) => handleSearchNumberChange(e, "age_to")}
+                      />
                     </TooltipTrigger>
 
                     <TooltipContent>
@@ -1398,7 +1459,13 @@ const MemberManagement = () => {
                       <div>
                         <Select
                           value={memberSearchForm.Gender}
-                          onValueChange={(value) => setMemberSearchForm({ ...memberSearchForm, Gender: value, })}>
+                          onValueChange={(value) =>
+                            setMemberSearchForm({
+                              ...memberSearchForm,
+                              Gender: value,
+                            })
+                          }
+                        >
                           <SelectTrigger>
                             <SelectValue placeholder="Select Gender" />
                           </SelectTrigger>
@@ -1434,7 +1501,8 @@ const MemberManagement = () => {
                         value={memberSearchForm.Mobile}
                         inputMode="numeric"
                         maxLength={15}
-                        onChange={(e) => handleSearchNumberChange(e, "Mobile")} />
+                        onChange={(e) => handleSearchNumberChange(e, "Mobile")}
+                      />
                     </TooltipTrigger>
 
                     <TooltipContent>
@@ -1454,7 +1522,10 @@ const MemberManagement = () => {
                         maxLength={10}
                         value={memberSearchForm.WhatsApp_Number}
                         inputMode="numeric"
-                        onChange={(e) => handleSearchNumberChange(e, "WhatsApp_Number")} />
+                        onChange={(e) =>
+                          handleSearchNumberChange(e, "WhatsApp_Number")
+                        }
+                      />
                     </TooltipTrigger>
 
                     <TooltipContent>
@@ -1473,7 +1544,13 @@ const MemberManagement = () => {
                         placeholder="Enter email address (e.g., branch@example.com)"
                         value={memberSearchForm.Email}
                         maxLength={100}
-                        onChange={(e) => setMemberSearchForm({ ...memberSearchForm, Email: e.target.value, })} />
+                        onChange={(e) =>
+                          setMemberSearchForm({
+                            ...memberSearchForm,
+                            Email: e.target.value,
+                          })
+                        }
+                      />
                     </TooltipTrigger>
 
                     <TooltipContent>
@@ -1492,7 +1569,13 @@ const MemberManagement = () => {
                       <div>
                         <Select
                           value={memberSearchForm.Membership_type}
-                          onValueChange={(value) => setMemberSearchForm({ ...memberSearchForm, Membership_type: value, })}>
+                          onValueChange={(value) =>
+                            setMemberSearchForm({
+                              ...memberSearchForm,
+                              Membership_type: value,
+                            })
+                          }
+                        >
                           <SelectTrigger>
                             <SelectValue placeholder="Select Membership Type" />
                           </SelectTrigger>
@@ -1500,10 +1583,11 @@ const MemberManagement = () => {
                           <SelectContent>
                             {membershipType.map((membershipType) => (
                               <SelectItem
-                                key={membershipType.attributedetails_name}
-                                value={membershipType.attributedetails_name}
+                                key={membershipType.MemberShipType_id}
+                                value={membershipType.MemberShipType_id}
                               >
-                                {membershipType.attributedetails_name}
+                                {membershipType.MemberShipType_id} -{" "}
+                                {membershipType.MemberShipType_Name}
                               </SelectItem>
                             ))}
                           </SelectContent>
@@ -1526,7 +1610,13 @@ const MemberManagement = () => {
                       <Input
                         type="date"
                         value={memberSearchForm.Joined_date_from}
-                        onChange={(e) => setMemberSearchForm({ ...memberSearchForm, Joined_date_from: e.target.value, })} />
+                        onChange={(e) =>
+                          setMemberSearchForm({
+                            ...memberSearchForm,
+                            Joined_date_from: e.target.value,
+                          })
+                        }
+                      />
                     </TooltipTrigger>
 
                     <TooltipContent>
@@ -1544,7 +1634,13 @@ const MemberManagement = () => {
                       <Input
                         type="date"
                         value={memberSearchForm.Joined_date_to}
-                        onChange={(e) => setMemberSearchForm({ ...memberSearchForm, Joined_date_to: e.target.value, })} />
+                        onChange={(e) =>
+                          setMemberSearchForm({
+                            ...memberSearchForm,
+                            Joined_date_to: e.target.value,
+                          })
+                        }
+                      />
                     </TooltipTrigger>
 
                     <TooltipContent>
@@ -1562,7 +1658,13 @@ const MemberManagement = () => {
                       <Input
                         type="date"
                         value={memberSearchForm.expiry_date_from}
-                        onChange={(e) => setMemberSearchForm({ ...memberSearchForm, expiry_date_from: e.target.value, })} />
+                        onChange={(e) =>
+                          setMemberSearchForm({
+                            ...memberSearchForm,
+                            expiry_date_from: e.target.value,
+                          })
+                        }
+                      />
                     </TooltipTrigger>
 
                     <TooltipContent>
@@ -1580,7 +1682,13 @@ const MemberManagement = () => {
                       <Input
                         type="date"
                         value={memberSearchForm.expiry_date_to}
-                        onChange={(e) => setMemberSearchForm({ ...memberSearchForm, expiry_date_to: e.target.value, })} />
+                        onChange={(e) =>
+                          setMemberSearchForm({
+                            ...memberSearchForm,
+                            expiry_date_to: e.target.value,
+                          })
+                        }
+                      />
                     </TooltipTrigger>
 
                     <TooltipContent>
@@ -1599,7 +1707,13 @@ const MemberManagement = () => {
                       <div>
                         <Select
                           value={memberSearchForm.is_active}
-                          onValueChange={(value) => setMemberSearchForm({ ...memberSearchForm, is_active: value, })}>
+                          onValueChange={(value) =>
+                            setMemberSearchForm({
+                              ...memberSearchForm,
+                              is_active: value,
+                            })
+                          }
+                        >
                           <SelectTrigger>
                             <SelectValue placeholder="Select Status" />
                           </SelectTrigger>
@@ -1672,7 +1786,9 @@ const MemberManagement = () => {
           <CardHeader>
             {/* <CardTitle>Members ({members.length})</CardTitle> */}
             <CardTitle>Members</CardTitle>
-            <CardDescription>Manage gym members with CPR as primary identifier</CardDescription>
+            <CardDescription>
+              Manage gym members with CPR as primary identifier
+            </CardDescription>
           </CardHeader>
           <CardContent>
             <AgGridTable
@@ -1686,28 +1802,44 @@ const MemberManagement = () => {
         </Card>
 
         {/* Add/Edit Member Dialog */}
-        <Dialog open={isDialogOpen} onOpenChange={(open) => {
-          if (!open) {
-            setSubmittedMember(false);
-          }
-          setIsDialogOpen(open)
-        }}
+        <Dialog
+          open={isDialogOpen}
+          onOpenChange={(open) => {
+            if (!open) {
+              setSubmittedMember(false);
+            }
+            setIsDialogOpen(open);
+          }}
         >
           <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto">
             <DialogHeader>
-              <DialogTitle>{editingMember ? 'Edit Member' : 'Add New Member'}</DialogTitle>
+              <DialogTitle>
+                {editingMember ? "Edit Member" : "Add New Member"}
+              </DialogTitle>
               <DialogDescription>
-                {editingMember ? 'Update member information' : 'Enter member details. CPR number is the primary identifier.'}
+                {editingMember
+                  ? "Update member information"
+                  : "Enter member details. CPR number is the primary identifier."}
               </DialogDescription>
             </DialogHeader>
 
             <div className="space-y-6 py-4">
               <div className="space-y-4">
-                <h3 className="font-semibold text-lg border-b pb-2">Personal Information</h3>
+                <h3 className="font-semibold text-lg border-b pb-2">
+                  Personal Information
+                </h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-
                   <div className="space-y-2">
-                    <Label htmlFor="cpr" className={submittedMember && !formData.Identity_No ? "text-red-500" : ""}>Identity No*</Label>
+                    <Label
+                      htmlFor="cpr"
+                      className={
+                        submittedMember && !formData.Identity_No
+                          ? "text-red-500"
+                          : ""
+                      }
+                    >
+                      Identity No*
+                    </Label>
                     <TooltipProvider>
                       <Tooltip>
                         <TooltipTrigger asChild>
@@ -1715,7 +1847,12 @@ const MemberManagement = () => {
                             id="cpr"
                             placeholder="Enter identity number"
                             value={formData.Identity_No}
-                            onChange={(e) => setFormData({ ...formData, Identity_No: e.target.value })}
+                            onChange={(e) =>
+                              setFormData({
+                                ...formData,
+                                Identity_No: e.target.value,
+                              })
+                            }
                             maxLength={20}
                             disabled={!!editingMember}
                           />
@@ -1729,7 +1866,16 @@ const MemberManagement = () => {
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="fullName" className={submittedMember && !formData.Full_name ? "text-red-500" : ""}>Full Name*</Label>
+                    <Label
+                      htmlFor="fullName"
+                      className={
+                        submittedMember && !formData.Full_name
+                          ? "text-red-500"
+                          : ""
+                      }
+                    >
+                      Full Name*
+                    </Label>
                     <TooltipProvider>
                       <Tooltip>
                         <TooltipTrigger asChild>
@@ -1738,7 +1884,12 @@ const MemberManagement = () => {
                             placeholder="Enter full name"
                             value={formData.Full_name}
                             maxLength={100}
-                            onChange={(e) => setFormData({ ...formData, Full_name: e.target.value })}
+                            onChange={(e) =>
+                              setFormData({
+                                ...formData,
+                                Full_name: e.target.value,
+                              })
+                            }
                           />
                         </TooltipTrigger>
 
@@ -1750,16 +1901,24 @@ const MemberManagement = () => {
                   </div>
 
                   <div className="space-y-2">
-                    <Label className={submittedMember && !formData.DOB ? "text-red-500" : ""}>Date of Birth*</Label>
+                    <Label
+                      className={
+                        submittedMember && !formData.DOB ? "text-red-500" : ""
+                      }
+                    >
+                      Date of Birth*
+                    </Label>
                     <TooltipProvider>
                       <Tooltip>
                         <TooltipTrigger asChild>
                           <Input
                             id="DOB"
-                            type='date'
+                            type="date"
                             value={formData.DOB}
                             max={maxDOB.toISOString().split("T")[0]}
-                            onChange={(e) => setFormData({ ...formData, DOB: e.target.value })}
+                            onChange={(e) =>
+                              setFormData({ ...formData, DOB: e.target.value })
+                            }
                             placeholder="e.g., Date of Birth"
                           />
                         </TooltipTrigger>
@@ -1772,14 +1931,25 @@ const MemberManagement = () => {
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="gender" className={submittedMember && !formData.Gender ? "text-red-500" : ""}>Gender*</Label>
+                    <Label
+                      htmlFor="gender"
+                      className={
+                        submittedMember && !formData.Gender
+                          ? "text-red-500"
+                          : ""
+                      }
+                    >
+                      Gender*
+                    </Label>
                     <TooltipProvider>
                       <Tooltip>
                         <TooltipTrigger asChild>
                           <div>
                             <Select
                               value={formData.Gender}
-                              onValueChange={(value) => setFormData({ ...formData, Gender: value })}
+                              onValueChange={(value) =>
+                                setFormData({ ...formData, Gender: value })
+                              }
                             >
                               <SelectTrigger>
                                 <SelectValue placeholder="Select Gender" />
@@ -1804,16 +1974,25 @@ const MemberManagement = () => {
                       </Tooltip>
                     </TooltipProvider>
                   </div>
-
                 </div>
               </div>
 
               <div className="space-y-4">
-                <h3 className="font-semibold text-lg border-b pb-2">Contact Information</h3>
+                <h3 className="font-semibold text-lg border-b pb-2">
+                  Contact Information
+                </h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-
                   <div className="space-y-2">
-                    <Label htmlFor="bahrainMobile" className={submittedMember && !formData.Mobile ? "text-red-500" : ""}>Mobile*</Label>
+                    <Label
+                      htmlFor="bahrainMobile"
+                      className={
+                        submittedMember && !formData.Mobile
+                          ? "text-red-500"
+                          : ""
+                      }
+                    >
+                      Mobile*
+                    </Label>
                     <TooltipProvider>
                       <Tooltip>
                         <TooltipTrigger asChild>
@@ -1823,7 +2002,9 @@ const MemberManagement = () => {
                             value={formData.Mobile}
                             inputMode="numeric"
                             maxLength={15}
-                            onChange={(e) => handlePhoneNumberChange(e, "Mobile")}
+                            onChange={(e) =>
+                              handlePhoneNumberChange(e, "Mobile")
+                            }
                           />
                         </TooltipTrigger>
 
@@ -1845,7 +2026,9 @@ const MemberManagement = () => {
                             value={formData.WhatsApp_Number}
                             inputMode="numeric"
                             maxLength={15}
-                            onChange={(e) => handlePhoneNumberChange(e, "WhatsApp_Number")}
+                            onChange={(e) =>
+                              handlePhoneNumberChange(e, "WhatsApp_Number")
+                            }
                           />
                         </TooltipTrigger>
 
@@ -1857,7 +2040,16 @@ const MemberManagement = () => {
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="password" className={submittedMember && !formData.Password ? "text-red-500" : ""}>Password*</Label>
+                    <Label
+                      htmlFor="password"
+                      className={
+                        submittedMember && !formData.Password
+                          ? "text-red-500"
+                          : ""
+                      }
+                    >
+                      Password*
+                    </Label>
                     <TooltipProvider>
                       <Tooltip>
                         <TooltipTrigger asChild>
@@ -1867,7 +2059,12 @@ const MemberManagement = () => {
                               type={showPassword ? "text" : "password"}
                               placeholder="Enter password"
                               value={formData.Password || ""}
-                              onChange={(e) => setFormData({ ...formData, Password: e.target.value, })}
+                              onChange={(e) =>
+                                setFormData({
+                                  ...formData,
+                                  Password: e.target.value,
+                                })
+                              }
                               className="pr-10"
                               maxLength={50}
                             />
@@ -1893,7 +2090,14 @@ const MemberManagement = () => {
                   </div>
 
                   <div className="space-y-2 md:col-span-2">
-                    <Label htmlFor="email" className={submittedMember && !formData.Email ? "text-red-500" : ""}>Email Address*</Label>
+                    <Label
+                      htmlFor="email"
+                      className={
+                        submittedMember && !formData.Email ? "text-red-500" : ""
+                      }
+                    >
+                      Email Address*
+                    </Label>
                     <TooltipProvider>
                       <Tooltip>
                         <TooltipTrigger asChild>
@@ -1903,7 +2107,12 @@ const MemberManagement = () => {
                             placeholder="Enter email address (e.g., branch@example.com)"
                             value={formData.Email}
                             maxLength={100}
-                            onChange={(e) => setFormData({ ...formData, Email: e.target.value })}
+                            onChange={(e) =>
+                              setFormData({
+                                ...formData,
+                                Email: e.target.value,
+                              })
+                            }
                           />
                         </TooltipTrigger>
 
@@ -1923,7 +2132,12 @@ const MemberManagement = () => {
                             id="address"
                             placeholder="Flat/Villa, Building, Road, Block, Area"
                             value={formData.Address}
-                            onChange={(e) => setFormData({ ...formData, Address: e.target.value })}
+                            onChange={(e) =>
+                              setFormData({
+                                ...formData,
+                                Address: e.target.value,
+                              })
+                            }
                           />
                         </TooltipTrigger>
 
@@ -1933,16 +2147,25 @@ const MemberManagement = () => {
                       </Tooltip>
                     </TooltipProvider>
                   </div>
-
                 </div>
               </div>
 
               <div className="space-y-4">
-                <h3 className="font-semibold text-lg border-b pb-2">Emergency Contact</h3>
+                <h3 className="font-semibold text-lg border-b pb-2">
+                  Emergency Contact
+                </h3>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-
                   <div className="space-y-2">
-                    <Label htmlFor="emergencyContactName" className={submittedMember && !formData.Emergency_contact_name ? "text-red-500" : ""}>Contact Name*</Label>
+                    <Label
+                      htmlFor="emergencyContactName"
+                      className={
+                        submittedMember && !formData.Emergency_contact_name
+                          ? "text-red-500"
+                          : ""
+                      }
+                    >
+                      Contact Name*
+                    </Label>
                     <TooltipProvider>
                       <Tooltip>
                         <TooltipTrigger asChild>
@@ -1950,7 +2173,12 @@ const MemberManagement = () => {
                             id="emergencyContactName"
                             placeholder="Enter emergency contact name"
                             value={formData.Emergency_contact_name}
-                            onChange={(e) => setFormData({ ...formData, Emergency_contact_name: e.target.value })}
+                            onChange={(e) =>
+                              setFormData({
+                                ...formData,
+                                Emergency_contact_name: e.target.value,
+                              })
+                            }
                           />
                         </TooltipTrigger>
 
@@ -1962,7 +2190,16 @@ const MemberManagement = () => {
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="emergencyContactPhone" className={submittedMember && !formData.Emergency_contact_phone ? "text-red-500" : ""}>Contact Phone*</Label>
+                    <Label
+                      htmlFor="emergencyContactPhone"
+                      className={
+                        submittedMember && !formData.Emergency_contact_phone
+                          ? "text-red-500"
+                          : ""
+                      }
+                    >
+                      Contact Phone*
+                    </Label>
                     <TooltipProvider>
                       <Tooltip>
                         <TooltipTrigger asChild>
@@ -1973,7 +2210,10 @@ const MemberManagement = () => {
                             inputMode="numeric"
                             maxLength={15}
                             onChange={(e) =>
-                              handlePhoneNumberChange(e, "Emergency_contact_phone")
+                              handlePhoneNumberChange(
+                                e,
+                                "Emergency_contact_phone",
+                              )
                             }
                           />
                         </TooltipTrigger>
@@ -1986,14 +2226,28 @@ const MemberManagement = () => {
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="emergencyContactRelation" className={submittedMember && !formData.Emergency_contact_relation ? "text-red-500" : ""}>Relationship*</Label>
+                    <Label
+                      htmlFor="emergencyContactRelation"
+                      className={
+                        submittedMember && !formData.Emergency_contact_relation
+                          ? "text-red-500"
+                          : ""
+                      }
+                    >
+                      Relationship*
+                    </Label>
                     <TooltipProvider>
                       <Tooltip>
                         <TooltipTrigger asChild>
                           <div>
                             <Select
                               value={formData.Emergency_contact_relation}
-                              onValueChange={(value) => setFormData({ ...formData, Emergency_contact_relation: value })}
+                              onValueChange={(value) =>
+                                setFormData({
+                                  ...formData,
+                                  Emergency_contact_relation: value,
+                                })
+                              }
                             >
                               <SelectTrigger>
                                 <SelectValue placeholder="Select Relationship" />
@@ -2018,23 +2272,37 @@ const MemberManagement = () => {
                       </Tooltip>
                     </TooltipProvider>
                   </div>
-
                 </div>
               </div>
 
               <div className="space-y-4">
-                <h3 className="font-semibold text-lg border-b pb-2">Membership Details</h3>
+                <h3 className="font-semibold text-lg border-b pb-2">
+                  Membership Details
+                </h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-
                   <div className="space-y-2">
-                    <Label htmlFor="membershipType" className={submittedMember && !formData.Membership_type ? "text-red-500" : ""}>Membership Type*</Label>
+                    <Label
+                      htmlFor="membershipType"
+                      className={
+                        submittedMember && !formData.Membership_type
+                          ? "text-red-500"
+                          : ""
+                      }
+                    >
+                      Membership Type*
+                    </Label>
                     <TooltipProvider>
                       <Tooltip>
                         <TooltipTrigger asChild>
                           <div>
                             <Select
                               value={formData.Membership_type}
-                              onValueChange={(value) => setFormData({ ...formData, Membership_type: value })}
+                              onValueChange={(value) =>
+                                setFormData({
+                                  ...formData,
+                                  Membership_type: value,
+                                })
+                              }
                             >
                               <SelectTrigger>
                                 <SelectValue placeholder="Select Membership Type" />
@@ -2042,10 +2310,11 @@ const MemberManagement = () => {
                               <SelectContent>
                                 {membershipType.map((membershipType: any) => (
                                   <SelectItem
-                                    key={membershipType.attributedetails_name}
-                                    value={membershipType.attributedetails_name}
+                                    key={membershipType.MemberShipType_id}
+                                    value={membershipType.MemberShipType_id}
                                   >
-                                    {membershipType.attributedetails_name}
+                                    {membershipType.MemberShipType_id} -{" "}
+                                    {membershipType.MemberShipType_Name}
                                   </SelectItem>
                                 ))}
                               </SelectContent>
@@ -2061,16 +2330,29 @@ const MemberManagement = () => {
                   </div>
 
                   <div className="space-y-2">
-                    <Label className={submittedMember && !formData.Joined_date ? "text-red-500" : ""}>Joined Date*</Label>
+                    <Label
+                      className={
+                        submittedMember && !formData.Joined_date
+                          ? "text-red-500"
+                          : ""
+                      }
+                    >
+                      Joined Date*
+                    </Label>
                     <TooltipProvider>
                       <Tooltip>
                         <TooltipTrigger asChild>
                           <Input
                             id="DOB"
-                            type='date'
+                            type="date"
                             value={formData.Joined_date}
                             max={new Date().toISOString().split("T")[0]}
-                            onChange={(e) => setFormData({ ...formData, Joined_date: e.target.value })}
+                            onChange={(e) =>
+                              setFormData({
+                                ...formData,
+                                Joined_date: e.target.value,
+                              })
+                            }
                             placeholder="Select joined date"
                           />
                         </TooltipTrigger>
@@ -2083,16 +2365,29 @@ const MemberManagement = () => {
                   </div>
 
                   <div className="space-y-2">
-                    <Label className={submittedMember && !formData.Plan_expiry_date ? "text-red-500" : ""}>Plan Expiry Date*</Label>
+                    <Label
+                      className={
+                        submittedMember && !formData.Plan_expiry_date
+                          ? "text-red-500"
+                          : ""
+                      }
+                    >
+                      Plan Expiry Date*
+                    </Label>
                     <TooltipProvider>
                       <Tooltip>
                         <TooltipTrigger asChild>
                           <Input
                             id="DOB"
-                            type='date'
+                            type="date"
                             value={formData.Plan_expiry_date}
                             min={formData.Joined_date}
-                            onChange={(e) => setFormData({ ...formData, Plan_expiry_date: e.target.value })}
+                            onChange={(e) =>
+                              setFormData({
+                                ...formData,
+                                Plan_expiry_date: e.target.value,
+                              })
+                            }
                             placeholder="Select plan expiry date"
                           />
                         </TooltipTrigger>
@@ -2109,28 +2404,40 @@ const MemberManagement = () => {
                     <div className="flex items-center space-x-2 pt-2">
                       <Switch
                         checked={formData.is_active}
-                        onCheckedChange={(checked) => setFormData({ ...formData, is_active: checked })}
+                        onCheckedChange={(checked) =>
+                          setFormData({ ...formData, is_active: checked })
+                        }
                       />
-                      <Label>{formData.is_active ? 'Active' : 'Inactive'}</Label>
+                      <Label>
+                        {formData.is_active ? "Active" : "Inactive"}
+                      </Label>
                     </div>
                   </div>
-
                 </div>
               </div>
 
               <div className="space-y-4">
-                <h3 className="font-semibold text-lg border-b pb-2">Communication Preferences</h3>
+                <h3 className="font-semibold text-lg border-b pb-2">
+                  Communication Preferences
+                </h3>
                 <div className="space-y-4">
-
                   <div className="flex items-center space-x-3">
                     <Checkbox
                       id="receivePromotions"
                       checked={formData.Receive_promotions}
-                      onCheckedChange={(checked) => setFormData({ ...formData, Receive_promotions: checked === true })}
+                      onCheckedChange={(checked) =>
+                        setFormData({
+                          ...formData,
+                          Receive_promotions: checked === true,
+                        })
+                      }
                     />
                     <div className="flex items-center space-x-2">
                       <Megaphone className="h-4 w-4 text-gray-500" />
-                      <Label htmlFor="receivePromotions" className="cursor-pointer">
+                      <Label
+                        htmlFor="receivePromotions"
+                        className="cursor-pointer"
+                      >
                         Receive Promotions
                       </Label>
                     </div>
@@ -2140,16 +2447,23 @@ const MemberManagement = () => {
                     <Checkbox
                       id="receiveNotifications"
                       checked={formData.Receive_notifications}
-                      onCheckedChange={(checked) => setFormData({ ...formData, Receive_notifications: checked === true })}
+                      onCheckedChange={(checked) =>
+                        setFormData({
+                          ...formData,
+                          Receive_notifications: checked === true,
+                        })
+                      }
                     />
                     <div className="flex items-center space-x-2">
                       <Bell className="h-4 w-4 text-gray-500" />
-                      <Label htmlFor="receiveNotifications" className="cursor-pointer">
+                      <Label
+                        htmlFor="receiveNotifications"
+                        className="cursor-pointer"
+                      >
                         Receive Notifications
                       </Label>
                     </div>
                   </div>
-
                 </div>
               </div>
 
@@ -2167,10 +2481,15 @@ const MemberManagement = () => {
               <TooltipProvider>
                 <Tooltip>
                   <TooltipTrigger asChild>
-                    <Button variant="outline" onClick={() => {
-                      setSubmittedMember(false);
-                      setIsDialogOpen(false);
-                    }}>Cancel</Button>
+                    <Button
+                      variant="outline"
+                      onClick={() => {
+                        setSubmittedMember(false);
+                        setIsDialogOpen(false);
+                      }}
+                    >
+                      Cancel
+                    </Button>
                   </TooltipTrigger>
 
                   <TooltipContent>
@@ -2183,20 +2502,15 @@ const MemberManagement = () => {
                 <Tooltip>
                   <TooltipTrigger asChild>
                     <Button onClick={handleSaveMember}>
-                      {editingMember ? 'Update Member' : 'Add Member'}
+                      {editingMember ? "Update Member" : "Add Member"}
                     </Button>
                   </TooltipTrigger>
 
                   <TooltipContent>
-                    <p>
-                      {editingMember
-                        ? "Update member"
-                        : "Create a member"}
-                    </p>
+                    <p>{editingMember ? "Update member" : "Create a member"}</p>
                   </TooltipContent>
                 </Tooltip>
               </TooltipProvider>
-
             </DialogFooter>
           </DialogContent>
         </Dialog>
@@ -2215,9 +2529,15 @@ const MemberManagement = () => {
               <div className="space-y-6 py-4">
                 <div className="flex items-center justify-between">
                   <div>
-                    <h2 className="text-2xl font-bold">{viewingMember.Full_name}</h2>
+                    <h2 className="text-2xl font-bold">
+                      {viewingMember.Full_name}
+                    </h2>
                     <Badge
-                      variant={String(viewingMember.is_active) === "Active" ? "default" : "secondary"}
+                      variant={
+                        String(viewingMember.is_active) === "Active"
+                          ? "default"
+                          : "secondary"
+                      }
                       className="mt-2"
                     >
                       {String(viewingMember.is_active)}
@@ -2231,78 +2551,127 @@ const MemberManagement = () => {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <Card>
                     <CardHeader className="pb-2">
-                      <CardTitle className="text-sm font-medium text-gray-500">Personal Info</CardTitle>
+                      <CardTitle className="text-sm font-medium text-gray-500">
+                        Personal Info
+                      </CardTitle>
                     </CardHeader>
                     <CardContent className="space-y-2">
-                      <p><span className="font-medium">Identity No:</span> {viewingMember.Identity_No}</p>
-                      <p><span className="font-medium">DOB:</span> {format(viewingMember.DOB, 'dd MMM yyyy')}</p>
-                      <p><span className="font-medium">Gender:</span> {viewingMember.Gender}</p>
+                      <p>
+                        <span className="font-medium">Identity No:</span>{" "}
+                        {viewingMember.Identity_No}
+                      </p>
+                      <p>
+                        <span className="font-medium">DOB:</span>{" "}
+                        {format(viewingMember.DOB, "dd MMM yyyy")}
+                      </p>
+                      <p>
+                        <span className="font-medium">Gender:</span>{" "}
+                        {viewingMember.Gender}
+                      </p>
                     </CardContent>
                   </Card>
 
                   <Card>
                     <CardHeader className="pb-2">
-                      <CardTitle className="text-sm font-medium text-gray-500">Membership</CardTitle>
+                      <CardTitle className="text-sm font-medium text-gray-500">
+                        Membership
+                      </CardTitle>
                     </CardHeader>
                     <CardContent className="space-y-2">
-                      <p><span className="font-medium">Joined:</span> {format(viewingMember.Joined_date, 'dd MMM yyyy')}</p>
-                      <p><span className="font-medium">Expiry:</span> {format(viewingMember.Plan_expiry_date, 'dd MMM yyyy')}</p>
-                      <p><span className="font-medium">Type:</span> {viewingMember.Membership_type}</p>
+                      <p>
+                        <span className="font-medium">Joined:</span>{" "}
+                        {format(viewingMember.Joined_date, "dd MMM yyyy")}
+                      </p>
+                      <p>
+                        <span className="font-medium">Expiry:</span>{" "}
+                        {format(viewingMember.Plan_expiry_date, "dd MMM yyyy")}
+                      </p>
+                      <p>
+                        <span className="font-medium">Type:</span>{" "}
+                        {viewingMember.Membership_type}
+                      </p>
                     </CardContent>
                   </Card>
 
                   <Card>
                     <CardHeader className="pb-2">
-                      <CardTitle className="text-sm font-medium text-gray-500">Contact</CardTitle>
+                      <CardTitle className="text-sm font-medium text-gray-500">
+                        Contact
+                      </CardTitle>
                     </CardHeader>
                     <CardContent className="space-y-2">
                       <p className="flex items-center gap-2">
                         <Phone className="h-4 w-4" /> {viewingMember.Mobile}
                       </p>
                       <p className="flex items-center gap-2">
-                        <Phone className="h-4 w-4" /> WhatsApp: {viewingMember.WhatsApp_Number}
+                        <Phone className="h-4 w-4" /> WhatsApp:{" "}
+                        {viewingMember.WhatsApp_Number}
                       </p>
                       <p className="flex items-center gap-2">
                         <Mail className="h-4 w-4" /> {viewingMember.Email}
                       </p>
                       <p className="flex items-start gap-2">
-                        <MapPin className="h-4 w-4 mt-1" /> {viewingMember.Address}
+                        <MapPin className="h-4 w-4 mt-1" />{" "}
+                        {viewingMember.Address}
                       </p>
                     </CardContent>
                   </Card>
 
                   <Card>
                     <CardHeader className="pb-2">
-                      <CardTitle className="text-sm font-medium text-gray-500">Emergency Contact</CardTitle>
+                      <CardTitle className="text-sm font-medium text-gray-500">
+                        Emergency Contact
+                      </CardTitle>
                     </CardHeader>
                     <CardContent className="space-y-2">
                       <p className="flex items-center gap-2">
-                        <AlertCircle className="h-4 w-4" /> {viewingMember.Emergency_contact_name}
+                        <AlertCircle className="h-4 w-4" />{" "}
+                        {viewingMember.Emergency_contact_name}
                       </p>
-                      <p><span className="font-medium">Phone:</span> {viewingMember.Emergency_contact_phone}</p>
-                      <p><span className="font-medium">Relation:</span> {viewingMember.Emergency_contact_relation}</p>
+                      <p>
+                        <span className="font-medium">Phone:</span>{" "}
+                        {viewingMember.Emergency_contact_phone}
+                      </p>
+                      <p>
+                        <span className="font-medium">Relation:</span>{" "}
+                        {viewingMember.Emergency_contact_relation}
+                      </p>
                     </CardContent>
                   </Card>
                 </div>
 
                 <Card>
                   <CardHeader className="pb-2">
-                    <CardTitle className="text-sm font-medium text-gray-500">Communication Preferences</CardTitle>
+                    <CardTitle className="text-sm font-medium text-gray-500">
+                      Communication Preferences
+                    </CardTitle>
                   </CardHeader>
                   <CardContent>
                     <div className="flex gap-4">
                       <div className="flex items-center gap-2">
                         <Megaphone className="h-4 w-4" />
                         <span>Promotions:</span>
-                        <Badge variant={viewingMember.Receive_promotions ? 'default' : 'secondary'}>
-                          {viewingMember.Receive_promotions ? 'Yes' : 'No'}
+                        <Badge
+                          variant={
+                            viewingMember.Receive_promotions
+                              ? "default"
+                              : "secondary"
+                          }
+                        >
+                          {viewingMember.Receive_promotions ? "Yes" : "No"}
                         </Badge>
                       </div>
                       <div className="flex items-center gap-2">
                         <Bell className="h-4 w-4" />
                         <span>Notifications:</span>
-                        <Badge variant={viewingMember.Receive_notifications ? 'default' : 'secondary'}>
-                          {viewingMember.Receive_notifications ? 'Yes' : 'No'}
+                        <Badge
+                          variant={
+                            viewingMember.Receive_notifications
+                              ? "default"
+                              : "secondary"
+                          }
+                        >
+                          {viewingMember.Receive_notifications ? "Yes" : "No"}
                         </Badge>
                       </div>
                     </div>
@@ -2312,19 +2681,23 @@ const MemberManagement = () => {
             )}
 
             <DialogFooter>
-              <Button variant="outline" onClick={() => setIsViewDialogOpen(false)}>
+              <Button
+                variant="outline"
+                onClick={() => setIsViewDialogOpen(false)}
+              >
                 Close
               </Button>
-              <Button onClick={() => {
-                setIsViewDialogOpen(false);
-                if (viewingMember) handleEditMember(viewingMember);
-              }}>
+              <Button
+                onClick={() => {
+                  setIsViewDialogOpen(false);
+                  if (viewingMember) handleEditMember(viewingMember);
+                }}
+              >
                 Edit Member
               </Button>
             </DialogFooter>
           </DialogContent>
         </Dialog>
-
       </main>
     </div>
   );
