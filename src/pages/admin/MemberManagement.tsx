@@ -444,7 +444,7 @@ const MemberManagement = () => {
       minWidth: 150,
     },
     {
-      headerName: "Membership",
+      headerName: "Membership Type",
       field: "Membership_type",
       minWidth: 220,
       cellRenderer: (params: any) => {
