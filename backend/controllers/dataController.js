@@ -5502,6 +5502,32 @@ const membershipSearchData = async (req, res) => {
 };
 //Code ended by Dinesh Gokul on 18-07-2026
 
+//Code added by Dinesh Gokul on 20-07-2026
+const getMeberShipTypeName = async (req, res) => {
+  const { Company_code, Location_code } = req.body;
+  try {
+    const pool = await connection.connectToDatabase();
+
+    const result = await pool
+      .request()
+      .input("mode", sql.NVarChar, "MT")
+      .input("Company_code", sql.NVarChar, Company_code)
+      .input("Location_code", sql.NVarChar, Location_code)
+      .query(`EXEC sp_MemberShipType_Hdr @mode, '', '', '', @Company_code, @Location_code, '', '', '', ''`);
+
+    if (result.recordset.length > 0) {
+      res.status(200).json(result.recordset);
+    } else {
+      res.status(404).json("Data not found");
+    }
+  } catch (err) {
+    console.error("Error:", err.message);
+    return res.status(500).json({
+      message: err.message || "Internal Server Error",
+    });
+  }
+};
+//Code ended by Dinesh Gokul on 20-07-2026
 
 module.exports = {
   getCompanyno,
@@ -5676,6 +5702,7 @@ module.exports = {
   MemberShipTypeDetailsDelete,
   getMeberShipPackages,
   membershipSearchData,
+  getMeberShipTypeName,
   adminDashboardCardData
 
 };
