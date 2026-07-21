@@ -25,7 +25,42 @@ import Quotation from "./pages/Quotation";
 import CompaniesList from "./pages/admin/CompaniesList";
 import SettingScreen from "./pages/admin/Settings";
 
+//Unauthorized UI
+import Unauthorized from "./pages/Unauthorized";
+
 const queryClient = new QueryClient();
+
+// const PermissionRoute = ({
+//   screenType,
+//   element,
+// }: {
+//   screenType: string;
+//   element: JSX.Element;
+// }) => {
+//   const isLoggedIn = sessionStorage.getItem("isLoggedIn") === "true";
+
+//   if (!isLoggedIn) {
+//     return <Navigate to="/login" replace />;
+//   }
+
+//   const permissions = JSON.parse(
+//     sessionStorage.getItem("permissions") || "[]"
+//   );
+
+//   const hasPermission = permissions.some(
+//     (item: any) => item.screen_type === screenType
+//   );
+
+//   if (!hasPermission) {
+//     const loginType = sessionStorage.getItem("loginType");
+
+//     return loginType === "member"
+//       ? <Navigate to="/MemberDashboard" replace />
+//       : <Navigate to="/AdminDashboard" replace />;
+//   }
+
+//   return element;
+// };
 
 const PermissionRoute = ({
   screenType,
@@ -48,12 +83,9 @@ const PermissionRoute = ({
     (item: any) => item.screen_type === screenType
   );
 
+  // If user lacks permission for this screen, render the Unauthorized UI
   if (!hasPermission) {
-    const loginType = sessionStorage.getItem("loginType");
-
-    return loginType === "member"
-      ? <Navigate to="/MemberDashboard" replace />
-      : <Navigate to="/AdminDashboard" replace />;
+    return <Unauthorized />;
   }
 
   return element;
