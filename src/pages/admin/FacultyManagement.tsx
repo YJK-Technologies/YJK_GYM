@@ -1828,7 +1828,7 @@ const FacultyManagement = () => {
                       </div>
                       <div className="flex items-center text-sm text-gray-600">
                         <Users className="h-4 w-4 mr-2" />
-                        {trainer.assignedMembers} members assigned
+                        {trainer.AssignedMembers} members assigned
                       </div>
                     </div>
 
