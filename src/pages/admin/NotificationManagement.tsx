@@ -279,8 +279,8 @@ const NotificationManagement = () => {
       name: "Payment Confirmation",
       channel: "email",
       subject: "Payment Received - RUW Fitness",
-      content:
-        "Dear {{name}}, Your payment of BHD {{amount}} has been received. Thank you for your continued membership.",
+      content: "Dear {{name}}, Your payment of {{amount}} has been received. Thank you for your continued membership.",
+      // content: "Dear {{name}}, Your payment of BHD {{amount}} has been received. Thank you for your continued membership.",
       category: "alert",
       isActive: true,
     },

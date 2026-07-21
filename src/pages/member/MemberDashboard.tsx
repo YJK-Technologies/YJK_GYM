@@ -10,23 +10,71 @@ import { useCompany } from "../CompanyContext";
 
 const MemberDashboard = () => {
   const { userName } = useCompany();
+  const membershipType = sessionStorage.getItem("membershipType") ?? ""
+  const validUntil = sessionStorage.getItem("planExpiryDate") ?? ""
+
+  const formattedvalidUntil = validUntil
+    ? new Date(validUntil).toLocaleDateString("en-GB", {
+      day: "2-digit",
+      month: "short",
+      year: "numeric",
+    })
+    : "";
+
+  const getMembershipDaysLeft = (expiryDate: string) => {
+    if (!expiryDate) return 0;
+
+    const today = new Date();
+    const expiry = new Date(expiryDate);
+
+    // Remove time portion for accurate day calculation
+    today.setHours(0, 0, 0, 0);
+    expiry.setHours(0, 0, 0, 0);
+
+    const diffTime = expiry.getTime() - today.getTime();
+    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+
+    return diffDays > 0 ? diffDays : 0;
+  };
+
+  const membershipDaysLeft = getMembershipDaysLeft(validUntil);
 
   const navigate = useNavigate();
 
   const memberInfo = {
     name: userName,
-    membershipType: "Premium",
-    validUntil: "Dec 31, 2024",
+    membershipType: membershipType,
+    validUntil: formattedvalidUntil,
     lastLogin: "Yesterday at 6:30 PM",
     currentWorkouts: 3,
     completedWorkouts: 8
   };
 
   const quickStats = [
-    { title: 'Workouts This Week', value: '4/5', icon: Activity, progress: 80 },
-    { title: 'Weight Progress', value: '-2.5 kg', icon: TrendingUp, color: 'text-green-600' },
-    { title: 'Membership Days Left', value: '45', icon: Calendar, color: 'text-purple-600' },
-    { title: 'Pending Dues', value: 'BHD 0', icon: DollarSign, color: 'text-green-600' },
+    {
+      title: "Workouts This Week",
+      value: "4/5",
+      icon: Activity,
+      progress: 80,
+    },
+    {
+      title: "Weight Progress",
+      value: "-2.5 kg",
+      icon: TrendingUp,
+      color: "text-green-600",
+    },
+    {
+      title: "Membership Days Left",
+      value: membershipDaysLeft.toString(),
+      icon: Calendar,
+      color: membershipDaysLeft <= 7 ? "text-red-600" : "text-purple-600",
+    },
+    {
+      title: "Pending Dues",
+      value: "0",
+      icon: DollarSign,
+      color: "text-green-600",
+    },
   ];
 
   const quickActions = [
