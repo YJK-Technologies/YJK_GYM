@@ -629,6 +629,16 @@ const MemberManagement = () => {
     setIsViewDialogOpen(true);
   };
 
+  const getMembershipDisplay = (membershipId: string) => {
+  const membership = membershipType.find(
+    (item: any) => item.MemberShipType_id === membershipId
+  );
+
+  return membership
+    ? `${membership.MemberShipType_id} - ${membership.MemberShipType_Name}`
+    : membershipId;
+};
+
   const handleDeleteMember = (memberID: string) => {
     showConfirmToast({
       title: "Delete Member",
@@ -2542,9 +2552,12 @@ const MemberManagement = () => {
                     >
                       {String(viewingMember.is_active)}
                     </Badge>
-                    <Badge variant="outline" className="ml-2">
+                    {/* <Badge variant="outline" className="ml-2">
                       {viewingMember.Membership_type}
-                    </Badge>
+                    </Badge> */}
+                    <Badge variant="outline">
+  {getMembershipDisplay(viewingMember.Membership_type)}
+</Badge>
                   </div>
                 </div>
 
@@ -2586,10 +2599,14 @@ const MemberManagement = () => {
                         <span className="font-medium">Expiry:</span>{" "}
                         {format(viewingMember.Plan_expiry_date, "dd MMM yyyy")}
                       </p>
-                      <p>
+                      {/* <p>
                         <span className="font-medium">Type:</span>{" "}
                         {viewingMember.Membership_type}
-                      </p>
+                      </p> */}
+                      <p>
+  <span className="font-medium">Type:</span>{" "}
+  {getMembershipDisplay(viewingMember.Membership_type)}
+</p>
                     </CardContent>
                   </Card>
 
