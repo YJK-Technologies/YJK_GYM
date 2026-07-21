@@ -447,7 +447,8 @@ const PaymentManagement = () => {
       });
       toast({
         title: "Coupon Applied!",
-        description: `Discount of BHD ${discountAmount.toFixed(3)} applied`,
+        // description: `Discount of BHD ${discountAmount.toFixed(3)} applied`,
+        description: `Discount of ${discountAmount.toFixed(3)} applied`,
       });
     } else {
       toast({
@@ -659,7 +660,7 @@ const PaymentManagement = () => {
                         Today's Collections
                       </p>
                       <p className="text-2xl font-bold text-gray-900">
-                        BHD {todayTotal.toFixed(3)}
+                        {/*BHD*/} {todayTotal.toFixed(3)}
                       </p>
                     </div>
                   </div>
@@ -676,7 +677,7 @@ const PaymentManagement = () => {
                         Monthly Revenue
                       </p>
                       <p className="text-2xl font-bold text-gray-900">
-                        BHD {monthlyTotal.toFixed(3)}
+                        {/*BHD*/} {monthlyTotal.toFixed(3)}
                       </p>
                     </div>
                   </div>
@@ -731,7 +732,8 @@ const PaymentManagement = () => {
                       <XAxis dataKey="day" />
                       <YAxis />
                       <Tooltip
-                        formatter={(value) => [`BHD ${value}`, "Revenue"]}
+                        // formatter={(value) => [`BHD ${value}`, "Revenue"]}
+                        formatter={(value) => [`${value}`, "Revenue"]}
                       />
                       <Line
                         type="monotone"
@@ -794,7 +796,7 @@ const PaymentManagement = () => {
                         </TableCell>
                         <TableCell>{payment.memberName}</TableCell>
                         <TableCell className="font-semibold text-green-600">
-                          BHD {payment.finalAmount.toFixed(3)}
+                          {/*BHD*/} {payment.finalAmount.toFixed(3)}
                         </TableCell>
                         <TableCell>
                           {getPaymentMethodBadge(payment.paymentMethod)}
@@ -903,7 +905,7 @@ const PaymentManagement = () => {
                     <SelectContent>
                       {samplePackages.map((pkg) => (
                         <SelectItem key={pkg.id} value={pkg.id}>
-                          {pkg.name} - BHD {pkg.price.toFixed(3)}
+                          {pkg.name} - {/*BHD*/} {pkg.price.toFixed(3)}
                         </SelectItem>
                       ))}
                     </SelectContent>
@@ -918,7 +920,7 @@ const PaymentManagement = () => {
                         Duration: {selectedPackage.duration}
                       </p>
                       <p className="text-lg font-bold text-green-600 mt-2">
-                        BHD {selectedPackage.price.toFixed(3)}
+                        {/*BHD*/} {selectedPackage.price.toFixed(3)}
                       </p>
                     </div>
                   )}
@@ -958,7 +960,7 @@ const PaymentManagement = () => {
                           {appliedCoupon.code}
                         </p>
                         <p className="text-sm text-green-600">
-                          -BHD {appliedCoupon.discount.toFixed(3)} discount
+                          -{/*BHD*/} {appliedCoupon.discount.toFixed(3)} discount
                         </p>
                       </div>
                       <Button
@@ -1038,19 +1040,19 @@ const PaymentManagement = () => {
                     <div className="flex justify-between">
                       <span className="text-gray-600">Original Price:</span>
                       <span>
-                        BHD {selectedPackage?.price.toFixed(3) || "0.000"}
+                        {/*BHD*/} {selectedPackage?.price.toFixed(3) || "0.000"}
                       </span>
                     </div>
                     {appliedCoupon && (
                       <div className="flex justify-between text-red-600">
                         <span>Discount ({appliedCoupon.code}):</span>
-                        <span>-BHD {appliedCoupon.discount.toFixed(3)}</span>
+                        <span>-{/*BHD*/} {appliedCoupon.discount.toFixed(3)}</span>
                       </div>
                     )}
                     <hr />
                     <div className="flex justify-between text-xl font-bold text-green-600">
                       <span>Total Payable:</span>
-                      <span>BHD {calculateTotal().toFixed(3)}</span>
+                      <span>{/*BHD*/} {calculateTotal().toFixed(3)}</span>
                     </div>
                     <Button
                       className="w-full mt-4"
@@ -1163,7 +1165,7 @@ const PaymentManagement = () => {
                         <TableCell>
                           <div>
                             <p className="font-semibold text-green-600">
-                              BHD {payment.finalAmount.toFixed(3)}
+                              {/*BHD*/} {payment.finalAmount.toFixed(3)}
                             </p>
                             {payment.discountAmount > 0 && (
                               <p className="text-xs text-red-500">
@@ -1228,7 +1230,7 @@ const PaymentManagement = () => {
                       Daily Average
                     </p>
                     <p className="text-3xl font-bold text-gray-900">
-                      BHD 308.000
+                      {/*BHD*/} 308.000
                     </p>
                     <p className="text-sm text-green-600">+12% vs last week</p>
                   </div>
@@ -1241,7 +1243,7 @@ const PaymentManagement = () => {
                       Weekly Revenue
                     </p>
                     <p className="text-3xl font-bold text-gray-900">
-                      BHD 2,155.000
+                      {/*BHD*/} 2,155.000
                     </p>
                     <p className="text-sm text-green-600">+8% vs last week</p>
                   </div>
@@ -1254,7 +1256,7 @@ const PaymentManagement = () => {
                       Total Discounts Given
                     </p>
                     <p className="text-3xl font-bold text-red-600">
-                      BHD 156.500
+                      {/*BHD*/} 156.500
                     </p>
                     <p className="text-sm text-gray-500">
                       From 23 coupons used
@@ -1277,7 +1279,8 @@ const PaymentManagement = () => {
                       <YAxis />
                       <Tooltip
                         formatter={(value, name) => [
-                          name === "revenue" ? `BHD ${value}` : value,
+                          // name === "revenue" ? `BHD ${value}` : value,
+                          name === "revenue" ? `${value}` : value,
                           name === "revenue" ? "Revenue" : "Count",
                         ]}
                       />
@@ -1285,7 +1288,8 @@ const PaymentManagement = () => {
                       <Bar
                         dataKey="revenue"
                         fill="#3b82f6"
-                        name="Revenue (BHD)"
+                        // name="Revenue (BHD)"
+                        name="Revenue"
                       />
                       <Bar dataKey="count" fill="#22c55e" name="Transactions" />
                     </BarChart>
@@ -1307,19 +1311,19 @@ const PaymentManagement = () => {
                       </div>
                       <div className="text-right">
                         <p className="font-semibold">45 uses</p>
-                        <p className="text-sm text-red-600">-BHD 450.000</p>
+                        <p className="text-sm text-red-600">-{/*BHD*/} 450.000</p>
                       </div>
                     </div>
                     <div className="flex justify-between items-center p-3 bg-gray-50 rounded-lg">
                       <div>
                         <p className="font-medium">NEWMEMBER</p>
                         <p className="text-sm text-gray-500">
-                          BHD 5 off for new members
+                          {/*BHD*/} 5 off for new members
                         </p>
                       </div>
                       <div className="text-right">
                         <p className="font-semibold">23 uses</p>
-                        <p className="text-sm text-red-600">-BHD 115.000</p>
+                        <p className="text-sm text-red-600">-{/*BHD*/} 115.000</p>
                       </div>
                     </div>
                     <div className="flex justify-between items-center p-3 bg-gray-50 rounded-lg">
@@ -1331,7 +1335,7 @@ const PaymentManagement = () => {
                       </div>
                       <div className="text-right">
                         <p className="font-semibold">50 uses</p>
-                        <p className="text-sm text-red-600">-BHD 1,200.000</p>
+                        <p className="text-sm text-red-600">-{/*BHD*/} 1,200.000</p>
                       </div>
                     </div>
                   </div>

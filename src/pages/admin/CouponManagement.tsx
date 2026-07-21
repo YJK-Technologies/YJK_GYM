@@ -769,7 +769,7 @@ const CouponManagement = () => {
                   </p>
 
                   <p className="text-2xl font-bold text-gray-900">
-                    BHD {Number(dashboardStats.totalDiscountGiven).toFixed(3)}
+                    {/*BHD*/} {Number(dashboardStats.totalDiscountGiven).toFixed(3)}
                   </p>
                 </div>
               </div>
@@ -889,7 +889,7 @@ const CouponManagement = () => {
 
               <div className="space-y-2">
                 <Label htmlFor="discountValue">
-                  Discount Value ({CouponSearchForm.Discount_Type === 'Percentage' ? '%' : 'BHD'})
+                  Discount Value {/*({CouponSearchForm.Discount_Type === 'Percentage' ? '%' : 'BHD'})*/}
                 </Label>
                 <TooltipProvider>
                   <Tooltip>

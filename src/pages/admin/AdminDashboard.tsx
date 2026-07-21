@@ -1,24 +1,9 @@
 import { useState, useRef, useEffect } from "react";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle,} from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { useNavigate } from "react-router-dom";
-import {
-  Users,
-  DollarSign,
-  Calendar,
-  TrendingUp,
-  ChevronDown,
-  Building2,
-  LogOut,
-  Settings,
-} from "lucide-react";
+import { Users, DollarSign, Calendar, TrendingUp, ChevronDown, Building2, LogOut, Settings,} from "lucide-react";
 import GymFloorActivity from "@/components/admin/GymFloorActivity";
 import { showConfirmToast } from "@/components/ui/show-confirm-toast";
 import { useCompany } from "../CompanyContext";
@@ -120,7 +105,8 @@ const getDashboardData = async () => {
   },
   {
     title: "Monthly Revenue",
-    value: "BHD 12,500",
+    // value: "BHD 12,500",
+    value: "12,500",
     icon: DollarSign,
     color: "bg-green-500",
   },
