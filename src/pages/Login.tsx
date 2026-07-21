@@ -74,7 +74,13 @@ const Login = () => {
       const data = await response.json();
 
       if (response.ok) {
-        const [{ user_code, role_id, user_images }] = data;
+        const [{
+          user_code,
+          role_id,
+          user_images,
+          membershipType,
+          planExpiryDate,
+        }] = data;
 
         if (user_images?.data) {
           sessionStorage.setItem(
@@ -87,6 +93,14 @@ const Login = () => {
         sessionStorage.setItem("user_code", user_code);
         sessionStorage.setItem("role_id", role_id);
         sessionStorage.setItem("loginType", loginType);
+
+        if (membershipType) {
+          sessionStorage.setItem("membershipType", membershipType);
+        }
+
+        if (planExpiryDate) {
+          sessionStorage.setItem("planExpiryDate", planExpiryDate);
+        }
 
         await UserPermission(role_id);
         await fetchUserData(user_code);
