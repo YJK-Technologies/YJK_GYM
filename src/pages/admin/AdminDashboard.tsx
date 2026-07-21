@@ -105,7 +105,8 @@ const getDashboardData = async () => {
   },
   {
     title: "Monthly Revenue",
-    value: "BHD 12,500",
+    // value: "BHD 12,500",
+    value: "12,500",
     icon: DollarSign,
     color: "bg-green-500",
   },

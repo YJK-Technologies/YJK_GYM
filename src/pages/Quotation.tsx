@@ -262,19 +262,19 @@ const Quotation = () => {
                 <thead>
                   <tr className="bg-muted">
                     <th className="text-left p-3 border-b border-border font-semibold">Description</th>
-                    <th className="text-right p-3 border-b border-border font-semibold">Amount (BHD)</th>
+                    <th className="text-right p-3 border-b border-border font-semibold">Amount {/*(BHD)*/}</th>
                   </tr>
                 </thead>
                 <tbody>
                   <tr className="bg-muted font-bold">
                     <td className="p-3 border-b border-border text-foreground">RUW FitnessPro — Gym Management System (Development, UAT, Go-Live & 1 Year Support)</td>
-                    <td className="p-3 border-b border-border text-right text-foreground">2,000 BHD</td>
+                    <td className="p-3 border-b border-border text-right text-foreground">2,000 {/*BHD*/}</td>
                   </tr>
                 </tbody>
               </table>
             </div>
             <p className="text-xs text-muted-foreground mt-3">
-              All amounts are in Bahraini Dinar (BHD) and exclusive of any applicable taxes.
+              All amounts are in Bahraini Dinar {/*(BHD)*/} and exclusive of any applicable taxes.
             </p>
           </Section>
 

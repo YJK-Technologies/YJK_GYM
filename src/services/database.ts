@@ -701,7 +701,8 @@ export const dbService = {
     }
     
     if (amount < c.minimum_purchase) {
-      return { valid: false, error: `Minimum purchase of BHD ${c.minimum_purchase} required` };
+      // return { valid: false, error: `Minimum purchase of BHD ${c.minimum_purchase} required` };
+      return { valid: false, error: `Minimum purchase of ${c.minimum_purchase} required` };
     }
     
     const discount = c.discount_type === 'percentage' 

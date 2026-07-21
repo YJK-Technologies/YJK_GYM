@@ -349,7 +349,7 @@ const WorkoutPrograms = () => {
                         <Badge className={styles.badge}>{pkg.durationDays} Days</Badge>
                         <h3 className="text-xl font-bold mt-3">{pkg.packageType}</h3>
                         <div className="mt-2">
-                          <span className="text-3xl font-bold">BHD {pkg.price}</span>
+                          <span className="text-3xl font-bold">{/*BHD*/} {pkg.price}</span>
                           {pkg.discountPercentage > 0 && (
                             <Badge variant="outline" className="ml-2 text-green-600">
                               Save {pkg.discountPercentage}%
