@@ -2164,7 +2164,7 @@ const WorkoutProgramManagement = () => {
       const headerPayload = {
         MemberShipType_id: MemberShipForm.MemberShipType_id,
         MemberShipType_Name: MemberShipForm.MemberShipType_Name,
-        Status: MemberShipForm.Status,
+        Status: MemberShipForm.Status ? "Active" : "Close",
         Company_code: companyCode,
         Location_code: locationCode,
         Keyfield: editingMemberShip.Keyfield,
@@ -5413,10 +5413,10 @@ const WorkoutProgramManagement = () => {
           <DialogContent className="max-w-lg">
             <DialogHeader>
               <DialogTitle>
-                {editingPackage ? "Edit Membership" : "Add New Membership"}
+                {editingMemberShip ? "Edit Membership" : "Add New Membership"}
               </DialogTitle>
               <DialogDescription>
-                {editingPackage
+                {editingMemberShip
                   ? "Update the Membership details"
                   : "Create a new workout Membership"}
               </DialogDescription>

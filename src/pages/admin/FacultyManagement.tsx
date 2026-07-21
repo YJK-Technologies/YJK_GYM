@@ -275,7 +275,7 @@ const FacultyManagement = () => {
       Specializations: "",
       WorkingSchedule: "",
       Biography: "",
-      Is_Active: "Close",
+      Is_Active: "Active",
       created_by: userCode,
       modified_by: userCode,
     });
