@@ -1,54 +1,15 @@
 import React, { useState, useEffect } from "react";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle,} from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger,} from "@/components/ui/dialog";
 import { useNavigate } from "react-router-dom";
-import {
-  ArrowLeft,
-  Plus,
-  Edit,
-  Trash2,
-  GraduationCap,
-  Mail,
-  Search,
-  RotateCcw,
-  Phone,
-  Clock,
-  Award,
-  Users,
-  Eye,
-  EyeOff,
-} from "lucide-react";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+import { ArrowLeft, Plus, Edit, Trash2, GraduationCap, Mail, Search, RotateCcw, Phone, Clock, Award, Users, Eye, EyeOff,} from "lucide-react";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger, } from "@/components/ui/tooltip";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue,} from "@/components/ui/select";
 import { BASE_URL } from "../ApiConfig";
 import { useToast } from "@/hooks/use-toast";
 import ImageUpload from "../ImageUpload";
@@ -408,6 +369,7 @@ const FacultyManagement = () => {
         toast({
           title: "Success",
           description: data.message || "Trainer created successfully.",
+          variant: "success"
         });
 
         setIsTrainerDialogOpen(false);
@@ -512,6 +474,7 @@ const FacultyManagement = () => {
         toast({
           title: "Success",
           description: data.message || "Trainer updated successfully.",
+          variant: "success"
         });
 
         setEditingTrainer(null);
@@ -564,6 +527,7 @@ const FacultyManagement = () => {
             toast({
               title: "Success",
               description: data.message || "Trainer deleted successfully.",
+              variant: "success"
             });
 
             handleTrainerSearch();
