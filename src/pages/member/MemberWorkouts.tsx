@@ -8,6 +8,13 @@ import { Calendar, Clock, Target, Plus, ArrowLeft } from 'lucide-react';
 import { dbService } from '@/services/database';
 import { useToast } from '@/hooks/use-toast';
 import { BASE_URL } from "../ApiConfig";
+import { useCompany } from "../CompanyContext";
+
+interface Program {
+  programid: string;
+  programname: string;
+  Description: string;
+}
 
 const MemberWorkouts = () => {
   const navigate = useNavigate();
@@ -15,10 +22,11 @@ const MemberWorkouts = () => {
   const [workouts, setWorkouts] = useState([]);
   const [programs, setPrograms] = useState([]);
   const [loading, setLoading] = useState(true);
+  const { companyCode, locationCode, userCode } = useCompany();
 
   // Mock member ID - in a real app, this would come from authentication
   // Mock member ID
-const memberId = "YJKT/001/26-27";
+const memberId = userCode;
 
 // Sample Workout Programs
 // const samplePrograms = [
@@ -58,25 +66,25 @@ const memberId = "YJKT/001/26-27";
 const sampleWorkouts = [
   {
     id: "101",
-    program_name: "Beginner Full Body",
+    programname: "Beginner Full Body",
     program_description: "A complete full body workout for beginners.",
     completed_at: "2026-07-20T09:30:00"
   },
   {
     id: "102",
-    program_name: "Upper Body Strength",
+    programname: "Upper Body Strength",
     program_description: "Focus on chest, shoulders, back, and arms.",
     completed_at: "2026-07-18T18:00:00"
   },
   {
     id: "103",
-    program_name: "Leg Day",
+    programname: "Leg Day",
     program_description: "Build lower body strength with compound exercises.",
     completed_at: "2026-07-15T07:45:00"
   },
   {
     id: "104",
-    program_name: "Core & Abs",
+    programname: "Core & Abs",
     program_description: "Strengthen your core muscles and improve stability.",
     completed_at: "2026-07-13T17:20:00"
   }
@@ -97,8 +105,8 @@ const sampleWorkouts = [
       },
       body: JSON.stringify({
         MemberID: memberId,
-        Company_code: "yjk",
-        Location_code: "loc001",
+        Company_code: companyCode,
+        Location_code: locationCode,
       }),
     });
 
@@ -129,16 +137,16 @@ const sampleWorkouts = [
   }
 };
 
-const handleStartWorkout = (programId: string) => {
+const handleStartWorkout = (programid: string) => {
   const selectedProgram = programs.find(
-  (p) => p.ProgramID === programId
+  (p) => p.programid === programid
 );
 
   if (!selectedProgram) return;
 
   const newWorkout = {
     id: Date.now().toString(),
-    program_name: selectedProgram.Program_Name,
+    programname: selectedProgram.programname,
     program_description: selectedProgram.Description,
     completed_at: new Date().toISOString(),
   };
@@ -192,13 +200,21 @@ const handleStartWorkout = (programId: string) => {
           <CardContent>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
               {programs.map((program) => (
-                <Card key={program.ProgramID} className="hover:shadow-md transition-shadow">
-                  <CardContent className="p-4">
-                    <h3 className="font-semibold text-lg mb-2">{program.Program_Name}</h3>
-                    <p className="text-gray-600 text-sm mb-4">{program.Description}</p>
+                <Card key={program.programid} className="hover:shadow-md transition-shadow flex flex-col h-55">
+                  <CardContent className="p-4 flex flex-col h-full">
+                    {/* Header section (fixed height impact) */}
+                    <h3 className="font-semibold text-lg mb-1 line-clamp-1">{program.programname}</h3>
+                    <p className="text-gray-500 text-xs mb-3">Program ID: {program.programid}</p>
+                    
+                    {/* Scrollable Description Container */}
+                    <div className="flex-1 overflow-y-auto pr-1 mb-4 text-gray-600 text-sm custom-scrollbar">
+                      <p>{program.Description}</p>
+                    </div>
+              
+                    {/* Always pinned to bottom */}
                     <Button 
-                      className="w-full"
-                      onClick={() => handleStartWorkout(program.ProgramID)}
+                      className="w-full mt-auto shrink-0"
+                      onClick={() => handleStartWorkout(program.programid)}
                     >
                       <Plus className="h-4 w-4 mr-2" />
                       Start Workout
@@ -231,7 +247,7 @@ const handleStartWorkout = (programId: string) => {
                 {workouts.map((workout) => (
                   <div key={workout.id} className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
                     <div>
-                      <h3 className="font-medium">{workout.program_name}</h3>
+                      <h3 className="font-medium">{workout.programname}</h3>
                       <p className="text-sm text-gray-600">{workout.program_description}</p>
                       <div className="flex items-center mt-2 text-xs text-gray-500">
                         <Clock className="h-3 w-3 mr-1" />
