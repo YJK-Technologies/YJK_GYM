@@ -4515,7 +4515,7 @@ const PackageInsertData = async (req, res) => {
       .input("Company_code", sql.NVarChar, Company_code)
       .input("Location_code", sql.NVarChar, Location_code)
       .input("created_by", sql.NVarChar, created_by)
-      .query(`EXEC sp_Package_hdr @Mode,'',@package_Name,@package_type,@duration_days,@price,@features,@discount_percentage,@is_active,@Company_code,@Location_code,'',@created_by,''`);
+      .query(`EXEC sp_Package_hdr_test @Mode,'',@package_Name,@package_type,@duration_days,@price,@features,@discount_percentage,@is_active,@Company_code,@Location_code,'',@created_by,''`);
 
     res.status(200).json({
       message: "pakage data saved successfully",
@@ -4553,7 +4553,7 @@ const PackageUpdateData = async (req, res) => {
             .input("Company_Code", sql.NVarChar, Company_Code)
             .input("Location_Code", sql.NVarChar, Location_Code)
             .input("modified_by", sql.NVarChar, modified_by)
-            .query(`EXEC sp_Package_hdr @Mode,@package_ID,@package_Name,@package_type,@duration_days,@price,@features,@discount_percentage,@is_active,@Company_Code,@Location_Code,'','',@modified_by`);
+            .query(`EXEC sp_Package_hdr_test @Mode,@package_ID,@package_Name,@package_type,@duration_days,@price,@features,@discount_percentage,@is_active,@Company_Code,@Location_Code,'','',@modified_by`);
         res.status(200).json({
             message: "Package data updated successfully"
         });
@@ -4577,7 +4577,7 @@ const PackageDeleteData = async (req, res) => {
             .input("Company_Code", sql.NVarChar, Company_Code)
             .input("Location_Code", sql.NVarChar, Location_Code)
             .input("KeyField", sql.NVarChar, KeyField)
-            .query(` EXEC sp_Package_hdr @Mode, @package_ID, '', '', 0, 0, '', 0, '', @Company_Code, @Location_Code, @KeyField, '', ''`);
+            .query(` EXEC sp_Package_hdr_test @Mode, @package_ID, '', '', 0, 0, '', 0, '', @Company_Code, @Location_Code, @KeyField, '', ''`);
         res.status(200).json({
             message: "Package data deleted successfully"
         });
@@ -4600,7 +4600,7 @@ const PackageSelectData = async (req, res) => {
             .input("package_ID", sql.NVarChar, package_ID)
             .input("Company_Code", sql.NVarChar, Company_Code)
             .input("Location_Code", sql.NVarChar, Location_Code)
-            .query(`EXEC sp_Package_hdr @Mode, @package_ID, '', '', 0, 0, '', 0, '', @Company_Code, @Location_Code, '', '', ''`);
+            .query(`EXEC sp_Package_hdr_test @Mode, @package_ID, '', '', 0, 0, '', 0, '', @Company_Code, @Location_Code, '', '', ''`);
       res.status(200).json(result.recordset);
     } catch (err) {
         console.error("Error", err.message);
@@ -4630,7 +4630,7 @@ const PackageViewAllData = async (req, res) => {
             .input("Location_Code", sql.NVarChar, Location_Code)
             .input("created_by", sql.NVarChar, "")
             .input("modified_by", sql.NVarChar, "")
-            .query(`EXEC sp_Package_hdr @Mode,@package_ID,@package_Name,@package_type,@duration_days,@price,@features,@discount_percentage,@is_active,@Company_Code,@Location_Code, '',@created_by,@modified_by`);
+            .query(`EXEC sp_Package_hdr_test @Mode,@package_ID,@package_Name,@package_type,@duration_days,@price,@features,@discount_percentage,@is_active,@Company_Code,@Location_Code, '',@created_by,@modified_by`);
         res.status(200).json(result.recordset);
     } catch (err) {
         console.error("Error", err.message);
@@ -4662,7 +4662,7 @@ const PackageSearchData = async (req, res) => {
             .input("Company_Code", sql.NVarChar, Company_Code)
             .input("Location_Code", sql.NVarChar, Location_Code)
             .input("program_id", sql.NVarChar, program_id)
-            .query(` EXEC sp_Package_hdr @Mode, @package_ID, @package_Name, @package_type, @duration_days, @price, @features, @discount_percentage, @is_active, @Company_Code, @Location_Code, '', '', '' `);
+            .query(` EXEC sp_Package_hdr_test @Mode, @package_ID, @package_Name, @package_type, @duration_days, @price, @features, @discount_percentage, @is_active, @Company_Code, @Location_Code, '', '', '' `);
 
             if (result.recordset.length > 0) {
                 res.status(200).json(result.recordset);
@@ -4793,7 +4793,7 @@ const getAppPackages = async (req, res) => {
       .input("mode", sql.NVarChar, "P")
       .input("Company_Code", sql.NVarChar, Company_Code)
       .input("Location_Code", sql.NVarChar, Location_Code)
-      .query(`EXEC sp_Package_hdr @mode,'', '', '', 0,  0,  '', 0,  '', @Company_Code,@Location_Code,'', '', ''  `);
+      .query(`EXEC sp_Package_hdr_test @mode,'', '', '', 0,  0,  '', 0,  '', @Company_Code,@Location_Code,'', '', ''  `);
 
     if (result.recordset.length > 0) {
       res.status(200).json(result.recordset);

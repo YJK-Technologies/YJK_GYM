@@ -580,13 +580,13 @@ const WorkoutProgramManagement = () => {
     },
     {
       title: "Total Packages",
-      value: packages.length.toString(),
+      value: statsData[0]?.TotalPackages ?? 0,
       icon: Package,
       color: "bg-purple-500",
     },
     {
       title: "Active Packages",
-      value: packages.filter((p) => p.isActive).length.toString(),
+      value: statsData[0]?.ActivePackages ?? 0,
       icon: Calendar,
       color: "bg-orange-500",
     },
