@@ -228,6 +228,45 @@ const WorkoutProgramManagement = () => {
     ActivePackages: 0,
   });
   const [GetPackages, setGetPackages] = useState<any[]>([]);
+  const [numberGeneration, setNumberGeneration] = useState("Auto");
+
+  useEffect(() => {
+    const getSettingData = async () => {
+      try {
+        const response = await fetch(`${BASE_URL}/getSettingScreenData`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            Company_code: companyCode,
+            Location_code: locationCode,
+          }),
+        });
+
+        if (!response.ok) {
+          throw new Error("Failed to fetch setting data");
+        }
+
+        const data = await response.json();
+
+        if (Array.isArray(data) && data.length > 0) {
+          setNumberGeneration(data[0].NumberGeneration || "Auto");
+        } else {
+          setNumberGeneration("Auto");
+        }
+      } catch (err) {
+        console.error("Error fetching settings:", err);
+        setNumberGeneration("Auto");
+      }
+    };
+
+    if (companyCode && locationCode) {
+      getSettingData();
+    }
+  }, [companyCode, locationCode]);
+
+
   // Start packages useEffect
   const fetchPackageTypes = async () => {
     try {
@@ -672,10 +711,10 @@ const WorkoutProgramManagement = () => {
     const selectedExercises =
       program.Exercises.length > 0
         ? program.Exercises.map((exercise: any) => ({
-            name: exercise.Exercises_Name,
-            sets: exercise.Exercises_Count,
-            reps: exercise.Exercises_Repetitions,
-          }))
+          name: exercise.Exercises_Name,
+          sets: exercise.Exercises_Count,
+          reps: exercise.Exercises_Repetitions,
+        }))
         : [{ name: "", sets: 3, reps: "" }];
 
     setProgramForm({
@@ -717,6 +756,19 @@ const WorkoutProgramManagement = () => {
         description: "Please fill all required fields.",
         variant: "destructive",
       });
+
+      if (
+        numberGeneration === "Manual" &&
+        !programForm.id.trim()
+      ) {
+        toast({
+          title: "Validation",
+          description: "Program ID is required.",
+          variant: "destructive",
+        });
+
+        return false;
+      }
 
       setSubmittedPrograms(true);
 
@@ -1297,13 +1349,13 @@ const WorkoutProgramManagement = () => {
     const associatedPrograms =
       pkg.Programs && pkg.Programs.length > 0
         ? pkg.Programs.map((id: string) => ({
-            programId: id.trim(),
-          }))
+          programId: id.trim(),
+        }))
         : [
-            {
-              programId: "",
-            },
-          ];
+          {
+            programId: "",
+          },
+        ];
 
     setPackageForm({
       id: pkg.package_ID,
@@ -2961,14 +3013,14 @@ const WorkoutProgramManagement = () => {
                     price: parseFloat(e.target.value) || 0,
                   })
                 }
-                // onChange={(e) => {
-                //   const value = e.target.value.replace(/[^\d.]/g, "");
+              // onChange={(e) => {
+              //   const value = e.target.value.replace(/[^\d.]/g, "");
 
-                //   setPackageSearchForm({
-                //     ...packageSearchForm,
-                //     price: value,
-                //   });
-                // }}
+              //   setPackageSearchForm({
+              //     ...packageSearchForm,
+              //     price: value,
+              //   });
+              // }}
               />
             </TooltipTrigger>
 
@@ -2998,19 +3050,19 @@ const WorkoutProgramManagement = () => {
                     discountPercentage: parseInt(e.target.value) || 0,
                   })
                 }
-                // onChange={(e) => {
-                //   const value = e.target.value.replace(/\D/g, "");
+              // onChange={(e) => {
+              //   const value = e.target.value.replace(/\D/g, "");
 
-                //   if (
-                //     value === "" ||
-                //     (Number(value) >= 0 && Number(value) <= 100)
-                //   ) {
-                //     setPackageSearchForm({
-                //       ...packageSearchForm,
-                //       discountPercentage: value,
-                //     });
-                //   }
-                // }}
+              //   if (
+              //     value === "" ||
+              //     (Number(value) >= 0 && Number(value) <= 100)
+              //   ) {
+              //     setPackageSearchForm({
+              //       ...packageSearchForm,
+              //       discountPercentage: value,
+              //     });
+              //   }
+              // }}
               />
             </TooltipTrigger>
 
@@ -3595,17 +3647,17 @@ const WorkoutProgramManagement = () => {
                                       "Programs",
                                       "edit",
                                     ) && (
-                                      <Button
-                                        variant="ghost"
-                                        size="icon"
-                                        className="h-8 w-8 text-gray-600 hover:text-violet-600 hover:bg-violet-50"
-                                        onClick={() =>
-                                          handleEditProgram(program)
-                                        }
-                                      >
-                                        <Edit className="h-4 w-4" />
-                                      </Button>
-                                    )}
+                                        <Button
+                                          variant="ghost"
+                                          size="icon"
+                                          className="h-8 w-8 text-gray-600 hover:text-violet-600 hover:bg-violet-50"
+                                          onClick={() =>
+                                            handleEditProgram(program)
+                                          }
+                                        >
+                                          <Edit className="h-4 w-4" />
+                                        </Button>
+                                      )}
                                   </TooltipTrigger>
 
                                   <TooltipContent>
@@ -3621,17 +3673,17 @@ const WorkoutProgramManagement = () => {
                                       "Programs",
                                       "delete",
                                     ) && (
-                                      <Button
-                                        variant="ghost"
-                                        size="icon"
-                                        className="h-8 w-8 text-red-500 hover:text-red-700 hover:bg-red-50"
-                                        onClick={() =>
-                                          handleDeleteProgram(program)
-                                        }
-                                      >
-                                        <Trash2 className="h-4 w-4" />
-                                      </Button>
-                                    )}
+                                        <Button
+                                          variant="ghost"
+                                          size="icon"
+                                          className="h-8 w-8 text-red-500 hover:text-red-700 hover:bg-red-50"
+                                          onClick={() =>
+                                            handleDeleteProgram(program)
+                                          }
+                                        >
+                                          <Trash2 className="h-4 w-4" />
+                                        </Button>
+                                      )}
                                   </TooltipTrigger>
 
                                   <TooltipContent>
@@ -3863,15 +3915,15 @@ const WorkoutProgramManagement = () => {
                                       "Packages",
                                       "edit",
                                     ) && (
-                                      <Button
-                                        variant="ghost"
-                                        size="icon"
-                                        className="h-8 w-8 text-gray-600 hover:text-violet-600 hover:bg-violet-50"
-                                        onClick={() => handleEditPackage(pkg)}
-                                      >
-                                        <Edit className="h-4 w-4" />
-                                      </Button>
-                                    )}
+                                        <Button
+                                          variant="ghost"
+                                          size="icon"
+                                          className="h-8 w-8 text-gray-600 hover:text-violet-600 hover:bg-violet-50"
+                                          onClick={() => handleEditPackage(pkg)}
+                                        >
+                                          <Edit className="h-4 w-4" />
+                                        </Button>
+                                      )}
                                   </TooltipTrigger>
 
                                   <TooltipContent>
@@ -3887,15 +3939,15 @@ const WorkoutProgramManagement = () => {
                                       "Packages",
                                       "delete",
                                     ) && (
-                                      <Button
-                                        variant="ghost"
-                                        size="icon"
-                                        className="h-8 w-8 text-red-500 hover:text-red-700 hover:bg-red-50"
-                                        onClick={() => handleDeletePackage(pkg)}
-                                      >
-                                        <Trash2 className="h-4 w-4" />
-                                      </Button>
-                                    )}
+                                        <Button
+                                          variant="ghost"
+                                          size="icon"
+                                          className="h-8 w-8 text-red-500 hover:text-red-700 hover:bg-red-50"
+                                          onClick={() => handleDeletePackage(pkg)}
+                                        >
+                                          <Trash2 className="h-4 w-4" />
+                                        </Button>
+                                      )}
                                   </TooltipTrigger>
 
                                   <TooltipContent>
@@ -3926,9 +3978,8 @@ const WorkoutProgramManagement = () => {
                               className={`font-medium text-xs ${statusBadgeColor}`}
                             >
                               <span
-                                className={`w-1.5 h-1.5 rounded-full mr-1.5 ${
-                                  isActive ? "bg-green-500" : "bg-gray-400"
-                                }`}
+                                className={`w-1.5 h-1.5 rounded-full mr-1.5 ${isActive ? "bg-green-500" : "bg-gray-400"
+                                  }`}
                               ></span>
 
                               {pkg.is_active || "Close"}
@@ -4055,8 +4106,8 @@ const WorkoutProgramManagement = () => {
                                 <p className="text-sm font-semibold text-slate-700 mt-1">
                                   {pkg.created_date
                                     ? new Date(
-                                        pkg.created_date,
-                                      ).toLocaleDateString()
+                                      pkg.created_date,
+                                    ).toLocaleDateString()
                                     : "-"}
                                 </p>
                               </div>
@@ -4117,17 +4168,17 @@ const WorkoutProgramManagement = () => {
                                       "Memberships",
                                       "edit",
                                     ) && (
-                                      <Button
-                                        variant="ghost"
-                                        size="icon"
-                                        className="h-8 w-8 text-gray-600 hover:text-violet-600 hover:bg-violet-50"
-                                        onClick={() =>
-                                          handleEditMemberShip(membership)
-                                        }
-                                      >
-                                        <Edit className="h-4 w-4" />
-                                      </Button>
-                                    )}
+                                        <Button
+                                          variant="ghost"
+                                          size="icon"
+                                          className="h-8 w-8 text-gray-600 hover:text-violet-600 hover:bg-violet-50"
+                                          onClick={() =>
+                                            handleEditMemberShip(membership)
+                                          }
+                                        >
+                                          <Edit className="h-4 w-4" />
+                                        </Button>
+                                      )}
                                   </TooltipTrigger>
                                   <TooltipContent>
                                     <p>Edit</p>
@@ -4142,17 +4193,17 @@ const WorkoutProgramManagement = () => {
                                       "Memberships",
                                       "delete",
                                     ) && (
-                                      <Button
-                                        variant="ghost"
-                                        size="icon"
-                                        className="h-8 w-8 text-red-500 hover:text-red-700 hover:bg-red-50"
-                                        onClick={() =>
-                                          handleDeleteMembership(membership)
-                                        }
-                                      >
-                                        <Trash2 className="h-4 w-4" />
-                                      </Button>
-                                    )}
+                                        <Button
+                                          variant="ghost"
+                                          size="icon"
+                                          className="h-8 w-8 text-red-500 hover:text-red-700 hover:bg-red-50"
+                                          onClick={() =>
+                                            handleDeleteMembership(membership)
+                                          }
+                                        >
+                                          <Trash2 className="h-4 w-4" />
+                                        </Button>
+                                      )}
                                   </TooltipTrigger>
                                   <TooltipContent>
                                     <p>Delete</p>
@@ -4172,9 +4223,8 @@ const WorkoutProgramManagement = () => {
                               className={`font-medium text-xs ${statusBadgeColor}`}
                             >
                               <span
-                                className={`w-1.5 h-1.5 rounded-full mr-1.5 ${
-                                  isActive ? "bg-green-500" : "bg-gray-400"
-                                }`}
+                                className={`w-1.5 h-1.5 rounded-full mr-1.5 ${isActive ? "bg-green-500" : "bg-gray-400"
+                                  }`}
                               ></span>
                               {membership.Status || "Inactive"}
                             </Badge>
@@ -4189,7 +4239,7 @@ const WorkoutProgramManagement = () => {
 
                             <div className="flex flex-wrap gap-2">
                               {membership.Packages &&
-                              membership.Packages.length > 0 ? (
+                                membership.Packages.length > 0 ? (
                                 membership.Packages.map(
                                   (pkg: any, index: number) => (
                                     <TooltipProvider
@@ -4260,17 +4310,36 @@ const WorkoutProgramManagement = () => {
                     <Tooltip>
                       <TooltipTrigger asChild>
                         <Input
-                          id="name"
+                          id="programId"
                           value={programForm.id}
-                          readOnly
-                          className="bg-gray-100 cursor-not-allowed"
-                          // onChange={(e) => setProgramForm({ ...programForm, id: e.target.value })}
-                          placeholder="Auto Generated"
+                          readOnly={numberGeneration === "Auto"}
+                          className={
+                            numberGeneration === "Auto"
+                              ? "bg-gray-100 cursor-not-allowed"
+                              : ""
+                          }
+                          placeholder={
+                            numberGeneration === "Auto"
+                              ? "Auto Generated"
+                              : "Enter Program ID"
+                          }
+                          maxLength={20}
+                          onChange={(e) => {
+                            if (numberGeneration === "Manual") {
+                              const value = e.target.value.replace(/[^a-zA-Z0-9]/g, "");
+                              setProgramForm({
+                                ...programForm,
+                                id: value,
+                              });
+                            }
+                          }}
                         />
                       </TooltipTrigger>
 
                       <TooltipContent>
-                        <p>Program ID is Auto Generated</p>
+                        <p> {numberGeneration === "Auto"
+                          ? "Program ID is Auto Generated"
+                          : "Enter Program ID"}</p>
                       </TooltipContent>
                     </Tooltip>
                   </TooltipProvider>
@@ -4610,7 +4679,7 @@ const WorkoutProgramManagement = () => {
                     htmlFor="faculty"
                     className={
                       submittedPrograms &&
-                      programForm.assignedFaculty.length === 0
+                        programForm.assignedFaculty.length === 0
                         ? "text-red-500"
                         : ""
                     }
@@ -4647,14 +4716,13 @@ const WorkoutProgramManagement = () => {
               <div className="space-y-4">
                 <div className="flex justify-between items-center">
                   <h4
-                    className={`font-medium text-sm text-gray-700 ${
-                      submittedPrograms &&
+                    className={`font-medium text-sm text-gray-700 ${submittedPrograms &&
                       programForm.exercises.some(
                         (e) => !e.name.trim() || !e.sets || !e.reps,
                       )
-                        ? "text-red-500"
-                        : "text-gray-700"
-                    }`}
+                      ? "text-red-500"
+                      : "text-gray-700"
+                      }`}
                   >
                     Exercises*
                   </h4>
@@ -5161,7 +5229,7 @@ const WorkoutProgramManagement = () => {
                 <Label
                   className={
                     submittedPackage &&
-                    packageForm.associatedPrograms.some((p) => !p.programId)
+                      packageForm.associatedPrograms.some((p) => !p.programId)
                       ? "text-red-500"
                       : ""
                   }
@@ -5406,7 +5474,7 @@ const WorkoutProgramManagement = () => {
                 <Label
                   className={
                     submittedMemberShips &&
-                    MemberShipForm.PackageIDName.some((p) => !p.package_ID)
+                      MemberShipForm.PackageIDName.some((p) => !p.package_ID)
                       ? "text-red-500"
                       : ""
                   }
