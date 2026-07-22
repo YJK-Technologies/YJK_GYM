@@ -6,10 +6,14 @@ import { useToast } from '@/hooks/use-toast';
 import { BASE_URL } from '../ApiConfig';
 import { ArrowLeft, Settings, User, Building2, MapPin } from 'lucide-react';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import { useCompany } from "../CompanyContext";
+
 
 const SettingScreen = () => {
     const navigate = useNavigate();
     const { toast } = useToast();
+    const { companyCode, locationCode, userCode } = useCompany();
+    
 
     // Form states matching the image requirements
     const [numberGeneration, setNumberGeneration] = useState<string>("Auto");
@@ -30,9 +34,7 @@ const SettingScreen = () => {
     const savedCompanyName = sessionStorage.getItem("selectedCompanyName");
     const savedLocationCode = sessionStorage.getItem("selectedLocationCode");
     const savedLocationName = sessionStorage.getItem("selectedLocationName");
-    const savedUserCode =
-        sessionStorage.getItem("selectedUserCode") ||
-        sessionStorage.getItem("user_code");
+    const savedUserCode = sessionStorage.getItem("selectedUserCode") || sessionStorage.getItem("user_code");
     const savedUserName = sessionStorage.getItem("selectedUserName");
 
     if (savedCompanyCode) {
@@ -49,8 +51,8 @@ const SettingScreen = () => {
         setCurrentContext(context);
 
         console.log("Selected Company:", savedCompanyCode);
-console.log("Selected Location:", savedLocationCode);
-console.log("Context:", context);
+        console.log("Selected Location:", savedLocationCode);
+        console.log("Context:", context);
 
         getSettingData(context);
     }
@@ -93,11 +95,11 @@ console.log("Context:", context);
                     "Content-Type": "application/json",
                 },
                 body: JSON.stringify({
-                    companyCode: currentContext.companyCode,
-                    locationCode: currentContext.locationCode,
+                    companyCode: companyCode,
+                    locationCode: locationCode,
                     NumberGeneration: numberGeneration,
                     MemberExpiredSoon: expiringDays,
-                    created_by: sessionStorage.getItem("user_code")
+                    created_by: userCode
                 }),
             });
 
@@ -105,6 +107,7 @@ console.log("Context:", context);
                 toast({
                     title: "Success",
                     description: "Settings updated successfully.",
+                    variant: "success"
                 });
             } else {
                 toast({
