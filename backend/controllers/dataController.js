@@ -3069,29 +3069,8 @@ const getTrainerSC = async (req, res) => {
 
 //Code added by ramya on 30-06-2026
 const memberAddData = async (req, res) => {
-  const {
-    Identity_No,
-    Full_name,
-    DOB,
-    Gender,
-    Mobile,
-    WhatsApp_Number,
-    Email,
-    Password,
-    Address,
-    Emergency_contact_name,
-    Emergency_contact_phone,
-    Emergency_contact_relation,
-    Receive_promotions,
-    Receive_notifications,
-    Joined_date,
-    Plan_expiry_date,
-    Membership_type,
-    is_active,
-    Company_code,
-    Location_code,
-    created_by
-  } = req.body;
+  const { Identity_No, Full_name, DOB, Gender, Mobile, WhatsApp_Number, Email, Password, Address, Emergency_contact_name, Emergency_contact_phone,
+  Emergency_contact_relation, Receive_promotions, Receive_notifications, Joined_date, Plan_expiry_date, Membership_type, is_active, Company_code, Location_code, created_by   } = req.body;
 
   let Photo = null;
 
@@ -3130,7 +3109,9 @@ const memberAddData = async (req, res) => {
       .query(`EXEC sp_Member_Hdr @mode,'',@Identity_No,@Full_name,@DOB,@Gender,@Mobile,@WhatsApp_Number,@Email,@Password,@Address,@Emergency_contact_name,@Emergency_contact_phone,@Emergency_contact_relation,
         @Receive_promotions,@Receive_notifications,@Photo,@Joined_date,@Plan_expiry_date,@Membership_type,@is_active,@Company_code,@Location_code,'',0,0,'','','','',@created_by,''`);
 
-    res.status(200).json({ success: true, message: "Data inserted successfully" });
+    res.status(200).json({ success: true, message: "Data inserted successfully",
+      MemberID: result.recordset[0].MemberID,
+     });
 
   } catch (err) {
     console.error("Error", err);
@@ -3387,7 +3368,7 @@ const getTrainers = async (req, res) => {
 };
 
 const programInsertData = async (req, res) => {
-  const { ProgramName, Description, Category, Difficulty_level, Goals, Exercises, Duration_per_session, Sessions_per_week, Working_hours, is_active, Company_code,
+  const {ProgramID, ProgramName, Description, Category, Difficulty_level, Goals, Exercises, Duration_per_session, Sessions_per_week, Working_hours, is_active, Company_code,
     Location_code, created_by } = req.body;
 
   try {
@@ -3395,6 +3376,7 @@ const programInsertData = async (req, res) => {
     const result = await pool
       .request()
       .input("mode", sql.NVarChar, "I")
+      .input("ProgramID", sql.NVarChar, ProgramID)
       .input("ProgramName", sql.NVarChar, ProgramName)
       .input("Description", sql.NVarChar, Description)
       .input("Category", sql.NVarChar, Category)
@@ -3408,7 +3390,7 @@ const programInsertData = async (req, res) => {
       .input("Company_code", sql.NVarChar, Company_code)
       .input("Location_code", sql.NVarChar, Location_code)
       .input("created_by", sql.NVarChar, created_by)
-      .query(`EXEC sp_Program_Hdr_Test @mode,'',@ProgramName,@Description,@Category,@Difficulty_level,@Goals,@Exercises,@Duration_per_session,@Sessions_per_week,@Working_hours,@is_active,'','',0,0,@Company_code,@Location_code,'',@created_by,''`);
+      .query(`EXEC sp_Program_Hdr_Test @mode,@ProgramID,@ProgramName,@Description,@Category,@Difficulty_level,@Goals,@Exercises,@Duration_per_session,@Sessions_per_week,@Working_hours,@is_active,'','',0,0,@Company_code,@Location_code,'',@created_by,''`);
 
     res.status(200).json({
       message: "program data saved successfully",
