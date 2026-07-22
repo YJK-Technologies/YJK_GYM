@@ -744,7 +744,7 @@ const WorkoutProgramManagement = () => {
       !programForm.durationPerSession.trim() ||
       !programForm.sessionsPerWeek.trim() ||
       !programForm.workingHours ||
-      !programForm.goals.trim() ||
+      // !programForm.goals.trim() ||
       programForm.assignedFaculty.length === 0 ||
       programForm.exercises.length === 0 ||
       programForm.exercises.some(
@@ -869,6 +869,8 @@ const WorkoutProgramManagement = () => {
 
       const result = await response.json();
 
+      const programId = result.ProgramID;
+
       setProgramForm((prev) => ({
         ...prev,
         id: programId,
@@ -877,8 +879,6 @@ const WorkoutProgramManagement = () => {
       if (!response.ok) {
         throw new Error(result.message || "Program insert failed.");
       }
-
-      const programId = result.ProgramID;
 
       // Insert Faculties
       for (const faculty of facultyIds) {
@@ -1371,6 +1371,73 @@ const WorkoutProgramManagement = () => {
 
     setIsPackageDialogOpen(true);
   };
+
+const validatePackage = () => {
+  if (
+    !packageForm.name.trim() ||
+    !packageForm.packageType.trim() ||
+    Number(packageForm.duration_days) <= 0 ||
+    Number(packageForm.price) <= 0 ||
+    packageForm.associatedPrograms.length === 0 ||
+    packageForm.associatedPrograms.some(
+      (item) => !item.programId || !item.programId.trim(),
+    )
+  ) {
+    toast({
+      title: "Required Fields",
+      description: "Please fill all required fields.",
+      variant: "destructive",
+    });
+
+    setSubmittedPackage(true);
+    return false;
+  }
+
+  // Duplicate Program Validation
+  const programIds = packageForm.associatedPrograms
+    .map((item) => item.programId.trim().toLowerCase())
+    .filter((id) => id !== "");
+
+  const duplicateProgram = programIds.some(
+    (id, index) => programIds.indexOf(id) !== index,
+  );
+
+  if (duplicateProgram) {
+    toast({
+      title: "Duplicate Program",
+      description: "Duplicate Program is not allowed.",
+      variant: "destructive",
+    });
+
+    setSubmittedPackage(true);
+    return false;
+  }
+
+  // Duration Validation
+  if (Number(packageForm.duration_days) <= 0) {
+    toast({
+      title: "Invalid Duration",
+      description: "Duration must be greater than zero.",
+      variant: "destructive",
+    });
+
+    return false;
+  }
+
+  // Price Validation
+  if (Number(packageForm.price) <= 0) {
+    toast({
+      title: "Invalid Price",
+      description: "Price must be greater than zero.",
+      variant: "destructive",
+    });
+
+    return false;
+  }
+
+  return true;
+};
+
   const handleSavePackage = async () => {
     if (editingPackage) {
       await handleUpdatePackage();
@@ -1390,7 +1457,7 @@ const WorkoutProgramManagement = () => {
   const updatePackage = async () => {
     if (!editingPackage) return;
 
-    // if (!validatePackage()) return;
+     if (!validatePackage()) return;
 
     try {
       const packagePayload = {
@@ -1589,13 +1656,14 @@ const WorkoutProgramManagement = () => {
   // };
 
   const handleCreatePackage = async () => {
-    // if (!validatePackage()) return;
+    if (!validatePackage()) return;
 
     let packageID = "";
     let keyFieldHeader = "";
 
     try {
       const packagePayload = {
+        packageID: packageForm.id,
         package_Name: packageForm.name,
         package_type: packageForm.packageType,
         duration_days: packageForm.duration_days,
@@ -4922,9 +4990,14 @@ const WorkoutProgramManagement = () => {
         {/* Add/Edit Package Dialog */}
         <Dialog
           open={isPackageDialogOpen}
-          onOpenChange={setIsPackageDialogOpen}
+          onOpenChange={(open) => {
+            if (!open) {
+              setSubmittedPackage(false);
+            }
+            setIsPackageDialogOpen (open)
+          }}
         >
-          <DialogContent className="max-w-lg">
+          <DialogContent className="max-w-lg max-h-[90vh] overflow-y-auto">
             <DialogHeader>
               <DialogTitle>
                 {editingPackage ? "Edit Package" : "Add New Package"}
@@ -4961,7 +5034,11 @@ const WorkoutProgramManagement = () => {
               </div>
               {/* Package Details */}
               <div className="space-y-2">
-                <Label htmlFor="pkgName">Package Name</Label>
+                <Label htmlFor="pkgName" className={
+                        submittedPackage && !packageForm.name
+                          ? "text-red-500"
+                          : ""
+                      }>Package Name*</Label>
                 <TooltipProvider>
                   <Tooltip>
                     <TooltipTrigger asChild>
@@ -4995,7 +5072,7 @@ const WorkoutProgramManagement = () => {
                         : ""
                     }
                   >
-                    Package Type
+                    Package Type*
                   </Label>
                   <TooltipProvider>
                     <Tooltip>
@@ -5035,7 +5112,11 @@ const WorkoutProgramManagement = () => {
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="price">Price</Label>
+                  <Label htmlFor="price" className={
+                        submittedPackage && !packageForm.price
+                          ? "text-red-500"
+                          : ""
+                      }>Price*</Label>
                   <TooltipProvider>
                     <Tooltip>
                       <TooltipTrigger asChild>
@@ -5089,7 +5170,11 @@ const WorkoutProgramManagement = () => {
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="pkgdays">Duration Days</Label>
+                  <Label htmlFor="pkgdays" className={
+                        submittedPackage && !packageForm.duration_days
+                          ? "text-red-500"
+                          : ""
+                      }>Duration Days*</Label>
                   <TooltipProvider>
                     <Tooltip>
                       <TooltipTrigger asChild>
@@ -5116,115 +5201,6 @@ const WorkoutProgramManagement = () => {
                 </div>
               </div>
 
-              {/* <div className="space-y-2">
-                  <Label htmlFor="program">Associated Program</Label>
-                  <Select
-                    value={packageForm.programId}
-                    onValueChange={(value) =>
-                      setPackageForm({ ...packageForm, programId: value })
-                    }
-                  >
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select program" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {programs.map((program) => (
-                        <SelectItem key={program.id} value={program.id}>
-                          {program.name}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div> */}
-
-              {/* Associated Program */}
-              {/* <div className="space-y-2">
-                  <Label
-                    htmlFor="program"
-                    className={
-                      submittedPackage && !packageForm.programId
-                        ? "text-red-500"
-                        : ""
-                    }
-                  >
-                    Associated Program
-                  </Label>
-                  <TooltipProvider>
-                    <Tooltip>
-                      <TooltipTrigger asChild>
-                        <div>
-                          <Select
-                            value={packageForm.programId}
-                            onValueChange={(value) =>
-                              setPackageForm({
-                                ...packageForm,
-                                programId: value,
-                              })
-                            }
-                          >
-                            <SelectTrigger>
-                              <SelectValue placeholder="Select Package Type" />
-                            </SelectTrigger>
-                            <SelectContent>
-                              {ProgramsID.map((ProgramsID: any) => (
-                                <SelectItem
-                                  key={ProgramsID.ProgramID}
-                                  value={
-                                    ProgramsID.ProgramID
-                                  }
-                                >
-                                  {ProgramsID.ProgramID}
-                                </SelectItem>
-                              ))}
-                            </SelectContent>
-                          </Select>
-                        </div>
-                      </TooltipTrigger>
-
-                      <TooltipContent>
-                        <p>Select Package Type</p>
-                      </TooltipContent>
-                    </Tooltip>
-                  </TooltipProvider>
-                </div> */}
-
-              {/* <div className="space-y-2">
-                <Label
-                  htmlFor="program"
-                  className={
-                    submittedPackage && packageForm.programId.length === 0
-                      ? "text-red-500"
-                      : ""
-                  }
-                >
-                  Associated Program*
-                </Label>
-
-                <TooltipProvider>
-                  <Tooltip>
-                    <TooltipTrigger asChild>
-                      <div>
-                        <ReactMultiSelect
-                          options={programOptions}
-                          value={packageForm.programId}
-                          placeholder="Select Associated Program"
-                          onChange={(selected) =>
-                            setPackageForm({
-                              ...packageForm,
-                              programId: selected,
-                            })
-                          }
-                        />
-                      </div>
-                    </TooltipTrigger>
-
-                    <TooltipContent>
-                      <p>Select Associated Program</p>
-                    </TooltipContent>
-                  </Tooltip>
-                </TooltipProvider>
-              </div> */}
-
               <div className="space-y-4">
                 <Label
                   className={
@@ -5234,7 +5210,7 @@ const WorkoutProgramManagement = () => {
                       : ""
                   }
                 >
-                  Associated Program
+                  Associated Program*
                 </Label>
 
                 {packageForm.associatedPrograms.map((program, index) => (
@@ -5341,7 +5317,10 @@ const WorkoutProgramManagement = () => {
                   <TooltipTrigger asChild>
                     <Button
                       variant="outline"
-                      onClick={() => setIsPackageDialogOpen(false)}
+                      onClick={() => {
+                        setIsPackageDialogOpen(false)
+                        setSubmittedPackage(false);
+                      }}
                     >
                       Cancel
                     </Button>
@@ -5363,7 +5342,7 @@ const WorkoutProgramManagement = () => {
 
                   <TooltipContent>
                     <p>
-                      {editingProgram ? "Update Package" : "Create a Package"}
+                      {editingPackage ? "Update Package" : "Create a Package"}
                     </p>
                   </TooltipContent>
                 </Tooltip>
@@ -5398,7 +5377,7 @@ const WorkoutProgramManagement = () => {
             }
           }}
         >
-          <DialogContent className="max-w-lg">
+          <DialogContent className="max-w-lg max-h-[90vh] overflow-y-auto">
             <DialogHeader>
               <DialogTitle>
                 {editingMemberShip ? "Edit Membership" : "Add New Membership"}
