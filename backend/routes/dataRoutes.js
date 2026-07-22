@@ -190,6 +190,8 @@ router.post("/getMeberShipPackages", dataController.getMeberShipPackages)
 router.post("/membershipSearchData", dataController.membershipSearchData)
 router.post("/getMeberShipTypeName", dataController.getMeberShipTypeName)
 router.post("/adminDashboardCardData", dataController.adminDashboardCardData)
+router.post("/getDietPlanNameId", dataController.getDietPlanNameId)
+router.post("/getMemberProgarmDetails", dataController.getMemberProgarmDetails)
 
 
 
