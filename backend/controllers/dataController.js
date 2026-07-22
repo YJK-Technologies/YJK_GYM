@@ -3088,6 +3088,7 @@ const memberAddData = async (req, res) => {
     Plan_expiry_date,
     Membership_type,
     is_active,
+    DietPlanID,
     Company_code,
     Location_code,
     created_by
@@ -3124,11 +3125,12 @@ const memberAddData = async (req, res) => {
       .input("Plan_expiry_date", sql.DateTime, Plan_expiry_date)
       .input("Membership_type", sql.NVarChar, Membership_type)
       .input("is_active", sql.VarChar, is_active)
+      .input("DietPlanID", sql.VarChar, DietPlanID)
       .input("Company_code", sql.NVarChar, Company_code)
       .input("Location_code", sql.NVarChar, Location_code)
       .input("created_by", sql.NVarChar, created_by)
-      .query(`EXEC sp_Member_Hdr @mode,'',@Identity_No,@Full_name,@DOB,@Gender,@Mobile,@WhatsApp_Number,@Email,@Password,@Address,@Emergency_contact_name,@Emergency_contact_phone,@Emergency_contact_relation,
-        @Receive_promotions,@Receive_notifications,@Photo,@Joined_date,@Plan_expiry_date,@Membership_type,@is_active,@Company_code,@Location_code,'',0,0,'','','','',@created_by,''`);
+      .query(`EXEC sp_Member_Hdr_test2 @mode,'',@Identity_No,@Full_name,@DOB,@Gender,@Mobile,@WhatsApp_Number,@Email,@Password,@Address,@Emergency_contact_name,@Emergency_contact_phone,@Emergency_contact_relation,
+        @Receive_promotions,@Receive_notifications,@Photo,@Joined_date,@Plan_expiry_date,@Membership_type,@is_active,@DietPlanID,@Company_code,@Location_code,'',0,0,'','','','',@created_by,''`);
 
     res.status(200).json({ success: true, message: "Data inserted successfully" });
 
@@ -3141,7 +3143,7 @@ const memberAddData = async (req, res) => {
 const memberUpdate = async (req, res) => {
   const {
     MemberID, Identity_No, Full_name, DOB, Gender, Mobile, WhatsApp_Number, Email, Password, Address, Emergency_contact_name, Emergency_contact_phone, Emergency_contact_relation,
-    Receive_promotions, Receive_notifications, Joined_date, Plan_expiry_date, Membership_type, is_active, Company_code, Location_code, modified_by, Keyfield } = req.body;
+    Receive_promotions, Receive_notifications, Joined_date, Plan_expiry_date, Membership_type, is_active, DietPlanID, Company_code, Location_code, modified_by, Keyfield } = req.body;
 
   let Photo = null;
 
@@ -3175,13 +3177,14 @@ const memberUpdate = async (req, res) => {
       .input("Plan_expiry_date", sql.DateTime, Plan_expiry_date)
       .input("Membership_type", sql.NVarChar, Membership_type)
       .input("is_active", sql.VarChar, is_active)
+      .input("DietPlanID", sql.VarChar, DietPlanID)
       .input("Company_code", sql.NVarChar, Company_code)
       .input("Location_code", sql.NVarChar, Location_code)
       .input("Keyfield", sql.NVarChar, Keyfield)
       .input("modified_by", sql.NVarChar, modified_by)
-      .query(`EXEC sp_Member_Hdr @mode,@MemberID,@Identity_No,@Full_name,@DOB,@Gender,@Mobile,@WhatsApp_Number,@Email,@Password,@Address,
+      .query(`EXEC sp_Member_Hdr_test2 @mode,@MemberID,@Identity_No,@Full_name,@DOB,@Gender,@Mobile,@WhatsApp_Number,@Email,@Password,@Address,
           @Emergency_contact_name,@Emergency_contact_phone,@Emergency_contact_relation,@Receive_promotions,@Receive_notifications,
-          @Photo,@Joined_date,@Plan_expiry_date,@Membership_type,@is_active,@Company_code,@Location_code,@Keyfield,0,0,'','','','','',@modified_by`);
+          @Photo,@Joined_date,@Plan_expiry_date,@Membership_type,@is_active,@DietPlanID,@Company_code,@Location_code,@Keyfield,0,0,'','','','','',@modified_by`);
     res.status(200).json("Edited data saved successfully");
   } catch (err) {
     console.error("Error", err);
@@ -3207,7 +3210,7 @@ const memberDeleteData = async (req, res) => {
         .input("Company_code", sql.NVarChar, req.headers["company_code"])
         .input("Location_code", sql.NVarChar, req.headers["location_code"])
         .input("modified_by", sql.NVarChar, req.headers["modified-by"])
-        .query(`EXEC sp_Member_Hdr 'D',@MemberID,'','','','','','','','','','','','','','',NULL,'','','','',@Company_code,@Location_code,'',0,0,'','','','','',@modified_by`);
+        .query(`EXEC sp_Member_Hdr_test2 'D',@MemberID,'','','','','','','','','','','','','','',NULL,'','','','','',@Company_code,@Location_code,'',0,0,'','','','','',@modified_by`);
     }
 
     res.status(200).json("member deleted successfully");
@@ -3225,7 +3228,7 @@ const getAllmemberData = async (req, res) => {
       .request()
       .input("Company_code", sql.NVarChar, Company_code)
       .input("Location_code", sql.NVarChar, Location_code)
-      .query(`EXEC sp_Member_Hdr 'A','','','','','','','','','','','','','','','',NULL,'','','','',@Company_code,@Location_code,'',0,0,'','','','','',''`);
+      .query(`EXEC sp_Member_Hdr_test2 'A','','','','','','','','','','','','','','','',NULL,'','','','','',@Company_code,@Location_code,'',0,0,'','','','','',''`);
 
     if (result.recordset.length > 0) {
       res.status(200).json(result.recordset);
@@ -3280,7 +3283,7 @@ const getRelationship = async (req, res) => {
 //Code Added by Pavun on 01-07-2026
 const searchMemberData = async (req, res) => {
   const { MemberID, Identity_No, Full_name, age_from, age_to, Gender, Mobile, WhatsApp_Number, Email, Membership_type, is_active, Joined_date_from,
-    Joined_date_to, expiry_date_from, expiry_date_to, Company_code, Location_code } = req.body;
+    Joined_date_to, expiry_date_from, expiry_date_to, DietPlanID, Company_code, Location_code } = req.body;
 
 
   try {
@@ -3300,14 +3303,15 @@ const searchMemberData = async (req, res) => {
       .input("Email", sql.NVarChar, Email)
       .input("Membership_type", sql.NVarChar, Membership_type)
       .input("is_active", sql.VarChar, is_active)
+      .input("DietPlanID", sql.VarChar, DietPlanID)
       .input("Joined_date_from", sql.NVarChar, Joined_date_from)
       .input("Joined_date_to", sql.NVarChar, Joined_date_to)
       .input("expiry_date_from", sql.NVarChar, expiry_date_from)
       .input("expiry_date_to", sql.NVarChar, expiry_date_to)
       .input("Company_code", sql.NVarChar, Company_code)
       .input("Location_code", sql.NVarChar, Location_code)
-      .query(`EXEC sp_Member_Hdr @mode,@MemberID,@Identity_No,@Full_name,'',@Gender,@Mobile,@WhatsApp_Number,@Email,'','','','','',
-        '','',NULL,'','',@Membership_type,@is_active,@Company_code,@Location_code,'',@age_from,@age_to,@Joined_date_from,@Joined_date_to,@expiry_date_from,@expiry_date_to,'',''`);
+      .query(`EXEC sp_Member_Hdr_test2 @mode,@MemberID,@Identity_No,@Full_name,'',@Gender,@Mobile,@WhatsApp_Number,@Email,'','','','','',
+        '','',NULL,'','',@Membership_type,@is_active,@DietPlanID,@Company_code,@Location_code,'',@age_from,@age_to,@Joined_date_from,@Joined_date_to,@expiry_date_from,@expiry_date_to,'',''`);
 
     if (result.recordset.length > 0) {
       res.status(200).json(result.recordset);
@@ -3676,7 +3680,7 @@ const getMemberCardData = async (req, res) => {
       .input("mode", sql.NVarChar, "ST")
       .input("Company_code", sql.NVarChar, Company_code)
       .input("Location_code", sql.NVarChar, Location_code)
-      .query(`EXEC sp_Member_Hdr @mode,'','','','','','','','','','','','','','','',NULL,'','','','',@Company_code,@Location_code,'',0,0,'','','','','',''`);
+      .query(`EXEC sp_Member_Hdr_test2 @mode,'','','','','','','','','','','','','','','',NULL,'','','','','',@Company_code,@Location_code,'',0,0,'','','','','',''`);
 
     if (result.recordset.length > 0) {
       res.status(200).json(result.recordset);
@@ -5188,6 +5192,56 @@ const getMeberShipTypeName = async (req, res) => {
 };
 //Code ended by Dinesh Gokul on 20-07-2026
 
+//Code added by Dinesh Gokul on 22-07-2026
+const getDietPlanNameId = async (req, res) => {
+  const { Company_code, Location_code } = req.body;
+  try {
+    const pool = await connection.connectToDatabase();
+
+    const result = await pool
+      .request()
+      .input("mode", sql.NVarChar, "DP")
+      .input("Company_code", sql.NVarChar, Company_code)
+      .input("Location_code", sql.NVarChar, Location_code)
+      .query(`EXEC sp_Diet_Plans_hdr @mode, '', '', '', '', '', '', '', '', '', @Location_Code, @company_code, '', '', '', ''`);
+
+    if (result.recordset.length > 0) {
+      res.status(200).json(result.recordset);
+    } else {
+      res.status(404).json("Data not found");
+    }
+  } catch (err) {
+    console.error("Error:", err.message);
+    return res.status(500).json({
+      message: err.message || "Internal Server Error",
+    });
+  }
+};
+
+const getMemberProgarmDetails = async (req, res) => {
+  const { MemberID, Company_code, Location_code } = req.body;
+  try {
+    const pool = await connection.connectToDatabase();
+    const result = await pool
+      .request()
+      .input("mode", sql.NVarChar, "MPD")
+      .input("MemberID", sql.NVarChar, MemberID)
+      .input("Company_code", sql.NVarChar, Company_code)
+      .input("Location_code", sql.NVarChar, Location_code)
+      .query(`EXEC sp_Member_Hdr_test2 @mode,@MemberID,'','','','','','','','','','','','','','',NULL,'','','','','',@Company_code,@Location_code,'',0,0,'','','','','',''`);
+
+    if (result.recordset.length > 0) {
+      res.status(200).json(result.recordset);
+    } else {
+      res.status(404).json("Data not found");
+    }
+  } catch (err) {
+    console.error("Error", err);
+    res.status(500).json({ message: err.message || "Internal Server Error" });
+  }
+}
+//Code ended by Dinesh Gokul on 22-07-2026
+
 module.exports = {
   getCompanyno,
   getsearchdata,
@@ -5352,6 +5406,8 @@ module.exports = {
   getMeberShipPackages,
   membershipSearchData,
   getMeberShipTypeName,
-  adminDashboardCardData
+  adminDashboardCardData,
+  getDietPlanNameId,
+  getMemberProgarmDetails
 
 };

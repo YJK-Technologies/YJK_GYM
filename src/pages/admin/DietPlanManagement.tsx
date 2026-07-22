@@ -128,6 +128,7 @@ interface WorkoutDietPlan {
   Fats: string;
   Carbs: string;
   TotalDuration: string;
+  AssignedMembers: string;
   KeyField: string;
   createdDate: string;
 }
@@ -1836,10 +1837,10 @@ const DietPlanManagement = () => {
                           <Clock className="h-4 w-4 mr-1" />
                           {plan.TotalDuration} Weeks
                         </div>
-                        {/* <div className="flex items-center">
+                        <div className="flex items-center">
                           <Users className="h-4 w-4 mr-1" />
-                          {plan.TrainerID} members
-                        </div> */}
+                          {plan.AssignedMembers} Members
+                        </div>
                       </div>
 
                       <div className="mb-3">
@@ -2772,6 +2773,10 @@ const DietPlanManagement = () => {
                         <p>
                           <span className="font-medium">Trainer ID:</span>{" "}
                           {selectedPlan.TrainerID}
+                        </p>
+                        <p>
+                          <span className="font-medium">Assigned Members:</span>{" "}
+                          {selectedPlan.AssignedMembers}
                         </p>
                       </CardContent>
                     </Card>
