@@ -5,7 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useNavigate } from "react-router-dom";
-import ruwLogo from "@/assets/ruw-logo-full.png";
+import yjkLogo from '@/assets/yjk-logo.png';
 import CryptoJS from "crypto-js";
 import { BASE_URL } from "./ApiConfig";
 import { useCompany } from "./CompanyContext";
@@ -57,6 +57,8 @@ const Login = () => {
         secretKey,
       ).toString();
 
+      const encryptedLoginType = CryptoJS.AES.encrypt(loginType, secretKey).toString();
+
       const response = await fetch(`${BASE_URL}/login`, {
         method: "POST",
         headers: {
@@ -65,13 +67,20 @@ const Login = () => {
         body: JSON.stringify({
           email_id: encryptedEmail,
           user_password: encryptedPassword,
+          loginType: encryptedLoginType,
         }),
       });
 
       const data = await response.json();
 
       if (response.ok) {
-        const [{ user_code, role_id, user_images }] = data;
+        const [{
+          user_code,
+          role_id,
+          user_images,
+          membershipType,
+          planExpiryDate,
+        }] = data;
 
         if (user_images?.data) {
           sessionStorage.setItem(
@@ -84,6 +93,14 @@ const Login = () => {
         sessionStorage.setItem("user_code", user_code);
         sessionStorage.setItem("role_id", role_id);
         sessionStorage.setItem("loginType", loginType);
+
+        if (membershipType) {
+          sessionStorage.setItem("membershipType", membershipType);
+        }
+
+        if (planExpiryDate) {
+          sessionStorage.setItem("planExpiryDate", planExpiryDate);
+        }
 
         await UserPermission(role_id);
         await fetchUserData(user_code);
@@ -191,12 +208,12 @@ const Login = () => {
         <CardHeader className="text-center">
           <div className="flex items-center justify-center mb-4">
             <img
-              src={ruwLogo}
+              src={yjkLogo}
               alt="Royal University for Women Logo"
               className="h-20"
             />
           </div>
-          <CardTitle className="text-2xl font-bold">RUW FitnessPro</CardTitle>
+          <CardTitle className="text-2xl font-bold">YJK FitnessPro</CardTitle>
         </CardHeader>
         <CardContent>
           <Tabs defaultValue="member" className="w-full">

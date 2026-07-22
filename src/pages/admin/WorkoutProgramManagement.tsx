@@ -2164,7 +2164,7 @@ const WorkoutProgramManagement = () => {
       const headerPayload = {
         MemberShipType_id: MemberShipForm.MemberShipType_id,
         MemberShipType_Name: MemberShipForm.MemberShipType_Name,
-        Status: MemberShipForm.Status,
+        Status: MemberShipForm.Status ? "Active" : "Close",
         Company_code: companyCode,
         Location_code: locationCode,
         Keyfield: editingMemberShip.Keyfield,
@@ -3814,86 +3814,6 @@ const WorkoutProgramManagement = () => {
           </TabsContent>
 
           {/* Packages Tab */}
-          {/* <TabsContent value="packages">
-            <Card>
-              <CardHeader>
-                <CardTitle>Workout Packages</CardTitle>
-                <CardDescription>
-                  Manage pricing packages (Monthly, Quarterly, Half-Yearly)
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead>Package Name</TableHead>
-                      <TableHead>Type</TableHead>
-                      <TableHead>Duration</TableHead>
-                      <TableHead>Price (BHD)</TableHead>
-                      <TableHead>Program</TableHead>
-                      <TableHead>Faculty</TableHead>
-                      <TableHead>Status</TableHead>
-                      <TableHead className="text-right">Actions</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {filteredPackages.map((pkg) => (
-                      <TableRow key={pkg.id}>
-                        <TableCell className="font-medium">
-                          {pkg.name}
-                        </TableCell>
-                        <TableCell>
-                          {getPackageTypeBadge(
-                            pkg.packageType,
-                            pkg.discountPercentage,
-                          )}
-                        </TableCell>
-                        <TableCell>{pkg.durationDays} days</TableCell>
-                        <TableCell className="font-semibold">
-                          BHD {pkg.price}
-                        </TableCell>
-                        <TableCell>{pkg.programName}</TableCell>
-                        
-                        <TableCell>
-                          {pkg.isActive ? (
-                            <Badge className="default">
-                              <CheckCircle className="h-3 w-3 mr-1" />
-                              Active
-                            </Badge>
-                          ) : (
-                            <Badge variant="secondary">
-                              <XCircle className="h-3 w-3 mr-1" />
-                              Inactive
-                            </Badge>
-                          )}
-                        </TableCell>
-                        <TableCell className="text-right">
-                          <div className="flex justify-end gap-2">
-                            <Button
-                              variant="ghost"
-                              size="sm"
-                              onClick={() => handleEditPackage(pkg)}
-                            >
-                              <Edit className="h-4 w-4" />
-                            </Button>
-                            <Button
-                              variant="ghost"
-                              size="sm"
-                              onClick={() => handleDeletePackage(pkg.id)}
-                            >
-                              <Trash2 className="h-4 w-4 text-red-500" />
-                            </Button>
-                          </div>
-                        </TableCell>
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-              </CardContent>
-            </Card>
-          </TabsContent> */}
-
-          {/* Packages Tab */}
           <TabsContent value="packages">
             <Card>
               <CardHeader>
@@ -5413,10 +5333,10 @@ const WorkoutProgramManagement = () => {
           <DialogContent className="max-w-lg">
             <DialogHeader>
               <DialogTitle>
-                {editingPackage ? "Edit Membership" : "Add New Membership"}
+                {editingMemberShip ? "Edit Membership" : "Add New Membership"}
               </DialogTitle>
               <DialogDescription>
-                {editingPackage
+                {editingMemberShip
                   ? "Update the Membership details"
                   : "Create a new workout Membership"}
               </DialogDescription>
