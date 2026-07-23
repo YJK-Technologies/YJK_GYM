@@ -298,7 +298,24 @@ const CouponManagement = () => {
     {
       headerName: "Applicable Packages",
       field: "Applicable_Packages",
-      minWidth: 130,
+      minWidth: 300,
+      cellRenderer: (params: any) => {
+        const packages = params.value
+          ?.split(",")
+          .map((id: string) => {
+            const pkg = AppPackages.find(
+              (item: any) => item.package_ID === id.trim()
+            );
+          
+            return pkg
+              ? `${pkg.package_ID} - ${pkg.package_Name}`
+              : id.trim();
+              
+          })
+          .join(", ");
+        
+        return packages || "";
+      },
     },
     {
       headerName: "KeyField",

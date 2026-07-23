@@ -200,14 +200,16 @@ const handleStartWorkout = (programid: string) => {
           <CardContent>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
               {programs.map((program) => (
-                <Card key={program.programid} className="hover:shadow-md transition-shadow flex flex-col h-55">
-                  <CardContent className="p-4 flex flex-col h-full">
-                    {/* Header section (fixed height impact) */}
-                    <h3 className="font-semibold text-lg mb-1 line-clamp-1">{program.programname}</h3>
-                    <p className="text-gray-500 text-xs mb-3">Program ID: {program.programid}</p>
+                <Card key={program.programid} className="hover:shadow-md transition-shadow flex flex-col h-52">
+                  <CardContent className="p-4 flex flex-col h-full min-h-0">
+                    {/* Header section */}
+                    <div className="shrink-0">
+                      <h3 className="font-semibold text-lg line-clamp-1">{program.programname}</h3>
+                      <p className="text-gray-500 text-xs mb-2">Program ID: {program.programid}</p>
+                    </div>
                     
                     {/* Scrollable Description Container */}
-                    <div className="flex-1 overflow-y-auto pr-1 mb-4 text-gray-600 text-sm custom-scrollbar">
+                    <div className="flex-1 overflow-y-auto pr-1 mb-3 text-gray-600 text-sm custom-scrollbar min-h-0">
                       <p>{program.Description}</p>
                     </div>
               
