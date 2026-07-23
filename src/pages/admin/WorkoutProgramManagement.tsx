@@ -619,13 +619,13 @@ const WorkoutProgramManagement = () => {
     },
     {
       title: "Total Packages",
-      value: packages.length.toString(),
+      value: statsData[0]?.TotalPackages ?? 0,
       icon: Package,
       color: "bg-purple-500",
     },
     {
       title: "Active Packages",
-      value: packages.filter((p) => p.isActive).length.toString(),
+      value: statsData[0]?.ActivePackages ?? 0,
       icon: Calendar,
       color: "bg-orange-500",
     },
@@ -3693,211 +3693,202 @@ const validatePackage = () => {
                         key={program.Keyfield}
                         className="overflow-hidden border-t-4 border-t-violet-600 hover:shadow-xl transition-all duration-300 bg-white"
                       >
-                        <CardContent className="p-6 space-y-5">
-                          <div className="flex justify-between items-start pb-3 border-b border-gray-100">
-                            <div className="space-y-1">
-                              <h3 className="text-xl font-bold text-slate-900 tracking-tight">
-                                {program.ProgramName}
-                              </h3>
-                              <p className="text-xs font-mono text-gray-500 flex items-center gap-1">
-                                <span className="font-semibold text-slate-700">
-                                  Program ID:
-                                </span>{" "}
-                                {program.ProgramID || "N/A"}
-                              </p>
-                            </div>
-
-                            <div className="flex gap-1 bg-slate-50 p-1 rounded-lg border border-gray-100">
-                              <TooltipProvider>
-                                <Tooltip>
-                                  <TooltipTrigger asChild>
-                                    {hasActionPermission(
-                                      "Programs",
-                                      "edit",
-                                    ) && (
+                        <CardContent className="p-6 h-[680px] flex flex-col justify-between">
+                          {/* Scrollable Container with Custom Scrollbar */}
+                          <div className="flex-1 overflow-y-auto pr-2 custom-scrollbar space-y-5 min-h-0">
+                                            
+                            {/* ================= HEADER ================= */}
+                            <div className="flex justify-between items-start pb-3 border-b border-gray-100">
+                              <div className="space-y-1">
+                                <h3 className="text-xl font-bold text-slate-900 tracking-tight">
+                                  {program.ProgramName}
+                                </h3>
+                                <p className="text-xs font-mono text-gray-500 flex items-center gap-1">
+                                  <span className="font-semibold text-slate-700">
+                                    Program ID:
+                                  </span>{" "}
+                                  {program.ProgramID || "N/A"}
+                                </p>
+                              </div>
+                                            
+                              <div className="flex gap-1 bg-slate-50 p-1 rounded-lg border border-gray-100">
+                                <TooltipProvider>
+                                  <Tooltip>
+                                    <TooltipTrigger asChild>
+                                      {hasActionPermission("Programs", "edit") && (
                                         <Button
                                           variant="ghost"
                                           size="icon"
                                           className="h-8 w-8 text-gray-600 hover:text-violet-600 hover:bg-violet-50"
-                                          onClick={() =>
-                                            handleEditProgram(program)
-                                          }
+                                          onClick={() => handleEditProgram(program)}
                                         >
                                           <Edit className="h-4 w-4" />
                                         </Button>
                                       )}
-                                  </TooltipTrigger>
-
-                                  <TooltipContent>
-                                    <p>Edit</p>
-                                  </TooltipContent>
-                                </Tooltip>
-                              </TooltipProvider>
-
-                              <TooltipProvider>
-                                <Tooltip>
-                                  <TooltipTrigger asChild>
-                                    {hasActionPermission(
-                                      "Programs",
-                                      "delete",
-                                    ) && (
+                                    </TooltipTrigger>
+                                    <TooltipContent>
+                                      <p>Edit</p>
+                                    </TooltipContent>
+                                  </Tooltip>
+                                </TooltipProvider>
+                                    
+                                <TooltipProvider>
+                                  <Tooltip>
+                                    <TooltipTrigger asChild>
+                                      {hasActionPermission("Programs", "delete") && (
                                         <Button
                                           variant="ghost"
                                           size="icon"
                                           className="h-8 w-8 text-red-500 hover:text-red-700 hover:bg-red-50"
-                                          onClick={() =>
-                                            handleDeleteProgram(program)
-                                          }
+                                          onClick={() => handleDeleteProgram(program)}
                                         >
                                           <Trash2 className="h-4 w-4" />
                                         </Button>
                                       )}
-                                  </TooltipTrigger>
-
-                                  <TooltipContent>
-                                    <p>Delete</p>
-                                  </TooltipContent>
-                                </Tooltip>
-                              </TooltipProvider>
+                                    </TooltipTrigger>
+                                    <TooltipContent>
+                                      <p>Delete</p>
+                                    </TooltipContent>
+                                  </Tooltip>
+                                </TooltipProvider>
+                              </div>
                             </div>
-                          </div>
-
-                          <div className="flex items-center justify-between bg-violet-50/40 px-4 py-2.5 rounded-lg border border-violet-50">
-                            <div className="flex items-center space-x-2">
-                              <TrendingUp className="w-4 h-4 text-violet-600" />
-                              <span className="text-xs text-gray-500 font-medium">
-                                Goal:
-                              </span>
-                              <span className="text-sm font-semibold text-slate-800">
-                                {program.Goals}
-                              </span>
-                            </div>
-
-                            <Badge
-                              variant="outline"
-                              className={`font-medium text-xs ${statusBadgeColor}`}
-                            >
-                              <span
-                                className={`w-1.5 h-1.5 rounded-full mr-1.5 ${isActive ? "bg-green-500" : "bg-gray-400"}`}
-                              ></span>
-                              {program.is_active || "Close"}
-                            </Badge>
-                          </div>
-
-                          <div className="grid grid-cols-3 gap-2 bg-slate-50 p-3 rounded-xl border border-slate-100 text-center sm:text-left">
-                            <div className="space-y-0.5 border-r border-gray-200 last:border-none px-2">
-                              <p className="text-[11px] text-gray-400 uppercase tracking-wider font-semibold">
-                                Category
-                              </p>
-                              <p
-                                className="text-xs font-bold text-slate-800 truncate"
-                                title={program.Category}
+                                    
+                            {/* ================= GOALS & STATUS ================= */}
+                            <div className="flex items-center justify-between bg-violet-50/40 px-4 py-2.5 rounded-lg border border-violet-50">
+                              <div className="flex items-center space-x-2">
+                                <TrendingUp className="w-4 h-4 text-violet-600" />
+                                <span className="text-xs text-gray-500 font-medium">Goal:</span>
+                                <span className="text-sm font-semibold text-slate-800">
+                                  {program.Goals}
+                                </span>
+                              </div>
+                                    
+                              <Badge
+                                variant="outline"
+                                className={`font-medium text-xs ${statusBadgeColor}`}
                               >
-                                {program.Category}
-                              </p>
+                                <span
+                                  className={`w-1.5 h-1.5 rounded-full mr-1.5 ${
+                                    isActive ? "bg-green-500" : "bg-gray-400"
+                                  }`}
+                                ></span>
+                                {program.is_active || "Close"}
+                              </Badge>
                             </div>
-                            <div className="space-y-0.5 border-r border-gray-200 last:border-none px-2">
+                                
+                            {/* ================= PROGRAM SPECS ================= */}
+                            <div className="grid grid-cols-3 gap-2 bg-slate-50 p-3 rounded-xl border border-slate-100 text-center sm:text-left">
+                              <div className="space-y-0.5 border-r border-gray-200 last:border-none px-2">
+                                <p className="text-[11px] text-gray-400 uppercase tracking-wider font-semibold">
+                                  Category
+                                </p>
+                                <p
+                                  className="text-xs font-bold text-slate-800 truncate"
+                                  title={program.Category}
+                                >
+                                  {program.Category}
+                                </p>
+                              </div>
+                                
+                              <div className="space-y-0.5 border-r border-gray-200 last:border-none px-2">
+                                <p className="text-[11px] text-gray-400 uppercase tracking-wider font-semibold flex items-center justify-center sm:justify-start gap-1">
+                                  <Dumbbell className="w-3 h-3 text-slate-400" /> Difficulty
+                                </p>
+                                <p className="text-xs font-bold text-violet-600">
+                                  {program.Difficulty_level}
+                                </p>
+                              </div>
+                                
+                              <div className="space-y-0.5 px-2">
+                                <p className="text-[11px] text-gray-400 uppercase tracking-wider font-semibold flex items-center justify-center sm:justify-start gap-1">
+                                  <Calendar className="w-3 h-3 text-slate-400" /> Session / Wk
+                                </p>
+                                <p className="text-xs font-bold text-slate-800">
+                                  {program.Sessions_per_week} Sessions
+                                </p>
+                              </div>
+                            </div>
+                                
+                            {/* ================= WORKING HOURS ================= */}
+                            <div className="space-y-1 px-2">
                               <p className="text-[11px] text-gray-400 uppercase tracking-wider font-semibold flex items-center justify-center sm:justify-start gap-1">
-                                <Dumbbell className="w-3 h-3 text-slate-400" />{" "}
-                                Difficulty
+                                <Clock className="w-3 h-3 text-slate-400" /> Working Hours
                               </p>
-                              <p className="text-xs font-bold text-violet-600">
-                                {program.Difficulty_level}
-                              </p>
-                            </div>
-                            <div className="space-y-0.5 px-2">
-                              <p className="text-[11px] text-gray-400 uppercase tracking-wider font-semibold flex items-center justify-center sm:justify-start gap-1">
-                                <Calendar className="w-3 h-3 text-slate-400" />{" "}
-                                Session / Wk
-                              </p>
-                              <p className="text-xs font-bold text-slate-800">
-                                {program.Sessions_per_week} Sessions
-                              </p>
-                            </div>
-                          </div>
-
-                          <div className="space-y-1 px-2">
-                            <p className="text-[11px] text-gray-400 uppercase tracking-wider font-semibold flex items-center justify-center sm:justify-start gap-1">
-                              <Clock className="w-3 h-3 text-slate-400" />{" "}
-                              Working Hours
-                            </p>
-                            <div className="flex flex-wrap justify-center sm:justify-start gap-1">
-                              {program.Working_hours ? (
-                                (typeof program.Working_hours === "string"
-                                  ? program.Working_hours.split(",")
-                                  : Array.isArray(program.Working_hours)
+                              <div className="flex flex-wrap justify-center sm:justify-start gap-1">
+                                {program.Working_hours ? (
+                                  (typeof program.Working_hours === "string"
+                                    ? program.Working_hours.split(",")
+                                    : Array.isArray(program.Working_hours)
                                     ? program.Working_hours
                                     : []
-                                ).map(
-                                  (timeSlot: string, idx: number) =>
-                                    timeSlot.trim() && (
+                                  ).map(
+                                    (timeSlot: string, idx: number) =>
+                                      timeSlot.trim() && (
+                                        <Badge
+                                          key={idx}
+                                          variant="secondary"
+                                          className="bg-purple-50 text-purple-700 border border-purple-100 px-1.5 py-0 text-[10px] font-medium rounded shadow-sm"
+                                        >
+                                          {timeSlot.trim()}
+                                        </Badge>
+                                      )
+                                  )
+                                ) : (
+                                  <span className="text-[11px] text-gray-400 italic">
+                                    No Slots
+                                  </span>
+                                )}
+                              </div>
+                            </div>
+                              
+                            {/* ================= FACULTY DETAILS ================= */}
+                            <div className="space-y-1.5">
+                              <p className="text-xs font-bold text-gray-400 uppercase tracking-wider flex items-center">
+                                <Users className="w-3.5 h-3.5 mr-1.5 text-slate-500" /> Faculty Details
+                              </p>
+                              <div className="flex flex-wrap gap-1.5">
+                                {program.Faculty && program.Faculty.length > 0 ? (
+                                  program.Faculty.map((faculty: string, idx: number) => {
+                                    const trainer = trainers.find(
+                                      (item: any) => item.TrainerID === faculty
+                                    );
+                                  
+                                    return (
                                       <Badge
                                         key={idx}
                                         variant="secondary"
-                                        className="bg-purple-50 text-purple-700 border border-purple-100 px-1.5 py-0 text-[10px] font-medium rounded shadow-sm"
+                                        className="bg-slate-100 text-slate-700 border border-slate-200 px-2.5 py-0.5 text-xs rounded-md"
                                       >
-                                        {timeSlot.trim()}
+                                        {trainer
+                                          ? `${trainer.TrainerID} - ${trainer.FullName}`
+                                          : faculty}
                                       </Badge>
-                                    ),
-                                )
-                              ) : (
-                                <span className="text-[11px] text-gray-400 italic">
-                                  No Slots
-                                </span>
-                              )}
-                            </div>
-                          </div>
-
-                          <div className="space-y-1.5">
-                            <p className="text-xs font-bold text-gray-400 uppercase tracking-wider flex items-center">
-                              <Users className="w-3.5 h-3.5 mr-1.5 text-slate-500" />{" "}
-                              Faculty Details
-                            </p>
-                            <div className="flex flex-wrap gap-1.5">
-                              {program.Faculty && program.Faculty.length > 0 ? (
-                                program.Faculty.map((faculty: string, idx: number) => {
-                                  const trainer = trainers.find(
-                                    (item: any) => item.TrainerID === faculty
-                                  );
-                                
-                                  return (
-                                    <Badge
-                                      key={idx}
-                                      variant="secondary"
-                                      className="bg-slate-100 text-slate-700 border border-slate-200 px-2.5 py-0.5 text-xs rounded-md"
-                                    >
-                                      {trainer
-                                        ? `${trainer.TrainerID} - ${trainer.FullName}`
-                                        : faculty}
-                                    </Badge>
-                                  );
-                                })
-                              ) : (
-                                <span className="text-xs text-gray-400 italic">
-                                  No faculty assigned
-                                </span>
-                              )}
-                            </div>
-                          </div>
-
-                          <div className="space-y-2">
-                            <p className="text-xs font-bold text-slate-400 uppercase tracking-wider flex items-center border-b border-slate-100 pb-1.5">
-                              <CheckCircle className="w-3.5 h-3.5 mr-1.5 text-emerald-500" />{" "}
-                              Exercises Details
-                            </p>
-
-                            <div className="grid grid-cols-12 gap-2 px-3 py-1 bg-slate-100 rounded text-[11px] font-bold text-gray-500 uppercase tracking-wider">
-                              <div className="col-span-6">Name</div>
-                              <div className="col-span-3 text-center">
-                                Count / Sets
+                                    );
+                                  })
+                                ) : (
+                                  <span className="text-xs text-gray-400 italic">
+                                    No faculty assigned
+                                  </span>
+                                )}
                               </div>
-                              <div className="col-span-3 text-center">Reps</div>
                             </div>
-
-                            <div className="space-y-1 max-h-[140px] overflow-y-auto pr-1 custom-scrollbar">
-                              {program.Exercises &&
-                                program.Exercises.map(
-                                  (exercise: any, idx: number) => (
+                              
+                            {/* ================= EXERCISES DETAILS ================= */}
+                            <div className="space-y-2">
+                              <p className="text-xs font-bold text-slate-400 uppercase tracking-wider flex items-center border-b border-slate-100 pb-1.5">
+                                <CheckCircle className="w-3.5 h-3.5 mr-1.5 text-emerald-500" /> Exercises Details
+                              </p>
+                              
+                              <div className="grid grid-cols-12 gap-2 px-3 py-1 bg-slate-100 rounded text-[11px] font-bold text-gray-500 uppercase tracking-wider">
+                                <div className="col-span-6">Name</div>
+                                <div className="col-span-3 text-center">Count / Sets</div>
+                                <div className="col-span-3 text-center">Reps</div>
+                              </div>
+                              
+                              <div className="space-y-1 max-h-[140px] overflow-y-auto pr-1 custom-scrollbar">
+                                {program.Exercises &&
+                                  program.Exercises.map((exercise: any, idx: number) => (
                                     <div
                                       key={idx}
                                       className="grid grid-cols-12 gap-2 px-3 py-2 bg-white border border-gray-100 rounded-lg shadow-sm items-center hover:bg-slate-50 transition-colors"
@@ -3916,19 +3907,21 @@ const validatePackage = () => {
                                         </b>
                                       </div>
                                     </div>
-                                  ),
-                                )}
+                                  ))}
+                              </div>
                             </div>
-                          </div>
-
-                          <div className="pt-3 border-t border-gray-100 space-y-1">
-                            <p className="text-xs font-bold text-gray-400 uppercase tracking-wider">
-                              Description
-                            </p>
-                            <p className="text-sm text-gray-600 leading-relaxed bg-slate-50/60 p-2.5 rounded-lg border border-slate-100/50">
-                              {program.Description ||
-                                "No custom description available for this workout program."}
-                            </p>
+                                
+                            {/* ================= DESCRIPTION ================= */}
+                            <div className="pt-3 border-t border-gray-100 space-y-1">
+                              <p className="text-xs font-bold text-gray-400 uppercase tracking-wider">
+                                Description
+                              </p>
+                              <p className="text-sm text-gray-600 leading-relaxed bg-slate-50/60 p-2.5 rounded-lg border border-slate-100/50">
+                                {program.Description ||
+                                  "No custom description available for this workout program."}
+                              </p>
+                            </div>
+                                
                           </div>
                         </CardContent>
                       </Card>
@@ -3963,32 +3956,30 @@ const validatePackage = () => {
                         key={pkg.KeyField}
                         className="overflow-hidden border-t-4 border-t-violet-600 hover:shadow-xl transition-all duration-300 bg-white"
                       >
-                        <CardContent className="p-6 space-y-5">
-                          {/* ================= HEADER ================= */}
+                        <CardContent className="p-6 h-[400px] flex flex-col justify-between">
+                          {/* Scrollable Container with Custom Scrollbar */}
+                          <div className="flex-1 overflow-y-auto pr-2 custom-scrollbar space-y-5 min-h-0">
 
-                          <div className="flex justify-between items-start pb-3 border-b border-gray-100">
-                            <div className="space-y-1">
-                              <h3 className="text-xl font-bold text-slate-900 tracking-tight">
-                                {pkg.package_Name}
-                              </h3>
+                            {/* ================= HEADER ================= */}
+                            <div className="flex justify-between items-start pb-3 border-b border-gray-100">
+                              <div className="space-y-1">
+                                <h3 className="text-xl font-bold text-slate-900 tracking-tight">
+                                  {pkg.package_Name}
+                                </h3>
 
-                              <p className="text-xs font-mono text-gray-500 flex items-center gap-1">
-                                <span className="font-semibold text-slate-700">
-                                  Package ID:
-                                </span>
+                                <p className="text-xs font-mono text-gray-500 flex items-center gap-1">
+                                  <span className="font-semibold text-slate-700">
+                                    Package ID:
+                                  </span>
+                                  {pkg.package_ID || "N/A"}
+                                </p>
+                              </div>
 
-                                {pkg.package_ID || "N/A"}
-                              </p>
-                            </div>
-
-                            <div className="flex gap-1 bg-slate-50 p-1 rounded-lg border border-gray-100">
-                              <TooltipProvider>
-                                <Tooltip>
-                                  <TooltipTrigger asChild>
-                                    {hasActionPermission(
-                                      "Packages",
-                                      "edit",
-                                    ) && (
+                              <div className="flex gap-1 bg-slate-50 p-1 rounded-lg border border-gray-100">
+                                <TooltipProvider>
+                                  <Tooltip>
+                                    <TooltipTrigger asChild>
+                                      {hasActionPermission("Packages", "edit") && (
                                         <Button
                                           variant="ghost"
                                           size="icon"
@@ -3998,21 +3989,18 @@ const validatePackage = () => {
                                           <Edit className="h-4 w-4" />
                                         </Button>
                                       )}
-                                  </TooltipTrigger>
-
-                                  <TooltipContent>
-                                    <p>Edit</p>
-                                  </TooltipContent>
-                                </Tooltip>
-                              </TooltipProvider>
-
-                              <TooltipProvider>
-                                <Tooltip>
-                                  <TooltipTrigger asChild>
-                                    {hasActionPermission(
-                                      "Packages",
-                                      "delete",
-                                    ) && (
+                                    </TooltipTrigger>
+                                    
+                                    <TooltipContent>
+                                      <p>Edit</p>
+                                    </TooltipContent>
+                                  </Tooltip>
+                                </TooltipProvider>
+                                    
+                                <TooltipProvider>
+                                  <Tooltip>
+                                    <TooltipTrigger asChild>
+                                      {hasActionPermission("Packages", "delete") && (
                                         <Button
                                           variant="ghost"
                                           size="icon"
@@ -4022,170 +4010,139 @@ const validatePackage = () => {
                                           <Trash2 className="h-4 w-4" />
                                         </Button>
                                       )}
-                                  </TooltipTrigger>
-
-                                  <TooltipContent>
-                                    <p>Delete</p>
-                                  </TooltipContent>
-                                </Tooltip>
-                              </TooltipProvider>
+                                    </TooltipTrigger>
+                                    
+                                    <TooltipContent>
+                                      <p>Delete</p>
+                                    </TooltipContent>
+                                  </Tooltip>
+                                </TooltipProvider>
+                              </div>
                             </div>
-                          </div>
-
-                          {/* ================= PRICE + STATUS ================= */}
-
-                          <div className="flex items-center justify-between bg-violet-50/40 px-4 py-2.5 rounded-lg border border-violet-50">
-                            <div className="flex items-center gap-2">
-                              <IndianRupee className="w-4 h-4 text-violet-600" />
-
-                              <span className="text-xs text-gray-500 font-medium">
-                                Price :
-                              </span>
-
-                              <span className="text-sm font-semibold text-slate-800">
-                                ₹ {pkg.price}
-                              </span>
-                            </div>
-
-                            <Badge
-                              variant="outline"
-                              className={`font-medium text-xs ${statusBadgeColor}`}
-                            >
-                              <span
-                                className={`w-1.5 h-1.5 rounded-full mr-1.5 ${isActive ? "bg-green-500" : "bg-gray-400"
-                                  }`}
-                              ></span>
-
-                              {pkg.is_active || "Close"}
-                            </Badge>
-                          </div>
-                          {/* ================= PACKAGE INFORMATION ================= */}
-
-                          <div className="grid grid-cols-3 gap-2 bg-slate-50 p-3 rounded-xl border border-slate-100 text-center sm:text-left">
-                            {/* Package Type */}
-                            <div className="space-y-0.5 border-r border-gray-200 last:border-none px-2">
-                              <p className="text-[11px] text-gray-400 uppercase tracking-wider font-semibold">
-                                Package Type
-                              </p>
-
-                              <p
-                                className="text-xs font-bold text-slate-800 truncate"
-                                title={pkg.package_type}
+                                    
+                            {/* ================= PRICE + STATUS ================= */}
+                            <div className="flex items-center justify-between bg-violet-50/40 px-4 py-2.5 rounded-lg border border-violet-50">
+                              <div className="flex items-center gap-2">
+                                <IndianRupee className="w-4 h-4 text-violet-600" />
+                                <span className="text-xs text-gray-500 font-medium">Price :</span>
+                                <span className="text-sm font-semibold text-slate-800">
+                                  ₹ {pkg.price}
+                                </span>
+                              </div>
+                                    
+                              <Badge
+                                variant="outline"
+                                className={`font-medium text-xs ${statusBadgeColor}`}
                               >
-                                {pkg.package_type}
-                              </p>
+                                <span
+                                  className={`w-1.5 h-1.5 rounded-full mr-1.5 ${
+                                    isActive ? "bg-green-500" : "bg-gray-400"
+                                  }`}
+                                ></span>
+                                {pkg.is_active || "Close"}
+                              </Badge>
                             </div>
-
-                            {/* Duration */}
-                            <div className="space-y-0.5 border-r border-gray-200 last:border-none px-2">
-                              <p className="text-[11px] text-gray-400 uppercase tracking-wider font-semibold flex items-center justify-center sm:justify-start gap-1">
-                                <Calendar className="w-3 h-3 text-slate-400" />
-                                Duration
-                              </p>
-
-                              <p className="text-xs font-bold text-violet-600">
-                                {pkg.duration_days} Days
-                              </p>
-                            </div>
-
-                            {/* Discount */}
-                            <div className="space-y-0.5 px-2">
-                              <p className="text-[11px] text-gray-400 uppercase tracking-wider font-semibold flex items-center justify-center sm:justify-start gap-1">
-                                <BadgePercent className="w-3 h-3 text-slate-400" />
-                                Discount
-                              </p>
-
-                              <p className="text-xs font-bold text-green-600">
-                                {pkg.discount_percentage}%
-                              </p>
-                            </div>
-                          </div>
-
-                          {/* ================= ASSOCIATED PROGRAMS ================= */}
-
-                          <div className="space-y-2">
-                            <p className="text-xs font-bold text-gray-400 uppercase tracking-wider flex items-center">
-                              <Dumbbell className="w-3.5 h-3.5 mr-1.5 text-violet-600" />
-                              Associated Programs
-                            </p>
-
-                            <div className="flex flex-wrap gap-1.5">
-                              {pkg.Programs && pkg.Programs.length > 0 ? (
-                                pkg.Programs.map(
-                                  (program: string, index: number) => (
-                                    <Badge
-                                      key={index}
-                                      variant="secondary"
-                                      className="bg-violet-50 text-violet-700 border border-violet-100 px-2.5 py-0.5 text-xs rounded-md"
-                                    >
-                                      {program}
-                                    </Badge>
-                                  ),
-                                )
-                              ) : (
-                                <span className="text-xs text-gray-400 italic">
-                                  No Programs Assigned
-                                </span>
-                              )}
-                            </div>
-                          </div>
-                          {/* ================= FEATURES ================= */}
-
-                          <div className="space-y-2">
-                            <p className="text-xs font-bold text-slate-400 uppercase tracking-wider flex items-center border-b border-slate-100 pb-1.5">
-                              <CheckCircle className="w-3.5 h-3.5 mr-1.5 text-emerald-500" />
-                              Package Features
-                            </p>
-
-                            <div className="flex flex-wrap gap-2">
-                              {pkg.features ? (
-                                pkg.features
-                                  .split(",")
-                                  .map((feature: string, index: number) => (
-                                    <Badge
-                                      key={index}
-                                      variant="secondary"
-                                      className="bg-emerald-50 text-emerald-700 border border-emerald-100 px-2.5 py-1 rounded-md shadow-sm"
-                                    >
-                                      {feature.trim()}
-                                    </Badge>
-                                  ))
-                              ) : (
-                                <span className="text-xs text-gray-400 italic">
-                                  No Features Available
-                                </span>
-                              )}
-                            </div>
-                          </div>
-
-                          {/* ================= PACKAGE SUMMARY ================= */}
-
-                          <div className="pt-3 border-t border-gray-100">
-                            <div className="grid grid-cols-2 gap-3">
-                              <div className="bg-slate-50 rounded-lg border p-3">
-                                <p className="text-[11px] uppercase tracking-wider text-gray-400 font-semibold">
-                                  Created By
+                                
+                            {/* ================= PACKAGE INFORMATION ================= */}
+                            <div className="grid grid-cols-3 gap-2 bg-slate-50 p-3 rounded-xl border border-slate-100 text-center sm:text-left">
+                              {/* Package Type */}
+                              <div className="space-y-0.5 border-r border-gray-200 last:border-none px-2">
+                                <p className="text-[11px] text-gray-400 uppercase tracking-wider font-semibold">
+                                  Package Type
                                 </p>
-
-                                <p className="text-sm font-semibold text-slate-700 mt-1">
-                                  {pkg.created_by || "-"}
+                                <p
+                                  className="text-xs font-bold text-slate-800 truncate"
+                                  title={pkg.package_type}
+                                >
+                                  {pkg.package_type}
                                 </p>
                               </div>
-
-                              <div className="bg-slate-50 rounded-lg border p-3">
-                                <p className="text-[11px] uppercase tracking-wider text-gray-400 font-semibold">
-                                  Created Date
+                                
+                              {/* Duration */}
+                              <div className="space-y-0.5 border-r border-gray-200 last:border-none px-2">
+                                <p className="text-[11px] text-gray-400 uppercase tracking-wider font-semibold flex items-center justify-center sm:justify-start gap-1">
+                                  <Calendar className="w-3 h-3 text-slate-400" />
+                                  Duration
                                 </p>
-
-                                <p className="text-sm font-semibold text-slate-700 mt-1">
-                                  {pkg.created_date
-                                    ? new Date(
-                                      pkg.created_date,
-                                    ).toLocaleDateString()
-                                    : "-"}
+                                <p className="text-xs font-bold text-violet-600">
+                                  {pkg.duration_days} Days
+                                </p>
+                              </div>
+                                
+                              {/* Discount */}
+                              <div className="space-y-0.5 px-2">
+                                <p className="text-[11px] text-gray-400 uppercase tracking-wider font-semibold flex items-center justify-center sm:justify-start gap-1">
+                                  <BadgePercent className="w-3 h-3 text-slate-400" />
+                                  Discount
+                                </p>
+                                <p className="text-xs font-bold text-green-600">
+                                  {pkg.discount_percentage}%
                                 </p>
                               </div>
                             </div>
+                                
+                            {/* ================= ASSOCIATED PROGRAMS ================= */}
+                            <div className="space-y-2">
+                              <p className="text-xs font-bold text-gray-400 uppercase tracking-wider flex items-center">
+                                <Dumbbell className="w-3.5 h-3.5 mr-1.5 text-violet-600" />
+                                Associated Programs
+                              </p>
+                                
+                              <div className="flex flex-wrap gap-1.5">
+                                {pkg.Programs && pkg.Programs.length > 0 ? (
+                                  pkg.Programs.map((program: string, index: number) => {
+                                    const programDetails = ProgramsID.find(
+                                      (item: any) => item.ProgramID === program
+                                    );
+                                  
+                                    return (
+                                      <Badge
+                                        key={index}
+                                        variant="secondary"
+                                        className="bg-violet-50 text-violet-700 border border-violet-100 px-2.5 py-0.5 text-xs rounded-md"
+                                      >
+                                        {programDetails
+                                          ? `${programDetails.ProgramID} - ${programDetails.ProgramName}`
+                                          : program}
+                                      </Badge>
+                                    );
+                                  })
+                                ) : (
+                                  <span className="text-xs text-gray-400 italic">
+                                    No Programs Assigned
+                                  </span>
+                                )}
+                              </div>
+                            </div>
+                              
+                            {/* ================= FEATURES ================= */}
+                            <div className="space-y-2">
+                              <p className="text-xs font-bold text-slate-400 uppercase tracking-wider flex items-center border-b border-slate-100 pb-1.5">
+                                <CheckCircle className="w-3.5 h-3.5 mr-1.5 text-emerald-500" />
+                                Package Features
+                              </p>
+                              
+                              <div className="flex flex-wrap gap-2">
+                                {pkg.features ? (
+                                  pkg.features
+                                    .split(",")
+                                    .map((feature: string, index: number) => (
+                                      <Badge
+                                        key={index}
+                                        variant="secondary"
+                                        className="bg-emerald-50 text-emerald-700 border border-emerald-100 px-2.5 py-1 rounded-md shadow-sm"
+                                      >
+                                        {feature.trim()}
+                                      </Badge>
+                                    ))
+                                ) : (
+                                  <span className="text-xs text-gray-400 italic">
+                                    No Features Available
+                                  </span>
+                                )}
+                              </div>
+                            </div>
+                              
                           </div>
                         </CardContent>
                       </Card>
@@ -4219,29 +4176,29 @@ const validatePackage = () => {
                         key={membership.Keyfield}
                         className="overflow-hidden border-t-4 border-t-violet-600 hover:shadow-xl transition-all duration-300 bg-white"
                       >
-                        <CardContent className="p-6 space-y-5">
-                          {/* ================= HEADER ================= */}
-                          <div className="flex justify-between items-start pb-3 border-b border-gray-100">
-                            <div className="space-y-1">
-                              <h3 className="text-xl font-bold text-slate-900 tracking-tight">
-                                {membership.MemberShipType_Name}
-                              </h3>
-                              <p className="text-xs font-mono text-gray-500 flex items-center gap-1">
-                                <span className="font-semibold text-slate-700">
-                                  Membership ID:
-                                </span>
-                                {membership.MemberShipType_id || "N/A"}
-                              </p>
-                            </div>
+                        <CardContent className="p-6 h-[260px] flex flex-col justify-between">
+                          {/* Scrollable Container with Custom Scrollbar */}
+                          <div className="flex-1 overflow-y-auto pr-2 custom-scrollbar space-y-5 min-h-0">
 
-                            <div className="flex gap-1 bg-slate-50 p-1 rounded-lg border border-gray-100">
-                              <TooltipProvider>
-                                <Tooltip>
-                                  <TooltipTrigger asChild>
-                                    {hasActionPermission(
-                                      "Memberships",
-                                      "edit",
-                                    ) && (
+                            {/* ================= HEADER ================= */}
+                            <div className="flex justify-between items-start pb-3 border-b border-gray-100">
+                              <div className="space-y-1">
+                                <h3 className="text-xl font-bold text-slate-900 tracking-tight">
+                                  {membership.MemberShipType_Name}
+                                </h3>
+                                <p className="text-xs font-mono text-gray-500 flex items-center gap-1">
+                                  <span className="font-semibold text-slate-700">
+                                    Membership ID:
+                                  </span>
+                                  {membership.MemberShipType_id || "N/A"}
+                                </p>
+                              </div>
+
+                              <div className="flex gap-1 bg-slate-50 p-1 rounded-lg border border-gray-100">
+                                <TooltipProvider>
+                                  <Tooltip>
+                                    <TooltipTrigger asChild>
+                                      {hasActionPermission("Memberships", "edit") && (
                                         <Button
                                           variant="ghost"
                                           size="icon"
@@ -4253,20 +4210,17 @@ const validatePackage = () => {
                                           <Edit className="h-4 w-4" />
                                         </Button>
                                       )}
-                                  </TooltipTrigger>
-                                  <TooltipContent>
-                                    <p>Edit</p>
-                                  </TooltipContent>
-                                </Tooltip>
-                              </TooltipProvider>
-
-                              <TooltipProvider>
-                                <Tooltip>
-                                  <TooltipTrigger asChild>
-                                    {hasActionPermission(
-                                      "Memberships",
-                                      "delete",
-                                    ) && (
+                                    </TooltipTrigger>
+                                    <TooltipContent>
+                                      <p>Edit</p>
+                                    </TooltipContent>
+                                  </Tooltip>
+                                </TooltipProvider>
+                                    
+                                <TooltipProvider>
+                                  <Tooltip>
+                                    <TooltipTrigger asChild>
+                                      {hasActionPermission("Memberships", "delete") && (
                                         <Button
                                           variant="ghost"
                                           size="icon"
@@ -4278,47 +4232,44 @@ const validatePackage = () => {
                                           <Trash2 className="h-4 w-4" />
                                         </Button>
                                       )}
-                                  </TooltipTrigger>
-                                  <TooltipContent>
-                                    <p>Delete</p>
-                                  </TooltipContent>
-                                </Tooltip>
-                              </TooltipProvider>
+                                    </TooltipTrigger>
+                                    <TooltipContent>
+                                      <p>Delete</p>
+                                    </TooltipContent>
+                                  </Tooltip>
+                                </TooltipProvider>
+                              </div>
                             </div>
-                          </div>
-
-                          {/* ================= STATUS BAR ================= */}
-                          <div className="flex items-center justify-between bg-violet-50/40 px-4 py-2.5 rounded-lg border border-violet-50">
-                            <span className="text-xs text-slate-600 font-semibold uppercase tracking-wider">
-                              Membership Status
-                            </span>
-                            <Badge
-                              variant="outline"
-                              className={`font-medium text-xs ${statusBadgeColor}`}
-                            >
-                              <span
-                                className={`w-1.5 h-1.5 rounded-full mr-1.5 ${isActive ? "bg-green-500" : "bg-gray-400"
+                                    
+                            {/* ================= STATUS BAR ================= */}
+                            <div className="flex items-center justify-between bg-violet-50/40 px-4 py-2.5 rounded-lg border border-violet-50">
+                              <span className="text-xs text-slate-600 font-semibold uppercase tracking-wider">
+                                Membership Status
+                              </span>
+                              <Badge
+                                variant="outline"
+                                className={`font-medium text-xs ${statusBadgeColor}`}
+                              >
+                                <span
+                                  className={`w-1.5 h-1.5 rounded-full mr-1.5 ${
+                                    isActive ? "bg-green-500" : "bg-gray-400"
                                   }`}
-                              ></span>
-                              {membership.Status || "Inactive"}
-                            </Badge>
-                          </div>
-
-                          {/* ================= ASSOCIATED PACKAGES (MULTIPLE DATA) ================= */}
-                          <div className="space-y-2">
-                            <p className="text-xs font-bold text-gray-400 uppercase tracking-wider flex items-center border-b border-slate-100 pb-1.5">
-                              <Dumbbell className="w-3.5 h-3.5 mr-1.5 text-violet-600" />
-                              Linked Packages
-                            </p>
-
-                            <div className="flex flex-wrap gap-2">
-                              {membership.Packages &&
-                                membership.Packages.length > 0 ? (
-                                membership.Packages.map(
-                                  (pkg: any, index: number) => (
-                                    <TooltipProvider
-                                      key={pkg.package_ID || index}
-                                    >
+                                ></span>
+                                {membership.Status || "Inactive"}
+                              </Badge>
+                            </div>
+                                
+                            {/* ================= ASSOCIATED PACKAGES ================= */}
+                            <div className="space-y-2">
+                              <p className="text-xs font-bold text-gray-400 uppercase tracking-wider flex items-center border-b border-slate-100 pb-1.5">
+                                <Dumbbell className="w-3.5 h-3.5 mr-1.5 text-violet-600" />
+                                Linked Packages
+                              </p>
+                                
+                              <div className="flex flex-wrap gap-2">
+                                {membership.Packages && membership.Packages.length > 0 ? (
+                                  membership.Packages.map((pkg: any, index: number) => (
+                                    <TooltipProvider key={pkg.package_ID || index}>
                                       <Tooltip>
                                         <TooltipTrigger asChild>
                                           <Badge
@@ -4335,14 +4286,15 @@ const validatePackage = () => {
                                         </TooltipContent>
                                       </Tooltip>
                                     </TooltipProvider>
-                                  ),
-                                )
-                              ) : (
-                                <span className="text-xs text-gray-400 italic">
-                                  No Packages Linked
-                                </span>
-                              )}
+                                  ))
+                                ) : (
+                                  <span className="text-xs text-gray-400 italic">
+                                    No Packages Linked
+                                  </span>
+                                )}
+                              </div>
                             </div>
+                              
                           </div>
                         </CardContent>
                       </Card>
