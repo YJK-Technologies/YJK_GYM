@@ -74,6 +74,46 @@ const FacultyManagement = () => {
     AvgExperience: 0,
     ActiveTrainers: 0,
   });
+
+    const [numberGeneration, setNumberGeneration] = useState("Auto");
+  
+    useEffect(() => {
+      const getSettingData = async () => {
+        try {
+          const response = await fetch(`${BASE_URL}/getSettingScreenData`, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              Company_code: companyCode,
+              Location_code: locationCode,
+            }),
+          });
+  
+          if (!response.ok) {
+            throw new Error("Failed to fetch setting data");
+          }
+  
+          const data = await response.json();
+  
+          if (Array.isArray(data) && data.length > 0) {
+            setNumberGeneration(data[0].NumberGeneration || "Auto");
+          } else {
+            setNumberGeneration("Auto");
+          }
+        } catch (err) {
+          console.error("Error fetching settings:", err);
+          setNumberGeneration("Auto");
+        }
+      };
+  
+      if (companyCode && locationCode) {
+        getSettingData();
+      }
+    }, [companyCode, locationCode]);
+  
+
   const [TrainerForm, setTrainerForm] = useState({
     company_code: "",
     Location_Code: "",
@@ -364,6 +404,17 @@ const FacultyManagement = () => {
       });
 
       const data = await response.json();
+
+      const trainerID = data.TrainerID;
+
+      if (!response.ok) {
+        throw new Error(data.message || "Trainer insert failed.");
+      }
+
+      setTrainerForm((prev) => ({
+        ...prev,
+        TrainerID: trainerID,
+      }));
 
       if (response.ok) {
         toast({
@@ -769,6 +820,54 @@ const FacultyManagement = () => {
                         : "Enter the details for the new personal trainer."}
                     </DialogDescription>
                   </DialogHeader>
+
+                  <div className="space-y-4">
+                    <div className="space-y-2">
+                    <Label htmlFor="trainerId">Trainer ID</Label>
+                    <TooltipProvider>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <Input
+                            id="trainerId"
+                            value={TrainerForm.TrainerID}
+                            readOnly={!!editingTrainer || numberGeneration === "Auto"}
+                            className={
+                              !!editingTrainer || numberGeneration === "Auto"
+                                ? "bg-gray-100 cursor-not-allowed"
+                                : ""
+                            }
+                            placeholder={
+                              numberGeneration === "Auto"
+                                ? "Auto Generated"
+                                : "Enter Trainer ID"
+                            }
+                            maxLength={20}
+                            onChange={(e) => {
+                              if (!editingTrainer && numberGeneration === "Manual") {
+                                const value = e.target.value.replace(/[^a-zA-Z0-9]/g, "");
+                              
+                                setTrainerForm({
+                                  ...TrainerForm,
+                                  TrainerID: value,
+                                });
+                              }
+                            }}
+                          />
+                        </TooltipTrigger>
+                          
+                        <TooltipContent>
+                          <p>
+                            {!!editingTrainer
+                              ? "Trainer ID cannot be edited"
+                              : numberGeneration === "Auto"
+                              ? "Trainer ID is Auto Generated"
+                              : "Enter Trainer ID"}
+                          </p>
+                        </TooltipContent>
+                      </Tooltip>
+                    </TooltipProvider>
+                  </div>
+                </div>
 
                   <div className="grid gap-4 py-4">
                     <div className="grid grid-cols-2 gap-4">
