@@ -324,6 +324,45 @@ const MemberManagement = () => {
   ]);
   const [submittedMember, setSubmittedMember] = useState(false);
 
+  const [numberGeneration, setNumberGeneration] = useState("Auto");
+
+    useEffect(() => {
+      const getSettingData = async () => {
+        try {
+          const response = await fetch(`${BASE_URL}/getSettingScreenData`, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              Company_code: companyCode,
+              Location_code: locationCode,
+            }),
+          });
+  
+          if (!response.ok) {
+            throw new Error("Failed to fetch setting data");
+          }
+  
+          const data = await response.json();
+  
+          if (Array.isArray(data) && data.length > 0) {
+            setNumberGeneration(data[0].NumberGeneration || "Auto");
+          } else {
+            setNumberGeneration("Auto");
+          }
+        } catch (err) {
+          console.error("Error fetching settings:", err);
+          setNumberGeneration("Auto");
+        }
+      };
+  
+      if (companyCode && locationCode) {
+        getSettingData();
+      }
+    }, [companyCode, locationCode]);
+  
+
   const [memberSearchForm, setMemberSearchForm] = useState({
     MemberID: "",
     Identity_No: "",
@@ -906,6 +945,11 @@ const MemberManagement = () => {
       const data = await response.json();
 
       if (response.ok) {
+        setFormData((prev) => ({
+    ...prev,
+    MemberID: data.MemberID,
+  }));
+
         toast({
           title: "Success",
           description: data.message || "Member created successfully.",
@@ -1938,6 +1982,55 @@ const MemberManagement = () => {
                   : "Enter member details. CPR number is the primary identifier."}
               </DialogDescription>
             </DialogHeader>
+
+            <div className="space-y-4">
+              <div className="space-y-2">
+                <Label htmlFor="memberId">Member ID</Label>
+                              
+                <TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Input
+                        id="memberId"
+                        value={formData.MemberID}
+                        readOnly={!!editingMember || numberGeneration === "Auto"}
+                        className={
+                          !!editingMember || numberGeneration === "Auto"
+                            ? "bg-gray-100 cursor-not-allowed"
+                            : ""
+                        }
+                        placeholder={
+                          numberGeneration === "Auto"
+                            ? "Auto Generated"
+                            : "Enter Member ID"
+                        }
+                        maxLength={20}
+                        onChange={(e) => {
+                          if (!editingMember && numberGeneration === "Manual") {
+                            const value = e.target.value.replace(/[^a-zA-Z0-9]/g, "");
+                          
+                            setFormData((prev) => ({
+                              ...prev,
+                              MemberID: value,
+                            }));
+                          }
+                        }}
+                      />
+                    </TooltipTrigger>
+                      
+                    <TooltipContent>
+                      <p>
+                        {!!editingMember
+                          ? "Member ID cannot be edited"
+                          : numberGeneration === "Auto"
+                          ? "Member ID is Auto Generated"
+                          : "Enter Member ID"}
+                      </p>
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
+              </div>
+            </div>
 
             <div className="space-y-6 py-4">
               <div className="space-y-4">
