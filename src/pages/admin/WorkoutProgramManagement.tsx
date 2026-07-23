@@ -3855,17 +3855,23 @@ const validatePackage = () => {
                             </p>
                             <div className="flex flex-wrap gap-1.5">
                               {program.Faculty && program.Faculty.length > 0 ? (
-                                program.Faculty.map(
-                                  (faculty: string, idx: number) => (
+                                program.Faculty.map((faculty: string, idx: number) => {
+                                  const trainer = trainers.find(
+                                    (item: any) => item.TrainerID === faculty
+                                  );
+                                
+                                  return (
                                     <Badge
                                       key={idx}
                                       variant="secondary"
                                       className="bg-slate-100 text-slate-700 border border-slate-200 px-2.5 py-0.5 text-xs rounded-md"
                                     >
-                                      {faculty}
+                                      {trainer
+                                        ? `${trainer.TrainerID} - ${trainer.FullName}`
+                                        : faculty}
                                     </Badge>
-                                  ),
-                                )
+                                  );
+                                })
                               ) : (
                                 <span className="text-xs text-gray-400 italic">
                                   No faculty assigned
