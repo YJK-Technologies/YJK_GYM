@@ -7,6 +7,7 @@ import { useNavigate } from 'react-router-dom';
 import { Calendar, Clock, Target, Plus, ArrowLeft } from 'lucide-react';
 import { dbService } from '@/services/database';
 import { useToast } from '@/hooks/use-toast';
+import { BASE_URL } from "../ApiConfig";
 
 const MemberWorkouts = () => {
   const navigate = useNavigate();
@@ -16,59 +17,139 @@ const MemberWorkouts = () => {
   const [loading, setLoading] = useState(true);
 
   // Mock member ID - in a real app, this would come from authentication
-  const memberId = 'member-123';
+  // Mock member ID
+const memberId = "YJKT/001/26-27";
+
+// Sample Workout Programs
+// const samplePrograms = [
+//   {
+//     id: "1",
+//     name: "Beginner Full Body",
+//     description: "A complete full body workout for beginners."
+//   },
+//   {
+//     id: "2",
+//     name: "Upper Body Strength",
+//     description: "Focus on chest, shoulders, back, and arms."
+//   },
+//   {
+//     id: "3",
+//     name: "Leg Day",
+//     description: "Build lower body strength with compound exercises."
+//   },
+//   {
+//     id: "4",
+//     name: "Fat Loss HIIT",
+//     description: "High-intensity interval training for burning calories."
+//   },
+//   {
+//     id: "5",
+//     name: "Core & Abs",
+//     description: "Strengthen your core muscles and improve stability."
+//   },
+//   {
+//     id: "6",
+//     name: "Push Pull Legs",
+//     description: "Advanced PPL split workout program."
+//   }
+// ];
+
+// Sample Workout History
+const sampleWorkouts = [
+  {
+    id: "101",
+    program_name: "Beginner Full Body",
+    program_description: "A complete full body workout for beginners.",
+    completed_at: "2026-07-20T09:30:00"
+  },
+  {
+    id: "102",
+    program_name: "Upper Body Strength",
+    program_description: "Focus on chest, shoulders, back, and arms.",
+    completed_at: "2026-07-18T18:00:00"
+  },
+  {
+    id: "103",
+    program_name: "Leg Day",
+    program_description: "Build lower body strength with compound exercises.",
+    completed_at: "2026-07-15T07:45:00"
+  },
+  {
+    id: "104",
+    program_name: "Core & Abs",
+    program_description: "Strengthen your core muscles and improve stability.",
+    completed_at: "2026-07-13T17:20:00"
+  }
+];
 
   useEffect(() => {
     loadWorkoutData();
   }, []);
 
   const loadWorkoutData = async () => {
-    try {
-      setLoading(true);
-      const [workoutsData, programsData] = await Promise.all([
-        dbService.getMemberWorkouts(memberId),
-        dbService.getWorkoutPrograms()
-      ]);
-      
-      setWorkouts(workoutsData.rows || []);
-      setPrograms(programsData.rows || []);
-    } catch (error) {
-      console.error('Failed to load workout data:', error);
+  try {
+    setLoading(true);
+
+    const response = await fetch(`${BASE_URL}/getMemberProgarmDetails`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        MemberID: memberId,
+        Company_code: "yjk",
+        Location_code: "loc001",
+      }),
+    });
+
+    const data = await response.json();
+
+    if (response.ok) {
+      setPrograms(data);
+    } else {
       toast({
-        title: "Error",
-        description: "Failed to load workout data. Please try again.",
-        variant: "destructive"
+        title: "No Programs",
+        description: "No workout programs found.",
+        variant: "destructive",
       });
-    } finally {
-      setLoading(false);
     }
+
+    // Keep history hardcoded for now
+    setWorkouts(sampleWorkouts);
+  } catch (err) {
+    console.error(err);
+
+    toast({
+      title: "Error",
+      description: "Unable to load workout programs.",
+      variant: "destructive",
+    });
+  } finally {
+    setLoading(false);
+  }
+};
+
+const handleStartWorkout = (programId: string) => {
+  const selectedProgram = programs.find(
+  (p) => p.ProgramID === programId
+);
+
+  if (!selectedProgram) return;
+
+  const newWorkout = {
+    id: Date.now().toString(),
+    program_name: selectedProgram.Program_Name,
+    program_description: selectedProgram.Description,
+    completed_at: new Date().toISOString(),
   };
 
-  const handleStartWorkout = async (programId: string) => {
-    try {
-      // Mock workout log - in a real app, this would be more detailed
-      const exercises = [
-        { name: 'Push-ups', sets: 3, reps: 10 },
-        { name: 'Squats', sets: 3, reps: 15 }
-      ];
-      
-      await dbService.addWorkoutLog(memberId, programId, exercises);
-      
-      toast({
-        title: "Workout Started",
-        description: "Your workout has been logged successfully!",
-      });
-      
-      loadWorkoutData();
-    } catch (error) {
-      console.error('Failed to start workout:', error);
-      toast({
-        title: "Error",
-        description: "Failed to start workout. Please try again.",
-        variant: "destructive"
-      });
-    }
-  };
+  setWorkouts((prev) => [newWorkout, ...prev]);
+
+  toast({
+    title: "Workout Started",
+    description: `${selectedProgram.name} has been added to your workout history.`,
+  });
+};
 
   if (loading) {
     return (
@@ -111,13 +192,13 @@ const MemberWorkouts = () => {
           <CardContent>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
               {programs.map((program) => (
-                <Card key={program.id} className="hover:shadow-md transition-shadow">
+                <Card key={program.ProgramID} className="hover:shadow-md transition-shadow">
                   <CardContent className="p-4">
-                    <h3 className="font-semibold text-lg mb-2">{program.name}</h3>
-                    <p className="text-gray-600 text-sm mb-4">{program.description}</p>
+                    <h3 className="font-semibold text-lg mb-2">{program.Program_Name}</h3>
+                    <p className="text-gray-600 text-sm mb-4">{program.Description}</p>
                     <Button 
                       className="w-full"
-                      onClick={() => handleStartWorkout(program.id)}
+                      onClick={() => handleStartWorkout(program.ProgramID)}
                     >
                       <Plus className="h-4 w-4 mr-2" />
                       Start Workout

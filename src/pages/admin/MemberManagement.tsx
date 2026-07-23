@@ -84,6 +84,7 @@ interface Member {
   Joined_date: string;
   Plan_expiry_date: string;
   is_active: boolean;
+  DietPlanID: string;
   Receive_promotions: boolean;
   Receive_notifications: boolean;
   Company_code: string;
@@ -120,6 +121,7 @@ const MemberManagement = () => {
     Joined_date: "",
     Plan_expiry_date: "",
     is_active: false,
+    DietPlanID: "",
     Receive_promotions: false,
     Receive_notifications: false,
     Company_code: companyCode,
@@ -132,6 +134,7 @@ const MemberManagement = () => {
   const { toast } = useToast();
   const [gender, setGender] = useState<any[]>([]);
   const [membershipType, setMembershipType] = useState<any[]>([]);
+  const [dietPlanType, setDietPlanType] = useState<any[]>([]);
   const [relationship, setRelationship] = useState<any[]>([]);
   const [status, setStatus] = useState<any[]>([]);
   const [statsData, setStatsData] = useState<MemberStats>({
@@ -185,6 +188,31 @@ const MemberManagement = () => {
 
       if (response.ok) {
         setMembershipType(data);
+      } else {
+        console.error("Failed to fetch status");
+      }
+    } catch (error) {
+      console.error("Error fetching status:", error);
+    }
+  };
+
+  const fetchDietPlanType = async () => {
+    try {
+      const response = await fetch(`${BASE_URL}/getDietPlanNameId`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          Company_code: companyCode,
+          Location_code: locationCode,
+        }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        setDietPlanType(data);
       } else {
         console.error("Failed to fetch status");
       }
@@ -276,6 +304,7 @@ const MemberManagement = () => {
         fetchRelationship(),
         fetchMembersData(),
         fetchStatus(),
+        fetchDietPlanType(),
       ]);
     };
 
@@ -346,6 +375,7 @@ const MemberManagement = () => {
     Email: "",
     Membership_type: "",
     is_active: "",
+    DietPlanID: "",
     Joined_date_from: "",
     Joined_date_to: "",
     expiry_date_from: "",
@@ -485,7 +515,7 @@ const MemberManagement = () => {
     {
       headerName: "Membership Type",
       field: "Membership_type",
-      minWidth: 220,
+      minWidth: 250,
       cellRenderer: (params: any) => {
         const membership = membershipType.find(
           (item: any) => item.MemberShipType_id === params.value,
@@ -495,6 +525,24 @@ const MemberManagement = () => {
           <Badge variant="outline">
             {membership
               ? `${membership.MemberShipType_id} - ${membership.MemberShipType_Name}`
+              : params.value}
+          </Badge>
+        );
+      },
+    },
+    {
+      headerName: "Diet Plan",
+      field: "DietPlanID",
+      minWidth: 250,
+      cellRenderer: (params: any) => {
+        const dietPlan = dietPlanType.find(
+          (item: any) => item.DietPlanID === params.value,
+        );
+
+        return (
+          <Badge variant="outline">
+            {dietPlan
+              ? `${dietPlan.DietPlanID} - ${dietPlan.Diet_Name}`
               : params.value}
           </Badge>
         );
@@ -669,14 +717,28 @@ const MemberManagement = () => {
   };
 
   const getMembershipDisplay = (membershipId: string) => {
-  const membership = membershipType.find(
-    (item: any) => item.MemberShipType_id === membershipId
-  );
+    const membership = membershipType.find(
+      (item: any) => item.MemberShipType_id === membershipId,
+    );
 
-  return membership
-    ? `${membership.MemberShipType_id} - ${membership.MemberShipType_Name}`
-    : membershipId;
-};
+    return membership
+      ? `${membership.MemberShipType_id} - ${membership.MemberShipType_Name}`
+      : membershipId;
+  };
+
+  const getDietPlanDisplay = (DietPlanID: string) => {
+    const dietPlan = dietPlanType.find(
+      (item: any) => item.MemberShipType_id === DietPlanID,
+    );
+
+    return dietPlan
+      ? `${dietPlan.MemberShipType_id} - ${dietPlan.Diet_Name}`
+      : DietPlanID;
+  };
+
+  const selectedDietPlan = dietPlanType.find(
+    (item: any) => item.DietPlanID === viewingMember?.DietPlanID,
+  );
 
   const handleDeleteMember = (memberID: string) => {
     showConfirmToast({
@@ -1098,6 +1160,7 @@ const MemberManagement = () => {
       Email: "",
       Membership_type: "",
       is_active: "",
+      DietPlanID: "",
       Joined_date_from: "",
       Joined_date_to: "",
       expiry_date_from: "",
@@ -1269,6 +1332,7 @@ const MemberManagement = () => {
           Email: memberSearchForm.Email,
           Membership_type: memberSearchForm.Membership_type,
           is_active: memberSearchForm.is_active,
+          DietPlanID: memberSearchForm.DietPlanID,
           Joined_date_from: memberSearchForm.Joined_date_from,
           Joined_date_to: memberSearchForm.Joined_date_to,
           expiry_date_from: memberSearchForm.expiry_date_from,
@@ -1657,6 +1721,48 @@ const MemberManagement = () => {
               </div>
 
               <div className="space-y-2">
+                <Label>Diet Plan</Label>
+
+                <TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <div>
+                        <Select
+                          value={memberSearchForm.DietPlanID}
+                          onValueChange={(value) =>
+                            setMemberSearchForm({
+                              ...memberSearchForm,
+                              DietPlanID: value,
+                            })
+                          }
+                        >
+                          <SelectTrigger>
+                            <SelectValue placeholder="Select Diet Plan" />
+                          </SelectTrigger>
+
+                          <SelectContent>
+                            {dietPlanType.map((dietPlanType: any) => (
+                              <SelectItem
+                                key={dietPlanType.DietPlanID}
+                                value={dietPlanType.DietPlanID}
+                              >
+                                {dietPlanType.DietPlanID} -{" "}
+                                {dietPlanType.Diet_Name}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      </div>
+                    </TooltipTrigger>
+
+                    <TooltipContent>
+                      <p>Select Diet Plan</p>
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
+              </div>
+
+              <div className="space-y-2">
                 <Label>Join Date From</Label>
                 <TooltipProvider>
                   <Tooltip>
@@ -1877,52 +1983,54 @@ const MemberManagement = () => {
               </DialogDescription>
             </DialogHeader>
 
-<div className="space-y-4">
-  <div className="space-y-2">
-    <Label htmlFor="memberId">Member ID</Label>
-
-    <TooltipProvider>
-      <Tooltip>
-        <TooltipTrigger asChild>
-          <Input
-            id="memberId"
-            value={formData.MemberID}
-            readOnly={numberGeneration === "Auto"}
-            className={
-              numberGeneration === "Auto"
-                ? "bg-gray-100 cursor-not-allowed"
-                : ""
-            }
-            placeholder={
-              numberGeneration === "Auto"
-                ? "Auto Generated"
-                : "Enter Member ID"
-            }
-            maxLength={20}
-            onChange={(e) => {
-              if (numberGeneration === "Manual") {
-                const value = e.target.value.replace(/[^a-zA-Z0-9]/g, "");
-
-                setFormData((prev) => ({
-                  ...prev,
-                  MemberID: value,
-                }));
-              }
-            }}
-          />
-        </TooltipTrigger>
-
-        <TooltipContent>
-          <p>
-            {numberGeneration === "Auto"
-              ? "Member ID is Auto Generated"
-              : "Enter Member ID"}
-          </p>
-        </TooltipContent>
-      </Tooltip>
-    </TooltipProvider>
-  </div>
-</div>
+            <div className="space-y-4">
+              <div className="space-y-2">
+                <Label htmlFor="memberId">Member ID</Label>
+                              
+                <TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Input
+                        id="memberId"
+                        value={formData.MemberID}
+                        readOnly={!!editingMember || numberGeneration === "Auto"}
+                        className={
+                          !!editingMember || numberGeneration === "Auto"
+                            ? "bg-gray-100 cursor-not-allowed"
+                            : ""
+                        }
+                        placeholder={
+                          numberGeneration === "Auto"
+                            ? "Auto Generated"
+                            : "Enter Member ID"
+                        }
+                        maxLength={20}
+                        onChange={(e) => {
+                          if (!editingMember && numberGeneration === "Manual") {
+                            const value = e.target.value.replace(/[^a-zA-Z0-9]/g, "");
+                          
+                            setFormData((prev) => ({
+                              ...prev,
+                              MemberID: value,
+                            }));
+                          }
+                        }}
+                      />
+                    </TooltipTrigger>
+                      
+                    <TooltipContent>
+                      <p>
+                        {!!editingMember
+                          ? "Member ID cannot be edited"
+                          : numberGeneration === "Auto"
+                          ? "Member ID is Auto Generated"
+                          : "Enter Member ID"}
+                      </p>
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
+              </div>
+            </div>
 
             <div className="space-y-6 py-4">
               <div className="space-y-4">
@@ -2432,6 +2540,55 @@ const MemberManagement = () => {
 
                   <div className="space-y-2">
                     <Label
+                      // htmlFor="membershipType"
+                      // className={
+                      //   submittedMember && !formData.DietPlanID
+                      //     ? "text-red-500"
+                      //     : ""
+                      // }
+                    >
+                      Diet Plan
+                    </Label>
+                    <TooltipProvider>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <div>
+                            <Select
+                              value={formData.DietPlanID}
+                              onValueChange={(value) =>
+                                setFormData({
+                                  ...formData,
+                                  DietPlanID: value,
+                                })
+                              }
+                            >
+                              <SelectTrigger>
+                                <SelectValue placeholder="Select Diet Plan" />
+                              </SelectTrigger>
+                              <SelectContent>
+                                {dietPlanType.map((dietPlanType: any) => (
+                                  <SelectItem
+                                    key={dietPlanType.DietPlanID}
+                                    value={dietPlanType.DietPlanID}
+                                  >
+                                    {dietPlanType.DietPlanID} -{" "}
+                                    {dietPlanType.Diet_Name}
+                                  </SelectItem>
+                                ))}
+                              </SelectContent>
+                            </Select>
+                          </div>
+                        </TooltipTrigger>
+
+                        <TooltipContent>
+                          <p>Select Diet Plan</p>
+                        </TooltipContent>
+                      </Tooltip>
+                    </TooltipProvider>
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label
                       className={
                         submittedMember && !formData.Joined_date
                           ? "text-red-500"
@@ -2646,9 +2803,9 @@ const MemberManagement = () => {
                     {/* <Badge variant="outline" className="ml-2">
                       {viewingMember.Membership_type}
                     </Badge> */}
-                    <Badge variant="outline">
-  {getMembershipDisplay(viewingMember.Membership_type)}
-</Badge>
+                    {/* <Badge variant="outline">
+  {getDietPlanDisplay(viewingMember.DietPlanID)}
+</Badge> */}
                   </div>
                 </div>
 
@@ -2695,9 +2852,9 @@ const MemberManagement = () => {
                         {viewingMember.Membership_type}
                       </p> */}
                       <p>
-  <span className="font-medium">Type:</span>{" "}
-  {getMembershipDisplay(viewingMember.Membership_type)}
-</p>
+                        <span className="font-medium">Type:</span>{" "}
+                        {getMembershipDisplay(viewingMember.Membership_type)}
+                      </p>
                     </CardContent>
                   </Card>
 
@@ -2746,45 +2903,67 @@ const MemberManagement = () => {
                       </p>
                     </CardContent>
                   </Card>
-                </div>
 
-                <Card>
-                  <CardHeader className="pb-2">
-                    <CardTitle className="text-sm font-medium text-gray-500">
-                      Communication Preferences
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="flex gap-4">
-                      <div className="flex items-center gap-2">
-                        <Megaphone className="h-4 w-4" />
-                        <span>Promotions:</span>
-                        <Badge
-                          variant={
-                            viewingMember.Receive_promotions
-                              ? "default"
-                              : "secondary"
-                          }
-                        >
-                          {viewingMember.Receive_promotions ? "Yes" : "No"}
-                        </Badge>
+                  <Card>
+                    <CardHeader className="pb-2">
+                      <CardTitle className="text-sm font-medium text-gray-500">
+                        Communication Preferences
+                      </CardTitle>
+                    </CardHeader>
+
+                    <CardContent className="space-y-2">
+                      <div className="flex flex-col gap-3">
+                        <div className="flex items-center gap-2">
+                          <Megaphone className="h-4 w-4" />
+                          <span>Promotions:</span>
+                          <Badge
+                            variant={
+                              viewingMember.Receive_promotions
+                                ? "default"
+                                : "secondary"
+                            }
+                          >
+                            {viewingMember.Receive_promotions ? "Yes" : "No"}
+                          </Badge>
+                        </div>
+
+                        <div className="flex items-center gap-2">
+                          <Bell className="h-4 w-4" />
+                          <span>Notifications:</span>
+                          <Badge
+                            variant={
+                              viewingMember.Receive_notifications
+                                ? "default"
+                                : "secondary"
+                            }
+                          >
+                            {viewingMember.Receive_notifications ? "Yes" : "No"}
+                          </Badge>
+                        </div>
                       </div>
-                      <div className="flex items-center gap-2">
-                        <Bell className="h-4 w-4" />
-                        <span>Notifications:</span>
-                        <Badge
-                          variant={
-                            viewingMember.Receive_notifications
-                              ? "default"
-                              : "secondary"
-                          }
-                        >
-                          {viewingMember.Receive_notifications ? "Yes" : "No"}
-                        </Badge>
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
+                    </CardContent>
+                  </Card>
+
+                  <Card>
+                    <CardHeader className="pb-2">
+                      <CardTitle className="text-sm font-medium text-gray-500">
+                        Diet Plan Details
+                      </CardTitle>
+                    </CardHeader>
+
+                    <CardContent className="space-y-2">
+                      <p>
+                        <span className="font-medium">Diet Plan ID:</span>{" "}
+                        {selectedDietPlan?.DietPlanID || "N/A"}
+                      </p>
+
+                      <p>
+                        <span className="font-medium">Diet Plan Name:</span>{" "}
+                        {selectedDietPlan?.Diet_Name || "N/A"}
+                      </p>
+                    </CardContent>
+                  </Card>
+                </div>
               </div>
             )}
 

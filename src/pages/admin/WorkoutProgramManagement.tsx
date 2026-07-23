@@ -1663,7 +1663,7 @@ const validatePackage = () => {
 
     try {
       const packagePayload = {
-        packageID: packageForm.id,
+        package_ID: packageForm.id,
         package_Name: packageForm.name,
         package_type: packageForm.packageType,
         duration_days: packageForm.duration_days,
@@ -2058,7 +2058,7 @@ const validatePackage = () => {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          MemberShipType_id: "",
+          MemberShipType_id: MemberShipForm.MemberShipType_id,
           MemberShipType_Name: MemberShipForm.MemberShipType_Name,
           Status: MemberShipForm.Status ? "Active" : "Close",
           Company_code: companyCode,
@@ -4373,16 +4373,17 @@ const validatePackage = () => {
               {/* Faculty Assignment */}
               <div className="space-y-4">
                 <div className="space-y-2">
-                  <Label htmlFor="faculty">Program ID</Label>
+                  <Label htmlFor="programId">Program ID</Label>
+
                   <TooltipProvider>
                     <Tooltip>
                       <TooltipTrigger asChild>
                         <Input
                           id="programId"
                           value={programForm.id}
-                          readOnly={numberGeneration === "Auto"}
+                          readOnly={!!editingProgram || numberGeneration === "Auto"}
                           className={
-                            numberGeneration === "Auto"
+                            !!editingProgram || numberGeneration === "Auto"
                               ? "bg-gray-100 cursor-not-allowed"
                               : ""
                           }
@@ -4393,8 +4394,9 @@ const validatePackage = () => {
                           }
                           maxLength={20}
                           onChange={(e) => {
-                            if (numberGeneration === "Manual") {
+                            if (!editingProgram && numberGeneration === "Manual") {
                               const value = e.target.value.replace(/[^a-zA-Z0-9]/g, "");
+                            
                               setProgramForm({
                                 ...programForm,
                                 id: value,
@@ -4403,11 +4405,15 @@ const validatePackage = () => {
                           }}
                         />
                       </TooltipTrigger>
-
+                        
                       <TooltipContent>
-                        <p> {numberGeneration === "Auto"
-                          ? "Program ID is Auto Generated"
-                          : "Enter Program ID"}</p>
+                        <p>
+                          {!!editingProgram
+                            ? "Program ID cannot be edited"
+                            : numberGeneration === "Auto"
+                            ? "Program ID is Auto Generated"
+                            : "Enter Program ID"}
+                        </p>
                       </TooltipContent>
                     </Tooltip>
                   </TooltipProvider>
@@ -5011,22 +5017,47 @@ const validatePackage = () => {
             <div className="grid gap-4 py-4">
               <div className="space-y-4">
                 <div className="space-y-2">
-                  <Label htmlFor="faculty">Package ID</Label>
+                  <Label htmlFor="packageId">Package ID</Label>
+
                   <TooltipProvider>
                     <Tooltip>
                       <TooltipTrigger asChild>
                         <Input
-                          id="name"
+                          id="packageId"
                           value={packageForm.id}
-                          readOnly
-                          className="bg-gray-100 cursor-not-allowed"
-                          // onChange={(e) => setPackageForm({ ...packageForm, id: e.target.value })}
-                          placeholder="Auto Generated"
+                          readOnly={!!editingPackage || numberGeneration === "Auto"}
+                          className={
+                            !!editingPackage || numberGeneration === "Auto"
+                              ? "bg-gray-100 cursor-not-allowed"
+                              : ""
+                          }
+                          placeholder={
+                            numberGeneration === "Auto"
+                              ? "Auto Generated"
+                              : "Enter Package ID"
+                          }
+                          maxLength={20}
+                          onChange={(e) => {
+                            if (!editingPackage && numberGeneration === "Manual") {
+                              const value = e.target.value.replace(/[^a-zA-Z0-9]/g, "");
+                            
+                              setPackageForm({
+                                ...packageForm,
+                                id: value,
+                              });
+                            }
+                          }}
                         />
                       </TooltipTrigger>
-
+                        
                       <TooltipContent>
-                        <p>Package ID is Auto Generated</p>
+                        <p>
+                          {!!editingPackage
+                            ? "Package ID cannot be edited"
+                            : numberGeneration === "Auto"
+                            ? "Package ID is Auto Generated"
+                            : "Enter Package ID"}
+                        </p>
                       </TooltipContent>
                     </Tooltip>
                   </TooltipProvider>
@@ -5391,22 +5422,47 @@ const validatePackage = () => {
             <div className="grid gap-4 py-4">
               <div className="space-y-4">
                 <div className="space-y-2">
-                  <Label htmlFor="faculty">Membership ID</Label>
+                  <Label htmlFor="membershipId">Membership ID</Label>
+
                   <TooltipProvider>
                     <Tooltip>
                       <TooltipTrigger asChild>
                         <Input
-                          id="name"
+                          id="membershipId"
                           value={MemberShipForm.MemberShipType_id}
-                          readOnly
-                          className="bg-gray-100 cursor-not-allowed"
-                          // onChange={(e) => setPackageForm({ ...packageForm, id: e.target.value })}
-                          placeholder="Auto Generated"
+                          readOnly={!!editingMemberShip || numberGeneration === "Auto"}
+                          className={
+                            !!editingMemberShip || numberGeneration === "Auto"
+                              ? "bg-gray-100 cursor-not-allowed"
+                              : ""
+                          }
+                          placeholder={
+                            numberGeneration === "Auto"
+                              ? "Auto Generated"
+                              : "Enter Membership ID"
+                          }
+                          maxLength={20}
+                          onChange={(e) => {
+                            if (!editingMemberShip && numberGeneration === "Manual") {
+                              const value = e.target.value.replace(/[^a-zA-Z0-9]/g, "");
+                            
+                              setMemberShipForm({
+                                ...MemberShipForm,
+                                MemberShipType_id: value,
+                              });
+                            }
+                          }}
                         />
                       </TooltipTrigger>
-
+                        
                       <TooltipContent>
-                        <p>Membership ID is Auto Generated</p>
+                        <p>
+                          {!!editingMemberShip
+                            ? "Membership ID cannot be edited"
+                            : numberGeneration === "Auto"
+                            ? "Membership ID is Auto Generated"
+                            : "Enter Membership ID"}
+                        </p>
                       </TooltipContent>
                     </Tooltip>
                   </TooltipProvider>

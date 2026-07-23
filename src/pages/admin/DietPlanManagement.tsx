@@ -128,6 +128,7 @@ interface WorkoutDietPlan {
   Fats: string;
   Carbs: string;
   TotalDuration: string;
+  AssignedMembers: string;
   KeyField: string;
   createdDate: string;
 }
@@ -150,6 +151,45 @@ const DietPlanManagement = () => {
     AvgCalories: 0,
     ActivePlans: 0,
   });
+
+    const [numberGeneration, setNumberGeneration] = useState("Auto");
+  
+    useEffect(() => {
+      const getSettingData = async () => {
+        try {
+          const response = await fetch(`${BASE_URL}/getSettingScreenData`, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              Company_code: companyCode,
+              Location_code: locationCode,
+            }),
+          });
+  
+          if (!response.ok) {
+            throw new Error("Failed to fetch setting data");
+          }
+  
+          const data = await response.json();
+  
+          if (Array.isArray(data) && data.length > 0) {
+            setNumberGeneration(data[0].NumberGeneration || "Auto");
+          } else {
+            setNumberGeneration("Auto");
+          }
+        } catch (err) {
+          console.error("Error fetching settings:", err);
+          setNumberGeneration("Auto");
+        }
+      };
+  
+      if (companyCode && locationCode) {
+        getSettingData();
+      }
+    }, [companyCode, locationCode]);
+  
 
   // DietPlan Dialog States
   const [dietPlans, setDietPlans] = useState<WorkoutDietPlan[]>([]);
@@ -580,7 +620,7 @@ const DietPlanManagement = () => {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          DietPlanID: "",
+          DietPlanID: DietPlanForm.DietPlanID,
           Diet_Name: DietPlanForm.Diet_Name,
           Category: DietPlanForm.Category,
           Description: DietPlanForm.Description,
@@ -1836,10 +1876,10 @@ const DietPlanManagement = () => {
                           <Clock className="h-4 w-4 mr-1" />
                           {plan.TotalDuration} Weeks
                         </div>
-                        {/* <div className="flex items-center">
+                        <div className="flex items-center">
                           <Users className="h-4 w-4 mr-1" />
-                          {plan.TrainerID} members
-                        </div> */}
+                          {plan.AssignedMembers} Members
+                        </div>
                       </div>
 
                       <div className="mb-3">
@@ -1918,26 +1958,50 @@ const DietPlanManagement = () => {
               {/* Faculty Assignment */}
               <div className="space-y-4">
                 <div className="space-y-2">
-                  <Label htmlFor="faculty">Diet Plan ID</Label>
+                  <Label htmlFor="dietPlanId">Diet Plan ID</Label>
+
                   <TooltipProvider>
                     <Tooltip>
                       <TooltipTrigger asChild>
                         <Input
-                          id="name"
+                          id="dietPlanId"
                           value={DietPlanForm.DietPlanID}
-                          readOnly
-                          className="bg-gray-100 cursor-not-allowed"
-                          // onChange={(e) => setProgramForm({ ...programForm, id: e.target.value })}
-                          placeholder="Auto Generated"
+                          readOnly={!!editingDietPlan || numberGeneration === "Auto"}
+                          className={
+                            !!editingDietPlan || numberGeneration === "Auto"
+                              ? "bg-gray-100 cursor-not-allowed"
+                              : ""
+                          }
+                          placeholder={
+                            numberGeneration === "Auto"
+                              ? "Auto Generated"
+                              : "Enter Diet Plan ID"
+                          }
+                          maxLength={20}
+                          onChange={(e) => {
+                            if (!editingDietPlan && numberGeneration === "Manual") {
+                              const value = e.target.value.replace(/[^a-zA-Z0-9]/g, "");
+                              setDietPlanForm({
+                                ...DietPlanForm,
+                                DietPlanID: value,
+                              });
+                            }
+                          }}
                         />
                       </TooltipTrigger>
-
+                        
                       <TooltipContent>
-                        <p>Diet Plan ID is Auto Generated</p>
+                        <p>
+                          {!!editingDietPlan
+                            ? "Diet Plan ID cannot be edited"
+                            : numberGeneration === "Auto"
+                            ? "Diet Plan ID is Auto Generated"
+                            : "Enter Diet Plan ID"}
+                        </p>
                       </TooltipContent>
                     </Tooltip>
                   </TooltipProvider>
-                </div>
+                </div>              
               </div>
 
               <div className="grid grid-cols-2 gap-4">
@@ -2772,6 +2836,10 @@ const DietPlanManagement = () => {
                         <p>
                           <span className="font-medium">Trainer ID:</span>{" "}
                           {selectedPlan.TrainerID}
+                        </p>
+                        <p>
+                          <span className="font-medium">Assigned Members:</span>{" "}
+                          {selectedPlan.AssignedMembers}
                         </p>
                       </CardContent>
                     </Card>
