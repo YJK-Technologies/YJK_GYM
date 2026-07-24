@@ -109,6 +109,7 @@ All colors MUST be HSL.
   /* Custom scrollbar styling wrapper container kaaga */
   .custom-scrollbar::-webkit-scrollbar {
     height: 5px; /* Horizontal scrollbar height height */
+    width: 8px;
   }
   
   /* Scrollbar thumb (Namma nagarthura antha bar) */
