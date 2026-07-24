@@ -115,6 +115,46 @@ const CouponManagement = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState<string>('all');
 
+    const [numberGeneration, setNumberGeneration] = useState("Auto");
+  
+    useEffect(() => {
+      const getSettingData = async () => {
+        try {
+          const response = await fetch(`${BASE_URL}/getSettingScreenData`, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              Company_code: companyCode,
+              Location_code: locationCode,
+            }),
+          });
+  
+          if (!response.ok) {
+            throw new Error("Failed to fetch setting data");
+          }
+  
+          const data = await response.json();
+  
+          if (Array.isArray(data) && data.length > 0) {
+            setNumberGeneration(data[0].NumberGeneration || "Auto");
+          } else {
+            setNumberGeneration("Auto");
+          }
+        } catch (err) {
+          console.error("Error fetching settings:", err);
+          setNumberGeneration("Auto");
+        }
+      };
+  
+      if (companyCode && locationCode) {
+        getSettingData();
+      }
+    }, [companyCode, locationCode]);
+  
+  
+
   // Dialog state
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [editingCoupon, setEditingCoupon] = useState<Coupon | null>(null);
@@ -258,7 +298,24 @@ const CouponManagement = () => {
     {
       headerName: "Applicable Packages",
       field: "Applicable_Packages",
-      minWidth: 130,
+      minWidth: 300,
+      cellRenderer: (params: any) => {
+        const packages = params.value
+          ?.split(",")
+          .map((id: string) => {
+            const pkg = AppPackages.find(
+              (item: any) => item.package_ID === id.trim()
+            );
+          
+            return pkg
+              ? `${pkg.package_ID} - ${pkg.package_Name}`
+              : id.trim();
+              
+          })
+          .join(", ");
+        
+        return packages || "";
+      },
     },
     {
       headerName: "KeyField",
@@ -404,6 +461,7 @@ const CouponManagement = () => {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
+          CouponID: formData.CouponID,
           Coupon_Code: formData.code.toUpperCase(),
           Description: formData.description,
           Discount_Type: formData.discountType,
@@ -1067,6 +1125,52 @@ const CouponManagement = () => {
               {editingCoupon ? 'Update coupon details' : 'Add a new discount or offer code'}
             </DialogDescription>
           </DialogHeader>
+              <div className="space-y-4">
+                <div className="space-y-2">
+                  <Label htmlFor="couponId">Coupon ID</Label>
+                  <TooltipProvider>
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <Input
+                          id="couponId"
+                          value={formData.CouponID}
+                          readOnly={!!editingCoupon || numberGeneration === "Auto"}
+                          className={
+                            !!editingCoupon || numberGeneration === "Auto"
+                              ? "bg-gray-100 cursor-not-allowed"
+                              : ""
+                          }
+                          placeholder={
+                            numberGeneration === "Auto"
+                              ? "Auto Generated"
+                              : "Enter Coupon ID"
+                          }
+                          maxLength={20}
+                          onChange={(e) => {
+                            if (!editingCoupon && numberGeneration === "Manual") {
+                              const value = e.target.value.replace(/[^a-zA-Z0-9]/g, "");
+                              setFormData({
+                                ...formData,
+                                CouponID: value,
+                              });
+                            }
+                          }}
+                        />
+                      </TooltipTrigger>
+                        
+                      <TooltipContent>
+                        <p>
+                          {!!editingCoupon
+                            ? "Coupon ID cannot be edited"
+                            : numberGeneration === "Auto"
+                            ? "Coupon ID is Auto Generated"
+                            : "Enter Coupon ID"}
+                        </p>
+                      </TooltipContent>
+                    </Tooltip>
+                  </TooltipProvider>
+                </div>
+              </div>
           <div className="grid gap-4 py-4">
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">

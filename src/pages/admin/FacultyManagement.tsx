@@ -74,6 +74,46 @@ const FacultyManagement = () => {
     AvgExperience: 0,
     ActiveTrainers: 0,
   });
+
+    const [numberGeneration, setNumberGeneration] = useState("Auto");
+  
+    useEffect(() => {
+      const getSettingData = async () => {
+        try {
+          const response = await fetch(`${BASE_URL}/getSettingScreenData`, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              Company_code: companyCode,
+              Location_code: locationCode,
+            }),
+          });
+  
+          if (!response.ok) {
+            throw new Error("Failed to fetch setting data");
+          }
+  
+          const data = await response.json();
+  
+          if (Array.isArray(data) && data.length > 0) {
+            setNumberGeneration(data[0].NumberGeneration || "Auto");
+          } else {
+            setNumberGeneration("Auto");
+          }
+        } catch (err) {
+          console.error("Error fetching settings:", err);
+          setNumberGeneration("Auto");
+        }
+      };
+  
+      if (companyCode && locationCode) {
+        getSettingData();
+      }
+    }, [companyCode, locationCode]);
+  
+
   const [TrainerForm, setTrainerForm] = useState({
     company_code: "",
     Location_Code: "",
@@ -364,6 +404,17 @@ const FacultyManagement = () => {
       });
 
       const data = await response.json();
+
+      const trainerID = data.TrainerID;
+
+      if (!response.ok) {
+        throw new Error(data.message || "Trainer insert failed.");
+      }
+
+      setTrainerForm((prev) => ({
+        ...prev,
+        TrainerID: trainerID,
+      }));
 
       if (response.ok) {
         toast({
@@ -769,6 +820,54 @@ const FacultyManagement = () => {
                         : "Enter the details for the new personal trainer."}
                     </DialogDescription>
                   </DialogHeader>
+
+                  <div className="space-y-4">
+                    <div className="space-y-2">
+                    <Label htmlFor="trainerId">Trainer ID</Label>
+                    <TooltipProvider>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <Input
+                            id="trainerId"
+                            value={TrainerForm.TrainerID}
+                            readOnly={!!editingTrainer || numberGeneration === "Auto"}
+                            className={
+                              !!editingTrainer || numberGeneration === "Auto"
+                                ? "bg-gray-100 cursor-not-allowed"
+                                : ""
+                            }
+                            placeholder={
+                              numberGeneration === "Auto"
+                                ? "Auto Generated"
+                                : "Enter Trainer ID"
+                            }
+                            maxLength={20}
+                            onChange={(e) => {
+                              if (!editingTrainer && numberGeneration === "Manual") {
+                                const value = e.target.value.replace(/[^a-zA-Z0-9]/g, "");
+                              
+                                setTrainerForm({
+                                  ...TrainerForm,
+                                  TrainerID: value,
+                                });
+                              }
+                            }}
+                          />
+                        </TooltipTrigger>
+                          
+                        <TooltipContent>
+                          <p>
+                            {!!editingTrainer
+                              ? "Trainer ID cannot be edited"
+                              : numberGeneration === "Auto"
+                              ? "Trainer ID is Auto Generated"
+                              : "Enter Trainer ID"}
+                          </p>
+                        </TooltipContent>
+                      </Tooltip>
+                    </TooltipProvider>
+                  </div>
+                </div>
 
                   <div className="grid gap-4 py-4">
                     <div className="grid grid-cols-2 gap-4">
@@ -1724,139 +1823,157 @@ const FacultyManagement = () => {
                   key={trainer.id}
                   className="hover:shadow-md transition-shadow"
                 >
-                  <CardContent className="p-6">
-                    <div className="flex items-start justify-between mb-4">
-                      <div className="flex items-center">
-                        <div className="w-16 h-16 bg-purple-100 rounded-full flex items-center justify-center mr-4">
-                          <GraduationCap className="h-8 w-8 text-purple-600" />
+                  <CardContent className="p-6 h-[480px] flex flex-col justify-between">
+                    {/* Scrollable Container with Custom Scrollbar */}
+                    <div className="flex-1 overflow-y-auto pr-2 custom-scrollbar space-y-4 min-h-0">
+                                
+                      {/* ================= HEADER ================= */}
+                      <div className="flex items-start justify-between">
+                        <div className="flex items-center">
+                          <div className="w-16 h-16 bg-purple-100 rounded-full flex items-center justify-center mr-4 shrink-0">
+                            <GraduationCap className="h-8 w-8 text-purple-600" />
+                          </div>
+                          <div>
+                            <h3 className="font-semibold text-lg">
+                              {trainer.FullName}
+                            </h3>
+                            <p className="text-sm text-gray-500">
+                              {trainer.TrainerID}
+                            </p>
+                            <p className="text-sm text-gray-500">
+                              {trainer.Experience} years experience
+                            </p>
+                            <Badge
+                              variant={
+                                trainer.Is_Active === "Active"
+                                  ? "default"
+                                  : "secondary"
+                              }
+                              className="mt-1"
+                            >
+                              {trainer.Is_Active === "Active"
+                                ? "Active"
+                                : "Closed"}
+                            </Badge>
+                          </div>
                         </div>
-                        <div>
-                          <h3 className="font-semibold text-lg">
-                            {trainer.FullName}
-                          </h3>
-                          <p className="text-sm text-gray-500">
-                            {trainer.TrainerID}
-                          </p>
-                          <p className="text-sm text-gray-500">
-                            {trainer.Experience} years experience
-                          </p>
-                          <Badge
-                            variant={
-                              trainer.Is_Active === "Active"
-                                ? "default"
-                                : "secondary"
-                            }
-                            className="mt-1"
-                          >
-                            {trainer.Is_Active === "Active"
-                              ? "Active"
-                              : "Closed"}
-                          </Badge>
+                              
+                        <div className="flex gap-2">
+                          {hasActionPermission("AdminFaculty", "edit") && (
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              onClick={() => handleEditTrainer(trainer)}
+                            >
+                              <Edit className="h-4 w-4" />
+                            </Button>
+                          )}
+                          {hasActionPermission("AdminFaculty", "delete") && (
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              className="text-red-500 hover:text-red-700"
+                              onClick={() => handleDeleteTrainer(trainer)}
+                            >
+                              <Trash2 className="h-4 w-4" />
+                            </Button>
+                          )}
                         </div>
                       </div>
-                      <div className="flex gap-2">
-                        {hasActionPermission("AdminFaculty", "edit") && (
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          onClick={() => handleEditTrainer(trainer)}
-                        >
-                          <Edit className="h-4 w-4" />
-                        </Button>
-                        )}
-                        {hasActionPermission("AdminFaculty", "delete") && (
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          className="text-red-500 hover:text-red-700"
-                          onClick={() => handleDeleteTrainer(trainer)}
-                        >
-                          <Trash2 className="h-4 w-4" />
-                        </Button>
-                        )}
+                        
+                      {/* ================= CONTACT & SCHEDULE ================= */}
+                      <div className="space-y-3">
+                        <div className="flex items-center text-sm text-gray-600">
+                          <Mail className="h-4 w-4 mr-2 shrink-0" />
+                          <span className="truncate">{trainer.Email}</span>
+                        </div>
+                        <div className="flex items-center text-sm text-gray-600">
+                          <Phone className="h-4 w-4 mr-2 shrink-0" />
+                          {trainer.Mobile}
+                        </div>
+                        <div className="flex items-center text-sm text-gray-600">
+                          <Clock className="h-4 w-4 mr-2 shrink-0" />
+                          {trainer.WorkingSchedule}
+                        </div>
+                        <div className="flex items-center text-sm text-gray-600">
+                          <Users className="h-4 w-4 mr-2 shrink-0" />
+                          {trainer.AssignedMembers} members assigned
+                        </div>
                       </div>
-                    </div>
-
-                    <div className="space-y-3">
-                      <div className="flex items-center text-sm text-gray-600">
-                        <Mail className="h-4 w-4 mr-2" />
-                        {trainer.Email}
-                      </div>
-                      <div className="flex items-center text-sm text-gray-600">
-                        <Phone className="h-4 w-4 mr-2" />
-                        {trainer.Mobile}
-                      </div>
-                      <div className="flex items-center text-sm text-gray-600">
-                        <Clock className="h-4 w-4 mr-2" />
-                        {trainer.WorkingSchedule}
-                      </div>
-                      <div className="flex items-center text-sm text-gray-600">
-                        <Users className="h-4 w-4 mr-2" />
-                        {trainer.AssignedMembers} members assigned
-                      </div>
-                    </div>
-
-                    <div className="mt-4">
-                      <p className="text-sm font-medium text-gray-700 mb-2">
-                        Specializations:
-                      </p>
-                      <div className="flex flex-wrap gap-2">
-                        {console.log("Trainer:", trainer)}
-                        {typeof trainer.Specializations === "string"
-                          ? trainer.Specializations.split(",").map(
-                              (spec: string, index: number) => (
-                                <Badge key={index} variant="outline">
-                                  {spec.trim()}
-                                </Badge>
-                              ),
-                            )
-                          : Array.isArray(trainer.Specializations)
-                            ? trainer.Specializations.map(
+                        
+                      {/* ================= SPECIALIZATIONS ================= */}
+                      <div>
+                        <p className="text-sm font-medium text-gray-700 mb-2">
+                          Specializations:
+                        </p>
+                        <div className="flex flex-wrap gap-2">
+                          {typeof trainer.Specializations === "string"
+                            ? trainer.Specializations.split(",").map(
                                 (spec: string, index: number) => (
                                   <Badge key={index} variant="outline">
-                                    {spec}
+                                    {spec.trim()}
                                   </Badge>
                                 ),
                               )
-                            : null}
+                            : Array.isArray(trainer.Specializations)
+                              ? trainer.Specializations.map(
+                                  (spec: string, index: number) => (
+                                    <Badge key={index} variant="outline">
+                                      {spec}
+                                    </Badge>
+                                  ),
+                                )
+                              : null}
+                        </div>
                       </div>
-                    </div>
-
-                    <div className="mt-4">
-                      <p className="text-sm font-medium text-gray-700 mb-2">
-                        Certifications:
-                      </p>
-                      <div className="flex flex-wrap gap-2">
-                        {typeof trainer.Certifications === "string"
-                          ? trainer.Certifications.split(",").map(
-                              (cert: string, index: number) => (
-                                <Badge
-                                  key={index}
-                                  variant="secondary"
-                                  className="text-xs"
-                                >
-                                  {cert.trim()}
-                                </Badge>
-                              ),
-                            )
-                          : Array.isArray(trainer.Certifications)
-                            ? trainer.Certifications.map(
+                              
+                      {/* ================= CERTIFICATIONS ================= */}
+                      <div>
+                        <p className="text-sm font-medium text-gray-700 mb-2">
+                          Certifications:
+                        </p>
+                        <div className="flex flex-wrap gap-2">
+                          {typeof trainer.Certifications === "string"
+                            ? trainer.Certifications.split(",").map(
                                 (cert: string, index: number) => (
                                   <Badge
                                     key={index}
                                     variant="secondary"
                                     className="text-xs"
                                   >
-                                    {cert}
+                                    {cert.trim()}
                                   </Badge>
                                 ),
                               )
-                            : null}
+                            : Array.isArray(trainer.Certifications)
+                              ? trainer.Certifications.map(
+                                  (cert: string, index: number) => (
+                                    <Badge
+                                      key={index}
+                                      variant="secondary"
+                                      className="text-xs"
+                                    >
+                                      {cert}
+                                    </Badge>
+                                  ),
+                                )
+                              : null}
+                        </div>
                       </div>
+                              
+                      {/* ================= BIOGRAPHY ================= */}
+                      {trainer.Biography && (
+                        <div>
+                          <p className="text-sm font-medium text-gray-700 mb-1">
+                            Biography:
+                          </p>
+                          <p className="text-gray-600 text-sm leading-relaxed">
+                            {trainer.Biography}
+                          </p>
+                        </div>
+                      )}
+                  
                     </div>
-                    <p className="text-gray-600 text-sm mb-4 line-clamp-2">
-                      {trainer.Biography}
-                    </p>
                   </CardContent>
                 </Card>
               ))}

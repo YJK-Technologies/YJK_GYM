@@ -152,6 +152,45 @@ const DietPlanManagement = () => {
     ActivePlans: 0,
   });
 
+    const [numberGeneration, setNumberGeneration] = useState("Auto");
+  
+    useEffect(() => {
+      const getSettingData = async () => {
+        try {
+          const response = await fetch(`${BASE_URL}/getSettingScreenData`, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              Company_code: companyCode,
+              Location_code: locationCode,
+            }),
+          });
+  
+          if (!response.ok) {
+            throw new Error("Failed to fetch setting data");
+          }
+  
+          const data = await response.json();
+  
+          if (Array.isArray(data) && data.length > 0) {
+            setNumberGeneration(data[0].NumberGeneration || "Auto");
+          } else {
+            setNumberGeneration("Auto");
+          }
+        } catch (err) {
+          console.error("Error fetching settings:", err);
+          setNumberGeneration("Auto");
+        }
+      };
+  
+      if (companyCode && locationCode) {
+        getSettingData();
+      }
+    }, [companyCode, locationCode]);
+  
+
   // DietPlan Dialog States
   const [dietPlans, setDietPlans] = useState<WorkoutDietPlan[]>([]);
   const [submittedDietPlans, setSubmittedDietPlans] = useState(false);
@@ -581,7 +620,7 @@ const DietPlanManagement = () => {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          DietPlanID: "",
+          DietPlanID: DietPlanForm.DietPlanID,
           Diet_Name: DietPlanForm.Diet_Name,
           Category: DietPlanForm.Category,
           Description: DietPlanForm.Description,
@@ -1577,7 +1616,7 @@ const DietPlanManagement = () => {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="faculty">Trainer ID</Label>
+                <Label htmlFor="faculty">Trainer ID - Name</Label>
                 <TooltipProvider>
                   <Tooltip>
                     <TooltipTrigger asChild>
@@ -1592,7 +1631,7 @@ const DietPlanManagement = () => {
                           }
                         >
                           <SelectTrigger>
-                            <SelectValue placeholder="Select Assigned Faculty" />
+                            <SelectValue placeholder="Select Trainer ID - Name" />
                           </SelectTrigger>
 
                           <SelectContent>
@@ -1610,7 +1649,7 @@ const DietPlanManagement = () => {
                     </TooltipTrigger>
 
                     <TooltipContent>
-                      <p>Select Trainer ID</p>
+                      <p>Select Trainer ID - Name</p>
                     </TooltipContent>
                   </Tooltip>
                 </TooltipProvider>
@@ -1715,174 +1754,181 @@ const DietPlanManagement = () => {
                     key={plan.DietPlanID}
                     className="hover:shadow-md transition-shadow"
                   >
-                    <CardContent className="p-6">
-                      <div className="flex items-start justify-between mb-4">
-                        <div>
-                          <div className="flex items-center gap-2 mb-1">
-                            <h3 className="font-semibold text-lg">
-                              {plan.Diet_Name}
-                            </h3>
-                            <Badge
-                              variant={
-                                plan.Is_Active === "Active"
-                                  ? "default"
-                                  : "secondary"
-                              }
-                            >
-                              {plan.Is_Active}
-                            </Badge>
-                          </div>
-                          <p className="text-sm text-gray-500">
-                            Plan ID: {plan.DietPlanID}
-                          </p>
-                          <Badge variant="outline" className="mb-2">
-                            {plan.Category}
-                          </Badge>
-                          {/* <p className="text-sm text-gray-500">By {plan.TrainerID}</p> */}
-                          <div className="mb-3">
-                            <p className="text-sm font-medium text-gray-700 mb-2">
-                              Training By:
+                    <CardContent className="p-6 h-[550px] flex flex-col justify-between">
+                      {/* Scrollable Content Wrapper with Custom Scrollbar */}
+                      <div className="flex-1 overflow-y-auto pr-2 custom-scrollbar">
+                        <div className="flex items-start justify-between mb-4">
+                          <div>
+                            <div className="flex items-center gap-2 mb-1">
+                              <h3 className="font-semibold text-lg">
+                                {plan.Diet_Name}
+                              </h3>
+                              <Badge
+                                variant={
+                                  plan.Is_Active === "Active"
+                                    ? "default"
+                                    : "secondary"
+                                }
+                              >
+                                {plan.Is_Active}
+                              </Badge>
+                            </div>
+                            <p className="text-sm text-gray-500">
+                              Plan ID: {plan.DietPlanID}
                             </p>
-                            <div className="flex flex-wrap gap-2">
-                              {plan.TrainerID?.split(",").map((goal, index) => (
-                                <Badge key={index} variant="outline">
-                                  {goal.trim()}
-                                </Badge>
-                              ))}
+                            <Badge variant="outline" className="mb-2">
+                              {plan.Category}
+                            </Badge>
+                            <div className="mb-3">
+                              <p className="text-sm font-medium text-gray-700 mb-2">
+                                Training By:
+                              </p>
+                              <div className="flex flex-wrap gap-2">
+                                {plan.TrainerID?.split(",").map((goal, index) => {
+                                  const trainer = trainers.find(
+                                    (item: any) => item.TrainerID === goal.trim()
+                                  );
+                                
+                                  return (
+                                    <Badge key={index} variant="outline">
+                                      {trainer
+                                        ? `${trainer.TrainerID} - ${trainer.FullName}`
+                                        : goal.trim()}
+                                    </Badge>
+                                  );
+                                })}
+                              </div>
                             </div>
                           </div>
+                              
+                          <div className="flex gap-2">
+                            <TooltipProvider>
+                              <Tooltip>
+                                <TooltipTrigger asChild>
+                                  {hasActionPermission("AdminDietPlans", "edit") && (
+                                    <Button
+                                      variant="ghost"
+                                      size="icon"
+                                      onClick={() => handleEditDietPlan(plan)}
+                                    >
+                                      <Edit className="h-4 w-4" />
+                                    </Button>
+                                  )}
+                                </TooltipTrigger>
+                                <TooltipContent>
+                                  <p>Edit</p>
+                                </TooltipContent>
+                              </Tooltip>
+                            </TooltipProvider>
+                                
+                            <TooltipProvider>
+                              <Tooltip>
+                                <TooltipTrigger asChild>
+                                  {hasActionPermission("AdminDietPlans", "edit") && (
+                                    <Button
+                                      variant="ghost"
+                                      size="icon"
+                                      onClick={() => handleDeleteDietPlan(plan)}
+                                      className="text-red-500 hover:text-red-700"
+                                    >
+                                      <Trash2 className="h-4 w-4" />
+                                    </Button>
+                                  )}
+                                </TooltipTrigger>
+                                <TooltipContent>
+                                  <p>Delete</p>
+                                </TooltipContent>
+                              </Tooltip>
+                            </TooltipProvider>
+                          </div>
                         </div>
-
-                        <div className="flex gap-2">
-                          {/* <Button variant="ghost" size="icon">
-                            <Copy className="h-4 w-4" />
-                          </Button> */}
-
-                          <TooltipProvider>
-                            <Tooltip>
-                              <TooltipTrigger asChild>
-                                {hasActionPermission("AdminDietPlans", "edit") && (
-                                  <Button
-                                    variant="ghost"
-                                    size="icon"
-                                    onClick={() => handleEditDietPlan(plan)}
-                                  >
-                                    <Edit className="h-4 w-4" />
-                                  </Button>
-                                )}
-                              </TooltipTrigger>
-
-                              <TooltipContent>
-                                <p>Edit</p>
-                              </TooltipContent>
-                            </Tooltip>
-                          </TooltipProvider>
-
-                          <TooltipProvider>
-                            <Tooltip>
-                              <TooltipTrigger asChild>
-                                {hasActionPermission("AdminDietPlans", "edit") && (
-                                  <Button
-                                    variant="ghost"
-                                    size="icon"
-                                    onClick={() => handleDeleteDietPlan(plan)}
-                                    className="text-red-500 hover:text-red-700"
-                                  >
-                                    <Trash2 className="h-4 w-4" />
-                                  </Button>
-                                )}
-                              </TooltipTrigger>
-
-                              <TooltipContent>
-                                <p>Delete</p>
-                              </TooltipContent>
-                            </Tooltip>
-                          </TooltipProvider>
-                        </div>
-                      </div>
-
-                      <p className="text-gray-600 text-sm mb-4 line-clamp-2">
-                        {plan.Description}
-                      </p>
-
-                      <div className="grid grid-cols-4 gap-3 mb-4 p-3 bg-gray-50 rounded-lg">
-                        <div className="text-center">
-                          <p className="text-xs text-gray-500">Calories</p>
-                          <p className="font-bold text-orange-600">
-                            {plan.Calories}
-                          </p>
-                        </div>
-                        <div className="text-center">
-                          <p className="text-xs text-gray-500">Protein</p>
-                          <p className="font-bold text-red-600">
-                            {plan.Protein}g
-                          </p>
-                        </div>
-                        <div className="text-center">
-                          <p className="text-xs text-gray-500">Carbs</p>
-                          <p className="font-bold text-blue-600">
-                            {plan.Carbs}g
-                          </p>
-                        </div>
-                        <div className="text-center">
-                          <p className="text-xs text-gray-500">Fats</p>
-                          <p className="font-bold text-yellow-600">
-                            {plan.Fats}g
-                          </p>
-                        </div>
-                      </div>
-
-                      <div className="flex items-center gap-4 text-sm text-gray-600 mb-4">
-                        <div className="flex items-center">
-                          <Clock className="h-4 w-4 mr-1" />
-                          {plan.TotalDuration} Weeks
-                        </div>
-                        <div className="flex items-center">
-                          <Users className="h-4 w-4 mr-1" />
-                          {plan.AssignedMembers} Members
-                        </div>
-                      </div>
-
-                      <div className="mb-3">
-                        <p className="text-sm font-medium text-gray-700 mb-2">
-                          Goals:
+                                
+                        <p className="text-gray-600 text-sm mb-4 line-clamp-2">
+                          {plan.Description}
                         </p>
-                        <div className="flex flex-wrap gap-2">
-                          {plan.Goals?.split(",").map((goal, index) => (
-                            <Badge key={index} variant="outline">
-                              {goal.trim()}
-                            </Badge>
-                          ))}
+                                
+                        <div className="grid grid-cols-4 gap-3 mb-4 p-3 bg-gray-50 rounded-lg">
+                          <div className="text-center">
+                            <p className="text-xs text-gray-500">Calories</p>
+                            <p className="font-bold text-orange-600">
+                              {plan.Calories}
+                            </p>
+                          </div>
+                          <div className="text-center">
+                            <p className="text-xs text-gray-500">Protein</p>
+                            <p className="font-bold text-red-600">
+                              {plan.Protein}g
+                            </p>
+                          </div>
+                          <div className="text-center">
+                            <p className="text-xs text-gray-500">Carbs</p>
+                            <p className="font-bold text-blue-600">
+                              {plan.Carbs}g
+                            </p>
+                          </div>
+                          <div className="text-center">
+                            <p className="text-xs text-gray-500">Fats</p>
+                            <p className="font-bold text-yellow-600">
+                              {plan.Fats}g
+                            </p>
+                          </div>
                         </div>
-                      </div>
-
-                      <div>
-                        <p className="text-sm font-medium text-gray-700 mb-2">
-                          Dietary Tags:
-                        </p>
-
-                        <div className="flex flex-wrap gap-2">
-                          {plan.Restrictions?.split(",").map(
-                            (restriction: string, index: number) => (
-                              <Badge
-                                key={index}
-                                variant="secondary"
-                                className="text-xs"
-                              >
-                                {restriction.trim()}
+                                
+                        <div className="flex items-center gap-4 text-sm text-gray-600 mb-4">
+                          <div className="flex items-center">
+                            <Clock className="h-4 w-4 mr-1" />
+                            {plan.TotalDuration} Weeks
+                          </div>
+                          <div className="flex items-center">
+                            <Users className="h-4 w-4 mr-1" />
+                            {plan.AssignedMembers} Members
+                          </div>
+                        </div>
+                                
+                        <div className="mb-3">
+                          <p className="text-sm font-medium text-gray-700 mb-2">
+                            Goals:
+                          </p>
+                          <div className="flex flex-wrap gap-2">
+                            {plan.Goals?.split(",").map((goal, index) => (
+                              <Badge key={index} variant="outline">
+                                {goal.trim()}
                               </Badge>
-                            ),
-                          )}
+                            ))}
+                          </div>
+                        </div>
+                          
+                        <div>
+                          <p className="text-sm font-medium text-gray-700 mb-2">
+                            Dietary Tags:
+                          </p>
+                          
+                          <div className="flex flex-wrap gap-2">
+                            {plan.Restrictions?.split(",").map(
+                              (restriction: string, index: number) => (
+                                <Badge
+                                  key={index}
+                                  variant="secondary"
+                                  className="text-xs"
+                                >
+                                  {restriction.trim()}
+                                </Badge>
+                              ),
+                            )}
+                          </div>
                         </div>
                       </div>
-
-                      <Button
-                        variant="outline"
-                        className="w-full mt-4"
-                        onClick={() => handleViewDietPlan(plan)}
-                      >
-                        View Full Plan
-                      </Button>
+                          
+                      {/* Fixed Bottom Button */}
+                      <div className="pt-4 mt-2 border-t">
+                        <Button
+                          variant="outline"
+                          className="w-full"
+                          onClick={() => handleViewDietPlan(plan)}
+                        >
+                          View Full Plan
+                        </Button>
+                      </div>
                     </CardContent>
                   </Card>
                 );
@@ -1919,26 +1965,50 @@ const DietPlanManagement = () => {
               {/* Faculty Assignment */}
               <div className="space-y-4">
                 <div className="space-y-2">
-                  <Label htmlFor="faculty">Diet Plan ID</Label>
+                  <Label htmlFor="dietPlanId">Diet Plan ID</Label>
+
                   <TooltipProvider>
                     <Tooltip>
                       <TooltipTrigger asChild>
                         <Input
-                          id="name"
+                          id="dietPlanId"
                           value={DietPlanForm.DietPlanID}
-                          readOnly
-                          className="bg-gray-100 cursor-not-allowed"
-                          // onChange={(e) => setProgramForm({ ...programForm, id: e.target.value })}
-                          placeholder="Auto Generated"
+                          readOnly={!!editingDietPlan || numberGeneration === "Auto"}
+                          className={
+                            !!editingDietPlan || numberGeneration === "Auto"
+                              ? "bg-gray-100 cursor-not-allowed"
+                              : ""
+                          }
+                          placeholder={
+                            numberGeneration === "Auto"
+                              ? "Auto Generated"
+                              : "Enter Diet Plan ID"
+                          }
+                          maxLength={20}
+                          onChange={(e) => {
+                            if (!editingDietPlan && numberGeneration === "Manual") {
+                              const value = e.target.value.replace(/[^a-zA-Z0-9]/g, "");
+                              setDietPlanForm({
+                                ...DietPlanForm,
+                                DietPlanID: value,
+                              });
+                            }
+                          }}
                         />
                       </TooltipTrigger>
-
+                        
                       <TooltipContent>
-                        <p>Diet Plan ID is Auto Generated</p>
+                        <p>
+                          {!!editingDietPlan
+                            ? "Diet Plan ID cannot be edited"
+                            : numberGeneration === "Auto"
+                            ? "Diet Plan ID is Auto Generated"
+                            : "Enter Diet Plan ID"}
+                        </p>
                       </TooltipContent>
                     </Tooltip>
                   </TooltipProvider>
-                </div>
+                </div>              
               </div>
 
               <div className="grid grid-cols-2 gap-4">
@@ -2101,7 +2171,7 @@ const DietPlanManagement = () => {
                 </TooltipProvider>
               </div>
 
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 gap-4">
                 <div className="space-y-2">
                   <Label
                     htmlFor="name"
@@ -2121,7 +2191,7 @@ const DietPlanManagement = () => {
                           <ReactMultiSelect
                             options={trainerOptions}
                             value={DietPlanForm.TrainerID}
-                            placeholder="Select assigned faculty"
+                            placeholder="Select Trainer ID - Name"
                             onChange={(selected) =>
                               setDietPlanForm({
                                 ...DietPlanForm,
@@ -2772,7 +2842,17 @@ const DietPlanManagement = () => {
                         </p>
                         <p>
                           <span className="font-medium">Trainer ID:</span>{" "}
-                          {selectedPlan.TrainerID}
+                          {selectedPlan.TrainerID?.split(",")
+                            .map((id: string) => {
+                              const trainer = trainers.find(
+                                (item: any) => item.TrainerID === id.trim()
+                              );
+                            
+                              return trainer
+                                ? `${trainer.TrainerID} - ${trainer.FullName}`
+                                : id.trim();
+                            })
+                            .join(", ")}
                         </p>
                         <p>
                           <span className="font-medium">Assigned Members:</span>{" "}
@@ -2783,7 +2863,7 @@ const DietPlanManagement = () => {
 
                     {/* Diet Plan Details Stack */}
                     <div>
-                      <h3 className="text-sm font-semibold text-gray-500 mb-3 px-1 uppercase tracking-wider">
+                      <h3 className="text-sm font-semibold text-gray-500 mb-3 px-1 normal-case tracking-wider">
                         Diet Plan Details
                       </h3>
                       <div className="flex flex-col gap-4">
@@ -2819,7 +2899,7 @@ const DietPlanManagement = () => {
 
                     {/* Meals Stack */}
                     <div>
-                      <h3 className="text-sm font-semibold text-gray-500 mb-3 px-1 uppercase tracking-wider">
+                      <h3 className="text-sm font-semibold text-gray-500 mb-3 px-1 normal-case tracking-wider">
                         Meals Schedule
                       </h3>
                       <div className="flex flex-col gap-4">
