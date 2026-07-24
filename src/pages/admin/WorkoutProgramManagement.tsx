@@ -1389,6 +1389,19 @@ const validatePackage = () => {
       variant: "destructive",
     });
 
+    if (
+        numberGeneration === "Manual" &&
+        !packageForm.id.trim()
+      ) {
+        toast({
+          title: "Validation",
+          description: "Package ID is required.",
+          variant: "destructive",
+        });
+
+        return false;
+      }
+
     setSubmittedPackage(true);
     return false;
   }
@@ -1747,6 +1760,8 @@ const validatePackage = () => {
       // handlePackageSearch();
       // fetchWorkoutData();
 
+      fetchWorkoutData();
+      handlePackageSearch();
       setSubmittedPackage(false);
       setIsPackageDialogOpen(false);
     } catch (err: any) {
@@ -2130,7 +2145,7 @@ const validatePackage = () => {
 
       // Refresh Grid / Cards
       handleMemberShipSearch();
-      // getMemberShipCardData();
+      fetchWorkoutData();
     } catch (error: any) {
       toast({
         title: "Error",
@@ -2365,7 +2380,7 @@ const validatePackage = () => {
 
       handleMemberShipSearch();
 
-      // getMemberShipCardData();
+      fetchWorkoutData();
 
       setSubmittedMemberShips(false);
 
@@ -2477,9 +2492,7 @@ const validatePackage = () => {
       // ======================================
 
       handleMemberShipSearch();
-
-      // If you have membership cards/dashboard count API
-      // getMemberShipCardData();
+      fetchWorkoutData();
 
       toast({
         title: "Membership Type Deleted",

@@ -2248,6 +2248,40 @@ const MemberManagement = () => {
                     </TooltipProvider>
                   </div>
 
+                  <div className="space-y-2 md:col-span-2">
+                    <Label
+                      htmlFor="email"
+                      className={
+                        submittedMember && !formData.Email ? "text-red-500" : ""
+                      }
+                    >
+                      Email Address*
+                    </Label>
+                    <TooltipProvider>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <Input
+                            id="email"
+                            type="email"
+                            placeholder="Enter email address (e.g., branch@example.com)"
+                            value={formData.Email}
+                            maxLength={100}
+                            onChange={(e) =>
+                              setFormData({
+                                ...formData,
+                                Email: e.target.value,
+                              })
+                            }
+                          />
+                        </TooltipTrigger>
+
+                        <TooltipContent>
+                          <p>Enter email address</p>
+                        </TooltipContent>
+                      </Tooltip>
+                    </TooltipProvider>
+                  </div>
+
                   <div className="space-y-2">
                     <Label
                       htmlFor="password"
@@ -2293,40 +2327,6 @@ const MemberManagement = () => {
 
                         <TooltipContent>
                           <p>Enter password</p>
-                        </TooltipContent>
-                      </Tooltip>
-                    </TooltipProvider>
-                  </div>
-
-                  <div className="space-y-2 md:col-span-2">
-                    <Label
-                      htmlFor="email"
-                      className={
-                        submittedMember && !formData.Email ? "text-red-500" : ""
-                      }
-                    >
-                      Email Address*
-                    </Label>
-                    <TooltipProvider>
-                      <Tooltip>
-                        <TooltipTrigger asChild>
-                          <Input
-                            id="email"
-                            type="email"
-                            placeholder="Enter email address (e.g., branch@example.com)"
-                            value={formData.Email}
-                            maxLength={100}
-                            onChange={(e) =>
-                              setFormData({
-                                ...formData,
-                                Email: e.target.value,
-                              })
-                            }
-                          />
-                        </TooltipTrigger>
-
-                        <TooltipContent>
-                          <p>Enter email address</p>
                         </TooltipContent>
                       </Tooltip>
                     </TooltipProvider>
