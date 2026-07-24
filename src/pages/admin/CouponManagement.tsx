@@ -775,6 +775,9 @@ const CouponManagement = () => {
               </Button>
               <h1 className="text-lg sm:text-xl lg:text-2xl font-bold text-gray-900 truncate">Coupon Management</h1>
             </div>
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger asChild>
             <Button
               onClick={() => handleOpenDialog()}
               className="shrink-0 px-2 sm:px-4"
@@ -784,6 +787,11 @@ const CouponManagement = () => {
                 Add Coupon
               </span>
             </Button>
+            </TooltipTrigger>
+            
+                <TooltipContent>Add Coupon</TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
           </div>
         </div>
       </header>
