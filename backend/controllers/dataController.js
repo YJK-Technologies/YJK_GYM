@@ -3758,7 +3758,7 @@ const programSearchData = async (req, res) => {
 
 //Code Added by Ramya on 08-07-2026
 const settingSaveData = async (req, res) => {
-  const { NumberGeneration, MemberExpiredSoon, companyCode, locationCode, created_by } = req.body;
+  const { NumberGeneration, MemberExpiredSoon, companyCode, locationCode,Currency, created_by } = req.body;
 
   try {
     const pool = await connection.connectToDatabase();
@@ -3771,9 +3771,10 @@ const settingSaveData = async (req, res) => {
       .input("Company_code", sql.NVarChar, companyCode)
       .input("Location_code", sql.NVarChar, locationCode)
       .input("keyfield_header", sql.NVarChar, "")
+      .input("Currency", sql.NVarChar, Currency)
       .input("created_by", sql.NVarChar, created_by)
       .input("modified_by", sql.NVarChar, created_by)
-      .query(`EXEC sp_Setting @mode, @NumberGeneration, @MemberExpiredSoon, @Company_code, @Location_code, @keyfield_header, @created_by, @modified_by`);
+      .query(`EXEC sp_Setting @mode, @NumberGeneration, @MemberExpiredSoon, @Company_code, @Location_code, @keyfield_header,@Currency, @created_by, @modified_by`);
 
     res.status(200).json({
       message: result.recordset[0].Message,
@@ -3791,7 +3792,7 @@ const settingSaveData = async (req, res) => {
 
 //Code Added by Dinesh Gokul on 08-07-2026
 const getSettingScreenData = async (req, res) => {
-  const { Company_code, Location_code } = req.body;
+  const { Company_code, Location_code,Currency } = req.body;
   try {
     const pool = await connection.connectToDatabase();
     const result = await pool
@@ -3799,7 +3800,8 @@ const getSettingScreenData = async (req, res) => {
       .input("mode", sql.NVarChar, "SS")
       .input("Company_code", sql.NVarChar, Company_code)
       .input("Location_code", sql.NVarChar, Location_code)
-      .query(`EXEC sp_Setting @mode, '', '', @Company_code, @Location_code, '', '', ''`);
+      .input("Currency", sql.NVarChar, Currency)
+      .query(`EXEC sp_Setting @mode, '', '', @Company_code, @Location_code, '',@Currency, '', ''`);
 
     if (result.recordset.length > 0) {
       res.status(200).json(result.recordset);
