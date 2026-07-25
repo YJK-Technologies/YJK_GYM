@@ -2608,7 +2608,7 @@ const addattrihdrData = async (req, res) => {
 const getAllNumberseries = async (req, res) => {
   try {
     await connection.connectToDatabase();
-    const result = await sql.query(`EXEC sp_numberseries_test 'A','','','','',0,0,0,'','','','','','',null,null,null,null,null,null,null,null,''`);
+    const result = await sql.query(`EXEC sp_numberseries 'A','','','','',0,0,0,'','','','','','',null,null,null,null,null,null,null,null,''`);
 
     res.json(result.recordset);
   } catch (err) {
@@ -2668,7 +2668,7 @@ const addNumberseries = async (req, res) => {
       .input("datetime2", sql.NVarChar, datetime2)
       .input("datetime3", sql.NVarChar, datetime3)
       .input("datetime4", sql.NVarChar, datetime4)
-      .query(`EXEC sp_numberseries_test @mode,@company_code,@Screen_Type,@Start_Year,@End_Year,@Start_No,@Running_No,@End_No,@text,@number_prefix,@Status,@bill_format,
+      .query(`EXEC sp_numberseries @mode,@company_code,@Screen_Type,@Start_Year,@End_Year,@Start_No,@Running_No,@End_No,@text,@number_prefix,@Status,@bill_format,
       @created_by,@modified_by, @tempstr1,@tempstr2,@tempstr3,@tempstr4,@datetime1,@datetime2,@datetime3,@datetime4,''`);
 
     res.status(200).json("Edited data saved successfully");
@@ -2716,7 +2716,7 @@ const saveEditedNumberseriesData = async (req, res) => {
         .input("datetime2", updatedRow.datetime2)
         .input("datetime3", updatedRow.datetime3)
         .input("datetime4", updatedRow.datetime4)
-        .query(`EXEC sp_numberseries_test @mode, @company_code,@Screen_Type, @Start_Year, @End_Year, @Start_No, @Running_No, @End_No,@text,@number_prefix,@Status,@bill_format,
+        .query(`EXEC sp_numberseries @mode, @company_code,@Screen_Type, @Start_Year, @End_Year, @Start_No, @Running_No, @End_No,@text,@number_prefix,@Status,@bill_format,
         @created_by,@modified_by,@tempstr1, @tempstr2, @tempstr3, @tempstr4,@datetime1, @datetime2, @datetime3, @datetime4,''`);
     }
 
@@ -2745,7 +2745,7 @@ const numberseriesdeleteData = async (req, res) => {
           .input("End_Year", updatedRow.End_Year)
           .input("modified_by", sql.NVarChar, req.headers['modified-by'])
           .input("company_code", sql.NVarChar, req.headers['company_code'])
-          .query(`EXEC sp_numberseries_test 'D',@company_code,@Screen_Type,@Start_Year,@End_Year,0,0,0,'','','','','',@modified_by, null,null,null,null,null,null,null,null,''`);
+          .query(`EXEC sp_numberseries 'D',@company_code,@Screen_Type,@Start_Year,@End_Year,0,0,0,'','','','','',@modified_by, null,null,null,null,null,null,null,null,''`);
       } catch (err) {
         if (err.number === 50000) {
           // Foreign key constraint violation
@@ -2787,7 +2787,7 @@ const NumberSeriesUpdate = async (req, res) => {
       .input("bill_format", sql.NVarChar, bill_format)
       .input("created_by", sql.NVarChar, created_by)
       .input("modified_by", sql.NVarChar, modified_by)
-      .query(`EXEC sp_numberseries_test @mode, @company_code,@Screen_Type, @Start_Year, @End_Year, @Start_No, @Running_No,@End_No,@text,@number_prefix,
+      .query(`EXEC sp_numberseries @mode, @company_code,@Screen_Type, @Start_Year, @End_Year, @Start_No, @Running_No,@End_No,@text,@number_prefix,
       @Status,@bill_format,@created_by,@modified_by,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,''`);
 
     res.status(200).json("Edited data saved successfully");
@@ -2804,7 +2804,7 @@ const getNumberseries = async (req, res) => {
       .request()
       .input("company_code", sql.NVarChar, company_code)
       .query(
-        `EXEC sp_numberseries_test 'F','','','','',0,0,0,'','','','','','',null,null,null,null,null,null,null,null,''`,
+        `EXEC sp_numberseries 'F','','','','',0,0,0,'','','','','','',null,null,null,null,null,null,null,null,''`,
       );
 
     res.json(result.recordset);
@@ -2884,7 +2884,7 @@ const getnumberseriessearchdata = async (req, res) => {
       .input("mode", sql.NVarChar, "SC")
       .input("company_code", sql.NVarChar, company_code)
       .input("Screen_Type", sql.NVarChar, Screen_Type) // Correct parameter name
-      .query(`EXEC sp_numberseries_test @mode,@company_code,@Screen_Type,'','',0,0,0,'','','','','','',
+      .query(`EXEC sp_numberseries @mode,@company_code,@Screen_Type,'','',0,0,0,'','','','','','',
                          null,null,null,null,null,null,null,null,''`);
 
     // Send response
@@ -3138,7 +3138,7 @@ const memberAddData = async (req, res) => {
       .input("Company_code", sql.NVarChar, Company_code)
       .input("Location_code", sql.NVarChar, Location_code)
       .input("created_by", sql.NVarChar, created_by)
-      .query(`EXEC sp_Member_Hdr_test2 @mode,@MemberID,@Identity_No,@Full_name,@DOB,@Gender,@Mobile,@WhatsApp_Number,@Email,@Password,@Address,@Emergency_contact_name,@Emergency_contact_phone,@Emergency_contact_relation,
+      .query(`EXEC sp_Member_Hdr @mode,@MemberID,@Identity_No,@Full_name,@DOB,@Gender,@Mobile,@WhatsApp_Number,@Email,@Password,@Address,@Emergency_contact_name,@Emergency_contact_phone,@Emergency_contact_relation,
         @Receive_promotions,@Receive_notifications,@Photo,@Joined_date,@Plan_expiry_date,@Membership_type,@is_active,@DietPlanID,@Company_code,@Location_code,'',0,0,'','','','',@created_by,''`);
 
     const memberId = result.recordset?.[0]?.MemberID ?? MemberID;
@@ -3197,7 +3197,7 @@ const memberUpdate = async (req, res) => {
       .input("Location_code", sql.NVarChar, Location_code)
       .input("Keyfield", sql.NVarChar, Keyfield)
       .input("modified_by", sql.NVarChar, modified_by)
-      .query(`EXEC sp_Member_Hdr_test2 @mode,@MemberID,@Identity_No,@Full_name,@DOB,@Gender,@Mobile,@WhatsApp_Number,@Email,@Password,@Address,
+      .query(`EXEC sp_Member_Hdr @mode,@MemberID,@Identity_No,@Full_name,@DOB,@Gender,@Mobile,@WhatsApp_Number,@Email,@Password,@Address,
           @Emergency_contact_name,@Emergency_contact_phone,@Emergency_contact_relation,@Receive_promotions,@Receive_notifications,
           @Photo,@Joined_date,@Plan_expiry_date,@Membership_type,@is_active,@DietPlanID,@Company_code,@Location_code,@Keyfield,0,0,'','','','','',@modified_by`);
     res.status(200).json("Edited data saved successfully");
@@ -3225,7 +3225,7 @@ const memberDeleteData = async (req, res) => {
         .input("Company_code", sql.NVarChar, req.headers["company_code"])
         .input("Location_code", sql.NVarChar, req.headers["location_code"])
         .input("modified_by", sql.NVarChar, req.headers["modified-by"])
-        .query(`EXEC sp_Member_Hdr_test2 'D',@MemberID,'','','','','','','','','','','','','','',NULL,'','','','','',@Company_code,@Location_code,'',0,0,'','','','','',@modified_by`);
+        .query(`EXEC sp_Member_Hdr 'D',@MemberID,'','','','','','','','','','','','','','',NULL,'','','','','',@Company_code,@Location_code,'',0,0,'','','','','',@modified_by`);
     }
 
     res.status(200).json("member deleted successfully");
@@ -3243,7 +3243,7 @@ const getAllmemberData = async (req, res) => {
       .request()
       .input("Company_code", sql.NVarChar, Company_code)
       .input("Location_code", sql.NVarChar, Location_code)
-      .query(`EXEC sp_Member_Hdr_test2 'A','','','','','','','','','','','','','','','',NULL,'','','','','',@Company_code,@Location_code,'',0,0,'','','','','',''`);
+      .query(`EXEC sp_Member_Hdr 'A','','','','','','','','','','','','','','','',NULL,'','','','','',@Company_code,@Location_code,'',0,0,'','','','','',''`);
 
     if (result.recordset.length > 0) {
       res.status(200).json(result.recordset);
@@ -3325,7 +3325,7 @@ const searchMemberData = async (req, res) => {
       .input("expiry_date_to", sql.NVarChar, expiry_date_to)
       .input("Company_code", sql.NVarChar, Company_code)
       .input("Location_code", sql.NVarChar, Location_code)
-      .query(`EXEC sp_Member_Hdr_test2 @mode,@MemberID,@Identity_No,@Full_name,'',@Gender,@Mobile,@WhatsApp_Number,@Email,'','','','','',
+      .query(`EXEC sp_Member_Hdr @mode,@MemberID,@Identity_No,@Full_name,'',@Gender,@Mobile,@WhatsApp_Number,@Email,'','','','','',
         '','',NULL,'','',@Membership_type,@is_active,@DietPlanID,@Company_code,@Location_code,'',@age_from,@age_to,@Joined_date_from,@Joined_date_to,@expiry_date_from,@expiry_date_to,'',''`);
 
     if (result.recordset.length > 0) {
@@ -3699,7 +3699,7 @@ const getMemberCardData = async (req, res) => {
       .input("mode", sql.NVarChar, "ST")
       .input("Company_code", sql.NVarChar, Company_code)
       .input("Location_code", sql.NVarChar, Location_code)
-      .query(`EXEC sp_Member_Hdr_test2 @mode,'','','','','','','','','','','','','','','',NULL,'','','','','',@Company_code,@Location_code,'',0,0,'','','','','',''`);
+      .query(`EXEC sp_Member_Hdr @mode,'','','','','','','','','','','','','','','',NULL,'','','','','',@Company_code,@Location_code,'',0,0,'','','','','',''`);
 
     if (result.recordset.length > 0) {
       res.status(200).json(result.recordset);
@@ -4099,7 +4099,7 @@ const Diet_Plans_hdrInsert = async (req, res) => {
       .input("created_date", sql.DateTime, created_date)
       .input("modified_by", sql.NVarChar, modified_by)
       .input("modified_date", sql.DateTime, modified_date)
-      .query(`EXEC sp_Diet_Plans_hdr_Test @mode, @DietPlanID, @Diet_Name, @Category, @Description, @Goals, @Restrictions, @TrainerID, @Is_Active, @KeyField, @Location_Code, @company_code, @created_by, @created_date, @modified_by, @modified_date`);
+      .query(`EXEC sp_Diet_Plans_hdr @mode, @DietPlanID, @Diet_Name, @Category, @Description, @Goals, @Restrictions, @TrainerID, @Is_Active, @KeyField, @Location_Code, @company_code, @created_by, @created_date, @modified_by, @modified_date`);
     const generatedDietPlanID = result.recordset?.[0]?.DietPlanID ?? DietPlanID;
     // result.recordset[0].DietPlanID;
     res.status(200).json({ success: true, message: "Diet_Plans_hdr insertd successfully", DietPlanID: generatedDietPlanID });
@@ -4129,7 +4129,7 @@ const Diet_Plans_hdrUpdate = async (req, res) => {
       .input("Location_Code", sql.NVarChar, Location_Code)
       .input("company_code", sql.NVarChar, company_code)
       .input("modified_by", sql.NVarChar, modified_by)
-      .query(`EXEC sp_Diet_Plans_hdr_Test @mode, @DietPlanID, @Diet_Name, @Category, @Description, @Goals, @Restrictions, @TrainerID, @Is_Active, @KeyField, @Location_Code, @company_code, '', '', @modified_by, ''`);
+      .query(`EXEC sp_Diet_Plans_hdr @mode, @DietPlanID, @Diet_Name, @Category, @Description, @Goals, @Restrictions, @TrainerID, @Is_Active, @KeyField, @Location_Code, @company_code, '', '', @modified_by, ''`);
 
     res.status(200).json({ success: true, message: "Diet_Plans_hdr updated successfully" });
   } catch (err) {
@@ -4151,7 +4151,7 @@ const Diet_Plans_hdrDelete = async (req, res) => {
       .input("Location_Code", sql.NVarChar, Location_Code)
       .input("company_code", sql.NVarChar, company_code)
       .input("modified_by", sql.NVarChar, modified_by)
-      .query(`EXEC sp_Diet_Plans_hdr_Test @mode, @DietPlanID, '', '', '', '', '', '', '', @KeyField, @Location_Code, @company_code, '', '', @modified_by, ''`);
+      .query(`EXEC sp_Diet_Plans_hdr @mode, @DietPlanID, '', '', '', '', '', '', '', @KeyField, @Location_Code, @company_code, '', '', @modified_by, ''`);
 
     res.status(200).json({ success: true, message: "Diet_Plans_hdr deleted successfully" });
   } catch (err) {
@@ -4405,7 +4405,7 @@ const dietPlanSearchData = async (req, res) => {
       .input("Is_Active", sql.NVarChar, Is_Active)
       .input("Company_code", sql.NVarChar, Company_code)
       .input("Location_code", sql.NVarChar, Location_code)
-      .query(`EXEC sp_Diet_Plans_hdr_Test @mode, @DietPlanID, @Diet_Name, @Category, @Description, @Goals, @Restrictions, @TrainerID, @Is_Active, '', @Location_Code, @company_code, '', '', '', ''`);
+      .query(`EXEC sp_Diet_Plans_hdr @mode, @DietPlanID, @Diet_Name, @Category, @Description, @Goals, @Restrictions, @TrainerID, @Is_Active, '', @Location_Code, @company_code, '', '', '', ''`);
 
     if (result.recordset.length > 0) {
       res.status(200).json(result.recordset);
@@ -4523,7 +4523,7 @@ const PackageInsertData = async (req, res) => {
       .input("Company_code", sql.NVarChar, Company_code)
       .input("Location_code", sql.NVarChar, Location_code)
       .input("created_by", sql.NVarChar, created_by)
-      .query(`EXEC sp_Package_hdr_test @Mode,@package_ID,@package_Name,@package_type,@duration_days,@price,@features,@discount_percentage,@is_active,@Company_code,@Location_code,'',@created_by,''`);
+      .query(`EXEC sp_Package_hdr @Mode,@package_ID,@package_Name,@package_type,@duration_days,@price,@features,@discount_percentage,@is_active,@Company_code,@Location_code,'',@created_by,''`);
 
     const packageId = result.recordset?.[0]?.PackageID ?? PackageID;
 
@@ -4562,7 +4562,7 @@ const PackageUpdateData = async (req, res) => {
             .input("Company_Code", sql.NVarChar, Company_Code)
             .input("Location_Code", sql.NVarChar, Location_Code)
             .input("modified_by", sql.NVarChar, modified_by)
-            .query(`EXEC sp_Package_hdr_test @Mode,@package_ID,@package_Name,@package_type,@duration_days,@price,@features,@discount_percentage,@is_active,@Company_Code,@Location_Code,'','',@modified_by`);
+            .query(`EXEC sp_Package_hdr @Mode,@package_ID,@package_Name,@package_type,@duration_days,@price,@features,@discount_percentage,@is_active,@Company_Code,@Location_Code,'','',@modified_by`);
         res.status(200).json({
             message: "Package data updated successfully"
         });
@@ -4586,7 +4586,7 @@ const PackageDeleteData = async (req, res) => {
             .input("Company_Code", sql.NVarChar, Company_Code)
             .input("Location_Code", sql.NVarChar, Location_Code)
             .input("KeyField", sql.NVarChar, KeyField)
-            .query(` EXEC sp_Package_hdr_test @Mode, @package_ID, '', '', 0, 0, '', 0, '', @Company_Code, @Location_Code, @KeyField, '', ''`);
+            .query(` EXEC sp_Package_hdr @Mode, @package_ID, '', '', 0, 0, '', 0, '', @Company_Code, @Location_Code, @KeyField, '', ''`);
         res.status(200).json({
             message: "Package data deleted successfully"
         });
@@ -4609,7 +4609,7 @@ const PackageSelectData = async (req, res) => {
             .input("package_ID", sql.NVarChar, package_ID)
             .input("Company_Code", sql.NVarChar, Company_Code)
             .input("Location_Code", sql.NVarChar, Location_Code)
-            .query(`EXEC sp_Package_hdr_test @Mode, @package_ID, '', '', 0, 0, '', 0, '', @Company_Code, @Location_Code, '', '', ''`);
+            .query(`EXEC sp_Package_hdr @Mode, @package_ID, '', '', 0, 0, '', 0, '', @Company_Code, @Location_Code, '', '', ''`);
       res.status(200).json(result.recordset);
     } catch (err) {
         console.error("Error", err.message);
@@ -4639,7 +4639,7 @@ const PackageViewAllData = async (req, res) => {
             .input("Location_Code", sql.NVarChar, Location_Code)
             .input("created_by", sql.NVarChar, "")
             .input("modified_by", sql.NVarChar, "")
-            .query(`EXEC sp_Package_hdr_test @Mode,@package_ID,@package_Name,@package_type,@duration_days,@price,@features,@discount_percentage,@is_active,@Company_Code,@Location_Code, '',@created_by,@modified_by`);
+            .query(`EXEC sp_Package_hdr @Mode,@package_ID,@package_Name,@package_type,@duration_days,@price,@features,@discount_percentage,@is_active,@Company_Code,@Location_Code, '',@created_by,@modified_by`);
         res.status(200).json(result.recordset);
     } catch (err) {
         console.error("Error", err.message);
@@ -4671,7 +4671,7 @@ const PackageSearchData = async (req, res) => {
             .input("Company_Code", sql.NVarChar, Company_Code)
             .input("Location_Code", sql.NVarChar, Location_Code)
             .input("program_id", sql.NVarChar, program_id)
-            .query(` EXEC sp_Package_hdr_test @Mode, @package_ID, @package_Name, @package_type, @duration_days, @price, @features, @discount_percentage, @is_active, @Company_Code, @Location_Code, '', '', '' `);
+            .query(` EXEC sp_Package_hdr @Mode, @package_ID, @package_Name, @package_type, @duration_days, @price, @features, @discount_percentage, @is_active, @Company_Code, @Location_Code, '', '', '' `);
 
             if (result.recordset.length > 0) {
                 res.status(200).json(result.recordset);
@@ -4802,7 +4802,7 @@ const getAppPackages = async (req, res) => {
       .input("mode", sql.NVarChar, "P")
       .input("Company_Code", sql.NVarChar, Company_Code)
       .input("Location_Code", sql.NVarChar, Location_Code)
-      .query(`EXEC sp_Package_hdr_test @mode,'', '', '', 0,  0,  '', 0,  '', @Company_Code,@Location_Code,'', '', ''  `);
+      .query(`EXEC sp_Package_hdr @mode,'', '', '', 0,  0,  '', 0,  '', @Company_Code,@Location_Code,'', '', ''  `);
 
     if (result.recordset.length > 0) {
       res.status(200).json(result.recordset);
@@ -4836,7 +4836,7 @@ const Diet_Plans_DetailsSearch = async (req, res) => {
       .input("DietPlanID", sql.NVarChar, DietPlanID)
       .input("Location_Code", sql.NVarChar, Location_Code)
       .input("company_code", sql.NVarChar, company_code)
-      .query(`  EXEC sp_Diet_Plans_Details  @mode,  '',  @DietPlanID,  '',  '',  '',  '',  @Location_Code,  @company_code,  '',  '',  '',  '', ''`);
+      .query(`EXEC sp_Diet_Plans_Details  @mode,  '',  @DietPlanID,  '',  '',  '',  '',  @Location_Code,  @company_code,  '',  '',  '',  '', ''`);
 
     res.status(200).json(result.recordset);
   } catch (err) {
@@ -4866,13 +4866,8 @@ const Diet_Plans_MealsSearch = async (req, res) => {
       .input("DietPlanID", sql.NVarChar, DietPlanID)
       .input("Location_Code", sql.NVarChar, Location_Code)
       .input("company_code", sql.NVarChar, company_code)
-
-      .query(`
-        EXEC sp_Diet_Plans_Meals @mode, '', @DietPlanID, '', '', '', '', '', '', '', '', '', 
-        @Location_Code, @company_code, '', '', '', '', '' `);
-
+      .query(`EXEC sp_Diet_Plans_Meals @mode, '', @DietPlanID, '', '', '', '', '', '', '', '', '', @Location_Code, @company_code, '', '', '', '', '' `);
     res.status(200).json(result.recordset);
-
   }
   catch(err){
 
@@ -4898,7 +4893,7 @@ const getDietPlanCardData = async (req, res) => {
       .input("mode", sql.NVarChar, "CD")
       .input("company_code", sql.NVarChar, Company_code)
       .input("Location_Code", sql.NVarChar, Location_code)
-      .query(`EXEC sp_Diet_Plans_hdr_Test @mode, '', '', '', '', '', '', '', '', '', @Location_Code, @company_code, '', '', '', ''`);
+      .query(`EXEC sp_Diet_Plans_hdr @mode, '', '', '', '', '', '', '', '', '', @Location_Code, @company_code, '', '', '', ''`);
 
     res.status(200).json({
       success: true,
@@ -5209,7 +5204,7 @@ const getDietPlanNameId = async (req, res) => {
       .input("mode", sql.NVarChar, "DP")
       .input("Company_code", sql.NVarChar, Company_code)
       .input("Location_code", sql.NVarChar, Location_code)
-      .query(`EXEC sp_Diet_Plans_hdr_Test @mode, '', '', '', '', '', '', '', '', '', @Location_Code, @company_code, '', '', '', ''`);
+      .query(`EXEC sp_Diet_Plans_hdr @mode, '', '', '', '', '', '', '', '', '', @Location_Code, @company_code, '', '', '', ''`);
 
     if (result.recordset.length > 0) {
       res.status(200).json(result.recordset);
@@ -5234,7 +5229,7 @@ const getMemberProgarmDetails = async (req, res) => {
       .input("MemberID", sql.NVarChar, MemberID)
       .input("Company_code", sql.NVarChar, Company_code)
       .input("Location_code", sql.NVarChar, Location_code)
-      .query(`EXEC sp_Member_Hdr_test2 @mode,@MemberID,'','','','','','','','','','','','','','',NULL,'','','','','',@Company_code,@Location_code,'',0,0,'','','','','',''`);
+      .query(`EXEC sp_Member_Hdr @mode,@MemberID,'','','','','','','','','','','','','','',NULL,'','','','','',@Company_code,@Location_code,'',0,0,'','','','','',''`);
 
     if (result.recordset.length > 0) {
       res.status(200).json(result.recordset);
