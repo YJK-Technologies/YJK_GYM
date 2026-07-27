@@ -363,13 +363,6 @@ const FacultyManagement = () => {
       Object.entries(TrainerForm).forEach(([key, value]) => {
         formData.append(key, value as string);
       });
-      // Object.entries(TrainerForm).forEach(([key, value]) => {
-      //   if (key === "super_admin") {
-      //     formData.append("super_admin", value ? "Yes" : "No");
-      //   } else {
-      //     formData.append(key, String(value ?? ""));
-      //   }
-      // });
 
       TrainerImages.forEach((img, index) => {
         if (!img) return;
