@@ -333,7 +333,12 @@ const getDashboardData = async () => {
                       {action.description}
                     </p>
                     <Button
-                      className="w-full"
+                      className={`w-full text-white border-0 transition-colors duration-300
+                        ${
+                          index % 2 === 0
+                            ? "bg-orange-400 hover:bg-purple-600"
+                            : "bg-emerald-400 hover:bg-purple-600"
+                        }`}
                       variant="outline"
                       onClick={() => navigate(action.route)}
                     >

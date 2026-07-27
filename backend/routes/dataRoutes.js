@@ -193,6 +193,10 @@ router.post("/adminDashboardCardData", dataController.adminDashboardCardData)
 router.post("/getDietPlanNameId", dataController.getDietPlanNameId)
 router.post("/getMemberProgarmDetails", dataController.getMemberProgarmDetails)
 router.post("/memberProgramSearchData", dataController.memberProgramSearchData)
+router.post("/PaymentTransactionInsert", dataController.PaymentTransactionInsert)
+router.post("/PaymentTransactionUpdate", dataController.PaymentTransactionUpdate)
+router.post("/PaymentTransactionDelete", dataController.PaymentTransactionDelete)
+router.post("/getPaymentPackageDetails", dataController.getPaymentPackageDetails)
 
 
 
