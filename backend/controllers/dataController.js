@@ -5274,6 +5274,121 @@ const memberProgramSearchData = async (req, res) => {
 };
 //Code ended by Dinesh Gokul on 24-07-2026
 
+//Code added by Dinesh Gokul on 27-07-2026
+// Auto-generated Node.js CRUD for sp_PaymentTransaction
+
+const PaymentTransactionInsert = async (req, res) => {
+  const { payment_id, MemberID, MemberShipType_id, package_ID, original_amount, discount_amount, final_amount, payment_method, Coupon_Code, status, payment_date, notes, keyfield, company_code, location_code, created_by, created_date
+  } = req.body;
+
+  try {
+    const pool = await sql.connect(dbConfig);
+    await pool.request()
+      .input("mode", sql.NVarChar, "I")
+      .input("payment_id", sql.NVarChar, payment_id)
+      .input("MemberID", sql.NVarChar, MemberID)
+      .input("MemberShipType_id", sql.NVarChar, MemberShipType_id)
+      .input("package_ID", sql.NVarChar, package_ID)
+      .input("original_amount", sql.Decimal(10, 2), original_amount)
+      .input("discount_amount", sql.Decimal(10, 2), discount_amount)
+      .input("final_amount", sql.Decimal(10, 2), final_amount)
+      .input("payment_method", sql.NVarChar, payment_method)
+      .input("Coupon_Code", sql.NVarChar, Coupon_Code)
+      .input("status", sql.NVarChar, status)
+      .input("payment_date", sql.DateTime, payment_date)
+      .input("notes", sql.NVarChar, notes)
+      .input("keyfield", sql.NVarChar, keyfield)
+      .input("company_code", sql.NVarChar, company_code)
+      .input("location_code", sql.NVarChar, location_code)
+      .input("created_by", sql.NVarChar, created_by)
+      .input("created_date", sql.DateTime, created_date)
+      .query(`EXEC sp_PaymentTransaction @mode, @payment_id, @MemberID, @MemberShipType_id, @package_ID, @original_amount, @discount_amount, @final_amount, @payment_method, @Coupon_Code, @status, @payment_date, @notes, @keyfield, @company_code, @location_code, @created_by, @created_date, '', ''`);
+
+    res.status(200).json({ success: true, message: "PaymentTransaction insertd successfully" });
+  } catch (err) {
+    console.error("Error during PaymentTransaction insert:", err);
+    res.status(500).json({ message: err.message || "Internal Server Error" });
+  }
+};
+
+const PaymentTransactionUpdate = async (req, res) => {
+  const { payment_id, MemberID, MemberShipType_id, package_ID, original_amount, discount_amount, final_amount, payment_method, Coupon_Code, status, payment_date, notes, keyfield, company_code, location_code, modified_by, modified_date
+  } = req.body;
+
+  try {
+    const pool = await sql.connect(dbConfig);
+    await pool.request()
+      .input("mode", sql.NVarChar, "U")
+      .input("payment_id", sql.NVarChar, payment_id)
+      .input("MemberID", sql.NVarChar, MemberID)
+      .input("MemberShipType_id", sql.NVarChar, MemberShipType_id)
+      .input("package_ID", sql.NVarChar, package_ID)
+      .input("original_amount", sql.Decimal(10, 2), original_amount)
+      .input("discount_amount", sql.Decimal(10, 2), discount_amount)
+      .input("final_amount", sql.Decimal(10, 2), final_amount)
+      .input("payment_method", sql.NVarChar, payment_method)
+      .input("Coupon_Code", sql.NVarChar, Coupon_Code)
+      .input("status", sql.NVarChar, status)
+      .input("payment_date", sql.DateTime, payment_date)
+      .input("notes", sql.NVarChar, notes)
+      .input("keyfield", sql.NVarChar, keyfield)
+      .input("company_code", sql.NVarChar, company_code)
+      .input("location_code", sql.NVarChar, location_code)
+      .input("modified_by", sql.NVarChar, modified_by)
+      .input("modified_date", sql.DateTime, modified_date)
+      .query(`EXEC sp_PaymentTransaction @mode, @payment_id, @MemberID, @MemberShipType_id, @package_ID, @original_amount, @discount_amount, @final_amount, @payment_method, @Coupon_Code, @status, @payment_date, @notes, @keyfield, @company_code, @location_code, '', '', @modified_by, @modified_date`);
+
+    res.status(200).json({ success: true, message: "PaymentTransaction updated successfully" });
+  } catch (err) {
+    console.error("Error during PaymentTransaction update:", err);
+    res.status(500).json({ message: err.message || "Internal Server Error" });
+  }
+};
+
+const PaymentTransactionDelete = async (req, res) => {
+  const { payment_id, keyfield, company_code, location_code
+  } = req.body;
+
+  try {
+    const pool = await sql.connect(dbConfig);
+    await pool.request()
+      .input("mode", sql.NVarChar, "D")
+      .input("payment_id", sql.NVarChar, payment_id)
+      .input("keyfield", sql.NVarChar, keyfield)
+      .input("company_code", sql.NVarChar, company_code)
+      .input("location_code", sql.NVarChar, location_code)
+      .query(`EXEC sp_PaymentTransaction @mode, @payment_id, '', '', '', 0, 0, 0, '', '', '', '', '', @keyfield, @company_code, @location_code, '', '', '', ''`);
+
+    res.status(200).json({ success: true, message: "PaymentTransaction deleted successfully" });
+  } catch (err) {
+    console.error("Error during PaymentTransaction delete:", err);
+    res.status(500).json({ message: err.message || "Internal Server Error" });
+  }
+};
+
+const getPaymentPackageDetails = async (req, res) => {
+  const { MemberID, Company_code, Location_code } = req.body;
+  try {
+    const pool = await connection.connectToDatabase();
+    const result = await pool
+      .request()
+      .input("mode", sql.NVarChar, "PPD")
+      .input("MemberID", sql.NVarChar, MemberID)
+      .input("Company_code", sql.NVarChar, Company_code)
+      .input("Location_code", sql.NVarChar, Location_code)
+      .query(`EXEC sp_Member_Hdr @mode,@MemberID,'','','','','','','','','','','','','','',NULL,'','','','','',@Company_code,@Location_code,'',0,0,'','','','','',''`);
+
+    if (result.recordset.length > 0) {
+      res.status(200).json(result.recordset);
+    } else {
+      res.status(404).json("Data not found");
+    }
+  } catch (err) {
+    console.error("Error", err);
+    res.status(500).json({ message: err.message || "Internal Server Error" });
+  }
+}
+//Code ended by Dinesh Gokul on 27-07-2026
 module.exports = {
   getCompanyno,
   getsearchdata,
@@ -5441,6 +5556,10 @@ module.exports = {
   adminDashboardCardData,
   getDietPlanNameId,
   getMemberProgarmDetails,
-  memberProgramSearchData
+  memberProgramSearchData,
+  PaymentTransactionInsert, 
+  PaymentTransactionUpdate, 
+  PaymentTransactionDelete,
+  getPaymentPackageDetails
 
 };
