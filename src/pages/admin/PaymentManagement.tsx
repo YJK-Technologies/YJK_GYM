@@ -72,11 +72,10 @@ import {
   Bar,
   Legend,
 } from "recharts";
-import {
-  LayoutDashboard,
-  History,
-  FileBarChart2,
-} from "lucide-react";
+import { LayoutDashboard, History, FileBarChart2 } from "lucide-react";
+import { BASE_URL } from "../ApiConfig";
+import { useCompany } from "../CompanyContext";
+import AgGridTable from "@/components/ui/ag-grid-table";
 
 // Types
 interface Payment {
@@ -106,186 +105,18 @@ interface Member {
 }
 
 interface PackageOption {
-  id: string;
-  name: string;
-  price: number;
-  duration: string;
-  programName: string;
+  package_ID: string;
+  package_Name: string;
+  MemberShipType_Name: string;
+  ProgramName: string;
+  Duration: string;
+  Amount: number;
 }
-
-// Sample data
-const samplePayments: Payment[] = [
-  {
-    id: "PAY-2024-001",
-    memberCpr: "810234567",
-    memberName: "Fatima Al-Mahmoud",
-    packageId: "pkg-1",
-    packageName: "Weight Loss - Quarterly",
-    originalAmount: 65.0,
-    discountAmount: 6.5,
-    finalAmount: 58.5,
-    paymentMethod: "BenefitPay",
-    couponCode: "SAVE10",
-    status: "Completed",
-    paymentDate: "2024-01-15",
-    receiptNumber: "REC-2024-001",
-    notes: "",
-    postedToExternal: true,
-  },
-  {
-    id: "PAY-2024-002",
-    memberCpr: "820345678",
-    memberName: "Mohammed Al-Khalifa",
-    packageId: "pkg-2",
-    packageName: "Muscle Building - Monthly",
-    originalAmount: 30.0,
-    discountAmount: 0,
-    finalAmount: 30.0,
-    paymentMethod: "Cash",
-    couponCode: null,
-    status: "Completed",
-    paymentDate: "2024-01-16",
-    receiptNumber: "REC-2024-002",
-    notes: "",
-    postedToExternal: false,
-  },
-  {
-    id: "PAY-2024-003",
-    memberCpr: "830456789",
-    memberName: "Sara Al-Dosari",
-    packageId: "pkg-3",
-    packageName: "Yoga Wellness - Half-Yearly",
-    originalAmount: 120.0,
-    discountAmount: 24.0,
-    finalAmount: 96.0,
-    paymentMethod: "Online",
-    couponCode: "HALFYEAR20",
-    status: "Completed",
-    paymentDate: "2024-01-17",
-    receiptNumber: "REC-2024-003",
-    notes: "First-time member discount applied",
-    postedToExternal: true,
-  },
-  {
-    id: "PAY-2024-004",
-    memberCpr: "840567890",
-    memberName: "Ahmed Al-Farsi",
-    packageId: "pkg-4",
-    packageName: "CrossFit - Monthly",
-    originalAmount: 35.0,
-    discountAmount: 0,
-    finalAmount: 35.0,
-    paymentMethod: "BenefitPay",
-    couponCode: null,
-    status: "Pending",
-    paymentDate: "2024-01-18",
-    receiptNumber: "REC-2024-004",
-    notes: "Awaiting confirmation",
-    postedToExternal: false,
-  },
-];
-
-const sampleMembers: Member[] = [
-  {
-    cpr: "810234567",
-    name: "Fatima Al-Mahmoud",
-    email: "fatima@email.com",
-    phone: "+973 3456 7890",
-    membershipStatus: "Active",
-  },
-  {
-    cpr: "820345678",
-    name: "Mohammed Al-Khalifa",
-    email: "mohammed@email.com",
-    phone: "+973 3567 8901",
-    membershipStatus: "Active",
-  },
-  {
-    cpr: "830456789",
-    name: "Sara Al-Dosari",
-    email: "sara@email.com",
-    phone: "+973 3678 9012",
-    membershipStatus: "Active",
-  },
-  {
-    cpr: "840567890",
-    name: "Ahmed Al-Farsi",
-    email: "ahmed@email.com",
-    phone: "+973 3789 0123",
-    membershipStatus: "Pending",
-  },
-];
-
-const samplePackages: PackageOption[] = [
-  {
-    id: "pkg-1",
-    name: "Weight Loss - Monthly",
-    price: 25.0,
-    duration: "30 Days",
-    programName: "Weight Loss Transformation",
-  },
-  {
-    id: "pkg-2",
-    name: "Weight Loss - Quarterly",
-    price: 65.0,
-    duration: "90 Days",
-    programName: "Weight Loss Transformation",
-  },
-  {
-    id: "pkg-3",
-    name: "Weight Loss - Half-Yearly",
-    price: 120.0,
-    duration: "180 Days",
-    programName: "Weight Loss Transformation",
-  },
-  {
-    id: "pkg-4",
-    name: "Muscle Building - Monthly",
-    price: 30.0,
-    duration: "30 Days",
-    programName: "Muscle Building Pro",
-  },
-  {
-    id: "pkg-5",
-    name: "Muscle Building - Quarterly",
-    price: 80.0,
-    duration: "90 Days",
-    programName: "Muscle Building Pro",
-  },
-  {
-    id: "pkg-6",
-    name: "CrossFit - Monthly",
-    price: 35.0,
-    duration: "30 Days",
-    programName: "CrossFit Extreme",
-  },
-];
-
-const revenueChartData = [
-  { day: "Mon", revenue: 245 },
-  { day: "Tue", revenue: 320 },
-  { day: "Wed", revenue: 185 },
-  { day: "Thu", revenue: 410 },
-  { day: "Fri", revenue: 295 },
-  { day: "Sat", revenue: 520 },
-  { day: "Sun", revenue: 180 },
-];
-
-const paymentMethodData = [
-  { name: "Cash", value: 35, color: "#22c55e" },
-  { name: "Online", value: 40, color: "#3b82f6" },
-  { name: "BenefitPay", value: 25, color: "#f97316" },
-];
-
-const packageRevenueData = [
-  { name: "Monthly", revenue: 850, count: 28 },
-  { name: "Quarterly", revenue: 1200, count: 15 },
-  { name: "Half-Yearly", revenue: 960, count: 8 },
-];
 
 const PaymentManagement = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
+  const { companyCode, locationCode, userCode } = useCompany();
 
   const tabs = [
     {
@@ -330,11 +161,15 @@ const PaymentManagement = () => {
     }
   }, []);
 
+  // useEffect(() => {
+  //   fetchPackages()
+  // }, []);
+
   const tabPermissions = [
     "PaymentDashboard",
     "NewPayment",
     "PaymentHistory",
-    "PaymentReports"
+    "PaymentReports",
   ];
 
   const hasAnyTabPermission = tabPermissions.some((tab) =>
@@ -352,7 +187,8 @@ const PaymentManagement = () => {
           </h2>
 
           <p className="mt-2 text-gray-500">
-            You don't have permission to access any module in Payment Management.
+            You don't have permission to access any module in Payment
+            Management.
           </p>
 
           <Button className="mt-6" onClick={() => navigate("/AdminDashboard")}>
@@ -363,14 +199,49 @@ const PaymentManagement = () => {
     );
   }
 
-  const [payments, setPayments] = useState<Payment[]>(samplePayments);
+  const [payments, setPayments] = useState<Payment[]>([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState<string>("all");
   const [methodFilter, setMethodFilter] = useState<string>("all");
 
   // New Payment Form State
+  const [members, setMembers] = useState<Member[]>([]);
+  const [memberSearchResults, setMemberSearchResults] = useState<any[]>([]);
+  const resetMemberSearch = () => {
+    setMemberSearch({
+      MemberID: "",
+      Full_name: "",
+      Gender: "",
+      Mobile: "",
+      Email: "",
+      Address: "",
+      Membership_type: "",
+      is_active: "",
+    });
+
+    setMemberSearchResults([]);
+  };
   const [selectedMember, setSelectedMember] = useState<Member | null>(null);
+
+  const [memberHelpOpen, setMemberHelpOpen] = useState(false);
+  // For member search
+  const [memberSearch, setMemberSearch] = useState({
+    MemberID: "",
+    Full_name: "",
+    Gender: "",
+    Mobile: "",
+    Email: "",
+    Address: "",
+    Membership_type: "",
+    is_active: "Active",
+  });
+
+  const [gender, setGender] = useState<any[]>([]);
+  const [statusList, setStatusList] = useState<any[]>([]);
+
   const [memberSearchTerm, setMemberSearchTerm] = useState("");
+
+  const [packages, setPackages] = useState<PackageOption[]>([]);
   const [selectedPackage, setSelectedPackage] = useState<PackageOption | null>(
     null,
   );
@@ -387,6 +258,26 @@ const PaymentManagement = () => {
   // Dialogs
   const [webhookDialogOpen, setWebhookDialogOpen] = useState(false);
   const [webhookUrl, setWebhookUrl] = useState("");
+
+  // New
+  const [revenueChartData, setRevenueChartData] = useState([]);
+  const [paymentMethodData, setPaymentMethodData] = useState([]);
+  const [packageRevenueData, setPackageRevenueData] = useState([]);
+
+  const [paymentId, setPaymentId] = useState("");
+  const [memberId, setMemberId] = useState("");
+  const [membershipTypeId, setMembershipTypeId] = useState("");
+  const [packageId, setPackageId] = useState("");
+
+  const [originalAmount, setOriginalAmount] = useState(0);
+  const [discountAmount, setDiscountAmount] = useState(0);
+  const [finalAmount, setFinalAmount] = useState(0);
+
+  const [status, setStatus] = useState("Active");
+  const [paymentDate, setPaymentDate] = useState("");
+  const [notes, setNotes] = useState("");
+
+  const [keyField, setKeyField] = useState("");
 
   // Stats calculation
   const todayTotal = payments
@@ -418,11 +309,251 @@ const PaymentManagement = () => {
   });
 
   // Filter members for search
-  const filteredMembers = sampleMembers.filter(
+  const filteredMembers = members.filter(
     (member) =>
       member.name.toLowerCase().includes(memberSearchTerm.toLowerCase()) ||
       member.cpr.includes(memberSearchTerm),
   );
+
+  // For search dropdown
+  const fetchStatus = async () => {
+    try {
+      const response = await fetch(`${BASE_URL}/status`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          company_code: companyCode,
+        }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        setStatusList(data);
+      } else {
+        console.error("Failed to fetch status");
+      }
+    } catch (error) {
+      console.error("Error fetching status:", error);
+    }
+  };
+
+  const fetchGender = async () => {
+    try {
+      const response = await fetch(`${BASE_URL}/gender`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          company_code: companyCode,
+        }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        setGender(data);
+      } else {
+        console.error("Failed to fetch status");
+      }
+    } catch (error) {
+      console.error("Error fetching status:", error);
+    }
+  };
+
+  const fetchPackages = async () => {
+      try {
+        const response = await fetch(`${BASE_URL}/getMeberShipPackages`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            Company_code: companyCode,
+            Location_code: locationCode,
+          }),
+        });
+  
+        const data = await response.json();
+  
+        if (response.ok) {
+          setPackages(data);
+  
+          console.log(data);
+        } else {
+          console.error("Failed to fetch status");
+        }
+      } catch (error) {
+        console.error("Error fetching status:", error);
+      }
+    };
+
+  const MembersColumnDefs = [
+    {
+      headerName: "Member ID",
+      field: "MemberID",
+      flex: 1,
+      sortable: true,
+      filter: true,
+    },
+    {
+      headerName: "Name",
+      field: "Full_name",
+      flex: 2,
+      sortable: true,
+      filter: true,
+    },
+    {
+      headerName: "Gender",
+      field: "Gender",
+      flex: 1,
+      sortable: true,
+      filter: true,
+    },
+    {
+      headerName: "Mobile",
+      field: "Mobile",
+      flex: 1.3,
+      sortable: true,
+      filter: true,
+    },
+    {
+      headerName: "Email",
+      field: "Email",
+      flex: 2,
+      sortable: true,
+      filter: true,
+    },
+    {
+      headerName: "Membership",
+      field: "Membership_type",
+      flex: 1.5,
+      sortable: true,
+      filter: true,
+    },
+    {
+      headerName: "Status",
+      field: "is_active",
+      flex: 1,
+      cellRenderer: (params: any) => (
+        <Badge
+          className={params.value === "Active" ? "bg-green-500" : "bg-red-500"}
+        >
+          {params.value}
+        </Badge>
+      ),
+    },
+    {
+      headerName: "Action",
+      field: "action",
+      flex: 1,
+      filter: false,
+      sortable: false,
+      cellRenderer: (params: any) => (
+        <Button
+          size="sm"
+          onClick={() => {
+  const member = {
+    cpr: params.data.MemberID,
+    name: params.data.Full_name,
+    email: params.data.Email,
+    phone: params.data.Mobile,
+    membershipStatus: params.data.Membership_type,
+  };
+
+  setSelectedMember(member);
+
+  // Fetch packages linked to this member
+  fetchMemberPackages(member.cpr);
+
+  // Clear previously selected package
+  setSelectedPackage(null);
+  setAppliedCoupon(null);
+
+  resetMemberSearch();
+  setMemberHelpOpen(false);
+}}
+        >
+          Select
+        </Button>
+      ),
+    },
+  ];
+
+  const handleSearchMembers = async () => {
+    try {
+      const response = await fetch(`${BASE_URL}/searchMemberData`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          MemberID: memberSearch.MemberID,
+          Identity_No: "",
+          Full_name: memberSearch.Full_name,
+          Gender: memberSearch.Gender,
+          Mobile: memberSearch.Mobile,
+          Email: memberSearch.Email,
+          Membership_type: memberSearch.Membership_type,
+          is_active: memberSearch.is_active,
+          Company_code: companyCode,
+          Location_code: locationCode,
+        }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        setMemberSearchResults(data);
+      } else {
+        setMemberSearchResults([]);
+
+        toast({
+          title: "No Members Found",
+          description: "No matching members were found.",
+          variant: "destructive",
+        });
+      }
+    } catch (error) {
+      console.error(error);
+
+      toast({
+        title: "Error",
+        description: "Unable to fetch member details.",
+        variant: "destructive",
+      });
+    }
+  };
+
+  const fetchMemberPackages = async (memberId: string) => {
+  try {
+    const response = await fetch(`${BASE_URL}/getPaymentPackageDetails`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        MemberID: memberId,
+        Company_code: companyCode,
+        Location_code: locationCode,
+      }),
+    });
+
+    const data = await response.json();
+
+    if (response.ok) {
+      setPackages(data);
+    } else {
+      setPackages([]);
+    }
+  } catch (error) {
+    console.error(error);
+    setPackages([]);
+  }
+};
 
   const handleApplyCoupon = () => {
     // Sample coupon validation
@@ -439,7 +570,7 @@ const PaymentManagement = () => {
     if (coupon && selectedPackage) {
       const discountAmount =
         coupon.type === "percentage"
-          ? (selectedPackage.price * coupon.discount) / 100
+          ? (selectedPackage.Amount * coupon.discount) / 100
           : coupon.discount;
       setAppliedCoupon({
         code: couponCode.toUpperCase(),
@@ -461,7 +592,7 @@ const PaymentManagement = () => {
 
   const calculateTotal = () => {
     if (!selectedPackage) return 0;
-    return selectedPackage.price - (appliedCoupon?.discount || 0);
+    return Number(selectedPackage.Amount) - (appliedCoupon?.discount || 0);
   };
 
   const handleProcessPayment = () => {
@@ -478,9 +609,10 @@ const PaymentManagement = () => {
       id: `PAY-2024-${String(payments.length + 1).padStart(3, "0")}`,
       memberCpr: selectedMember.cpr,
       memberName: selectedMember.name,
-      packageId: selectedPackage.id,
-      packageName: selectedPackage.name,
-      originalAmount: selectedPackage.price,
+      packageId: selectedPackage.package_ID,
+packageName: selectedPackage.package_Name,
+
+originalAmount: Number(selectedPackage.Amount),
       discountAmount: appliedCoupon?.discount || 0,
       finalAmount: calculateTotal(),
       paymentMethod,
@@ -627,8 +759,7 @@ const PaymentManagement = () => {
           className="space-y-6"
         >
           <div className="mb-4 w-full overflow-x-auto scrollbar-thin">
-            <TabsList
-              className=" inline-flex w-max min-w-full sm:grid sm:w-full sm:grid-cols-4">
+            <TabsList className=" inline-flex w-max min-w-full sm:grid sm:w-full sm:grid-cols-4">
               {allowedTabs.map((tab) => {
                 const Icon = tab.icon;
 
@@ -636,7 +767,8 @@ const PaymentManagement = () => {
                   <TabsTrigger
                     key={tab.value}
                     value={tab.value}
-                    className="flex items-center justify-center whitespace-nowrap px-4 py-2 min-w-[160px] sm:min-w-0">
+                    className="flex items-center justify-center whitespace-nowrap px-4 py-2 min-w-[160px] sm:min-w-0"
+                  >
                     <Icon className="h-4 w-4 mr-2 shrink-0" />
                     <span>{tab.label}</span>
                   </TabsTrigger>
@@ -823,34 +955,18 @@ const PaymentManagement = () => {
                   <CardDescription>Search by CPR or name</CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-4">
-                  <div className="relative">
-                    <Search className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
-                    <Input
-                      placeholder="Search member..."
-                      value={memberSearchTerm}
-                      onChange={(e) => setMemberSearchTerm(e.target.value)}
-                      className="pl-10"
-                    />
-                  </div>
-                  {memberSearchTerm && !selectedMember && (
-                    <div className="border rounded-lg max-h-48 overflow-y-auto">
-                      {filteredMembers.map((member) => (
-                        <div
-                          key={member.cpr}
-                          className="p-3 hover:bg-gray-100 cursor-pointer border-b last:border-b-0"
-                          onClick={() => {
-                            setSelectedMember(member);
-                            setMemberSearchTerm("");
-                          }}
-                        >
-                          <p className="font-medium">{member.name}</p>
-                          <p className="text-sm text-gray-500">
-                            CPR: {member.cpr}
-                          </p>
-                        </div>
-                      ))}
-                    </div>
-                  )}
+                  <Button
+                    variant="outline"
+                    className="w-full justify-start"
+                    onClick={() => {
+                      fetchGender();
+                      fetchStatus();
+                      setMemberHelpOpen(true);
+                    }}
+                  >
+                    <Search className="h-4 w-4 mr-2" />
+                    Select Member
+                  </Button>
                   {selectedMember && (
                     <div className="p-4 bg-blue-50 rounded-lg border border-blue-200">
                       <div className="flex justify-between items-start">
@@ -859,20 +975,32 @@ const PaymentManagement = () => {
                             {selectedMember.name}
                           </p>
                           <p className="text-sm text-gray-600">
-                            CPR: {selectedMember.cpr}
+                            Member ID: {selectedMember.cpr}
                           </p>
                           <p className="text-sm text-gray-600">
-                            {selectedMember.email}
+                            Email: {selectedMember.email}
                           </p>
                           <p className="text-sm text-gray-600">
-                            {selectedMember.phone}
+                            Mobile: {selectedMember.phone}
                           </p>
                         </div>
                         <Button
-                          variant="ghost"
-                          size="sm"
-                          onClick={() => setSelectedMember(null)}
-                        >
+  variant="ghost"
+  size="sm"
+  onClick={() => {
+    setSelectedMember(null);
+
+    // Clear package also
+    setPackages([]);
+    setSelectedPackage(null);
+    setAppliedCoupon(null);
+
+    fetchGender();
+    fetchStatus();
+
+    setMemberHelpOpen(true);
+  }}
+>
                           Change
                         </Button>
                       </div>
@@ -892,9 +1020,14 @@ const PaymentManagement = () => {
                 </CardHeader>
                 <CardContent>
                   <Select
-                    value={selectedPackage?.id || ""}
+                    value={selectedPackage?.package_ID  || ""}
                     onValueChange={(value) => {
-                      const pkg = samplePackages.find((p) => p.id === value);
+                      const pkg = packages.find(
+                        (p: any) => p.package_ID === value
+                      );
+
+                      setSelectedPackage(pkg || null);
+                      setAppliedCoupon(null);
                       setSelectedPackage(pkg || null);
                       setAppliedCoupon(null);
                     }}
@@ -903,27 +1036,45 @@ const PaymentManagement = () => {
                       <SelectValue placeholder="Select a package" />
                     </SelectTrigger>
                     <SelectContent>
-                      {samplePackages.map((pkg) => (
-                        <SelectItem key={pkg.id} value={pkg.id}>
-                          {pkg.name} - {/*BHD*/} {pkg.price.toFixed(3)}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
+                    {packages.map((pkg: any) => (
+                      <SelectItem
+                        key={pkg.package_ID}
+                        value={pkg.package_ID}
+                      >
+                        {pkg.package_ID} - {pkg.package_Name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
                   </Select>
                   {selectedPackage && (
-                    <div className="mt-4 p-4 bg-gray-50 rounded-lg">
-                      <p className="font-semibold">{selectedPackage.name}</p>
-                      <p className="text-sm text-gray-600">
-                        Program: {selectedPackage.programName}
-                      </p>
-                      <p className="text-sm text-gray-600">
-                        Duration: {selectedPackage.duration}
-                      </p>
-                      <p className="text-lg font-bold text-green-600 mt-2">
-                        {/*BHD*/} {selectedPackage.price.toFixed(3)}
-                      </p>
-                    </div>
-                  )}
+  <div className="mt-4 p-4 bg-gray-50 rounded-lg space-y-2">
+    <p className="font-semibold">
+      {selectedPackage.package_ID} - {selectedPackage.package_Name}
+    </p>
+
+    <p className="text-sm text-gray-600">
+      Membership :
+      {" "}
+      {selectedPackage.MemberShipType_Name}
+    </p>
+
+    <p className="text-sm text-gray-600">
+      Program :
+      {" "}
+      {selectedPackage.ProgramName}
+    </p>
+
+    <p className="text-sm text-gray-600">
+      Duration :
+      {" "}
+      {selectedPackage.Duration}
+    </p>
+
+    <p className="text-lg font-bold text-green-600">
+      {selectedPackage.Amount}
+    </p>
+  </div>
+)}
                 </CardContent>
               </Card>
 
@@ -960,7 +1111,8 @@ const PaymentManagement = () => {
                           {appliedCoupon.code}
                         </p>
                         <p className="text-sm text-green-600">
-                          -{/*BHD*/} {appliedCoupon.discount.toFixed(3)} discount
+                          -{/*BHD*/} {appliedCoupon.discount.toFixed(3)}{" "}
+                          discount
                         </p>
                       </div>
                       <Button
@@ -1040,19 +1192,23 @@ const PaymentManagement = () => {
                     <div className="flex justify-between">
                       <span className="text-gray-600">Original Price:</span>
                       <span>
-                        {/*BHD*/} {selectedPackage?.price.toFixed(3) || "0.000"}
+                        {/*BHD*/} {selectedPackage?.Amount.toFixed(3) || "0.000"}
                       </span>
                     </div>
                     {appliedCoupon && (
                       <div className="flex justify-between text-red-600">
                         <span>Discount ({appliedCoupon.code}):</span>
-                        <span>-{/*BHD*/} {appliedCoupon.discount.toFixed(3)}</span>
+                        <span>
+                          -{/*BHD*/} {appliedCoupon.discount.toFixed(3)}
+                        </span>
                       </div>
                     )}
                     <hr />
                     <div className="flex justify-between text-xl font-bold text-green-600">
                       <span>Total Payable:</span>
-                      <span>{/*BHD*/} {calculateTotal().toFixed(3)}</span>
+                      <span>
+                        {/*BHD*/} {calculateTotal().toFixed(3)}
+                      </span>
                     </div>
                     <Button
                       className="w-full mt-4"
@@ -1311,7 +1467,9 @@ const PaymentManagement = () => {
                       </div>
                       <div className="text-right">
                         <p className="font-semibold">45 uses</p>
-                        <p className="text-sm text-red-600">-{/*BHD*/} 450.000</p>
+                        <p className="text-sm text-red-600">
+                          -{/*BHD*/} 450.000
+                        </p>
                       </div>
                     </div>
                     <div className="flex justify-between items-center p-3 bg-gray-50 rounded-lg">
@@ -1323,7 +1481,9 @@ const PaymentManagement = () => {
                       </div>
                       <div className="text-right">
                         <p className="font-semibold">23 uses</p>
-                        <p className="text-sm text-red-600">-{/*BHD*/} 115.000</p>
+                        <p className="text-sm text-red-600">
+                          -{/*BHD*/} 115.000
+                        </p>
                       </div>
                     </div>
                     <div className="flex justify-between items-center p-3 bg-gray-50 rounded-lg">
@@ -1335,7 +1495,9 @@ const PaymentManagement = () => {
                       </div>
                       <div className="text-right">
                         <p className="font-semibold">50 uses</p>
-                        <p className="text-sm text-red-600">-{/*BHD*/} 1,200.000</p>
+                        <p className="text-sm text-red-600">
+                          -{/*BHD*/} 1,200.000
+                        </p>
                       </div>
                     </div>
                   </div>
@@ -1345,6 +1507,193 @@ const PaymentManagement = () => {
           </TabsContent>
         </Tabs>
       </main>
+
+      {/* Member Search Dialog */}
+      <Dialog
+        open={memberHelpOpen}
+        onOpenChange={(open) => {
+          setMemberHelpOpen(open);
+
+          if (!open) {
+            resetMemberSearch();
+          }
+        }}
+      >
+        <DialogContent className="max-w-6xl h-[80vh] flex flex-col">
+          <DialogHeader>
+            <DialogTitle>Select Member</DialogTitle>
+            <DialogDescription>Search and select a member</DialogDescription>
+          </DialogHeader>
+
+          {/* Search Filters */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+            <div className="space-y-2">
+              <Label>Member ID</Label>
+              <Input
+                placeholder="Member ID"
+                value={memberSearch.MemberID}
+                onChange={(e) =>
+                  setMemberSearch({
+                    ...memberSearch,
+                    MemberID: e.target.value,
+                  })
+                }
+              />
+            </div>
+
+            <div className="space-y-2">
+              <Label>Full Name</Label>
+              <Input
+                placeholder="Full Name"
+                value={memberSearch.Full_name}
+                onChange={(e) =>
+                  setMemberSearch({
+                    ...memberSearch,
+                    Full_name: e.target.value,
+                  })
+                }
+              />
+            </div>
+
+            <div className="space-y-2">
+              <Label>Gender</Label>
+              <Select
+                value={memberSearch.Gender}
+                onValueChange={(value) =>
+                  setMemberSearch({
+                    ...memberSearch,
+                    Gender: value,
+                  })
+                }
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder="Select Gender" />
+                </SelectTrigger>
+
+                <SelectContent>
+                  {gender.map((item: any) => (
+                    <SelectItem
+                      key={item.attributedetails_name}
+                      value={item.attributedetails_name}
+                    >
+                      {item.attributedetails_name}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+
+            <div className="space-y-2">
+              <Label>Mobile</Label>
+              <Input
+                placeholder="Mobile"
+                value={memberSearch.Mobile}
+                onChange={(e) =>
+                  setMemberSearch({
+                    ...memberSearch,
+                    Mobile: e.target.value,
+                  })
+                }
+              />
+            </div>
+
+            <div className="space-y-2">
+              <Label>Email</Label>
+              <Input
+                placeholder="Email"
+                value={memberSearch.Email}
+                onChange={(e) =>
+                  setMemberSearch({
+                    ...memberSearch,
+                    Email: e.target.value,
+                  })
+                }
+              />
+            </div>
+
+            <div className="space-y-2">
+              <Label>Address</Label>
+              <Input
+                placeholder="Address"
+                value={memberSearch.Address}
+                onChange={(e) =>
+                  setMemberSearch({
+                    ...memberSearch,
+                    Address: e.target.value,
+                  })
+                }
+              />
+            </div>
+
+            <div className="space-y-2">
+              <Label>Membership Type</Label>
+              <Input
+                placeholder="Membership Type"
+                value={memberSearch.Membership_type}
+                onChange={(e) =>
+                  setMemberSearch({
+                    ...memberSearch,
+                    Membership_type: e.target.value,
+                  })
+                }
+              />
+            </div>
+
+            <div className="space-y-2">
+              <Label>Status</Label>
+              <Select
+                value={memberSearch.is_active}
+                onValueChange={(value) =>
+                  setMemberSearch({
+                    ...memberSearch,
+                    is_active: value,
+                  })
+                }
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder="Select Status" />
+                </SelectTrigger>
+
+                <SelectContent>
+                  {statusList.map((item: any) => (
+                    <SelectItem
+                      key={item.attributedetails_name}
+                      value={item.attributedetails_name}
+                    >
+                      {item.attributedetails_name}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+          </div>
+
+          {/* Search Button */}
+          <div className="flex justify-end mt-4">
+            <Button onClick={handleSearchMembers}>
+              <Search className="h-4 w-4 mr-2" />
+              Search
+            </Button>
+          </div>
+
+          {/* Members Table */}
+          <div className="mt-4 flex-1">
+            <AgGridTable
+              rowData={memberSearchResults}
+              columnDefs={MembersColumnDefs}
+              pagination={true}
+              paginationPageSize={10}
+              height="100%"
+            />
+          </div>
+
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setMemberHelpOpen(false)}>
+              Close
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
 
       {/* Webhook Configuration Dialog */}
       <Dialog open={webhookDialogOpen} onOpenChange={setWebhookDialogOpen}>
