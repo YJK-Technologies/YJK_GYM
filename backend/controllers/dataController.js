@@ -5389,6 +5389,31 @@ const getPaymentPackageDetails = async (req, res) => {
   }
 }
 //Code ended by Dinesh Gokul on 27-07-2026
+
+//Code added by Dinesh Gokul on 28-07-2026
+const getPaymentProgramDetails = async (req, res) => {
+  const { package_ID, Company_code, Location_code } = req.body;
+  try {
+    const pool = await connection.connectToDatabase();
+    const result = await pool
+      .request()
+      .input("mode", sql.NVarChar, "PDP")
+      .input("package_ID", sql.NVarChar, package_ID)
+      .input("Company_code", sql.NVarChar, Company_code)
+      .input("Location_code", sql.NVarChar, Location_code)
+      .query(`EXEC sp_Package_hdr @mode,@package_ID, '', '', 0,  0,  '', 0,  '', @Company_Code,@Location_Code,'', '', ''`);
+
+    if (result.recordset.length > 0) {
+      res.status(200).json(result.recordset);
+    } else {
+      res.status(404).json("Data not found");
+    }
+  } catch (err) {
+    console.error("Error", err);
+    res.status(500).json({ message: err.message || "Internal Server Error" });
+  }
+}
+//Code ended by Dinesh Gokul on 28-07-2026
 module.exports = {
   getCompanyno,
   getsearchdata,
@@ -5560,6 +5585,7 @@ module.exports = {
   PaymentTransactionInsert, 
   PaymentTransactionUpdate, 
   PaymentTransactionDelete,
-  getPaymentPackageDetails
+  getPaymentPackageDetails,
+  getPaymentProgramDetails
 
 };

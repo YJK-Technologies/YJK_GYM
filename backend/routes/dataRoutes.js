@@ -197,6 +197,7 @@ router.post("/PaymentTransactionInsert", dataController.PaymentTransactionInsert
 router.post("/PaymentTransactionUpdate", dataController.PaymentTransactionUpdate)
 router.post("/PaymentTransactionDelete", dataController.PaymentTransactionDelete)
 router.post("/getPaymentPackageDetails", dataController.getPaymentPackageDetails)
+router.post("/getPaymentProgramDetails", dataController.getPaymentProgramDetails)
 
 
 
