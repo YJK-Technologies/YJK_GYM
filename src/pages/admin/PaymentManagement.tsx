@@ -309,20 +309,6 @@ const PaymentManagement = () => {
   const [paymentID, setPaymentID] = useState("");
   const [numberGeneration, setNumberGeneration] = useState("Auto");
 
-  const [memberId, setMemberId] = useState("");
-  const [membershipTypeId, setMembershipTypeId] = useState("");
-  const [packageId, setPackageId] = useState("");
-
-  const [originalAmount, setOriginalAmount] = useState(0);
-  const [discountAmount, setDiscountAmount] = useState(0);
-  const [finalAmount, setFinalAmount] = useState(0);
-
-  const [status, setStatus] = useState("Active");
-  const [paymentDate, setPaymentDate] = useState("");
-  const [notes, setNotes] = useState("");
-
-  const [keyField, setKeyField] = useState("");
-
 const [todayTotal, setTodayTotal] = useState(0);
 const [monthlyTotal, setMonthlyTotal] = useState(0);
 const [pendingCount, setPendingCount] = useState(0);
@@ -852,7 +838,7 @@ useEffect(() => {
 
           Coupon_Code: appliedCoupon?.Coupon_Code || "",
 
-          status: "Active",
+          status: "Completed",
 
           payment_date: new Date(),
 
@@ -1714,15 +1700,23 @@ useEffect(() => {
                       <TooltipProvider>
                         <Tooltip>
                           <TooltipTrigger asChild>
-                            <Textarea
-                              placeholder="Add payment notes..."
-                              value={paymentNotes}
-                              onChange={(e) => setPaymentNotes(e.target.value)}
-                            />
+                            <div className="space-y-2">
+                              <Textarea
+                                placeholder="Add payment notes..."
+                                value={paymentNotes}
+                                maxLength={500}
+                                onChange={(e) =>
+                                  setPaymentNotes(e.target.value)
+                                }
+                              />
+                              <div className="text-xs text-gray-500 text-right">
+                                {paymentNotes.length}/500 characters
+                              </div>
+                            </div>
                           </TooltipTrigger>
 
                           <TooltipContent>
-                            <p>Enter the notes</p>
+                            <p>Enter the Notes</p>
                           </TooltipContent>
                         </Tooltip>
                       </TooltipProvider>
@@ -2072,30 +2066,50 @@ useEffect(() => {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
             <div className="space-y-2">
               <Label>Member ID</Label>
-              <Input
-                placeholder="Member ID"
-                value={memberSearch.MemberID}
-                onChange={(e) =>
-                  setMemberSearch({
-                    ...memberSearch,
-                    MemberID: e.target.value,
-                  })
-                }
-              />
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Input
+                      placeholder="Member ID"
+                      maxLength={50}
+                      value={memberSearch.MemberID}
+                      onChange={(e) =>
+                        setMemberSearch({
+                          ...memberSearch,
+                          MemberID: e.target.value,
+                        })
+                      }
+                    />
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <p>Enter the Member ID</p>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
             </div>
 
             <div className="space-y-2">
               <Label>Full Name</Label>
-              <Input
-                placeholder="Full Name"
-                value={memberSearch.Full_name}
-                onChange={(e) =>
-                  setMemberSearch({
-                    ...memberSearch,
-                    Full_name: e.target.value,
-                  })
-                }
-              />
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Input
+                      placeholder="Full Name"
+                      maxLength={50}
+                      value={memberSearch.Full_name}
+                      onChange={(e) =>
+                        setMemberSearch({
+                          ...memberSearch,
+                          Full_name: e.target.value,
+                        })
+                      }
+                    />
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <p>Enter the Full Name</p>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
             </div>
 
             <div className="space-y-2">
@@ -2109,9 +2123,19 @@ useEffect(() => {
                   })
                 }
               >
-                <SelectTrigger>
-                  <SelectValue placeholder="Select Gender" />
-                </SelectTrigger>
+                <TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select Gender" />
+                      </SelectTrigger>
+                    </TooltipTrigger>
+
+                    <TooltipContent>
+                      <p>Select the Gender</p>
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
 
                 <SelectContent>
                   {gender.map((item: any) => (
@@ -2128,58 +2152,98 @@ useEffect(() => {
 
             <div className="space-y-2">
               <Label>Mobile</Label>
-              <Input
-                placeholder="Mobile"
-                value={memberSearch.Mobile}
-                onChange={(e) =>
-                  setMemberSearch({
-                    ...memberSearch,
-                    Mobile: e.target.value,
-                  })
-                }
-              />
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Input
+                      placeholder="Mobile"
+                      maxLength={15}
+                      value={memberSearch.Mobile}
+                      onChange={(e) =>
+                        setMemberSearch({
+                          ...memberSearch,
+                          Mobile: e.target.value,
+                        })
+                      }
+                    />
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <p>Enter the Mobile</p>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
             </div>
 
             <div className="space-y-2">
               <Label>Email</Label>
-              <Input
-                placeholder="Email"
-                value={memberSearch.Email}
-                onChange={(e) =>
-                  setMemberSearch({
-                    ...memberSearch,
-                    Email: e.target.value,
-                  })
-                }
-              />
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Input
+                      placeholder="Email"
+                      maxLength={250}
+                      value={memberSearch.Email}
+                      onChange={(e) =>
+                        setMemberSearch({
+                          ...memberSearch,
+                          Email: e.target.value,
+                        })
+                      }
+                    />
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <p>Enter the Email</p>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
             </div>
 
             <div className="space-y-2">
               <Label>Address</Label>
-              <Input
-                placeholder="Address"
-                value={memberSearch.Address}
-                onChange={(e) =>
-                  setMemberSearch({
-                    ...memberSearch,
-                    Address: e.target.value,
-                  })
-                }
-              />
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Input
+                      placeholder="Address"
+                      maxLength={250}
+                      value={memberSearch.Address}
+                      onChange={(e) =>
+                        setMemberSearch({
+                          ...memberSearch,
+                          Address: e.target.value,
+                        })
+                      }
+                    />
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <p>Enter the Address</p>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
             </div>
 
             <div className="space-y-2">
               <Label>Membership Type</Label>
-              <Input
-                placeholder="Membership Type"
-                value={memberSearch.Membership_type}
-                onChange={(e) =>
-                  setMemberSearch({
-                    ...memberSearch,
-                    Membership_type: e.target.value,
-                  })
-                }
-              />
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Input
+                      placeholder="Membership Type"
+                      maxLength={100}
+                      value={memberSearch.Membership_type}
+                      onChange={(e) =>
+                        setMemberSearch({
+                          ...memberSearch,
+                          Membership_type: e.target.value,
+                        })
+                      }
+                    />
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <p>Enter the Address</p>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
             </div>
 
             <div className="space-y-2">
@@ -2193,9 +2257,19 @@ useEffect(() => {
                   })
                 }
               >
-                <SelectTrigger>
-                  <SelectValue placeholder="Select Status" />
-                </SelectTrigger>
+                <TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select Status" />
+                      </SelectTrigger>
+                    </TooltipTrigger>
+
+                    <TooltipContent>
+                      <p>Select the Status</p>
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
 
                 <SelectContent>
                   {statusList.map((item: any) => (
