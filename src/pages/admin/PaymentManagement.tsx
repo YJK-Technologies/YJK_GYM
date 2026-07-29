@@ -63,7 +63,7 @@ import {
   XAxis,
   YAxis,
   CartesianGrid,
-  Tooltip,
+  Tooltip as RechartsTooltip,
   ResponsiveContainer,
   PieChart,
   Pie,
@@ -76,6 +76,12 @@ import { LayoutDashboard, History, FileBarChart2 } from "lucide-react";
 import { BASE_URL } from "../ApiConfig";
 import { useCompany } from "../CompanyContext";
 import AgGridTable from "@/components/ui/ag-grid-table";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 // Types
 interface Payment {
@@ -161,9 +167,41 @@ const PaymentManagement = () => {
     }
   }, []);
 
-  // useEffect(() => {
-  //   fetchPackages()
-  // }, []);
+  useEffect(() => {
+    const getSettingData = async () => {
+      try {
+        const response = await fetch(`${BASE_URL}/getSettingScreenData`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            Company_code: companyCode,
+            Location_code: locationCode,
+          }),
+        });
+
+        if (!response.ok) {
+          throw new Error("Failed to fetch setting data");
+        }
+
+        const data = await response.json();
+
+        if (Array.isArray(data) && data.length > 0) {
+          setNumberGeneration(data[0].NumberGeneration || "Auto");
+        } else {
+          setNumberGeneration("Auto");
+        }
+      } catch (err) {
+        console.error(err);
+        setNumberGeneration("Auto");
+      }
+    };
+
+    if (companyCode && locationCode) {
+      getSettingData();
+    }
+  }, [companyCode, locationCode]);
 
   const tabPermissions = [
     "PaymentDashboard",
@@ -247,7 +285,7 @@ const PaymentManagement = () => {
   );
   const [couponCode, setCouponCode] = useState("");
   const [appliedCoupon, setAppliedCoupon] = useState<{
-    code: string;
+    Coupon_Code: string;
     discount: number;
   } | null>(null);
   const [paymentMethod, setPaymentMethod] = useState<
@@ -264,7 +302,11 @@ const PaymentManagement = () => {
   const [paymentMethodData, setPaymentMethodData] = useState([]);
   const [packageRevenueData, setPackageRevenueData] = useState([]);
 
-  const [paymentId, setPaymentId] = useState("");
+  const [packageDetails, setPackageDetails] = useState<any[]>([]);
+
+  const [paymentID, setPaymentID] = useState("");
+  const [numberGeneration, setNumberGeneration] = useState("Auto");
+
   const [memberId, setMemberId] = useState("");
   const [membershipTypeId, setMembershipTypeId] = useState("");
   const [packageId, setPackageId] = useState("");
@@ -365,31 +407,31 @@ const PaymentManagement = () => {
   };
 
   const fetchPackages = async () => {
-      try {
-        const response = await fetch(`${BASE_URL}/getMeberShipPackages`, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            Company_code: companyCode,
-            Location_code: locationCode,
-          }),
-        });
-  
-        const data = await response.json();
-  
-        if (response.ok) {
-          setPackages(data);
-  
-          console.log(data);
-        } else {
-          console.error("Failed to fetch status");
-        }
-      } catch (error) {
-        console.error("Error fetching status:", error);
+    try {
+      const response = await fetch(`${BASE_URL}/getMeberShipPackages`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          Company_code: companyCode,
+          Location_code: locationCode,
+        }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        setPackages(data);
+
+        console.log(data);
+      } else {
+        console.error("Failed to fetch status");
       }
-    };
+    } catch (error) {
+      console.error("Error fetching status:", error);
+    }
+  };
 
   const MembersColumnDefs = [
     {
@@ -456,26 +498,26 @@ const PaymentManagement = () => {
         <Button
           size="sm"
           onClick={() => {
-  const member = {
-    cpr: params.data.MemberID,
-    name: params.data.Full_name,
-    email: params.data.Email,
-    phone: params.data.Mobile,
-    membershipStatus: params.data.Membership_type,
-  };
+            const member = {
+              cpr: params.data.MemberID,
+              name: params.data.Full_name,
+              email: params.data.Email,
+              phone: params.data.Mobile,
+              membershipStatus: params.data.Membership_type,
+            };
 
-  setSelectedMember(member);
+            setSelectedMember(member);
 
-  // Fetch packages linked to this member
-  fetchMemberPackages(member.cpr);
+            // Fetch packages linked to this member
+            fetchMemberPackages(member.cpr);
 
-  // Clear previously selected package
-  setSelectedPackage(null);
-  setAppliedCoupon(null);
+            // Clear previously selected package
+            setSelectedPackage(null);
+            setAppliedCoupon(null);
 
-  resetMemberSearch();
-  setMemberHelpOpen(false);
-}}
+            resetMemberSearch();
+            setMemberHelpOpen(false);
+          }}
         >
           Select
         </Button>
@@ -529,62 +571,250 @@ const PaymentManagement = () => {
   };
 
   const fetchMemberPackages = async (memberId: string) => {
-  try {
-    const response = await fetch(`${BASE_URL}/getPaymentPackageDetails`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        MemberID: memberId,
-        Company_code: companyCode,
-        Location_code: locationCode,
-      }),
-    });
+    try {
+      const response = await fetch(`${BASE_URL}/getPaymentPackageDetails`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          MemberID: memberId,
+          Company_code: companyCode,
+          Location_code: locationCode,
+        }),
+      });
 
-    const data = await response.json();
+      const data = await response.json();
 
-    if (response.ok) {
-      setPackages(data);
-    } else {
+      if (response.ok) {
+        setPackages(data);
+      } else {
+        setPackages([]);
+      }
+    } catch (error) {
+      console.error(error);
       setPackages([]);
     }
-  } catch (error) {
-    console.error(error);
-    setPackages([]);
-  }
-};
+  };
 
-  const handleApplyCoupon = () => {
-    // Sample coupon validation
-    const validCoupons: Record<
-      string,
-      { discount: number; type: "percentage" | "fixed" }
-    > = {
-      SAVE10: { discount: 10, type: "percentage" },
-      NEWMEMBER: { discount: 5, type: "fixed" },
-      HALFYEAR20: { discount: 20, type: "percentage" },
-    };
+  const fetchPaymentProgramDetails = async (packageID: string) => {
+    try {
+      const response = await fetch(`${BASE_URL}/getPaymentProgramDetails`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          package_ID: packageID,
+          Company_code: companyCode,
+          Location_code: locationCode,
+        }),
+      });
 
-    const coupon = validCoupons[couponCode.toUpperCase()];
-    if (coupon && selectedPackage) {
-      const discountAmount =
-        coupon.type === "percentage"
-          ? (selectedPackage.Amount * coupon.discount) / 100
-          : coupon.discount;
+      const data = await response.json();
+
+      if (response.ok) {
+        setPackageDetails(data);
+      } else {
+        setPackageDetails([]);
+      }
+    } catch (error) {
+      console.error(error);
+      setPackageDetails([]);
+    }
+  };
+
+  const validateCoupon = async (couponCode: string) => {
+    try {
+      const response = await fetch(`${BASE_URL}/applyCouponPayment`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          coupon_code: couponCode,
+          package_ID: selectedPackage?.package_ID,
+          Company_code: companyCode,
+          Location_code: locationCode,
+        }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.message);
+      }
+
+      return data;
+    } catch (error) {
+      throw error;
+    }
+  };
+
+  const savePayment = async () => {
+    try {
+      if (!selectedMember) {
+        toast({
+          title: "Member Required",
+          description: "Please select a member.",
+          variant: "destructive",
+        });
+        return;
+      }
+
+      if (!selectedPackage) {
+        toast({
+          title: "Package Required",
+          description: "Please select a package.",
+          variant: "destructive",
+        });
+        return;
+      }
+
+      const response = await fetch(`${BASE_URL}/PaymentTransactionInsert`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          payment_id: paymentID,
+          MemberID: selectedMember.cpr,
+          MemberShipType_id: packageDetails[0]?.MemberShipType_id,
+          package_ID: selectedPackage.package_ID,
+
+          original_amount: Number(packageDetails[0]?.Amount),
+          discount_amount: appliedCoupon?.discount || 0,
+          final_amount: calculateTotal(),
+
+          payment_method: paymentMethod,
+
+          Coupon_Code: appliedCoupon?.Coupon_Code || "",
+
+          status: "Active",
+
+          payment_date: new Date(),
+
+          notes: paymentNotes,
+
+          keyfield: "",
+
+          company_code: companyCode,
+          location_code: locationCode,
+
+          created_by: userCode,
+        }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.message);
+      }
+
+      toast({
+        title: "Success",
+        description: "Payment saved successfully.",
+      });
+
+      // Clear screen
+      setSelectedMember(null);
+      setSelectedPackage(null);
+      setPackages([]);
+      setPackageDetails([]);
+      setAppliedCoupon(null);
+      setCouponCode("");
+      setPaymentNotes("");
+    } catch (error: any) {
+      toast({
+        title: "Error",
+        description: error.message,
+        variant: "destructive",
+      });
+    }
+  };
+
+  // const handleApplyCoupon = () => {
+  //   // Sample coupon validation
+  //   const validCoupons: Record<
+  //     string,
+  //     { discount: number; type: "percentage" | "fixed" }
+  //   > = {
+  //     SAVE10: { discount: 10, type: "percentage" },
+  //     NEWMEMBER: { discount: 5, type: "fixed" },
+  //     HALFYEAR20: { discount: 20, type: "percentage" },
+  //   };
+
+  //   const coupon = validCoupons[couponCode.toUpperCase()];
+  //   if (coupon && selectedPackage) {
+  //     const discountAmount =
+  //       coupon.type === "percentage"
+  //         ? (packageDetails[0].Amount * coupon.discount) / 100
+  //         : coupon.discount;
+  //     setAppliedCoupon({
+  //       code: couponCode.toUpperCase(),
+  //       discount: discountAmount,
+  //     });
+  //     toast({
+  //       title: "Coupon Applied!",
+  //       // description: `Discount of BHD ${discountAmount.toFixed(3)} applied`,
+  //       description: `Discount of ${discountAmount.toFixed(3)} applied`,
+  //     });
+  //   } else {
+  //     toast({
+  //       title: "Invalid Coupon",
+  //       description: "The coupon code is invalid or expired",
+  //       variant: "destructive",
+  //     });
+  //   }
+  // };
+
+  const handleApplyCoupon = async () => {
+    if (!selectedPackage || packageDetails.length === 0) return;
+
+    try {
+      const couponData = await validateCoupon(couponCode);
+
+      if (!couponData || couponData.length === 0) {
+        // Clear previously applied coupon
+        setAppliedCoupon(null);
+
+        return;
+      }
+
+      const coupon = couponData[0];
+
+      const packageAmount = Number(packageDetails[0].Amount);
+
+      if (
+        coupon.Minimum_Purchase &&
+        packageAmount < Number(coupon.Minimum_Purchase)
+      ) {
+        toast({
+          title: "Coupon Not Applicable",
+          description: `Minimum purchase should be ${coupon.Minimum_Purchase}.`,
+          variant: "destructive",
+        });
+        return;
+      }
+
+      const discountAmount = Number(coupon.Discount_Value);
+
       setAppliedCoupon({
-        code: couponCode.toUpperCase(),
+        Coupon_Code: coupon.Coupon_Code,
         discount: discountAmount,
       });
+
       toast({
         title: "Coupon Applied!",
-        // description: `Discount of BHD ${discountAmount.toFixed(3)} applied`,
         description: `Discount of ${discountAmount.toFixed(3)} applied`,
       });
-    } else {
+    } catch (error: any) {
+      // Clear previously applied coupon
+      setAppliedCoupon(null);
+
       toast({
-        title: "Invalid Coupon",
-        description: "The coupon code is invalid or expired",
+        title: "Coupon Error",
+        description: error.message,
         variant: "destructive",
       });
     }
@@ -592,7 +822,14 @@ const PaymentManagement = () => {
 
   const calculateTotal = () => {
     if (!selectedPackage) return 0;
-    return Number(selectedPackage.Amount) - (appliedCoupon?.discount || 0);
+
+    if (!packageDetails || packageDetails.length === 0) {
+      return 0;
+    }
+
+    return (
+      Number(packageDetails[0]?.Amount || 0) - (appliedCoupon?.discount || 0)
+    );
   };
 
   const handleProcessPayment = () => {
@@ -610,13 +847,13 @@ const PaymentManagement = () => {
       memberCpr: selectedMember.cpr,
       memberName: selectedMember.name,
       packageId: selectedPackage.package_ID,
-packageName: selectedPackage.package_Name,
+      packageName: selectedPackage.package_Name,
 
-originalAmount: Number(selectedPackage.Amount),
+      originalAmount: Number(packageDetails[0].Amount),
       discountAmount: appliedCoupon?.discount || 0,
       finalAmount: calculateTotal(),
       paymentMethod,
-      couponCode: appliedCoupon?.code || null,
+      couponCode: appliedCoupon?.Coupon_Code || null,
       status: "Completed",
       paymentDate: new Date().toISOString().split("T")[0],
       receiptNumber: `REC-2024-${String(payments.length + 1).padStart(3, "0")}`,
@@ -863,9 +1100,8 @@ originalAmount: Number(selectedPackage.Amount),
                       <CartesianGrid strokeDasharray="3 3" />
                       <XAxis dataKey="day" />
                       <YAxis />
-                      <Tooltip
-                        // formatter={(value) => [`BHD ${value}`, "Revenue"]}
-                        formatter={(value) => [`${value}`, "Revenue"]}
+                      <RechartsTooltip
+                        formatter={(value: number) => [`${value}`, "Revenue"]}
                       />
                       <Line
                         type="monotone"
@@ -946,7 +1182,7 @@ originalAmount: Number(selectedPackage.Amount),
           <TabsContent value="newPayment" className="space-y-6">
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
               {/* Member Selection */}
-              <Card>
+              <Card className="h-[360px] flex flex-col">
                 <CardHeader>
                   <CardTitle className="flex items-center">
                     <Users className="h-5 w-5 mr-2" />
@@ -954,19 +1190,74 @@ originalAmount: Number(selectedPackage.Amount),
                   </CardTitle>
                   <CardDescription>Search by CPR or name</CardDescription>
                 </CardHeader>
-                <CardContent className="space-y-4">
-                  <Button
-                    variant="outline"
-                    className="w-full justify-start"
-                    onClick={() => {
-                      fetchGender();
-                      fetchStatus();
-                      setMemberHelpOpen(true);
-                    }}
-                  >
-                    <Search className="h-4 w-4 mr-2" />
-                    Select Member
-                  </Button>
+                <CardContent className="flex-1 overflow-y-auto space-y-4 pr-2 custom-scrollbar">
+                  <div className="space-y-2">
+                    <Label htmlFor="paymentID">Payment ID</Label>
+
+                    <TooltipProvider>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <Input
+                            id="paymentID"
+                            value={paymentID}
+                            readOnly={numberGeneration === "Auto"}
+                            className={
+                              numberGeneration === "Auto"
+                                ? "bg-gray-100 cursor-not-allowed"
+                                : ""
+                            }
+                            placeholder={
+                              numberGeneration === "Auto"
+                                ? "Auto Generated"
+                                : "Enter Payment ID"
+                            }
+                            maxLength={20}
+                            onChange={(e) => {
+                              if (numberGeneration === "Manual") {
+                                const value = e.target.value.replace(
+                                  /[^a-zA-Z0-9]/g,
+                                  "",
+                                );
+
+                                setPaymentID(value);
+                              }
+                            }}
+                          />
+                        </TooltipTrigger>
+
+                        <TooltipContent>
+                          <p>
+                            {numberGeneration === "Auto"
+                              ? "Payment ID is Auto Generated"
+                              : "Enter Payment ID"}
+                          </p>
+                        </TooltipContent>
+                      </Tooltip>
+                    </TooltipProvider>
+                  </div>
+
+                  <TooltipProvider>
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <Button
+                          variant="outline"
+                          className="w-full justify-start"
+                          onClick={() => {
+                            fetchGender();
+                            fetchStatus();
+                            setMemberHelpOpen(true);
+                          }}
+                        >
+                          <Search className="h-4 w-4 mr-2" />
+                          Select Member
+                        </Button>
+                      </TooltipTrigger>
+
+                      <TooltipContent>
+                        <p>Click to search and select a member</p>
+                      </TooltipContent>
+                    </Tooltip>
+                  </TooltipProvider>
                   {selectedMember && (
                     <div className="p-4 bg-blue-50 rounded-lg border border-blue-200">
                       <div className="flex justify-between items-start">
@@ -985,22 +1276,22 @@ originalAmount: Number(selectedPackage.Amount),
                           </p>
                         </div>
                         <Button
-  variant="ghost"
-  size="sm"
-  onClick={() => {
-    setSelectedMember(null);
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => {
+                            setSelectedMember(null);
 
-    // Clear package also
-    setPackages([]);
-    setSelectedPackage(null);
-    setAppliedCoupon(null);
+                            // Clear package also
+                            setPackages([]);
+                            setSelectedPackage(null);
+                            setAppliedCoupon(null);
 
-    fetchGender();
-    fetchStatus();
+                            fetchGender();
+                            fetchStatus();
 
-    setMemberHelpOpen(true);
-  }}
->
+                            setMemberHelpOpen(true);
+                          }}
+                        >
                           Change
                         </Button>
                       </div>
@@ -1010,7 +1301,7 @@ originalAmount: Number(selectedPackage.Amount),
               </Card>
 
               {/* Package Selection */}
-              <Card>
+              <Card className="h-[360px] flex flex-col">
                 <CardHeader>
                   <CardTitle className="flex items-center">
                     <Package className="h-5 w-5 mr-2" />
@@ -1018,63 +1309,95 @@ originalAmount: Number(selectedPackage.Amount),
                   </CardTitle>
                   <CardDescription>Choose a membership package</CardDescription>
                 </CardHeader>
-                <CardContent>
+                <CardContent className="flex-1 overflow-y-auto space-y-4 pr-2 custom-scrollbar">
                   <Select
-                    value={selectedPackage?.package_ID  || ""}
+                    open={selectedMember ? undefined : false}
+                    value={selectedPackage?.package_ID || ""}
                     onValueChange={(value) => {
                       const pkg = packages.find(
-                        (p: any) => p.package_ID === value
+                        (p: any) => p.package_ID === value,
                       );
 
                       setSelectedPackage(pkg || null);
                       setAppliedCoupon(null);
-                      setSelectedPackage(pkg || null);
-                      setAppliedCoupon(null);
+
+                      if (pkg) {
+                        fetchPaymentProgramDetails(pkg.package_ID);
+                      }
                     }}
                   >
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select a package" />
-                    </SelectTrigger>
+                    <TooltipProvider>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <SelectTrigger
+                            onClick={() => {
+                              if (!selectedMember) {
+                                toast({
+                                  title: "Select Member",
+                                  description:
+                                    "Please select a member before selecting a package.",
+                                  variant: "destructive",
+                                });
+                              }
+                            }}
+                          >
+                            <SelectValue placeholder="Select a package" />
+                          </SelectTrigger>
+                        </TooltipTrigger>
+
+                        <TooltipContent>
+                          <p>
+                            {selectedMember
+                              ? "Select a membership package"
+                              : "Please select a member first"}
+                          </p>
+                        </TooltipContent>
+                      </Tooltip>
+                    </TooltipProvider>
                     <SelectContent>
-                    {packages.map((pkg: any) => (
-                      <SelectItem
-                        key={pkg.package_ID}
-                        value={pkg.package_ID}
-                      >
-                        {pkg.package_ID} - {pkg.package_Name}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
+                      {packages.map((pkg: any) => (
+                        <SelectItem key={pkg.package_ID} value={pkg.package_ID}>
+                          {pkg.package_ID} - {pkg.package_Name}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
                   </Select>
-                  {selectedPackage && (
-  <div className="mt-4 p-4 bg-gray-50 rounded-lg space-y-2">
-    <p className="font-semibold">
-      {selectedPackage.package_ID} - {selectedPackage.package_Name}
-    </p>
+                  {selectedPackage && packageDetails.length > 0 && (
+                    <div className="mt-4 p-4 bg-gray-50 rounded-lg space-y-2">
+                      <p className="font-semibold">
+                        {selectedPackage.package_ID} -{" "}
+                        {selectedPackage.package_Name}
+                      </p>
 
-    <p className="text-sm text-gray-600">
-      Membership :
-      {" "}
-      {selectedPackage.MemberShipType_Name}
-    </p>
+                      <p className="text-sm text-gray-600">
+                        Membership :{" "}
+                        {[
+                          ...new Set(
+                            packageDetails.map(
+                              (x: any) => x.MemberShipType_Name,
+                            ),
+                          ),
+                        ].join(", ")}
+                      </p>
 
-    <p className="text-sm text-gray-600">
-      Program :
-      {" "}
-      {selectedPackage.ProgramName}
-    </p>
+                      <p className="text-sm text-gray-600">
+                        Program :{" "}
+                        {[
+                          ...new Set(
+                            packageDetails.map((x: any) => x.programname),
+                          ),
+                        ].join(", ")}
+                      </p>
 
-    <p className="text-sm text-gray-600">
-      Duration :
-      {" "}
-      {selectedPackage.Duration}
-    </p>
+                      <p className="text-sm text-gray-600">
+                        Duration : {packageDetails[0]?.Duration}
+                      </p>
 
-    <p className="text-lg font-bold text-green-600">
-      {selectedPackage.Amount}
-    </p>
-  </div>
-)}
+                      <p className="text-lg font-bold text-green-600">
+                        {packageDetails[0]?.Amount}
+                      </p>
+                    </div>
+                  )}
                 </CardContent>
               </Card>
 
@@ -1091,15 +1414,58 @@ originalAmount: Number(selectedPackage.Amount),
                 </CardHeader>
                 <CardContent className="space-y-4">
                   <div className="flex space-x-2">
-                    <Input
-                      placeholder="Enter coupon code"
-                      value={couponCode}
-                      onChange={(e) => setCouponCode(e.target.value)}
-                      disabled={!selectedPackage}
-                    />
+                    <TooltipProvider>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <Input
+                            placeholder="Enter coupon code"
+                            value={couponCode}
+                            // disabled={!selectedPackage}
+                            onClick={() => {
+                              if (!selectedPackage) {
+                                toast({
+                                  title: "Select Package",
+                                  description:
+                                    "Please select a package before applying a coupon.",
+                                  variant: "destructive",
+                                });
+                              }
+                            }}
+                            onChange={(e) => setCouponCode(e.target.value)}
+                          />
+                        </TooltipTrigger>
+
+                        <TooltipContent>
+                          <p>Enter a valid Coupon Code</p>
+                        </TooltipContent>
+                      </Tooltip>
+                    </TooltipProvider>
                     <Button
-                      onClick={handleApplyCoupon}
-                      disabled={!couponCode || !selectedPackage}
+                      onClick={() => {
+                        // Validate Coupon Code
+                        if (!couponCode.trim()) {
+                          toast({
+                            title: "Enter Coupon Code",
+                            description:
+                              "Please enter a coupon code before applying.",
+                            variant: "destructive",
+                          });
+                          return;
+                        }
+
+                        // Validate Package Selection
+                        if (!selectedPackage) {
+                          toast({
+                            title: "Select Package",
+                            description:
+                              "Please select a package before applying a coupon.",
+                            variant: "destructive",
+                          });
+                          return;
+                        }
+
+                        handleApplyCoupon();
+                      }}
                     >
                       Apply
                     </Button>
@@ -1108,7 +1474,7 @@ originalAmount: Number(selectedPackage.Amount),
                     <div className="p-3 bg-green-50 rounded-lg border border-green-200 flex justify-between items-center">
                       <div>
                         <p className="font-medium text-green-700">
-                          {appliedCoupon.code}
+                          {appliedCoupon.Coupon_Code}
                         </p>
                         <p className="text-sm text-green-600">
                           -{/*BHD*/} {appliedCoupon.discount.toFixed(3)}{" "}
@@ -1181,23 +1547,36 @@ originalAmount: Number(selectedPackage.Amount),
                   <div className="space-y-4">
                     <div>
                       <Label>Notes (Optional)</Label>
-                      <Textarea
-                        placeholder="Add payment notes..."
-                        value={paymentNotes}
-                        onChange={(e) => setPaymentNotes(e.target.value)}
-                      />
+                      <TooltipProvider>
+                        <Tooltip>
+                          <TooltipTrigger asChild>
+                            <Textarea
+                              placeholder="Add payment notes..."
+                              value={paymentNotes}
+                              onChange={(e) => setPaymentNotes(e.target.value)}
+                            />
+                          </TooltipTrigger>
+
+                          <TooltipContent>
+                            <p>Enter the notes</p>
+                          </TooltipContent>
+                        </Tooltip>
+                      </TooltipProvider>
                     </div>
                   </div>
                   <div className="space-y-3 p-4 bg-gray-50 rounded-lg">
                     <div className="flex justify-between">
                       <span className="text-gray-600">Original Price:</span>
                       <span>
-                        {/*BHD*/} {selectedPackage?.Amount.toFixed(3) || "0.000"}
+                        {/*BHD*/}{" "}
+                        {packageDetails.length > 0
+                          ? Number(packageDetails[0].Amount).toFixed(3)
+                          : "0.000"}
                       </span>
                     </div>
                     {appliedCoupon && (
                       <div className="flex justify-between text-red-600">
-                        <span>Discount ({appliedCoupon.code}):</span>
+                        <span>Discount ({appliedCoupon.Coupon_Code}):</span>
                         <span>
                           -{/*BHD*/} {appliedCoupon.discount.toFixed(3)}
                         </span>
@@ -1213,7 +1592,7 @@ originalAmount: Number(selectedPackage.Amount),
                     <Button
                       className="w-full mt-4"
                       size="lg"
-                      onClick={handleProcessPayment}
+                      onClick={savePayment}
                       disabled={
                         !selectedMember || !selectedPackage || !paymentMethod
                       }
@@ -1433,7 +1812,7 @@ originalAmount: Number(selectedPackage.Amount),
                       <CartesianGrid strokeDasharray="3 3" />
                       <XAxis dataKey="name" />
                       <YAxis />
-                      <Tooltip
+                      <RechartsTooltip
                         formatter={(value, name) => [
                           // name === "revenue" ? `BHD ${value}` : value,
                           name === "revenue" ? `${value}` : value,
