@@ -207,6 +207,10 @@ router.post("/getSSLTypes", dataController.getSSLTypes)
 router.post("/EmailConfiInsert", dataController.EmailConfiInsert)
 router.post("/SMSConfiInsert", dataController.SMSConfiInsert)
 router.post("/WhatsappSettingsInsert", dataController.WhatsappSettingsInsert)
+router.post("/getDashboardKPI", dataController.getDashboardKPI)
+router.post("/getRevenueTrend", dataController.getRevenueTrend)
+router.post("/getPaymentMethodDistribution", dataController.getPaymentMethodDistribution)
+router.post("/getRecentPayments", dataController.getRecentPayments)
 
 
 
