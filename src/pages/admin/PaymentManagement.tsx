@@ -203,6 +203,14 @@ const PaymentManagement = () => {
     }
   }, [companyCode, locationCode]);
 
+  useEffect(() => {
+    if (companyCode && locationCode) {
+      fetchReportCardData();
+      fetchPackageRevenue();
+      fetchCouponUsageData();
+    }
+  }, [companyCode, locationCode]);
+
   const tabPermissions = [
     "PaymentDashboard",
     "NewPayment",
@@ -301,11 +309,13 @@ const PaymentManagement = () => {
   const [revenueChartData, setRevenueChartData] = useState([]);
   const [paymentMethodData, setPaymentMethodData] = useState([]);
   const [packageRevenueData, setPackageRevenueData] = useState([]);
-
   const [packageDetails, setPackageDetails] = useState<any[]>([]);
 
   const [paymentID, setPaymentID] = useState("");
   const [numberGeneration, setNumberGeneration] = useState("Auto");
+
+  const [reportCardData, setReportCardData] = useState<any>(null);
+  const [couponUsageData, setCouponUsageData] = useState<any[]>([]);
 
   // Stats calculation
   const todayTotal = payments
@@ -805,6 +815,151 @@ const PaymentManagement = () => {
       });
     }
   };
+
+  const fetchReportCardData = async () => {
+    try {
+      const response = await fetch(`${BASE_URL}/reportCardDataPayment`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          Company_code: companyCode,
+          Location_code: locationCode,
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to fetch report card data");
+      }
+
+      const data = await response.json();
+
+      if (Array.isArray(data) && data.length > 0) {
+        setReportCardData(data[0]);
+      }
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  const fetchPackageRevenue = async () => {
+    try {
+      const response = await fetch(`${BASE_URL}/reportPackageRevenue`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          Company_code: companyCode,
+          Location_code: locationCode,
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to fetch package revenue.");
+      }
+
+      const data = await response.json();
+
+      setPackageRevenueData(data);
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  const fetchCouponUsageData = async () => {
+    try {
+      const response = await fetch(`${BASE_URL}/couponUsageStatistics`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          Company_code: companyCode,
+          Location_code: locationCode,
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to fetch coupon statistics");
+      }
+
+      const data = await response.json();
+
+      setCouponUsageData(data);
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  const paymentHistoryColumns = [
+  {
+    headerName: "Payment ID",
+    field: "payment_id",
+    minWidth: 180,
+    filter: true,
+    sortable: true,
+  },
+  {
+    headerName: "Payment Date",
+    field: "payment_date",
+    minWidth: 150,
+    filter: true,
+    sortable: true,
+  },
+  {
+    headerName: "Member",
+    field: "Member_Name",
+    minWidth: 220,
+    filter: true,
+    sortable: true,
+  },
+  {
+    headerName: "Package",
+    field: "package_Name",
+    minWidth: 220,
+    filter: true,
+    sortable: true,
+  },
+  {
+    headerName: "Amount",
+    field: "final_amount",
+    minWidth: 130,
+    filter: true,
+    sortable: true,
+    valueFormatter: (params: any) =>
+      Number(params.value || 0).toFixed(3),
+  },
+  {
+    headerName: "Method",
+    field: "payment_method",
+    minWidth: 140,
+    filter: true,
+    sortable: true,
+  },
+  {
+    headerName: "Coupon",
+    field: "Coupon_Code",
+    minWidth: 150,
+    filter: true,
+    sortable: true,
+  },
+  {
+    headerName: "Status",
+    field: "status",
+    minWidth: 130,
+    filter: true,
+    sortable: true,
+  },
+  {
+    headerName: "Posted",
+    field: "postedToExternal",
+    minWidth: 130,
+    cellRenderer: (params: any) =>
+      params.value ? "Posted" : "Not Posted",
+  },
+];
 
   const calculateTotal = () => {
     if (!selectedPackage) return 0;
@@ -1660,7 +1815,7 @@ const PaymentManagement = () => {
                 </div>
 
                 {/* Table */}
-                <Table>
+                {/* <Table>
                   <TableHeader>
                     <TableRow>
                       <TableHead>Payment ID</TableHead>
@@ -1694,7 +1849,7 @@ const PaymentManagement = () => {
                         <TableCell>
                           <div>
                             <p className="font-semibold text-green-600">
-                              {/*BHD*/} {payment.finalAmount.toFixed(3)}
+                             {payment.finalAmount.toFixed(3)}
                             </p>
                             {payment.discountAmount > 0 && (
                               <p className="text-xs text-red-500">
@@ -1744,7 +1899,17 @@ const PaymentManagement = () => {
                       </TableRow>
                     ))}
                   </TableBody>
-                </Table>
+                </Table> */}
+
+                <div className="ag-theme-alpine h-[550px] w-full">
+  <AgGridTable
+    rowData={filteredPayments}
+    columnDefs={paymentHistoryColumns}
+    pagination={true}
+    paginationPageSize={10}
+  />
+</div>
+
               </CardContent>
             </Card>
           </TabsContent>
@@ -1759,9 +1924,15 @@ const PaymentManagement = () => {
                       Daily Average
                     </p>
                     <p className="text-3xl font-bold text-gray-900">
-                      {/*BHD*/} 308.000
+                      {reportCardData?.DailyAverage?.toFixed(3) || "0.000"}
                     </p>
-                    <p className="text-sm text-green-600">+12% vs last week</p>
+                    <p className="text-sm text-green-600">
+                      {reportCardData
+                        ? `${Number(reportCardData.DailyAveragePercentage) >= 0 ? "+" : ""}${Number(
+                            reportCardData.DailyAveragePercentage,
+                          ).toFixed(2)}% vs last week`
+                        : "0% vs last week"}
+                    </p>
                   </div>
                 </CardContent>
               </Card>
@@ -1772,9 +1943,15 @@ const PaymentManagement = () => {
                       Weekly Revenue
                     </p>
                     <p className="text-3xl font-bold text-gray-900">
-                      {/*BHD*/} 2,155.000
+                      {reportCardData?.WeeklyRevenue?.toFixed(3) || "0.000"}
                     </p>
-                    <p className="text-sm text-green-600">+8% vs last week</p>
+                    <p className="text-sm text-green-600">
+                      {reportCardData
+                        ? `${Number(reportCardData.WeeklyRevenuePercentage) >= 0 ? "+" : ""}${Number(
+                            reportCardData.WeeklyRevenuePercentage,
+                          ).toFixed(2)}% vs last week`
+                        : "0% vs last week"}
+                    </p>
                   </div>
                 </CardContent>
               </Card>
@@ -1785,10 +1962,10 @@ const PaymentManagement = () => {
                       Total Discounts Given
                     </p>
                     <p className="text-3xl font-bold text-red-600">
-                      {/*BHD*/} 156.500
+                      {reportCardData?.TotalDiscounts?.toFixed(3) || "0.000"}
                     </p>
                     <p className="text-sm text-gray-500">
-                      From 23 coupons used
+                      From {reportCardData?.CouponUsed || 0} coupons used
                     </p>
                   </div>
                 </CardContent>
@@ -1825,54 +2002,43 @@ const PaymentManagement = () => {
                   </ResponsiveContainer>
                 </CardContent>
               </Card>
+
               <Card>
                 <CardHeader>
                   <CardTitle>Coupon Usage Statistics</CardTitle>
                 </CardHeader>
-                <CardContent>
-                  <div className="space-y-4">
-                    <div className="flex justify-between items-center p-3 bg-gray-50 rounded-lg">
-                      <div>
-                        <p className="font-medium">SAVE10</p>
-                        <p className="text-sm text-gray-500">
-                          10% off all packages
-                        </p>
+                <CardContent className="p-6 h-[300px] flex flex-col justify-between">
+                  <div className="flex-1 overflow-y-auto pr-2 custom-scrollbar space-y-4 min-h-0">
+                    {couponUsageData.length > 0 ? (
+                      couponUsageData.map((coupon: any, index: number) => (
+                        <div
+                          key={index}
+                          className="flex justify-between items-center p-3 bg-gray-50 rounded-lg"
+                        >
+                          <div>
+                            <p className="font-medium">{coupon.Coupon_Code}</p>
+
+                            <p className="text-sm text-gray-500">
+                              {coupon.Description}
+                            </p>
+                          </div>
+
+                          <div className="text-right">
+                            <p className="font-semibold">
+                              {coupon.TotalUses} uses
+                            </p>
+
+                            <p className="text-sm text-red-600">
+                              -{Number(coupon.TotalDiscount).toFixed(3)}
+                            </p>
+                          </div>
+                        </div>
+                      ))
+                    ) : (
+                      <div className="text-center text-gray-500 py-6">
+                        No coupon usage found.
                       </div>
-                      <div className="text-right">
-                        <p className="font-semibold">45 uses</p>
-                        <p className="text-sm text-red-600">
-                          -{/*BHD*/} 450.000
-                        </p>
-                      </div>
-                    </div>
-                    <div className="flex justify-between items-center p-3 bg-gray-50 rounded-lg">
-                      <div>
-                        <p className="font-medium">NEWMEMBER</p>
-                        <p className="text-sm text-gray-500">
-                          {/*BHD*/} 5 off for new members
-                        </p>
-                      </div>
-                      <div className="text-right">
-                        <p className="font-semibold">23 uses</p>
-                        <p className="text-sm text-red-600">
-                          -{/*BHD*/} 115.000
-                        </p>
-                      </div>
-                    </div>
-                    <div className="flex justify-between items-center p-3 bg-gray-50 rounded-lg">
-                      <div>
-                        <p className="font-medium">HALFYEAR20</p>
-                        <p className="text-sm text-gray-500">
-                          20% off Half-Yearly
-                        </p>
-                      </div>
-                      <div className="text-right">
-                        <p className="font-semibold">50 uses</p>
-                        <p className="text-sm text-red-600">
-                          -{/*BHD*/} 1,200.000
-                        </p>
-                      </div>
-                    </div>
+                    )}
                   </div>
                 </CardContent>
               </Card>

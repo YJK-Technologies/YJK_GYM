@@ -1,14 +1,28 @@
 import { useState, useRef, useEffect } from "react";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle,} from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { useNavigate } from "react-router-dom";
-import { Users, DollarSign, Calendar, TrendingUp, ChevronDown, Building2, LogOut, Settings,} from "lucide-react";
+import {
+  Users,
+  DollarSign,
+  Calendar,
+  TrendingUp,
+  ChevronDown,
+  Building2,
+  LogOut,
+  Settings,
+} from "lucide-react";
 import GymFloorActivity from "@/components/admin/GymFloorActivity";
 import { showConfirmToast } from "@/components/ui/show-confirm-toast";
 import { useCompany } from "../CompanyContext";
 import { BASE_URL } from "../ApiConfig";
-
 
 const AdminDashboard = () => {
   const { userCode } = useCompany();
@@ -20,50 +34,64 @@ const AdminDashboard = () => {
   const menuRef = useRef(null);
   const navigate = useNavigate();
 
-   const { companyCode, locationCode, } = useCompany();
+  const { companyCode, locationCode } = useCompany();
 
-  // For admin 
+  // For admin
   const [dashboardData, setDashboardData] = useState({
-  TotalMembers: 0,
-  ActivePrograms: 0,
-});
+    TotalMembers: 0,
+    ActivePrograms: 0,
+  });
 
-const getDashboardData = async () => {
-  try {
-    const response = await fetch(`${BASE_URL}/adminDashboardCardData`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        Company_code: companyCode,
-        Location_code: locationCode,
-      }),
-    });
+  // For manage buttons colour
+  const buttonColors = [
+    "bg-orange-400",
+    "bg-emerald-400",
+    "bg-blue-500",
+    "bg-red-500",
+    "bg-pink-500",
+    "bg-cyan-500",
+    "bg-amber-500",
+    "bg-indigo-500",
+    "bg-teal-500",
+    "bg-rose-500",
+  ];
 
-    const result = await response.json();
+  const getDashboardData = async () => {
+    try {
+      const response = await fetch(`${BASE_URL}/adminDashboardCardData`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          Company_code: companyCode,
+          Location_code: locationCode,
+        }),
+      });
 
-    setDashboardData(result[0]);
-  } catch (error) {
-    console.error(error);
-  }
-};
+      const result = await response.json();
 
-  useEffect(() => {
-  getDashboardData();
-
-  const handleClickOutside = (event) => {
-    if (menuRef.current && !menuRef.current.contains(event.target)) {
-      setIsMenuOpen(false);
+      setDashboardData(result[0]);
+    } catch (error) {
+      console.error(error);
     }
   };
 
-  document.addEventListener("mousedown", handleClickOutside);
+  useEffect(() => {
+    getDashboardData();
 
-  return () => {
-    document.removeEventListener("mousedown", handleClickOutside);
-  };
-}, []);
+    const handleClickOutside = (event) => {
+      if (menuRef.current && !menuRef.current.contains(event.target)) {
+        setIsMenuOpen(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
 
   const permissions = JSON.parse(sessionStorage.getItem("permissions") || "[]");
 
@@ -97,32 +125,32 @@ const getDashboardData = async () => {
   // ];
 
   const stats = [
-  {
-    title: "Total Members",
-    value: dashboardData.TotalMembers,
-    icon: Users,
-    color: "bg-purple-500",
-  },
-  {
-    title: "Monthly Revenue",
-    // value: "BHD 12,500",
-    value: "12,500",
-    icon: DollarSign,
-    color: "bg-green-500",
-  },
-  {
-    title: "Active Programs",
-    value: dashboardData.ActivePrograms,
-    icon: Calendar,
-    color: "bg-purple-500",
-  },
-  {
-    title: "Growth Rate",
-    value: "+15%",
-    icon: TrendingUp,
-    color: "bg-orange-500",
-  },
-];
+    {
+      title: "Total Members",
+      value: dashboardData.TotalMembers,
+      icon: Users,
+      color: "bg-purple-500",
+    },
+    {
+      title: "Monthly Revenue",
+      // value: "BHD 12,500",
+      value: "12,500",
+      icon: DollarSign,
+      color: "bg-green-500",
+    },
+    {
+      title: "Active Programs",
+      value: dashboardData.ActivePrograms,
+      icon: Calendar,
+      color: "bg-purple-500",
+    },
+    {
+      title: "Growth Rate",
+      value: "+15%",
+      icon: TrendingUp,
+      color: "bg-orange-500",
+    },
+  ];
 
   const quickActions = [
     {
@@ -334,11 +362,8 @@ const getDashboardData = async () => {
                     </p>
                     <Button
                       className={`w-full text-white border-0 transition-colors duration-300
-                        ${
-                          index % 2 === 0
-                            ? "bg-orange-400 hover:bg-purple-600"
-                            : "bg-emerald-400 hover:bg-purple-600"
-                        }`}
+                      ${buttonColors[index % buttonColors.length]}
+                      hover:bg-purple-600`}
                       variant="outline"
                       onClick={() => navigate(action.route)}
                     >

@@ -5659,6 +5659,98 @@ return res.status(404).json({
   }
 };
 //Code ended by Dinesh Gokul on 28-07-2026
+
+//Code added by Dinesh Gokul on 29-07-2026
+const reportCardDataPayment = async (req, res) => {
+  const {  Company_code,  Location_code,} = req.body;
+
+  try {
+    const pool = await connection.connectToDatabase();
+
+    const result = await pool
+      .request()
+      .input("mode", sql.NVarChar, "SD")
+      .input("Company_code", sql.NVarChar, Company_code)
+      .input("Location_code", sql.NVarChar, Location_code)
+      .query(`
+        EXEC sp_Payment_Values @mode, '', '', @Company_Code, @Location_Code
+      `);
+
+    if (result.recordset.length > 0) {
+  return res.status(200).json(result.recordset);
+}
+
+return res.status(404).json({
+  success: false,
+  message: "Coupon not found."
+});
+
+  } catch (err) {
+    console.error(err);
+
+    return res.status(400).json({
+  success: false,
+  message: err.originalError?.info?.message || err.message,
+});
+  }
+};
+
+const reportPackageRevenue = async (req, res) => {
+  const { Company_code, Location_code } = req.body;
+
+  try {
+    const pool = await connection.connectToDatabase();
+
+    const result = await pool
+      .request()
+      .input("mode", sql.NVarChar, "RP")
+      .input("Company_code", sql.NVarChar, Company_code)
+      .input("Location_code", sql.NVarChar, Location_code)
+      .query(`
+        EXEC sp_Payment_Values @mode, '', '', @Company_code, @Location_code
+      `);
+
+    return res.status(200).json(result.recordset);
+
+  } catch (err) {
+
+    console.error(err);
+
+    return res.status(500).json({
+      success: false,
+      message: err.originalError?.info?.message || err.message
+    });
+
+  }
+};
+
+const couponUsageStatistics = async (req, res) => {
+  const { Company_code, Location_code } = req.body;
+
+  try {
+    const pool = await connection.connectToDatabase();
+
+    const result = await pool
+      .request()
+      .input("mode", sql.NVarChar, "CU")
+      .input("Company_code", sql.NVarChar, Company_code)
+      .input("Location_code", sql.NVarChar, Location_code)
+      .query(`
+        EXEC sp_Payment_Values @mode, '', '', @Company_Code, @Location_Code
+      `);
+
+    return res.status(200).json(result.recordset);
+
+  } catch (err) {
+    console.error(err);
+
+    return res.status(500).json({
+      success: false,
+      message: err.originalError?.info?.message || err.message,
+    });
+  }
+};
+//Code ended by Dinesh Gokul on 29-07-2026
 module.exports = {
   getCompanyno,
   getsearchdata,
@@ -5840,6 +5932,9 @@ module.exports = {
   getSSLTypes,
   EmailConfiInsert,
   SMSConfiInsert,
-  WhatsappSettingsInsert
+  WhatsappSettingsInsert,
+  reportCardDataPayment,
+  reportPackageRevenue,
+  couponUsageStatistics
 
 };
