@@ -4523,13 +4523,9 @@ const PackageInsertData = async (req, res) => {
       .input("Company_code", sql.NVarChar, Company_code)
       .input("Location_code", sql.NVarChar, Location_code)
       .input("created_by", sql.NVarChar, created_by)
-<<<<<<< HEAD
-      .query(`EXEC sp_Package_hdr_test @Mode,'',@package_Name,@package_type,@duration_days,@price,@features,@discount_percentage,@is_active,@Company_code,@Location_code,'',@created_by,''`);
-=======
       .query(`EXEC sp_Package_hdr_test @Mode,@package_ID,@package_Name,@package_type,@duration_days,@price,@features,@discount_percentage,@is_active,@Company_code,@Location_code,'',@created_by,''`);
 
     const packageId = result.recordset?.[0]?.PackageID ?? PackageID;
->>>>>>> cf3a300e34a9ff5859cbdee7544b19afdbf12df8
 
     res.status(200).json({
       success: true,
