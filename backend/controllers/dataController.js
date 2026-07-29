@@ -5390,6 +5390,215 @@ const getPaymentPackageDetails = async (req, res) => {
 }
 //Code ended by Dinesh Gokul on 27-07-2026
 
+//code added by SakthiGanesh J on 28-07-26
+const getSMTPPorts = async (req, res) => {
+  const { company_code } = req.body;
+  try {
+    const pool = await connection.connectToDatabase();
+    const result = await pool
+      .request()
+      .input("company_code", sql.NVarChar, company_code)
+      .query(
+        "EXEC sp_attribute_Info 'F',@company_code,'SMTPP','','', '','','', NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL",
+      );
+
+    res.json(result.recordset);
+  } catch (err) {
+    console.error("Error", err);
+    res.status(500).json({ message: err.message || "Internal Server Error" });
+  }
+};
+const getSMSProviders = async (req, res) => {
+  const { company_code } = req.body;
+  try {
+    const pool = await connection.connectToDatabase();
+    const result = await pool
+      .request()
+      .input("company_code", sql.NVarChar, company_code)
+      .query(
+        "EXEC sp_attribute_Info 'F',@company_code,'SMS Provider','','', '','','', NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL",
+      );
+
+    res.json(result.recordset);
+  } catch (err) {
+    console.error("Error", err);
+    res.status(500).json({ message: err.message || "Internal Server Error" });
+  }
+};
+const getCountryCodes = async (req, res) => {
+  const { company_code } = req.body;
+  try {
+    const pool = await connection.connectToDatabase();
+    const result = await pool
+      .request()
+      .input("company_code", sql.NVarChar, company_code)
+      .query(
+        "EXEC sp_attribute_Info 'F',@company_code,'Default Country Co','','', '','','', NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL",
+      );
+
+    res.json(result.recordset);
+  } catch (err) {
+    console.error("Error", err);
+    res.status(500).json({ message: err.message || "Internal Server Error" });
+  }
+};
+const getWhatsappProviders = async (req, res) => {
+  const { company_code } = req.body;
+  try {
+    const pool = await connection.connectToDatabase();
+    const result = await pool
+      .request()
+      .input("company_code", sql.NVarChar, company_code)
+      .query(
+        "EXEC sp_attribute_Info 'F',@company_code,'WhatsApp Provider','','', '','','', NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL",
+      );
+
+    res.json(result.recordset);
+  } catch (err) {
+    console.error("Error", err);
+    res.status(500).json({ message: err.message || "Internal Server Error" });
+  }
+};
+const getSSLTypes = async (req, res) => {
+  const { company_code } = req.body;
+  try {
+    const pool = await connection.connectToDatabase();
+    const result = await pool
+      .request()
+      .input("company_code", sql.NVarChar, company_code)
+      .query(
+        "EXEC sp_attribute_Info 'F',@company_code,'boolean','','', '','','', NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL",
+      );
+
+    res.json(result.recordset);
+  } catch (err) {
+    console.error("Error", err);
+    res.status(500).json({ message: err.message || "Internal Server Error" });
+  }
+};
+
+const EmailConfiInsert = async (req, res) => {
+  const { SmtpHostID, smtp_host, smtp_port, smtp_username, smtp_password, from_email, from_name, use_ssl, Company_code, Location_code, created_by,} = req.body;
+
+  try {
+    const pool = await connection.connectToDatabase();
+
+    const result = await pool
+      .request()
+      .input("mode", sql.NVarChar, "I")
+      .input("SmtpHostID", sql.NVarChar, SmtpHostID)
+      .input("smtp_host", sql.NVarChar, smtp_host)
+      .input("smtp_port", sql.Int, smtp_port)
+      .input("smtp_username", sql.NVarChar, smtp_username)
+      .input("smtp_password", sql.NVarChar, smtp_password)
+      .input("from_email", sql.NVarChar, from_email)
+      .input("from_name", sql.NVarChar, from_name)
+      .input("use_ssl", sql.NVarChar, use_ssl)
+      .input("Company_code", sql.NVarChar, Company_code)
+      .input("Location_code", sql.NVarChar, Location_code)
+      .input("created_by", sql.NVarChar, created_by)
+      .query(`EXEC sp_Notification_Settings_Host @mode, @SmtpHostID, @smtp_host, @smtp_port, @smtp_username, @smtp_password,
+      @from_email, @from_name, @use_ssl, @Company_code, @Location_code, '', @created_by, '' `);
+
+    const smtpHostId =
+      result.recordset?.[0]?.SmtpHostID ?? SmtpHostID;
+
+    res.status(200).json({
+      success: true,
+      message: "SMTP Settings saved successfully.",
+      SmtpHostID: smtpHostId,
+    });
+  } catch (err) {
+    console.error("Error:", err.message);
+
+    res.status(500).json({
+      success: false,
+      message: err.message || "Internal Server Error",
+    });
+  }
+};
+
+const SMSConfiInsert = async (req, res) => {
+  const { SmsSettingsId, sms_provider, sms_api_key, sms_api_secret, sms_sender_id, sms_country_code, Company_code, Location_code, created_by,} = req.body;
+
+  try {
+    const pool = await connection.connectToDatabase();
+
+    const result = await pool
+      .request()
+      .input("mode", sql.NVarChar, "I")
+      .input("SmsSettingsId", sql.NVarChar, SmsSettingsId)
+      .input("sms_provider", sql.NVarChar, sms_provider)
+      .input("sms_api_key", sql.NVarChar, sms_api_key)
+      .input("sms_api_secret", sql.NVarChar, sms_api_secret)
+      .input("sms_sender_id", sql.NVarChar, sms_sender_id)
+      .input("sms_country_code", sql.NVarChar, sms_country_code)
+      .input("Company_code", sql.NVarChar, Company_code)
+      .input("Location_code", sql.NVarChar, Location_code)
+      .input("created_by", sql.NVarChar, created_by)
+      .query(`EXEC sp_Notification_Settings_SMS @mode, @SmsSettingsId, @sms_provider, @sms_api_key, @sms_api_secret, 
+        @sms_sender_id, @sms_country_code, @Company_code, @Location_code, '', @created_by, ''`);
+
+    const smsSettingsId =
+      result.recordset?.[0]?.SmsSettingsId ?? SmsSettingsId;
+
+    res.status(200).json({
+      success: true,
+      message: "SMS Settings saved successfully.",
+      SmsSettingsId: smsSettingsId,
+    });
+  } catch (err) {
+    console.error("Error:", err.message);
+
+    res.status(500).json({
+      success: false,
+      message: err.message || "Internal Server Error",
+    });
+  }
+};
+
+const WhatsappSettingsInsert = async (req, res) => {
+  const { WhatsappSettingsId, whatsapp_provider, whatsapp_api_key, whatsapp_phone_id, whatsapp_access_token, whatsapp_business_id,
+    Company_code, Location_code, created_by, } = req.body;
+
+  try {
+    const pool = await connection.connectToDatabase();
+
+    const result = await pool
+      .request()
+      .input("mode", sql.NVarChar, "I")
+      .input("WhatsappSettingsId", sql.NVarChar, WhatsappSettingsId)
+      .input("whatsapp_provider", sql.NVarChar, whatsapp_provider)
+      .input("whatsapp_api_key", sql.NVarChar, whatsapp_api_key)
+      .input("whatsapp_phone_id", sql.NVarChar, whatsapp_phone_id)
+      .input("whatsapp_access_token", sql.NVarChar, whatsapp_access_token)
+      .input("whatsapp_business_id", sql.NVarChar, whatsapp_business_id)
+      .input("Company_code", sql.NVarChar, Company_code)
+      .input("Location_code", sql.NVarChar, Location_code)
+      .input("created_by", sql.NVarChar, created_by)
+      .query(`EXEC sp_Notification_Settings_Whatsapp @mode, @WhatsappSettingsId, @whatsapp_provider, @whatsapp_api_key, 
+        @whatsapp_phone_id, @whatsapp_access_token, @whatsapp_business_id, @Company_code, @Location_code, '', @created_by,
+        ''`);
+
+    const whatsappSettingsId =
+      result.recordset?.[0]?.WhatsappSettingsId ?? WhatsappSettingsId;
+
+    res.status(200).json({
+      success: true,
+      message: "WhatsApp Settings saved successfully.",
+      WhatsappSettingsId: whatsappSettingsId,
+    });
+  } catch (err) {
+    console.error("Error:", err.message);
+
+    res.status(500).json({
+      success: false,
+      message: err.message || "Internal Server Error",
+    });
+  }
+};
+//code ended by SakthiGanesh J on 28-07-26
+
 //Code added by Dinesh Gokul on 28-07-2026
 const getPaymentProgramDetails = async (req, res) => {
   const { package_ID, Company_code, Location_code } = req.body;
@@ -5623,6 +5832,14 @@ module.exports = {
   PaymentTransactionDelete,
   getPaymentPackageDetails,
   getPaymentProgramDetails,
-  applyCouponPayment
+  applyCouponPayment,
+  getSMTPPorts,
+  getSMSProviders,
+  getCountryCodes,
+  getWhatsappProviders,
+  getSSLTypes,
+  EmailConfiInsert,
+  SMSConfiInsert,
+  WhatsappSettingsInsert
 
 };

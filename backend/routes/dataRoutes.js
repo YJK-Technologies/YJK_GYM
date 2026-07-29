@@ -199,6 +199,14 @@ router.post("/PaymentTransactionDelete", dataController.PaymentTransactionDelete
 router.post("/getPaymentPackageDetails", dataController.getPaymentPackageDetails)
 router.post("/getPaymentProgramDetails", dataController.getPaymentProgramDetails)
 router.post("/applyCouponPayment", dataController.applyCouponPayment)
+router.post("/getSMTPPorts", dataController.getSMTPPorts)
+router.post("/getSMSProviders", dataController.getSMSProviders)
+router.post("/getCountryCodes", dataController.getCountryCodes)
+router.post("/getWhatsappProviders", dataController.getWhatsappProviders)
+router.post("/getSSLTypes", dataController.getSSLTypes)
+router.post("/EmailConfiInsert", dataController.EmailConfiInsert)
+router.post("/SMSConfiInsert", dataController.SMSConfiInsert)
+router.post("/WhatsappSettingsInsert", dataController.WhatsappSettingsInsert)
 
 
 
