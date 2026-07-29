@@ -203,6 +203,14 @@ const PaymentManagement = () => {
     }
   }, [companyCode, locationCode]);
 
+  useEffect(() => {
+    if (companyCode && locationCode) {
+      fetchReportCardData();
+      fetchPackageRevenue();
+      fetchCouponUsageData();
+    }
+  }, [companyCode, locationCode]);
+
   const tabPermissions = [
     "PaymentDashboard",
     "NewPayment",
@@ -237,7 +245,7 @@ const PaymentManagement = () => {
     );
   }
 
-  const [payments, setPayments] = useState<Payment[]>([]);
+
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState<string>("all");
   const [methodFilter, setMethodFilter] = useState<string>("all");
@@ -301,27 +309,206 @@ const PaymentManagement = () => {
   const [revenueChartData, setRevenueChartData] = useState([]);
   const [paymentMethodData, setPaymentMethodData] = useState([]);
   const [packageRevenueData, setPackageRevenueData] = useState([]);
-
   const [packageDetails, setPackageDetails] = useState<any[]>([]);
 
   const [paymentID, setPaymentID] = useState("");
+  const [payments, setPayments] = useState([]);
   const [numberGeneration, setNumberGeneration] = useState("Auto");
 
-  // Stats calculation
-  const todayTotal = payments
-    .filter(
-      (p) =>
-        p.paymentDate === new Date().toISOString().split("T")[0] &&
-        p.status === "Completed",
-    )
-    .reduce((sum, p) => sum + p.finalAmount, 0);
+  const [reportCardData, setReportCardData] = useState<any>(null);
+  const [couponUsageData, setCouponUsageData] = useState<any[]>([]);
 
-  const monthlyTotal = payments
-    .filter((p) => p.status === "Completed")
-    .reduce((sum, p) => sum + p.finalAmount, 0);
+const [todayTotal, setTodayTotal] = useState(0);
+const [monthlyTotal, setMonthlyTotal] = useState(0);
+const [pendingCount, setPendingCount] = useState(0);
+const [totalTransactions, setTotalTransactions] = useState(0);
 
-  const pendingCount = payments.filter((p) => p.status === "Pending").length;
-  const totalTransactions = payments.length;
+// Stats calculation
+  // const todayTotal = payments
+  //   .filter(
+  //     (p) =>
+  //       p.paymentDate === new Date().toISOString().split("T")[0] &&
+  //       p.status === "Completed",
+  //   )
+  //   .reduce((sum, p) => sum + p.finalAmount, 0);
+
+  // const monthlyTotal = payments
+  //   .filter((p) => p.status === "Completed")
+  //   .reduce((sum, p) => sum + p.finalAmount, 0);
+
+  // const pendingCount = payments.filter((p) => p.status === "Pending").length;
+  // const totalTransactions = payments.length;
+
+
+const getDashboardKPI = async () => {
+  try {
+    const response = await fetch(`${BASE_URL}/getDashboardKPI`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        company_code: companyCode,
+        Location_Code: locationCode,
+      }),
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      throw new Error(data.message);
+    }
+
+    if (data.length > 0) {
+      setTodayTotal(Number(data[0].TodayCollections));
+      setMonthlyTotal(Number(data[0].MonthlyRevenue));
+      setPendingCount(Number(data[0].PendingPayments));
+      setTotalTransactions(Number(data[0].TotalTransactions));
+    }
+  } catch (err) {
+    console.error("Dashboard KPI Error :", err);
+  }
+};
+
+useEffect(() => {
+  if (companyCode && locationCode) {
+    getDashboardKPI();
+  }
+}, [companyCode, locationCode]);
+
+
+const getRevenueTrend = async () => {
+  try {
+    const response = await fetch(`${BASE_URL}/getRevenueTrend`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        company_code: companyCode,
+        Location_Code: locationCode,
+      }),
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      throw new Error(data.message || "Failed to fetch Revenue Trend");
+    }
+
+    const chartData = data.map((item: any) => ({
+      day: new Date(item.PaymentDate).toLocaleDateString("en-GB", {
+        day: "2-digit",
+        month: "short",
+      }),
+      revenue: Number(item.Revenue),
+    }));
+
+    setRevenueChartData(chartData);
+  } catch (err) {
+    console.error("Revenue Trend Error:", err);
+  }
+};
+
+useEffect(() => {
+  if (companyCode && locationCode) {
+    getRevenueTrend();
+  }
+}, [companyCode, locationCode]);
+
+const getPaymentMethodDistribution = async () => {
+  try {
+    const response = await fetch(`${BASE_URL}/getPaymentMethodDistribution`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        company_code: companyCode,
+        Location_Code: locationCode,
+      }),
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      throw new Error(
+        data.message || "Failed to fetch Payment Method Distribution"
+      );
+    }
+
+    const colors = [
+      "#3b82f6",
+      "#22c55e",
+      "#f59e0b",
+      "#ef4444",
+      "#8b5cf6",
+      "#06b6d4",
+    ];
+
+    const totalAmount = data.reduce(
+      (sum: number, item: any) => sum + Number(item.TotalAmount),
+      0
+    );
+
+    const chartData = data.map((item: any, index: number) => ({
+      name: item.payment_method,
+      value: Number(((item.TotalAmount / totalAmount) * 100).toFixed(1)),
+      color: colors[index % colors.length],
+    }));
+
+    setPaymentMethodData(chartData);
+  } catch (err) {
+    console.error("Payment Method Distribution Error:", err);
+  }
+};
+
+useEffect(() => {
+  if (companyCode && locationCode) {
+    getPaymentMethodDistribution();
+  }
+}, [companyCode, locationCode]);
+
+
+const getRecentPayments = async () => {
+  try {
+    const response = await fetch(`${BASE_URL}/getRecentPayments`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        company_code: companyCode,
+        Location_Code: locationCode,
+      }),
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      throw new Error(data.message || "Failed to fetch Recent Payments");
+    }
+
+    const paymentData = data.map((item: any) => ({
+      id: item.payment_id,
+      memberName: item.MemberID,
+      finalAmount: Number(item.final_amount),
+      paymentMethod: item.payment_method,
+      status: item.status,
+    }));
+
+    setPayments(paymentData);
+  } catch (err) {
+    console.error("Recent Payments Error:", err);
+  }
+};
+
+
+useEffect(() => {
+  if (companyCode && locationCode) {
+    getRecentPayments();
+  }
+}, [companyCode, locationCode]);
 
   // Filter payments
   const filteredPayments = payments.filter((payment) => {
@@ -806,6 +993,151 @@ const PaymentManagement = () => {
     }
   };
 
+  const fetchReportCardData = async () => {
+    try {
+      const response = await fetch(`${BASE_URL}/reportCardDataPayment`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          Company_code: companyCode,
+          Location_code: locationCode,
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to fetch report card data");
+      }
+
+      const data = await response.json();
+
+      if (Array.isArray(data) && data.length > 0) {
+        setReportCardData(data[0]);
+      }
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  const fetchPackageRevenue = async () => {
+    try {
+      const response = await fetch(`${BASE_URL}/reportPackageRevenue`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          Company_code: companyCode,
+          Location_code: locationCode,
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to fetch package revenue.");
+      }
+
+      const data = await response.json();
+
+      setPackageRevenueData(data);
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  const fetchCouponUsageData = async () => {
+    try {
+      const response = await fetch(`${BASE_URL}/couponUsageStatistics`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          Company_code: companyCode,
+          Location_code: locationCode,
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to fetch coupon statistics");
+      }
+
+      const data = await response.json();
+
+      setCouponUsageData(data);
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  const paymentHistoryColumns = [
+  {
+    headerName: "Payment ID",
+    field: "payment_id",
+    minWidth: 180,
+    filter: true,
+    sortable: true,
+  },
+  {
+    headerName: "Payment Date",
+    field: "payment_date",
+    minWidth: 150,
+    filter: true,
+    sortable: true,
+  },
+  {
+    headerName: "Member",
+    field: "Member_Name",
+    minWidth: 220,
+    filter: true,
+    sortable: true,
+  },
+  {
+    headerName: "Package",
+    field: "package_Name",
+    minWidth: 220,
+    filter: true,
+    sortable: true,
+  },
+  {
+    headerName: "Amount",
+    field: "final_amount",
+    minWidth: 130,
+    filter: true,
+    sortable: true,
+    valueFormatter: (params: any) =>
+      Number(params.value || 0).toFixed(3),
+  },
+  {
+    headerName: "Method",
+    field: "payment_method",
+    minWidth: 140,
+    filter: true,
+    sortable: true,
+  },
+  {
+    headerName: "Coupon",
+    field: "Coupon_Code",
+    minWidth: 150,
+    filter: true,
+    sortable: true,
+  },
+  {
+    headerName: "Status",
+    field: "status",
+    minWidth: 130,
+    filter: true,
+    sortable: true,
+  },
+  {
+    headerName: "Posted",
+    field: "postedToExternal",
+    minWidth: 130,
+    cellRenderer: (params: any) =>
+      params.value ? "Posted" : "Not Posted",
+  },
+];
+
   const calculateTotal = () => {
     if (!selectedPackage) return 0;
 
@@ -943,6 +1275,8 @@ const PaymentManagement = () => {
     }
   };
 
+
+
   return (
     <div className="min-h-screen bg-gray-50">
       <header className="bg-white shadow-sm border-b">
@@ -1015,7 +1349,7 @@ const PaymentManagement = () => {
                         Today's Collections
                       </p>
                       <p className="text-2xl font-bold text-gray-900">
-                        {/*BHD*/} {todayTotal.toFixed(3)}
+                        {/*BHD*/}  {todayTotal.toFixed(3)}
                       </p>
                     </div>
                   </div>
@@ -1076,29 +1410,29 @@ const PaymentManagement = () => {
 
             {/* Charts */}
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-              <Card>
-                <CardHeader>
-                  <CardTitle>Revenue Trend (Last 7 Days)</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <ResponsiveContainer width="100%" height={300}>
-                    <LineChart data={revenueChartData}>
-                      <CartesianGrid strokeDasharray="3 3" />
-                      <XAxis dataKey="day" />
-                      <YAxis />
-                      <RechartsTooltip
-                        formatter={(value: number) => [`${value}`, "Revenue"]}
-                      />
-                      <Line
-                        type="monotone"
-                        dataKey="revenue"
-                        stroke="#3b82f6"
-                        strokeWidth={2}
-                      />
-                    </LineChart>
-                  </ResponsiveContainer>
-                </CardContent>
-              </Card>
+                <Card>
+                  <CardHeader>
+                    <CardTitle>Revenue Trend (Last 7 Days)</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <ResponsiveContainer width="100%" height={300}>
+                      <LineChart data={revenueChartData}>
+                        <CartesianGrid strokeDasharray="3 3" />
+                        <XAxis dataKey="day" />
+                        <YAxis />
+                        <RechartsTooltip
+                          formatter={(value: number) => [`${value}`, "Revenue"]}
+                        />
+                        <Line
+                          type="monotone"
+                          dataKey="revenue"
+                          stroke="#3b82f6"
+                          strokeWidth={2}
+                        />
+                      </LineChart>
+                    </ResponsiveContainer>
+                  </CardContent>
+                </Card>
               <Card>
                 <CardHeader>
                   <CardTitle>Payment Method Distribution</CardTitle>
@@ -1660,7 +1994,7 @@ const PaymentManagement = () => {
                 </div>
 
                 {/* Table */}
-                <Table>
+                {/* <Table>
                   <TableHeader>
                     <TableRow>
                       <TableHead>Payment ID</TableHead>
@@ -1694,7 +2028,7 @@ const PaymentManagement = () => {
                         <TableCell>
                           <div>
                             <p className="font-semibold text-green-600">
-                              {/*BHD*/} {payment.finalAmount.toFixed(3)}
+                             {payment.finalAmount.toFixed(3)}
                             </p>
                             {payment.discountAmount > 0 && (
                               <p className="text-xs text-red-500">
@@ -1744,7 +2078,17 @@ const PaymentManagement = () => {
                       </TableRow>
                     ))}
                   </TableBody>
-                </Table>
+                </Table> */}
+
+                <div className="ag-theme-alpine h-[550px] w-full">
+  <AgGridTable
+    rowData={filteredPayments}
+    columnDefs={paymentHistoryColumns}
+    pagination={true}
+    paginationPageSize={10}
+  />
+</div>
+
               </CardContent>
             </Card>
           </TabsContent>
@@ -1759,9 +2103,15 @@ const PaymentManagement = () => {
                       Daily Average
                     </p>
                     <p className="text-3xl font-bold text-gray-900">
-                      {/*BHD*/} 308.000
+                      {reportCardData?.DailyAverage?.toFixed(3) || "0.000"}
                     </p>
-                    <p className="text-sm text-green-600">+12% vs last week</p>
+                    <p className="text-sm text-green-600">
+                      {reportCardData
+                        ? `${Number(reportCardData.DailyAveragePercentage) >= 0 ? "+" : ""}${Number(
+                            reportCardData.DailyAveragePercentage,
+                          ).toFixed(2)}% vs last week`
+                        : "0% vs last week"}
+                    </p>
                   </div>
                 </CardContent>
               </Card>
@@ -1772,9 +2122,15 @@ const PaymentManagement = () => {
                       Weekly Revenue
                     </p>
                     <p className="text-3xl font-bold text-gray-900">
-                      {/*BHD*/} 2,155.000
+                      {reportCardData?.WeeklyRevenue?.toFixed(3) || "0.000"}
                     </p>
-                    <p className="text-sm text-green-600">+8% vs last week</p>
+                    <p className="text-sm text-green-600">
+                      {reportCardData
+                        ? `${Number(reportCardData.WeeklyRevenuePercentage) >= 0 ? "+" : ""}${Number(
+                            reportCardData.WeeklyRevenuePercentage,
+                          ).toFixed(2)}% vs last week`
+                        : "0% vs last week"}
+                    </p>
                   </div>
                 </CardContent>
               </Card>
@@ -1785,10 +2141,10 @@ const PaymentManagement = () => {
                       Total Discounts Given
                     </p>
                     <p className="text-3xl font-bold text-red-600">
-                      {/*BHD*/} 156.500
+                      {reportCardData?.TotalDiscounts?.toFixed(3) || "0.000"}
                     </p>
                     <p className="text-sm text-gray-500">
-                      From 23 coupons used
+                      From {reportCardData?.CouponUsed || 0} coupons used
                     </p>
                   </div>
                 </CardContent>
@@ -1825,54 +2181,43 @@ const PaymentManagement = () => {
                   </ResponsiveContainer>
                 </CardContent>
               </Card>
+
               <Card>
                 <CardHeader>
                   <CardTitle>Coupon Usage Statistics</CardTitle>
                 </CardHeader>
-                <CardContent>
-                  <div className="space-y-4">
-                    <div className="flex justify-between items-center p-3 bg-gray-50 rounded-lg">
-                      <div>
-                        <p className="font-medium">SAVE10</p>
-                        <p className="text-sm text-gray-500">
-                          10% off all packages
-                        </p>
+                <CardContent className="p-6 h-[300px] flex flex-col justify-between">
+                  <div className="flex-1 overflow-y-auto pr-2 custom-scrollbar space-y-4 min-h-0">
+                    {couponUsageData.length > 0 ? (
+                      couponUsageData.map((coupon: any, index: number) => (
+                        <div
+                          key={index}
+                          className="flex justify-between items-center p-3 bg-gray-50 rounded-lg"
+                        >
+                          <div>
+                            <p className="font-medium">{coupon.Coupon_Code}</p>
+
+                            <p className="text-sm text-gray-500">
+                              {coupon.Description}
+                            </p>
+                          </div>
+
+                          <div className="text-right">
+                            <p className="font-semibold">
+                              {coupon.TotalUses} uses
+                            </p>
+
+                            <p className="text-sm text-red-600">
+                              -{Number(coupon.TotalDiscount).toFixed(3)}
+                            </p>
+                          </div>
+                        </div>
+                      ))
+                    ) : (
+                      <div className="text-center text-gray-500 py-6">
+                        No coupon usage found.
                       </div>
-                      <div className="text-right">
-                        <p className="font-semibold">45 uses</p>
-                        <p className="text-sm text-red-600">
-                          -{/*BHD*/} 450.000
-                        </p>
-                      </div>
-                    </div>
-                    <div className="flex justify-between items-center p-3 bg-gray-50 rounded-lg">
-                      <div>
-                        <p className="font-medium">NEWMEMBER</p>
-                        <p className="text-sm text-gray-500">
-                          {/*BHD*/} 5 off for new members
-                        </p>
-                      </div>
-                      <div className="text-right">
-                        <p className="font-semibold">23 uses</p>
-                        <p className="text-sm text-red-600">
-                          -{/*BHD*/} 115.000
-                        </p>
-                      </div>
-                    </div>
-                    <div className="flex justify-between items-center p-3 bg-gray-50 rounded-lg">
-                      <div>
-                        <p className="font-medium">HALFYEAR20</p>
-                        <p className="text-sm text-gray-500">
-                          20% off Half-Yearly
-                        </p>
-                      </div>
-                      <div className="text-right">
-                        <p className="font-semibold">50 uses</p>
-                        <p className="text-sm text-red-600">
-                          -{/*BHD*/} 1,200.000
-                        </p>
-                      </div>
-                    </div>
+                    )}
                   </div>
                 </CardContent>
               </Card>

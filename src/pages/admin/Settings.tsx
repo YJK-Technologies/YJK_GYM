@@ -306,10 +306,13 @@ const SettingScreen = () => {
               {/*Code Added by Ramya on 25-07-2026*/}
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 items-center">
                 <label className="text-sm font-bold text-gray-900">
-                  Currency <span className="text-red-500">*</span>
+                  Currency*
                 </label>
 
                 <div className="sm:col-span-2">
+                  <TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
                   <select
                     value={currency}
                     onChange={(e) => setCurrency(e.target.value)}
@@ -320,6 +323,12 @@ const SettingScreen = () => {
                     <option value="USD">US Dollar (USD)</option>
                     <option value="EUR">Euro (EUR)</option>
                   </select>
+                  </TooltipTrigger>
+                    <TooltipContent>
+                      <p>Select the Currency</p>
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
                 </div>
               </div>
 
@@ -334,7 +343,7 @@ const SettingScreen = () => {
                         type="button"
                         variant="outline"
                         onClick={() => navigate("/AdminDashboard")}
-                        className="px-6 py-2 border-gray-200 text-gray-700 hover:bg-gray-50 rounded-lg font-semibold"
+                        className="px-6 py-2 border-gray-200 text-gray-700 hover:bg-purple-700 rounded-lg font-semibold"
                       >
                         Cancel
                       </Button>
