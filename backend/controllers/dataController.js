@@ -5413,6 +5413,42 @@ const getPaymentProgramDetails = async (req, res) => {
     res.status(500).json({ message: err.message || "Internal Server Error" });
   }
 }
+
+const applyCouponPayment = async (req, res) => {
+  const {  coupon_code,  package_ID,  Company_code,  Location_code,} = req.body;
+
+  try {
+    const pool = await connection.connectToDatabase();
+
+    const result = await pool
+      .request()
+      .input("mode", sql.NVarChar, "AP")
+      .input("coupon_code", sql.NVarChar, coupon_code)
+      .input("package_ID", sql.NVarChar, package_ID)
+      .input("Company_code", sql.NVarChar, Company_code)
+      .input("Location_code", sql.NVarChar, Location_code)
+      .query(`
+        EXEC sp_Payment_Values @mode, @package_ID, @coupon_code, @Company_Code, @Location_Code
+      `);
+
+    if (result.recordset.length > 0) {
+  return res.status(200).json(result.recordset);
+}
+
+return res.status(404).json({
+  success: false,
+  message: "Coupon not found."
+});
+
+  } catch (err) {
+    console.error(err);
+
+    return res.status(400).json({
+  success: false,
+  message: err.originalError?.info?.message || err.message,
+});
+  }
+};
 //Code ended by Dinesh Gokul on 28-07-2026
 module.exports = {
   getCompanyno,
@@ -5586,6 +5622,7 @@ module.exports = {
   PaymentTransactionUpdate, 
   PaymentTransactionDelete,
   getPaymentPackageDetails,
-  getPaymentProgramDetails
+  getPaymentProgramDetails,
+  applyCouponPayment
 
 };
