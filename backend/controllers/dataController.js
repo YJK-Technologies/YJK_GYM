@@ -5660,6 +5660,143 @@ return res.status(404).json({
 };
 //Code ended by Dinesh Gokul on 28-07-2026
 
+//Code added by Ramya 29-07-2026
+
+const getDashboardKPI = async (req, res) => {
+  const { company_code, Location_Code } = req.body;
+
+  try {
+    const pool = await sql.connect(dbConfig);
+
+    const result = await pool.request()
+      .input("mode", sql.NVarChar, "KPI")
+      .input("company_code", sql.NVarChar, company_code)
+      .input("Location_Code", sql.NVarChar, Location_Code)
+      .query(`
+        EXEC sp_payment_dashboard
+        @mode,
+        @company_code,
+        @Location_Code
+      `);
+
+    res.status(200).json(result.recordset);
+
+  } catch (err) {
+    console.error("Dashboard KPI Error:", err);
+    res.status(500).json({
+      success: false,
+      message: err.message
+    });
+  }
+};
+
+const getRevenueTrend = async (req, res) => {
+
+  const { company_code, Location_Code } = req.body;
+
+  try {
+
+    const pool = await sql.connect(dbConfig);
+
+    const result = await pool.request()
+      .input("mode", sql.NVarChar, "RT")
+      .input("company_code", sql.NVarChar, company_code)
+      .input("Location_Code", sql.NVarChar, Location_Code)
+      .query(`
+        EXEC sp_payment_dashboard
+        @mode,
+        @company_code,
+        @Location_Code
+      `);
+
+    res.status(200).json(result.recordset);
+
+  }
+  catch (err) {
+
+    console.error(err);
+
+    res.status(500).json({
+      message: err.message
+    });
+
+  }
+
+};
+
+const getPaymentMethodDistribution = async (req, res) => {
+
+  const { company_code, Location_Code } = req.body;
+
+  try {
+
+    const pool = await sql.connect(dbConfig);
+
+    const result = await pool.request()
+      .input("mode", sql.NVarChar, "PMD")
+      .input("company_code", sql.NVarChar, company_code)
+      .input("Location_Code", sql.NVarChar, Location_Code)
+      .query(`
+        EXEC sp_payment_dashboard
+        @mode,
+        @company_code,
+        @Location_Code
+      `);
+
+    res.status(200).json(result.recordset);
+
+  }
+  catch (err) {
+
+    console.error(err);
+
+    res.status(500).json({
+      message: err.message
+    });
+
+  }
+
+};
+
+const getRecentPayments = async (req, res) => {
+
+  const { company_code, Location_Code } = req.body;
+
+  try {
+
+    const pool = await sql.connect(dbConfig);
+
+    const result = await pool.request()
+      .input("mode", sql.NVarChar, "RP")
+      .input("company_code", sql.NVarChar, company_code)
+      .input("Location_Code", sql.NVarChar, Location_Code)
+      .query(`
+        EXEC sp_payment_dashboard
+        @mode,
+        @company_code,
+        @Location_Code
+      `);
+
+    res.status(200).json(result.recordset);
+
+  }
+  catch (err) {
+
+    console.error(err);
+
+    res.status(500).json({
+      message: err.message
+    });
+
+  }
+
+};
+
+
+
+
+//Code ended by Ramya  on 29-07-2026
+
 //Code added by Dinesh Gokul on 29-07-2026
 const reportCardDataPayment = async (req, res) => {
   const {  Company_code,  Location_code,} = req.body;
@@ -5935,6 +6072,9 @@ module.exports = {
   WhatsappSettingsInsert,
   reportCardDataPayment,
   reportPackageRevenue,
-  couponUsageStatistics
-
+  couponUsageStatistics,
+  getDashboardKPI,
+  getRevenueTrend,
+  getPaymentMethodDistribution,
+  getRecentPayments
 };

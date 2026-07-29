@@ -210,6 +210,10 @@ router.post("/WhatsappSettingsInsert", dataController.WhatsappSettingsInsert)
 router.post("/reportCardDataPayment", dataController.reportCardDataPayment)
 router.post("/reportPackageRevenue", dataController.reportPackageRevenue)
 router.post("/couponUsageStatistics", dataController.couponUsageStatistics)
+router.post("/getDashboardKPI", dataController.getDashboardKPI)
+router.post("/getRevenueTrend", dataController.getRevenueTrend)
+router.post("/getPaymentMethodDistribution", dataController.getPaymentMethodDistribution)
+router.post("/getRecentPayments", dataController.getRecentPayments)
 
 
 
