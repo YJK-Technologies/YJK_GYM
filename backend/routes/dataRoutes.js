@@ -197,6 +197,8 @@ router.post("/PaymentTransactionInsert", dataController.PaymentTransactionInsert
 router.post("/PaymentTransactionUpdate", dataController.PaymentTransactionUpdate)
 router.post("/PaymentTransactionDelete", dataController.PaymentTransactionDelete)
 router.post("/getPaymentPackageDetails", dataController.getPaymentPackageDetails)
+router.post("/getPaymentProgramDetails", dataController.getPaymentProgramDetails)
+router.post("/applyCouponPayment", dataController.applyCouponPayment)
 router.post("/getSMTPPorts", dataController.getSMTPPorts)
 router.post("/getSMSProviders", dataController.getSMSProviders)
 router.post("/getCountryCodes", dataController.getCountryCodes)
