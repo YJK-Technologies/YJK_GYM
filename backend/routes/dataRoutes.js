@@ -214,6 +214,7 @@ router.post("/getDashboardKPI", dataController.getDashboardKPI)
 router.post("/getRevenueTrend", dataController.getRevenueTrend)
 router.post("/getPaymentMethodDistribution", dataController.getPaymentMethodDistribution)
 router.post("/getRecentPayments", dataController.getRecentPayments)
+router.post("/getPaymentHistory", dataController.getPaymentHistory)
 
 
 

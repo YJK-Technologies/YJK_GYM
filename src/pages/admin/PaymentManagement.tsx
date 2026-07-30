@@ -82,6 +82,10 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import { useRef } from "react";
+import * as XLSX from "xlsx";
+import jsPDF from "jspdf";
+import autoTable from "jspdf-autotable";
 
 // Types
 interface Payment {
@@ -122,6 +126,7 @@ interface PackageOption {
 const PaymentManagement = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
+  const gridApiRef = useRef<any>(null);
   const { companyCode, locationCode, userCode } = useCompany();
 
   const tabs = [
@@ -160,6 +165,10 @@ const PaymentManagement = () => {
   const allowedTabs = tabs.filter((tab) =>
     allowedScreens.includes(tab.screenType),
   );
+
+  const onPaymentGridReady = (params: any) => {
+    gridApiRef.current = params.api;
+  };
 
   useEffect(() => {
     if (allowedTabs.length > 0) {
@@ -208,6 +217,7 @@ const PaymentManagement = () => {
       fetchReportCardData();
       fetchPackageRevenue();
       fetchCouponUsageData();
+      fetchPaymentHistory();
     }
   }, [companyCode, locationCode]);
 
@@ -244,7 +254,6 @@ const PaymentManagement = () => {
       </div>
     );
   }
-
 
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState<string>("all");
@@ -318,12 +327,14 @@ const PaymentManagement = () => {
   const [reportCardData, setReportCardData] = useState<any>(null);
   const [couponUsageData, setCouponUsageData] = useState<any[]>([]);
 
-const [todayTotal, setTodayTotal] = useState(0);
-const [monthlyTotal, setMonthlyTotal] = useState(0);
-const [pendingCount, setPendingCount] = useState(0);
-const [totalTransactions, setTotalTransactions] = useState(0);
+  const [todayTotal, setTodayTotal] = useState(0);
+  const [monthlyTotal, setMonthlyTotal] = useState(0);
+  const [pendingCount, setPendingCount] = useState(0);
+  const [totalTransactions, setTotalTransactions] = useState(0);
 
-// Stats calculation
+  const [paymentHistoryData, setPaymentHistoryData] = useState<any[]>([]);
+
+  // Stats calculation
   // const todayTotal = payments
   //   .filter(
   //     (p) =>
@@ -339,187 +350,189 @@ const [totalTransactions, setTotalTransactions] = useState(0);
   // const pendingCount = payments.filter((p) => p.status === "Pending").length;
   // const totalTransactions = payments.length;
 
+  const getDashboardKPI = async () => {
+    try {
+      const response = await fetch(`${BASE_URL}/getDashboardKPI`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          company_code: companyCode,
+          Location_Code: locationCode,
+        }),
+      });
 
-const getDashboardKPI = async () => {
-  try {
-    const response = await fetch(`${BASE_URL}/getDashboardKPI`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        company_code: companyCode,
-        Location_Code: locationCode,
-      }),
-    });
+      const data = await response.json();
 
-    const data = await response.json();
+      if (!response.ok) {
+        throw new Error(data.message);
+      }
 
-    if (!response.ok) {
-      throw new Error(data.message);
+      if (data.length > 0) {
+        setTodayTotal(Number(data[0].TodayCollections));
+        setMonthlyTotal(Number(data[0].MonthlyRevenue));
+        setPendingCount(Number(data[0].PendingPayments));
+        setTotalTransactions(Number(data[0].TotalTransactions));
+      }
+    } catch (err) {
+      console.error("Dashboard KPI Error :", err);
     }
+  };
 
-    if (data.length > 0) {
-      setTodayTotal(Number(data[0].TodayCollections));
-      setMonthlyTotal(Number(data[0].MonthlyRevenue));
-      setPendingCount(Number(data[0].PendingPayments));
-      setTotalTransactions(Number(data[0].TotalTransactions));
+  useEffect(() => {
+    if (companyCode && locationCode) {
+      getDashboardKPI();
     }
-  } catch (err) {
-    console.error("Dashboard KPI Error :", err);
-  }
-};
+  }, [companyCode, locationCode]);
 
-useEffect(() => {
-  if (companyCode && locationCode) {
-    getDashboardKPI();
-  }
-}, [companyCode, locationCode]);
+  const getRevenueTrend = async () => {
+    try {
+      const response = await fetch(`${BASE_URL}/getRevenueTrend`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          company_code: companyCode,
+          Location_Code: locationCode,
+        }),
+      });
 
+      const data = await response.json();
 
-const getRevenueTrend = async () => {
-  try {
-    const response = await fetch(`${BASE_URL}/getRevenueTrend`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        company_code: companyCode,
-        Location_Code: locationCode,
-      }),
-    });
+      if (!response.ok) {
+        throw new Error(data.message || "Failed to fetch Revenue Trend");
+      }
 
-    const data = await response.json();
+      const chartData = data.map((item: any) => ({
+        day: new Date(item.PaymentDate).toLocaleDateString("en-GB", {
+          day: "2-digit",
+          month: "short",
+        }),
+        revenue: Number(item.Revenue),
+      }));
 
-    if (!response.ok) {
-      throw new Error(data.message || "Failed to fetch Revenue Trend");
+      setRevenueChartData(chartData);
+    } catch (err) {
+      console.error("Revenue Trend Error:", err);
     }
+  };
 
-    const chartData = data.map((item: any) => ({
-      day: new Date(item.PaymentDate).toLocaleDateString("en-GB", {
-        day: "2-digit",
-        month: "short",
-      }),
-      revenue: Number(item.Revenue),
-    }));
+  useEffect(() => {
+    if (companyCode && locationCode) {
+      getRevenueTrend();
+    }
+  }, [companyCode, locationCode]);
 
-    setRevenueChartData(chartData);
-  } catch (err) {
-    console.error("Revenue Trend Error:", err);
-  }
-};
+  const getPaymentMethodDistribution = async () => {
+    try {
+      const response = await fetch(`${BASE_URL}/getPaymentMethodDistribution`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          company_code: companyCode,
+          Location_Code: locationCode,
+        }),
+      });
 
-useEffect(() => {
-  if (companyCode && locationCode) {
-    getRevenueTrend();
-  }
-}, [companyCode, locationCode]);
+      const data = await response.json();
 
-const getPaymentMethodDistribution = async () => {
-  try {
-    const response = await fetch(`${BASE_URL}/getPaymentMethodDistribution`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        company_code: companyCode,
-        Location_Code: locationCode,
-      }),
-    });
+      if (!response.ok) {
+        throw new Error(
+          data.message || "Failed to fetch Payment Method Distribution",
+        );
+      }
 
-    const data = await response.json();
+      const colors = [
+        "#3b82f6",
+        "#22c55e",
+        "#f59e0b",
+        "#ef4444",
+        "#8b5cf6",
+        "#06b6d4",
+      ];
 
-    if (!response.ok) {
-      throw new Error(
-        data.message || "Failed to fetch Payment Method Distribution"
+      const totalAmount = data.reduce(
+        (sum: number, item: any) => sum + Number(item.TotalAmount),
+        0,
       );
+
+      const chartData = data.map((item: any, index: number) => ({
+        name: item.payment_method,
+        value: Number(((item.TotalAmount / totalAmount) * 100).toFixed(1)),
+        color: colors[index % colors.length],
+      }));
+
+      setPaymentMethodData(chartData);
+    } catch (err) {
+      console.error("Payment Method Distribution Error:", err);
     }
+  };
 
-    const colors = [
-      "#3b82f6",
-      "#22c55e",
-      "#f59e0b",
-      "#ef4444",
-      "#8b5cf6",
-      "#06b6d4",
-    ];
-
-    const totalAmount = data.reduce(
-      (sum: number, item: any) => sum + Number(item.TotalAmount),
-      0
-    );
-
-    const chartData = data.map((item: any, index: number) => ({
-      name: item.payment_method,
-      value: Number(((item.TotalAmount / totalAmount) * 100).toFixed(1)),
-      color: colors[index % colors.length],
-    }));
-
-    setPaymentMethodData(chartData);
-  } catch (err) {
-    console.error("Payment Method Distribution Error:", err);
-  }
-};
-
-useEffect(() => {
-  if (companyCode && locationCode) {
-    getPaymentMethodDistribution();
-  }
-}, [companyCode, locationCode]);
-
-
-const getRecentPayments = async () => {
-  try {
-    const response = await fetch(`${BASE_URL}/getRecentPayments`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        company_code: companyCode,
-        Location_Code: locationCode,
-      }),
-    });
-
-    const data = await response.json();
-
-    if (!response.ok) {
-      throw new Error(data.message || "Failed to fetch Recent Payments");
+  useEffect(() => {
+    if (companyCode && locationCode) {
+      getPaymentMethodDistribution();
     }
+  }, [companyCode, locationCode]);
 
-    const paymentData = data.map((item: any) => ({
-      id: item.payment_id,
-      memberName: item.MemberID,
-      finalAmount: Number(item.final_amount),
-      paymentMethod: item.payment_method,
-      status: item.status,
-    }));
+  const getRecentPayments = async () => {
+    try {
+      const response = await fetch(`${BASE_URL}/getRecentPayments`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          company_code: companyCode,
+          Location_Code: locationCode,
+        }),
+      });
 
-    setPayments(paymentData);
-  } catch (err) {
-    console.error("Recent Payments Error:", err);
-  }
-};
+      const data = await response.json();
 
+      if (!response.ok) {
+        throw new Error(data.message || "Failed to fetch Recent Payments");
+      }
 
-useEffect(() => {
-  if (companyCode && locationCode) {
-    getRecentPayments();
-  }
-}, [companyCode, locationCode]);
+      const paymentData = data.map((item: any) => ({
+        id: item.payment_id,
+        memberName: item.MemberID,
+        finalAmount: Number(item.final_amount),
+        paymentMethod: item.payment_method,
+        status: item.status,
+      }));
+
+      setPayments(paymentData);
+    } catch (err) {
+      console.error("Recent Payments Error:", err);
+    }
+  };
+
+  useEffect(() => {
+    if (companyCode && locationCode) {
+      getRecentPayments();
+    }
+  }, [companyCode, locationCode]);
 
   // Filter payments
-  const filteredPayments = payments.filter((payment) => {
+  const filteredPaymentHistory = paymentHistoryData.filter((row: any) => {
+    const search = searchTerm.toLowerCase();
+
     const matchesSearch =
-      payment.memberName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      payment.memberCpr.includes(searchTerm) ||
-      payment.id.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesStatus =
-      statusFilter === "all" || payment.status === statusFilter;
+      row.payment_id?.toLowerCase().includes(search) ||
+      row.Full_name?.toLowerCase().includes(search) ||
+      row.package_Name?.toLowerCase().includes(search) ||
+      row.Coupon_Code?.toLowerCase().includes(search) ||
+      row.package_Name?.toLowerCase().includes(search);
+
+    const matchesStatus = statusFilter === "all" || row.status === statusFilter;
+
     const matchesMethod =
-      methodFilter === "all" || payment.paymentMethod === methodFilter;
+      methodFilter === "all" || row.payment_method === methodFilter;
+
     return matchesSearch && matchesStatus && matchesMethod;
   });
 
@@ -1070,73 +1083,126 @@ useEffect(() => {
     }
   };
 
+  const fetchPaymentHistory = async () => {
+    try {
+      const response = await fetch(`${BASE_URL}/getPaymentHistory`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          Company_code: companyCode,
+          Location_code: locationCode,
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to fetch payment history");
+      }
+
+      const data = await response.json();
+
+      setPaymentHistoryData(data);
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
   const paymentHistoryColumns = [
-  {
-    headerName: "Payment ID",
-    field: "payment_id",
-    minWidth: 180,
-    filter: true,
-    sortable: true,
-  },
-  {
-    headerName: "Payment Date",
-    field: "payment_date",
-    minWidth: 150,
-    filter: true,
-    sortable: true,
-  },
-  {
-    headerName: "Member",
-    field: "Member_Name",
-    minWidth: 220,
-    filter: true,
-    sortable: true,
-  },
-  {
-    headerName: "Package",
-    field: "package_Name",
-    minWidth: 220,
-    filter: true,
-    sortable: true,
-  },
-  {
-    headerName: "Amount",
-    field: "final_amount",
-    minWidth: 130,
-    filter: true,
-    sortable: true,
-    valueFormatter: (params: any) =>
-      Number(params.value || 0).toFixed(3),
-  },
-  {
-    headerName: "Method",
-    field: "payment_method",
-    minWidth: 140,
-    filter: true,
-    sortable: true,
-  },
-  {
-    headerName: "Coupon",
-    field: "Coupon_Code",
-    minWidth: 150,
-    filter: true,
-    sortable: true,
-  },
-  {
-    headerName: "Status",
-    field: "status",
-    minWidth: 130,
-    filter: true,
-    sortable: true,
-  },
-  {
-    headerName: "Posted",
-    field: "postedToExternal",
-    minWidth: 130,
-    cellRenderer: (params: any) =>
-      params.value ? "Posted" : "Not Posted",
-  },
-];
+    {
+      headerName: "Payment ID",
+      field: "payment_id",
+      minWidth: 180,
+      filter: true,
+      sortable: true,
+    },
+    {
+      headerName: "Payment Date",
+      field: "payment_date",
+      minWidth: 180,
+      filter: true,
+      sortable: true,
+      valueFormatter: (params: any) => {
+        if (!params.value) return "";
+
+        const date = new Date(params.value);
+
+        return date.toLocaleDateString("en-GB");
+      },
+    },
+    {
+      headerName: "Member",
+      field: "Full_name",
+      minWidth: 300,
+      filter: true,
+      sortable: true,
+      valueGetter: (params: any) =>
+        `${params.data.MemberID} - ${params.data.Full_name}`,
+    },
+    {
+      headerName: "Package",
+      field: "package_Name",
+      minWidth: 300,
+      filter: true,
+      sortable: true,
+      valueGetter: (params: any) =>
+        `${params.data.package_ID} - ${params.data.package_Name}`,
+    },
+    {
+      headerName: "Amount",
+      field: "final_amount",
+      minWidth: 150,
+      filter: true,
+      sortable: true,
+      valueFormatter: (params: any) => Number(params.value || 0).toFixed(3),
+      cellClass: "font-semibold text-green-500",
+    },
+    {
+      headerName: "Discount Amount",
+      field: "discount_amount",
+      minWidth: 150,
+      filter: true,
+      sortable: true,
+      valueFormatter: (params: any) => Number(params.value || 0).toFixed(3),
+      cellClass: "font-semibold text-red-500",
+    },
+    {
+      headerName: "Method",
+      field: "payment_method",
+      minWidth: 180,
+      filter: true,
+      sortable: true,
+
+      cellRenderer: (params: any) => {
+        return getPaymentMethodBadge(params.value);
+      },
+    },
+    {
+      headerName: "Coupon",
+      field: "Coupon_Code",
+      minWidth: 180,
+      filter: true,
+      sortable: true,
+    },
+    {
+      headerName: "Status",
+      field: "status",
+      minWidth: 150,
+      filter: true,
+      sortable: true,
+
+      cellRenderer: (params: any) => {
+        return getStatusBadge(params.value);
+      },
+    },
+    // {
+    //   headerName: "Posted",
+    //   field: "postedToExternal",
+    //   minWidth: 130,
+    //   cellRenderer: (params: any) =>
+    //     params.value ? "Posted" : "Not Posted",
+    // },
+  ];
 
   const calculateTotal = () => {
     if (!selectedPackage) return 0;
@@ -1275,7 +1341,207 @@ useEffect(() => {
     }
   };
 
+  const handleExportExcel = () => {
+    if (!gridApiRef.current) return;
 
+    // Get exactly what AG Grid is currently displaying
+    const rows: any[] = [];
+
+    gridApiRef.current.forEachNodeAfterFilterAndSort((node: any) => {
+      rows.push({
+        "Payment ID": node.data.payment_id,
+        "Payment Date": node.data.payment_date
+          ? new Date(node.data.payment_date).toLocaleDateString("en-GB")
+          : "",
+        Member: `${node.data.MemberID} - ${node.data.Full_name}`,
+        Package: `${node.data.package_ID} - ${node.data.package_Name}`,
+        Amount: node.data.final_amount,
+        "Discount Amount": node.data.final_amount,
+        Method: node.data.payment_method,
+        Coupon: node.data.Coupon_Code,
+        Status: node.data.status,
+      });
+    });
+
+    const worksheet = XLSX.utils.aoa_to_sheet([
+      ["Report Name", "Payment History"],
+      ["Company Name", paymentHistoryData[0]?.company_name || ""],
+      ["User Name", userCode],
+      ["Date", new Date().toLocaleDateString("en-GB")],
+
+      [], // Blank Row
+      [], // Blank Row
+    ]);
+
+    // Insert the payment history table starting from row 7
+    XLSX.utils.sheet_add_json(worksheet, rows, {
+      origin: "A7",
+    });
+
+    // Auto-size all columns based on the longest content
+    const columnWidths = Object.keys(rows[0]).map((key) => {
+      const maxLength = Math.max(
+        key.length,
+        ...rows.map((row) => String(row[key] ?? "").length),
+      );
+
+      return {
+        wch: Math.min(Math.max(maxLength + 3, 18), 40),
+      };
+    });
+
+    worksheet["!cols"] = columnWidths;
+
+    const workbook = XLSX.utils.book_new();
+
+    XLSX.utils.book_append_sheet(workbook, worksheet, "Payment History");
+
+    XLSX.writeFile(workbook, "Payment_History.xlsx");
+  };
+
+  const handleExportPDF = () => {
+    if (!gridApiRef.current) return;
+
+    const doc = new jsPDF("landscape");
+
+    const currentDate = new Date().toLocaleDateString("en-GB");
+    const currentDateTime = new Date().toLocaleString("en-GB");
+
+    // Company Name
+    const companyName =
+      paymentHistoryData.length > 0 ? paymentHistoryData[0].Company_Name : "";
+
+    // -------------------------
+    // Collect AG Grid data
+    // -------------------------
+
+    const body: any[] = [];
+
+    gridApiRef.current.forEachNodeAfterFilterAndSort((node: any) => {
+      body.push([
+        node.data.payment_id,
+
+        node.data.payment_date
+          ? new Date(node.data.payment_date).toLocaleDateString("en-GB")
+          : "",
+
+        `${node.data.MemberID} - ${node.data.Full_name}`,
+
+        `${node.data.package_ID} - ${node.data.package_Name}`,
+
+        Number(node.data.final_amount).toFixed(3),
+
+        Number(node.data.discount_amount || 0).toFixed(3),
+
+        node.data.payment_method,
+
+        node.data.Coupon_Code || "-",
+
+        node.data.status,
+      ]);
+    });
+
+    // -------------------------
+    // Table
+    // -------------------------
+
+    autoTable(doc, {
+      startY: 32,
+      margin: {
+        top: 28,
+        bottom: 20,
+      },
+
+      head: [
+        [
+          "Payment ID",
+          "Payment Date",
+          "Member",
+          "Package",
+          "Amount",
+          "Discount",
+          "Method",
+          "Coupon",
+          "Status",
+        ],
+      ],
+
+      body,
+
+      styles: {
+        fontSize: 9,
+        cellPadding: 3,
+      },
+
+      headStyles: {
+        fillColor: [41, 128, 185],
+        textColor: 255,
+        fontStyle: "bold",
+      },
+
+      alternateRowStyles: {
+        fillColor: [245, 245, 245],
+      },
+
+      theme: "grid",
+      didDrawPage: (data) => {
+        const pageWidth = doc.internal.pageSize.getWidth();
+        const pageHeight = doc.internal.pageSize.getHeight();
+
+        // ==========================
+        // Header
+        // ==========================
+
+        doc.setFontSize(8);
+        doc.setFont("helvetica", "bold");
+
+        doc.text(`Report Name : Payment History`, 14, 12);
+
+        doc.text(`Company Name : ${companyName}`, pageWidth - 14, 12, {
+          align: "right",
+        });
+
+        // Header Line
+
+        doc.setLineWidth(0.3);
+
+        doc.line(14, 16, pageWidth - 14, 16);
+
+        // ==========================
+        // Footer
+        // ==========================
+
+        doc.setLineWidth(0.3);
+
+        doc.line(14, pageHeight - 14, pageWidth - 14, pageHeight - 14);
+
+        doc.setFontSize(8);
+
+        doc.setFont("helvetica", "normal");
+
+        doc.text(`User Name : ${userCode}`, 14, pageHeight - 8);
+
+        doc.text(
+          `Date & Time : ${currentDateTime}`,
+          pageWidth - 14,
+          pageHeight - 8,
+          {
+            align: "right",
+          },
+        );
+
+        // ==========================
+        // Page Number
+        // ==========================
+
+        doc.text(`Page ${data.pageNumber}`, pageWidth / 2, pageHeight - 8, {
+          align: "center",
+        });
+      },
+    });
+
+    doc.save("Payment_History_Report.pdf");
+  };
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -1349,7 +1615,7 @@ useEffect(() => {
                         Today's Collections
                       </p>
                       <p className="text-2xl font-bold text-gray-900">
-                        {/*BHD*/}  {todayTotal.toFixed(3)}
+                        {/*BHD*/} {todayTotal.toFixed(3)}
                       </p>
                     </div>
                   </div>
@@ -1410,29 +1676,29 @@ useEffect(() => {
 
             {/* Charts */}
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                <Card>
-                  <CardHeader>
-                    <CardTitle>Revenue Trend (Last 7 Days)</CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <ResponsiveContainer width="100%" height={300}>
-                      <LineChart data={revenueChartData}>
-                        <CartesianGrid strokeDasharray="3 3" />
-                        <XAxis dataKey="day" />
-                        <YAxis />
-                        <RechartsTooltip
-                          formatter={(value: number) => [`${value}`, "Revenue"]}
-                        />
-                        <Line
-                          type="monotone"
-                          dataKey="revenue"
-                          stroke="#3b82f6"
-                          strokeWidth={2}
-                        />
-                      </LineChart>
-                    </ResponsiveContainer>
-                  </CardContent>
-                </Card>
+              <Card>
+                <CardHeader>
+                  <CardTitle>Revenue Trend (Last 7 Days)</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <ResponsiveContainer width="100%" height={300}>
+                    <LineChart data={revenueChartData}>
+                      <CartesianGrid strokeDasharray="3 3" />
+                      <XAxis dataKey="day" />
+                      <YAxis />
+                      <RechartsTooltip
+                        formatter={(value: number) => [`${value}`, "Revenue"]}
+                      />
+                      <Line
+                        type="monotone"
+                        dataKey="revenue"
+                        stroke="#3b82f6"
+                        strokeWidth={2}
+                      />
+                    </LineChart>
+                  </ResponsiveContainer>
+                </CardContent>
+              </Card>
               <Card>
                 <CardHeader>
                   <CardTitle>Payment Method Distribution</CardTitle>
@@ -1661,7 +1927,7 @@ useEffect(() => {
                               }
                             }}
                           >
-                            <SelectValue placeholder="Select a package" />
+                            <SelectValue placeholder="Select a Package" />
                           </SelectTrigger>
                         </TooltipTrigger>
 
@@ -1738,7 +2004,7 @@ useEffect(() => {
                       <Tooltip>
                         <TooltipTrigger asChild>
                           <Input
-                            placeholder="Enter coupon code"
+                            placeholder="Enter Coupon Code"
                             value={couponCode}
                             // disabled={!selectedPackage}
                             onClick={() => {
@@ -1865,14 +2131,14 @@ useEffect(() => {
               <CardContent>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div className="space-y-4">
-                    <div>
+                    <div className="space-y-2">
                       <Label>Notes (Optional)</Label>
                       <TooltipProvider>
                         <Tooltip>
                           <TooltipTrigger asChild>
                             <div className="space-y-2">
                               <Textarea
-                                placeholder="Add payment notes..."
+                                placeholder="Add Payment Notes..."
                                 value={paymentNotes}
                                 maxLength={500}
                                 onChange={(e) =>
@@ -1946,24 +2212,28 @@ useEffect(() => {
                     </CardDescription>
                   </div>
                   <div className="flex space-x-2">
-                    <Button variant="outline" onClick={handleBulkPost}>
+                    {/* <Button variant="outline" onClick={handleBulkPost}>
                       <Upload className="h-4 w-4 mr-2" />
                       Bulk Post
-                    </Button>
-                    <Button variant="outline">
+                    </Button> */}
+                    <Button variant="outline" onClick={handleExportExcel}>
                       <Download className="h-4 w-4 mr-2" />
-                      Export CSV
+                      Export Excel
+                    </Button>
+                    <Button variant="outline" onClick={handleExportPDF}>
+                      <Download className="h-4 w-4 mr-2" />
+                      Export PDF
                     </Button>
                   </div>
                 </div>
               </CardHeader>
-              <CardContent className="space-y-4">
+              <CardContent className="p-6 h-[520px] flex flex-col justify-between">
                 {/* Filters */}
                 <div className="flex flex-col md:flex-row gap-4">
                   <div className="relative flex-1">
                     <Search className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
                     <Input
-                      placeholder="Search by ID, name, or CPR..."
+                      placeholder="Search by Payment ID, Member, Package or Coupon"
                       value={searchTerm}
                       onChange={(e) => setSearchTerm(e.target.value)}
                       className="pl-10"
@@ -1993,102 +2263,15 @@ useEffect(() => {
                   </Select>
                 </div>
 
-                {/* Table */}
-                {/* <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead>Payment ID</TableHead>
-                      <TableHead>Date</TableHead>
-                      <TableHead>Member</TableHead>
-                      <TableHead>Package</TableHead>
-                      <TableHead>Amount</TableHead>
-                      <TableHead>Method</TableHead>
-                      <TableHead>Coupon</TableHead>
-                      <TableHead>Status</TableHead>
-                      <TableHead>Synced</TableHead>
-                      <TableHead>Actions</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {filteredPayments.map((payment) => (
-                      <TableRow key={payment.id}>
-                        <TableCell className="font-medium">
-                          {payment.id}
-                        </TableCell>
-                        <TableCell>{payment.paymentDate}</TableCell>
-                        <TableCell>
-                          <div>
-                            <p className="font-medium">{payment.memberName}</p>
-                            <p className="text-sm text-gray-500">
-                              {payment.memberCpr}
-                            </p>
-                          </div>
-                        </TableCell>
-                        <TableCell>{payment.packageName}</TableCell>
-                        <TableCell>
-                          <div>
-                            <p className="font-semibold text-green-600">
-                             {payment.finalAmount.toFixed(3)}
-                            </p>
-                            {payment.discountAmount > 0 && (
-                              <p className="text-xs text-red-500">
-                                -{payment.discountAmount.toFixed(3)}
-                              </p>
-                            )}
-                          </div>
-                        </TableCell>
-                        <TableCell>
-                          {getPaymentMethodBadge(payment.paymentMethod)}
-                        </TableCell>
-                        <TableCell>{payment.couponCode || "-"}</TableCell>
-                        <TableCell>{getStatusBadge(payment.status)}</TableCell>
-                        <TableCell>
-                          {payment.postedToExternal ? (
-                            <Badge
-                              variant="outline"
-                              className="text-green-600 border-green-600"
-                            >
-                              <CheckCircle className="h-3 w-3 mr-1" /> Posted
-                            </Badge>
-                          ) : (
-                            <Badge variant="outline" className="text-gray-500">
-                              Not Posted
-                            </Badge>
-                          )}
-                        </TableCell>
-                        <TableCell>
-                          <div className="flex space-x-2">
-                            <Button variant="ghost" size="sm">
-                              <Receipt className="h-4 w-4" />
-                            </Button>
-                            {!payment.postedToExternal &&
-                              payment.status === "Completed" && (
-                                <Button
-                                  variant="ghost"
-                                  size="sm"
-                                  onClick={() =>
-                                    handlePostToExternal(payment.id)
-                                  }
-                                >
-                                  <Upload className="h-4 w-4" />
-                                </Button>
-                              )}
-                          </div>
-                        </TableCell>
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table> */}
-
                 <div className="ag-theme-alpine h-[550px] w-full">
-  <AgGridTable
-    rowData={filteredPayments}
-    columnDefs={paymentHistoryColumns}
-    pagination={true}
-    paginationPageSize={10}
-  />
-</div>
-
+                  <AgGridTable
+                    rowData={filteredPaymentHistory}
+                    columnDefs={paymentHistoryColumns}
+                    pagination={true}
+                    paginationPageSize={10}
+                    onGridReady={onPaymentGridReady}
+                  />
+                </div>
               </CardContent>
             </Card>
           </TabsContent>
@@ -2421,7 +2604,7 @@ useEffect(() => {
                     />
                   </TooltipTrigger>
                   <TooltipContent>
-                    <p>Enter the Address</p>
+                    <p>Enter the Membership Type</p>
                   </TooltipContent>
                 </Tooltip>
               </TooltipProvider>
@@ -2468,10 +2651,20 @@ useEffect(() => {
 
           {/* Search Button */}
           <div className="flex justify-end mt-4">
-            <Button onClick={handleSearchMembers}>
-              <Search className="h-4 w-4 mr-2" />
-              Search
-            </Button>
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button onClick={handleSearchMembers}>
+                    <Search className="h-4 w-4 mr-2" />
+                    Search
+                  </Button>
+                </TooltipTrigger>
+
+                <TooltipContent>
+                  <p>Search</p>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
           </div>
 
           {/* Members Table */}
@@ -2486,9 +2679,22 @@ useEffect(() => {
           </div>
 
           <DialogFooter>
-            <Button variant="outline" onClick={() => setMemberHelpOpen(false)}>
-              Close
-            </Button>
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button
+                    variant="outline"
+                    onClick={() => setMemberHelpOpen(false)}
+                  >
+                    Close
+                  </Button>
+                </TooltipTrigger>
+
+                <TooltipContent>
+                  <p>Close</p>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
           </DialogFooter>
         </DialogContent>
       </Dialog>
@@ -2503,14 +2709,24 @@ useEffect(() => {
             </DialogDescription>
           </DialogHeader>
           <div className="space-y-4">
-            <div>
+            <div className="space-y-2">
               <Label htmlFor="webhookUrl">Webhook URL</Label>
-              <Input
-                id="webhookUrl"
-                placeholder="https://your-external-system.com/api/payments"
-                value={webhookUrl}
-                onChange={(e) => setWebhookUrl(e.target.value)}
-              />
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Input
+                      id="webhookUrl"
+                      placeholder="https://your-external-system.com/api/payments"
+                      value={webhookUrl}
+                      onChange={(e) => setWebhookUrl(e.target.value)}
+                    />
+                  </TooltipTrigger>
+
+                  <TooltipContent>
+                    <p>Enter the Webhook URL</p>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
             </div>
             <p className="text-sm text-gray-500">
               Payments will be posted to this URL when you click "Post to
@@ -2518,23 +2734,44 @@ useEffect(() => {
             </p>
           </div>
           <DialogFooter>
-            <Button
-              variant="outline"
-              onClick={() => setWebhookDialogOpen(false)}
-            >
-              Cancel
-            </Button>
-            <Button
-              onClick={() => {
-                toast({
-                  title: "Settings Saved",
-                  description: "Webhook URL has been configured",
-                });
-                setWebhookDialogOpen(false);
-              }}
-            >
-              Save Settings
-            </Button>
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button
+                    variant="outline"
+                    onClick={() => setWebhookDialogOpen(false)}
+                  >
+                    Cancel
+                  </Button>
+                </TooltipTrigger>
+
+                <TooltipContent>
+                  <p>Cancel without saving changes.</p>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
+
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button
+                    onClick={() => {
+                      toast({
+                        title: "Settings Saved",
+                        description: "Webhook URL has been configured",
+                      });
+                      setWebhookDialogOpen(false);
+                    }}
+                  >
+                    Save Settings
+                  </Button>
+                </TooltipTrigger>
+
+                <TooltipContent>
+                  <p>Save Settings</p>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
           </DialogFooter>
         </DialogContent>
       </Dialog>

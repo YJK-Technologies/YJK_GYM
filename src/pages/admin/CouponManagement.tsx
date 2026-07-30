@@ -495,6 +495,7 @@ const CouponManagement = () => {
         setSubmittedCoupon(false);
 
         handleCouponSearch();
+        getCouponDashboard();
       } else {
         toast({
           title: "Error",

@@ -5275,8 +5275,6 @@ const memberProgramSearchData = async (req, res) => {
 //Code ended by Dinesh Gokul on 24-07-2026
 
 //Code added by Dinesh Gokul on 27-07-2026
-// Auto-generated Node.js CRUD for sp_PaymentTransaction
-
 const PaymentTransactionInsert = async (req, res) => {
   const { payment_id, MemberID, MemberShipType_id, package_ID, original_amount, discount_amount, final_amount, payment_method, Coupon_Code, status, payment_date, notes, keyfield, company_code, location_code, created_by, created_date
   } = req.body;
@@ -5304,7 +5302,7 @@ const PaymentTransactionInsert = async (req, res) => {
       .input("created_date", sql.DateTime, created_date)
       .query(`EXEC sp_PaymentTransaction @mode, @payment_id, @MemberID, @MemberShipType_id, @package_ID, @original_amount, @discount_amount, @final_amount, @payment_method, @Coupon_Code, @status, @payment_date, @notes, @keyfield, @company_code, @location_code, @created_by, @created_date, '', ''`);
 
-    res.status(200).json({ success: true, message: "PaymentTransaction insertd successfully" });
+    res.status(200).json({ success: true, message: "PaymentTransaction inserted successfully" });
   } catch (err) {
     console.error("Error during PaymentTransaction insert:", err);
     res.status(500).json({ message: err.message || "Internal Server Error" });
@@ -5791,10 +5789,6 @@ const getRecentPayments = async (req, res) => {
   }
 
 };
-
-
-
-
 //Code ended by Ramya  on 29-07-2026
 
 //Code added by Dinesh Gokul on 29-07-2026
@@ -5888,6 +5882,36 @@ const couponUsageStatistics = async (req, res) => {
   }
 };
 //Code ended by Dinesh Gokul on 29-07-2026
+
+//Code added by Dinesh Gokul on 30-07-2026
+const getPaymentHistory = async (req, res) => {
+  const { Company_code, Location_code } = req.body;
+
+  try {
+    const pool = await connection.connectToDatabase();
+
+    const result = await pool
+      .request()
+      .input("mode", sql.NVarChar, "PH")
+      .input("Company_code", sql.NVarChar, Company_code)
+      .input("Location_code", sql.NVarChar, Location_code)
+      .query(`
+        EXEC sp_Payment_Values @mode, '', '', @Company_Code, @Location_Code
+      `);
+
+    return res.status(200).json(result.recordset);
+
+  } catch (err) {
+    console.error(err);
+
+    return res.status(500).json({
+      success: false,
+      message: err.originalError?.info?.message || err.message,
+    });
+  }
+};
+//Code ended by Dinesh Gokul on 30-07-2026
+
 module.exports = {
   getCompanyno,
   getsearchdata,
@@ -6076,5 +6100,6 @@ module.exports = {
   getDashboardKPI,
   getRevenueTrend,
   getPaymentMethodDistribution,
-  getRecentPayments
+  getRecentPayments,
+  getPaymentHistory
 };
