@@ -40,6 +40,7 @@ const AdminDashboard = () => {
   const [dashboardData, setDashboardData] = useState({
     TotalMembers: 0,
     ActivePrograms: 0,
+    MonthlyRevenue: 0,
   });
 
   // For manage buttons colour
@@ -134,7 +135,7 @@ const AdminDashboard = () => {
     {
       title: "Monthly Revenue",
       // value: "BHD 12,500",
-      value: "12,500",
+      value: dashboardData.MonthlyRevenue,
       icon: DollarSign,
       color: "bg-green-500",
     },

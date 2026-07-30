@@ -22,16 +22,7 @@ const SettingScreen = () => {
   const [numberGeneration, setNumberGeneration] = useState<string>("Auto");
   const [expiringDays, setExpiringDays] = useState<string>("");
   const [currency, setCurrency] = useState("");
-
-  // Context parameters matching your application's global design signature
-  const [currentContext, setCurrentContext] = useState({
-    userCode: "JK",
-    userName: "JaiKrishnan",
-    companyCode: "YJK",
-    companyName: "YJK Technologies",
-    locationCode: "LOC001",
-    locationName: "Main Branch",
-  });
+  const [error, setError] = useState(false);
 
   useEffect(() => {
     const savedCompanyCode = sessionStorage.getItem("selectedCompanyCode");
@@ -52,12 +43,6 @@ const SettingScreen = () => {
         locationCode: savedLocationCode || "",
         locationName: savedLocationName || "",
       };
-
-      setCurrentContext(context);
-
-      console.log("Selected Company:", savedCompanyCode);
-      console.log("Selected Location:", savedLocationCode);
-      console.log("Context:", context);
 
       getSettingData(context);
     }
@@ -93,6 +78,14 @@ const SettingScreen = () => {
   };
 
   const handleSave = async () => {
+    if(!currency)
+    {
+      setError(true);
+      return
+    }
+
+    setError(false);
+
     try {
       // Update this endpoint according to your actual configuration backend API
       const response = await fetch(`${BASE_URL}/settingSaveData`, {
@@ -243,7 +236,7 @@ const SettingScreen = () => {
             <div className="flex-1 space-y-8">
               {/* Number Generation Field */}
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 items-center">
-                <label className="text-sm font-bold text-gray-900">
+                <label className="text-sm font-bold text-gray-900" >
                   Number Generation
                 </label>
                 <div className="sm:col-span-2 flex items-center space-x-8">
@@ -305,7 +298,7 @@ const SettingScreen = () => {
 
               {/*Code Added by Ramya on 25-07-2026*/}
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 items-center">
-                <label className="text-sm font-bold text-gray-900">
+                <label className={`text-sm font-bold text-gray-900 ${!currency && error ? "text-red-500" : ""}`}>
                   Currency*
                 </label>
 
