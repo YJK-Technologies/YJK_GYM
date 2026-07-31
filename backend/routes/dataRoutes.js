@@ -215,6 +215,9 @@ router.post("/getRevenueTrend", dataController.getRevenueTrend)
 router.post("/getPaymentMethodDistribution", dataController.getPaymentMethodDistribution)
 router.post("/getRecentPayments", dataController.getRecentPayments)
 router.post("/getPaymentHistory", dataController.getPaymentHistory)
+router.post("/getNewMemberRegistration", dataController.getNewMemberRegistration)
+router.post("/getPaymentReceived", dataController.getPaymentReceived)
+router.post("/getWorkoutProgramAssigned", dataController.getWorkoutProgramAssigned)
 
 
 

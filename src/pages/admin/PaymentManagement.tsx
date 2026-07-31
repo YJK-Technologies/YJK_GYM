@@ -623,49 +623,42 @@ const PaymentManagement = () => {
     {
       headerName: "Member ID",
       field: "MemberID",
-      flex: 1,
       sortable: true,
       filter: true,
     },
     {
       headerName: "Name",
       field: "Full_name",
-      flex: 2,
       sortable: true,
       filter: true,
     },
     {
       headerName: "Gender",
       field: "Gender",
-      flex: 1,
       sortable: true,
       filter: true,
     },
     {
       headerName: "Mobile",
       field: "Mobile",
-      flex: 1.3,
       sortable: true,
       filter: true,
     },
     {
       headerName: "Email",
       field: "Email",
-      flex: 2,
       sortable: true,
       filter: true,
     },
     {
       headerName: "Membership",
       field: "Membership_type",
-      flex: 1.5,
       sortable: true,
       filter: true,
     },
     {
       headerName: "Status",
       field: "is_active",
-      flex: 1,
       cellRenderer: (params: any) => (
         <Badge
           className={params.value === "Active" ? "bg-green-500" : "bg-red-500"}
@@ -677,7 +670,6 @@ const PaymentManagement = () => {
     {
       headerName: "Action",
       field: "action",
-      flex: 1,
       filter: false,
       sortable: false,
       cellRenderer: (params: any) => (
@@ -710,6 +702,55 @@ const PaymentManagement = () => {
       ),
     },
   ];
+
+  const recentPaymentColumns = [
+  {
+    headerName: "Payment ID",
+    field: "id",
+    minWidth: 170,
+    filter: true,
+    sortable: true,
+  },
+  {
+    headerName: "Member",
+    field: "memberName",
+    minWidth: 250,
+    filter: true,
+    sortable: true,
+  },
+  {
+    headerName: "Amount",
+    field: "finalAmount",
+    minWidth: 150,
+    filter: true,
+    sortable: true,
+    valueFormatter: (params: any) =>
+      Number(params.value || 0).toFixed(3),
+    cellRenderer: (params: any) => (
+  <span className="font-semibold text-green-600">
+    {Number(params.value || 0).toFixed(3)}
+  </span>
+),
+  },
+  {
+    headerName: "Method",
+    field: "paymentMethod",
+    minWidth: 180,
+    filter: true,
+    sortable: true,
+    cellRenderer: (params: any) =>
+      getPaymentMethodBadge(params.value),
+  },
+  {
+    headerName: "Status",
+    field: "status",
+    minWidth: 170,
+    filter: true,
+    sortable: true,
+    cellRenderer: (params: any) =>
+      getStatusBadge(params.value),
+  },
+];
 
   const handleSearchMembers = async () => {
     try {
@@ -1545,7 +1586,7 @@ const PaymentManagement = () => {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <header className="bg-white shadow-sm border-b">
+      <header className="bg-white shadow-sm border-b sticky top-0 z-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center py-4">
             <div className="flex items-center gap-2 sm:gap-4 min-w-0">
@@ -1732,7 +1773,7 @@ const PaymentManagement = () => {
                 <CardTitle>Recent Payments</CardTitle>
               </CardHeader>
               <CardContent>
-                <Table>
+                {/* <Table>
                   <TableHeader>
                     <TableRow>
                       <TableHead>Payment ID</TableHead>
@@ -1750,7 +1791,7 @@ const PaymentManagement = () => {
                         </TableCell>
                         <TableCell>{payment.memberName}</TableCell>
                         <TableCell className="font-semibold text-green-600">
-                          {/*BHD*/} {payment.finalAmount.toFixed(3)}
+                           {payment.finalAmount.toFixed(3)}
                         </TableCell>
                         <TableCell>
                           {getPaymentMethodBadge(payment.paymentMethod)}
@@ -1759,7 +1800,17 @@ const PaymentManagement = () => {
                       </TableRow>
                     ))}
                   </TableBody>
-                </Table>
+                </Table> */}
+
+                <div className="ag-theme-alpine h-[340px] w-full">
+  <AgGridTable
+    rowData={payments.slice(0, 5)}
+    columnDefs={recentPaymentColumns}
+    // pagination={true}
+    //                 paginationPageSize={10}
+                    height="340px"
+  />
+</div>
               </CardContent>
             </Card>
           </TabsContent>
@@ -1776,7 +1827,7 @@ const PaymentManagement = () => {
                   </CardTitle>
                   <CardDescription>Search by CPR or name</CardDescription>
                 </CardHeader>
-                <CardContent className="flex-1 overflow-y-auto space-y-4 pr-2 custom-scrollbar">
+                <CardContent className="flex-1 overflow-y-auto space-y-4 px-6 custom-scrollbar">
                   <div className="space-y-2">
                     <Label htmlFor="paymentID">Payment ID</Label>
 
@@ -1895,7 +1946,7 @@ const PaymentManagement = () => {
                   </CardTitle>
                   <CardDescription>Choose a membership package</CardDescription>
                 </CardHeader>
-                <CardContent className="flex-1 overflow-y-auto space-y-4 pr-2 custom-scrollbar">
+                <CardContent className="flex-1 overflow-y-auto space-y-4 px-6 custom-scrollbar">
                   <Select
                     open={selectedMember ? undefined : false}
                     value={selectedPackage?.package_ID || ""}
@@ -2411,293 +2462,206 @@ const PaymentManagement = () => {
 
       {/* Member Search Dialog */}
       <Dialog
-        open={memberHelpOpen}
-        onOpenChange={(open) => {
-          setMemberHelpOpen(open);
+  open={memberHelpOpen}
+  onOpenChange={(open) => {
+    setMemberHelpOpen(open);
+    if (!open) {
+      resetMemberSearch();
+    }
+  }}
+>
+  <DialogContent className="sm:max-w-6xl w-[95vw] h-[90vh] sm:h-[85vh] flex flex-col p-4 sm:p-6 overflow-hidden">
+    <DialogHeader className="shrink-0 pb-2">
+      <DialogTitle>Select Member</DialogTitle>
+      <DialogDescription>Search and select a member from the GYM</DialogDescription>
+    </DialogHeader>
 
-          if (!open) {
-            resetMemberSearch();
-          }
-        }}
-      >
-        <DialogContent className="max-w-6xl h-[80vh] flex flex-col">
-          <DialogHeader>
-            <DialogTitle>Select Member</DialogTitle>
-            <DialogDescription>Search and select a member</DialogDescription>
-          </DialogHeader>
-
-          {/* Search Filters */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-            <div className="space-y-2">
-              <Label>Member ID</Label>
-              <TooltipProvider>
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <Input
-                      placeholder="Member ID"
-                      maxLength={50}
-                      value={memberSearch.MemberID}
-                      onChange={(e) =>
-                        setMemberSearch({
-                          ...memberSearch,
-                          MemberID: e.target.value,
-                        })
-                      }
-                    />
-                  </TooltipTrigger>
-                  <TooltipContent>
-                    <p>Enter the Member ID</p>
-                  </TooltipContent>
-                </Tooltip>
-              </TooltipProvider>
-            </div>
-
-            <div className="space-y-2">
-              <Label>Full Name</Label>
-              <TooltipProvider>
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <Input
-                      placeholder="Full Name"
-                      maxLength={50}
-                      value={memberSearch.Full_name}
-                      onChange={(e) =>
-                        setMemberSearch({
-                          ...memberSearch,
-                          Full_name: e.target.value,
-                        })
-                      }
-                    />
-                  </TooltipTrigger>
-                  <TooltipContent>
-                    <p>Enter the Full Name</p>
-                  </TooltipContent>
-                </Tooltip>
-              </TooltipProvider>
-            </div>
-
-            <div className="space-y-2">
-              <Label>Gender</Label>
-              <Select
-                value={memberSearch.Gender}
-                onValueChange={(value) =>
-                  setMemberSearch({
-                    ...memberSearch,
-                    Gender: value,
-                  })
-                }
-              >
-                <TooltipProvider>
-                  <Tooltip>
-                    <TooltipTrigger asChild>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select Gender" />
-                      </SelectTrigger>
-                    </TooltipTrigger>
-
-                    <TooltipContent>
-                      <p>Select the Gender</p>
-                    </TooltipContent>
-                  </Tooltip>
-                </TooltipProvider>
-
-                <SelectContent>
-                  {gender.map((item: any) => (
-                    <SelectItem
-                      key={item.attributedetails_name}
-                      value={item.attributedetails_name}
-                    >
-                      {item.attributedetails_name}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-
-            <div className="space-y-2">
-              <Label>Mobile</Label>
-              <TooltipProvider>
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <Input
-                      placeholder="Mobile"
-                      maxLength={15}
-                      value={memberSearch.Mobile}
-                      onChange={(e) =>
-                        setMemberSearch({
-                          ...memberSearch,
-                          Mobile: e.target.value,
-                        })
-                      }
-                    />
-                  </TooltipTrigger>
-                  <TooltipContent>
-                    <p>Enter the Mobile</p>
-                  </TooltipContent>
-                </Tooltip>
-              </TooltipProvider>
-            </div>
-
-            <div className="space-y-2">
-              <Label>Email</Label>
-              <TooltipProvider>
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <Input
-                      placeholder="Email"
-                      maxLength={250}
-                      value={memberSearch.Email}
-                      onChange={(e) =>
-                        setMemberSearch({
-                          ...memberSearch,
-                          Email: e.target.value,
-                        })
-                      }
-                    />
-                  </TooltipTrigger>
-                  <TooltipContent>
-                    <p>Enter the Email</p>
-                  </TooltipContent>
-                </Tooltip>
-              </TooltipProvider>
-            </div>
-
-            <div className="space-y-2">
-              <Label>Address</Label>
-              <TooltipProvider>
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <Input
-                      placeholder="Address"
-                      maxLength={250}
-                      value={memberSearch.Address}
-                      onChange={(e) =>
-                        setMemberSearch({
-                          ...memberSearch,
-                          Address: e.target.value,
-                        })
-                      }
-                    />
-                  </TooltipTrigger>
-                  <TooltipContent>
-                    <p>Enter the Address</p>
-                  </TooltipContent>
-                </Tooltip>
-              </TooltipProvider>
-            </div>
-
-            <div className="space-y-2">
-              <Label>Membership Type</Label>
-              <TooltipProvider>
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <Input
-                      placeholder="Membership Type"
-                      maxLength={100}
-                      value={memberSearch.Membership_type}
-                      onChange={(e) =>
-                        setMemberSearch({
-                          ...memberSearch,
-                          Membership_type: e.target.value,
-                        })
-                      }
-                    />
-                  </TooltipTrigger>
-                  <TooltipContent>
-                    <p>Enter the Membership Type</p>
-                  </TooltipContent>
-                </Tooltip>
-              </TooltipProvider>
-            </div>
-
-            <div className="space-y-2">
-              <Label>Status</Label>
-              <Select
-                value={memberSearch.is_active}
-                onValueChange={(value) =>
-                  setMemberSearch({
-                    ...memberSearch,
-                    is_active: value,
-                  })
-                }
-              >
-                <TooltipProvider>
-                  <Tooltip>
-                    <TooltipTrigger asChild>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select Status" />
-                      </SelectTrigger>
-                    </TooltipTrigger>
-
-                    <TooltipContent>
-                      <p>Select the Status</p>
-                    </TooltipContent>
-                  </Tooltip>
-                </TooltipProvider>
-
-                <SelectContent>
-                  {statusList.map((item: any) => (
-                    <SelectItem
-                      key={item.attributedetails_name}
-                      value={item.attributedetails_name}
-                    >
-                      {item.attributedetails_name}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-          </div>
-
-          {/* Search Button */}
-          <div className="flex justify-end mt-4">
-            <TooltipProvider>
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <Button onClick={handleSearchMembers}>
-                    <Search className="h-4 w-4 mr-2" />
-                    Search
-                  </Button>
-                </TooltipTrigger>
-
-                <TooltipContent>
-                  <p>Search</p>
-                </TooltipContent>
-              </Tooltip>
-            </TooltipProvider>
-          </div>
-
-          {/* Members Table */}
-          <div className="mt-4 flex-1">
-            <AgGridTable
-              rowData={memberSearchResults}
-              columnDefs={MembersColumnDefs}
-              pagination={true}
-              paginationPageSize={10}
-              height="100%"
+    {/* Main Content Area - Added px-1.5 for focus ring breathing room */}
+    <div className="flex-1 flex flex-col min-h-0 overflow-y-auto space-y-4 px-1.5">
+      {/* Search Filters Grid - Added p-1 wrapper to prevent outline truncation */}
+      <div className="p-1">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 shrink-0">
+          <div className="space-y-2">
+            <Label className="text-xs sm:text-sm font-medium">Member ID</Label>
+            <Input
+              placeholder="Member ID"
+              maxLength={50}
+              value={memberSearch.MemberID}
+              onChange={(e) =>
+                setMemberSearch({
+                  ...memberSearch,
+                  MemberID: e.target.value,
+                })
+              }
             />
           </div>
 
-          <DialogFooter>
-            <TooltipProvider>
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <Button
-                    variant="outline"
-                    onClick={() => setMemberHelpOpen(false)}
-                  >
-                    Close
-                  </Button>
-                </TooltipTrigger>
+          <div className="space-y-2">
+            <Label className="text-xs sm:text-sm font-medium">Full Name</Label>
+            <Input
+              placeholder="Full Name"
+              maxLength={50}
+              value={memberSearch.Full_name}
+              onChange={(e) =>
+                setMemberSearch({
+                  ...memberSearch,
+                  Full_name: e.target.value,
+                })
+              }
+            />
+          </div>
 
-                <TooltipContent>
-                  <p>Close</p>
-                </TooltipContent>
-              </Tooltip>
-            </TooltipProvider>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
+          <div className="space-y-2">
+            <Label className="text-xs sm:text-sm font-medium">Gender</Label>
+            <Select
+              value={memberSearch.Gender}
+              onValueChange={(value) =>
+                setMemberSearch({
+                  ...memberSearch,
+                  Gender: value,
+                })
+              }
+            >
+              <SelectTrigger>
+                <SelectValue placeholder="Select Gender" />
+              </SelectTrigger>
+              <SelectContent>
+                {gender.map((item: any) => (
+                  <SelectItem
+                    key={item.attributedetails_name}
+                    value={item.attributedetails_name}
+                  >
+                    {item.attributedetails_name}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+
+          <div className="space-y-2">
+            <Label className="text-xs sm:text-sm font-medium">Mobile</Label>
+            <Input
+              placeholder="Mobile"
+              maxLength={15}
+              value={memberSearch.Mobile}
+              onChange={(e) =>
+                setMemberSearch({
+                  ...memberSearch,
+                  Mobile: e.target.value,
+                })
+              }
+            />
+          </div>
+
+          <div className="space-y-2">
+            <Label className="text-xs sm:text-sm font-medium">Email</Label>
+            <Input
+              placeholder="Email"
+              maxLength={250}
+              value={memberSearch.Email}
+              onChange={(e) =>
+                setMemberSearch({
+                  ...memberSearch,
+                  Email: e.target.value,
+                })
+              }
+            />
+          </div>
+
+          <div className="space-y-2">
+            <Label className="text-xs sm:text-sm font-medium">Address</Label>
+            <Input
+              placeholder="Address"
+              maxLength={250}
+              value={memberSearch.Address}
+              onChange={(e) =>
+                setMemberSearch({
+                  ...memberSearch,
+                  Address: e.target.value,
+                })
+              }
+            />
+          </div>
+
+          <div className="space-y-2">
+            <Label className="text-xs sm:text-sm font-medium">Membership Type</Label>
+            <Input
+              placeholder="Membership Type"
+              maxLength={100}
+              value={memberSearch.Membership_type}
+              onChange={(e) =>
+                setMemberSearch({
+                  ...memberSearch,
+                  Membership_type: e.target.value,
+                })
+              }
+            />
+          </div>
+
+          <div className="space-y-2">
+            <Label className="text-xs sm:text-sm font-medium">Status</Label>
+            <Select
+              value={memberSearch.is_active}
+              onValueChange={(value) =>
+                setMemberSearch({
+                  ...memberSearch,
+                  is_active: value,
+                })
+              }
+            >
+              <SelectTrigger>
+                <SelectValue placeholder="Select Status" />
+              </SelectTrigger>
+              <SelectContent>
+                {statusList.map((item: any) => (
+                  <SelectItem
+                    key={item.attributedetails_name}
+                    value={item.attributedetails_name}
+                  >
+                    {item.attributedetails_name}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+        </div>
+      </div>
+
+      {/* Action Button Section */}
+      <div className="flex justify-end shrink-0 pt-1 px-1">
+        <Button
+          onClick={handleSearchMembers}
+          className="w-full sm:w-auto"
+        >
+          <Search className="h-4 w-4 mr-2" />
+          Search
+        </Button>
+      </div>
+
+      {/* AG Grid Container */}
+      <div className="flex-1 min-h-[250px] w-full pt-2 px-1">
+        <AgGridTable
+          rowData={memberSearchResults}
+          columnDefs={MembersColumnDefs}
+          pagination={true}
+          paginationPageSize={10}
+          height="100%"
+        />
+      </div>
+    </div>
+
+    {/* Footer */}
+    <DialogFooter className="shrink-0 pt-2">
+      <Button
+        variant="outline"
+        onClick={() => setMemberHelpOpen(false)}
+        className="w-full sm:w-auto"
+      >
+        Close
+      </Button>
+    </DialogFooter>
+  </DialogContent>
+</Dialog>
 
       {/* Webhook Configuration Dialog */}
       <Dialog open={webhookDialogOpen} onOpenChange={setWebhookDialogOpen}>
