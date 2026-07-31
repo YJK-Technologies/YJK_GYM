@@ -43,18 +43,24 @@ const AdminDashboard = () => {
     MonthlyRevenue: 0,
   });
 
+  // For Recent Activities
+  const [newMemberRegistration, setNewMemberRegistration] = useState<any>(null);
+  const [paymentReceived, setPaymentReceived] = useState<any>(null);
+  const [workoutProgramAssigned, setWorkoutProgramAssigned] =
+    useState<any>(null);
+
   // For manage buttons colour
   const buttonColors = [
-    "bg-orange-400",
+    "bg-orange-700",
     "bg-emerald-400",
     "bg-blue-500",
     "bg-red-500",
-    "bg-pink-500",
-    "bg-cyan-500",
+    "bg-zinc-500",
+    "bg-cyan-400",
     "bg-amber-500",
-    "bg-indigo-500",
-    "bg-teal-500",
-    "bg-rose-500",
+    "bg-lime-500",
+    "bg-green-700",
+    "bg-pink-400",
   ];
 
   const getDashboardData = async () => {
@@ -80,6 +86,9 @@ const AdminDashboard = () => {
 
   useEffect(() => {
     getDashboardData();
+    getNewMemberRegistration();
+    getPaymentReceived();
+    getWorkoutProgramAssigned();
 
     const handleClickOutside = (event) => {
       if (menuRef.current && !menuRef.current.contains(event.target)) {
@@ -201,7 +210,7 @@ const AdminDashboard = () => {
     },
     {
       title: "Super User Management",
-      description: "Manage all administrative modules.",
+      description: "Manage all administrative modules",
       route: "/SuperUser",
     },
   ];
@@ -214,6 +223,77 @@ const AdminDashboard = () => {
     sessionStorage.clear(); // or remove only the required items
     navigate("/");
   };
+
+  // For Recent Activities
+  const getNewMemberRegistration = async () => {
+    try {
+      const response = await fetch(`${BASE_URL}/getNewMemberRegistration`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          Company_code: companyCode,
+          Location_code: locationCode,
+        }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        setNewMemberRegistration(data[0] || null);
+      }
+    } catch (err) {
+      console.error("Error fetching new member registration:", err);
+    }
+  };
+
+  const getPaymentReceived = async () => {
+    try {
+      const response = await fetch(`${BASE_URL}/getPaymentReceived`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          Company_code: companyCode,
+          Location_code: locationCode,
+        }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        setPaymentReceived(data[0] || null);
+      }
+    } catch (err) {
+      console.error("Error fetching new member registration:", err);
+    }
+  };
+
+  const getWorkoutProgramAssigned = async () => {
+    try {
+      const response = await fetch(`${BASE_URL}/getWorkoutProgramAssigned`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          Company_code: companyCode,
+          Location_code: locationCode,
+        }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        setWorkoutProgramAssigned(data[0] || null);
+      }
+    } catch (err) {
+      console.error("Error fetching new member registration:", err);
+    }
+  };
+
   return (
     <div className="min-h-screen bg-gray-50">
       <header className="bg-white shadow-sm border-b sticky top-0 z-50">
@@ -391,7 +471,9 @@ const AdminDashboard = () => {
                 <div>
                   <p className="font-medium">New member registration</p>
                   <p className="text-sm text-gray-600">
-                    John Doe joined Premium Plan
+                    {newMemberRegistration
+                      ? `${newMemberRegistration.MemberID} - ${newMemberRegistration.Full_Name} joined ${newMemberRegistration.MemberShipType_id} - ${newMemberRegistration.MemberShipType_Name}`
+                      : "No recent member registration"}
                   </p>
                 </div>
                 <Badge>New</Badge>
@@ -400,7 +482,9 @@ const AdminDashboard = () => {
                 <div>
                   <p className="font-medium">Payment received</p>
                   <p className="text-sm text-gray-600">
-                    Sarah Wilson - Monthly dues
+                    {paymentReceived
+                      ? `${paymentReceived.MemberID} - ${paymentReceived.Full_Name} joined ${paymentReceived.package_ID} - ${paymentReceived.Package_Name}`
+                      : "No recent payment Received"}
                   </p>
                 </div>
                 <Badge variant="secondary">Payment</Badge>
@@ -409,7 +493,9 @@ const AdminDashboard = () => {
                 <div>
                   <p className="font-medium">Workout program assigned</p>
                   <p className="text-sm text-gray-600">
-                    Weight Loss Program to Mike Johnson
+                    {workoutProgramAssigned
+                      ? `${workoutProgramAssigned.ProgramID} - ${workoutProgramAssigned.ProgramName} joined ${workoutProgramAssigned.TrainerID} - ${workoutProgramAssigned.FullName}`
+                      : "No recent workout program assigned"}
                   </p>
                 </div>
                 <Badge variant="outline">Program</Badge>

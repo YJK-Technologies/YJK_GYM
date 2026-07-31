@@ -2639,7 +2639,7 @@ const validatePackage = () => {
       </div>
 
       <div className="space-y-2">
-        <Label htmlFor="goals">Goals (comma-separated)</Label>
+        <Label htmlFor="goals">Goals</Label>
         <TooltipProvider>
           <Tooltip>
             <TooltipTrigger asChild>
@@ -3546,7 +3546,7 @@ const validatePackage = () => {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <header className="bg-white shadow-sm border-b">
+      <header className="bg-white shadow-sm border-b sticky top-0 z-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center py-4">
             <div className="flex items-center gap-2 sm:gap-4 min-w-0">
@@ -4589,7 +4589,7 @@ const validatePackage = () => {
               {/* Schedule Section */}
               <div className="space-y-4">
                 <h4 className="font-medium text-sm text-gray-700">Schedule</h4>
-                <div className="grid grid-cols-3 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4 flex-1">
                   <div className="space-y-2">
                     <Label
                       htmlFor="duration"
