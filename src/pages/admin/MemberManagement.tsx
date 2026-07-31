@@ -120,7 +120,7 @@ const MemberManagement = () => {
     Membership_type: "",
     Joined_date: "",
     Plan_expiry_date: "",
-    is_active: false,
+    is_active: true,
     DietPlanID: "",
     Receive_promotions: false,
     Receive_notifications: false,
@@ -963,6 +963,7 @@ const MemberManagement = () => {
         setMemberImages([null, null]);
 
         handleMemberSearch();
+        fetchMembersData();
       } else {
         toast({
           title: "Error",
@@ -1109,6 +1110,7 @@ const MemberManagement = () => {
         setMemberImages([null, null]);
 
         handleMemberSearch();
+        fetchMembersData();
       } else {
         toast({
           title: "Error",
@@ -1386,7 +1388,7 @@ const MemberManagement = () => {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <header className="bg-white shadow-sm border-b">
+      <header className="bg-white shadow-sm border-b sticky top-0 z-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center py-4">
             <div className="flex items-center gap-2 sm:gap-4 min-w-0">
@@ -1659,7 +1661,7 @@ const MemberManagement = () => {
                   <Tooltip>
                     <TooltipTrigger asChild>
                       <Input
-                        placeholder="Enter email address (e.g., branch@example.com)"
+                        placeholder="Enter email address"
                         value={memberSearchForm.Email}
                         maxLength={100}
                         onChange={(e) =>

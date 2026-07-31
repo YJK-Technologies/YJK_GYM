@@ -74,7 +74,7 @@ export default function AgGridTable({
           sortable: true,
           filter: false,
           resizable: true,
-          flex: 1,
+          // flex: 1,
         }}
         gridOptions={gridOptions}
         onGridReady={onGridReady}
