@@ -66,6 +66,7 @@ import ReactMultiSelect, {
 import { showConfirmToast } from "../../components/ui/show-confirm-toast";
 import { useToast } from "@/hooks/use-toast";
 import { hasActionPermission } from "@/utils/permission";
+import Loading from "@/components/Loading";
 
 interface Meal {
   name: string;
@@ -142,6 +143,8 @@ const DietPlanManagement = () => {
 
   // Const - Needed
   const { companyCode, locationCode, userCode } = useCompany();
+  // For loading
+    const [loading, setLoading] = useState(false);
   const { toast } = useToast();
 
   // For cards data - Backend
@@ -608,6 +611,7 @@ const DietPlanManagement = () => {
 
     if (!validateDietPlan()) return;
 
+    setLoading(true);
     try {
       const currentDate = new Date().toISOString();
 
@@ -787,9 +791,13 @@ const DietPlanManagement = () => {
         variant: "destructive",
       });
     }
+    finally {
+    setLoading(false);
+}
   };
 
   const handleViewDietPlan = async (plan: WorkoutDietPlan) => {
+    setLoading(true);
     try {
       const detailsResponse = await fetch(
         `${BASE_URL}/Diet_Plans_DetailsSearch`,
@@ -836,9 +844,13 @@ const DietPlanManagement = () => {
     } catch (err) {
       console.log(err);
     }
+    finally {
+    setLoading(false);
+}
   };
 
   const handleEditDietPlan = async (plan: any) => {
+    setLoading(true);
     setEditingDietPlan(plan);
 
     // Convert Trainer IDs into MultiSelect format
@@ -924,6 +936,7 @@ const DietPlanManagement = () => {
 
     // Open Dialog
     setIsDietPlanDialogOpen(true);
+    setLoading(false);
   };
 
   const handleUpdateDietPlan = () => {
@@ -941,6 +954,7 @@ const DietPlanManagement = () => {
 
     if (!validateDietPlan()) return;
 
+    setLoading(true);
     try {
       const currentDate = new Date().toISOString();
 
@@ -1142,6 +1156,9 @@ const DietPlanManagement = () => {
         variant: "destructive",
       });
     }
+    finally {
+    setLoading(false);
+}
   };
 
   const handleDeleteDietPlan = (dietPlan: any) => {
@@ -1267,6 +1284,7 @@ const DietPlanManagement = () => {
   };
 
   const handleDietPlanSearch = async () => {
+    setLoading(true);
     try {
       const response = await fetch(`${BASE_URL}/dietPlanSearchData`, {
         method: "POST",
@@ -1321,6 +1339,9 @@ const DietPlanManagement = () => {
         variant: "destructive",
       });
     }
+    finally {
+    setLoading(false);
+}
   };
 
   const getDietPlanCardData = async () => {
@@ -1348,6 +1369,7 @@ const DietPlanManagement = () => {
 
   return (
     <div className="min-h-screen bg-gray-50">
+      {loading && <Loading />}
       <header className="bg-white shadow-sm border-b sticky top-0 z-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center py-4">
