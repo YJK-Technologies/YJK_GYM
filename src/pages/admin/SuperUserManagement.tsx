@@ -64,6 +64,7 @@ import {
 import { showConfirmToast } from "../../components/ui/show-confirm-toast";
 import { useCompany } from "../CompanyContext";
 import { hasActionPermission } from "@/utils/permission";
+import Loading from "@/components/Loading";
 
 const WorkoutProgramManagement = () => {
   const { companyCode, locationCode, userCode } = useCompany();
@@ -625,6 +626,7 @@ const WorkoutProgramManagement = () => {
   }
 
   //Company Dialog States
+  const [loading, setLoading] = useState(false);
   const [submittedCompany, setSubmittedCompany] = useState(false);
   const [companies, setCompanies] = useState([]);
   const [isCompanyDialogOpen, setIsCompanyDialogOpen] = useState(false);
@@ -858,8 +860,7 @@ const WorkoutProgramManagement = () => {
   const [submittedCompanyMapping, setSubmittedCompanyMapping] = useState(false);
   const [companyMappings, setCompanyMappings] = useState([]);
   const [editingCompanyMapping, setEditingCompanyMapping] = useState<any>(null);
-  const [isCompanyMappingDialogOpen, setIsCompanyMappingDialogOpen] =
-    useState(false);
+  const [isCompanyMappingDialogOpen, setIsCompanyMappingDialogOpen] = useState(false);
   const [companyMappingForm, setCompanyMappingForm] = useState({
     company_code: "",
     user_code: "",
@@ -973,7 +974,7 @@ const WorkoutProgramManagement = () => {
       : [])
   ];
 
-  //Location Dialog States
+  //Location Dialog States  const [loadingLocation, setLoadingLocation] = useState(false);
   const [submittedLocation, setSubmittedLocation] = useState(false);
   const [locations, setLocations] = useState([]);
   const [editingLocation, setEditingLocation] = useState<any>(null);
@@ -1706,8 +1707,7 @@ const WorkoutProgramManagement = () => {
 
   //Attribute Header Dialog States
   const [submittedAttributeHdr, setSubmittedAttributeHdr] = useState(false);
-  const [isAttributeHdrDialogOpen, setIsAttributeHdrDialogOpen] =
-    useState(false);
+  const [isAttributeHdrDialogOpen, setIsAttributeHdrDialogOpen] = useState(false);
   const [attributeHdrForm, setAttributeHdrForm] = useState({
     company_code: "",
     attributeheader_code: "",
@@ -1719,8 +1719,7 @@ const WorkoutProgramManagement = () => {
 
   //Number Series
   const [submittedNumberSeries, setSubmittedNumberSeries] = useState(false);
-  const [isNumberSeriesDialogOpen, setIsNumberSeriesDialogOpen] =
-    useState(false);
+  const [isNumberSeriesDialogOpen, setIsNumberSeriesDialogOpen] = useState(false);
   const [editingNumberSeries, setEditingNumberSeries] = useState<any>(null);
   const [numberSeries, setNumberSeries] = useState([]);
   const [numberSeriesForm, setNumberSeriesForm] = useState({
@@ -1877,11 +1876,11 @@ const WorkoutProgramManagement = () => {
   //Company CRUD Functions
   const handleAddCompany = () => {
     fetchCities(),
-      fetchStates(),
-      fetchCountries(),
-      fetchStatus(),
-      fetchLocation(),
-      setEditingCompany(null);
+    fetchStates(),
+    fetchCountries(),
+    fetchStatus(),
+    fetchLocation(),
+    setEditingCompany(null);
     setCompanyForm({
       company_no: "",
       company_name: "",
@@ -1951,6 +1950,8 @@ const WorkoutProgramManagement = () => {
 
     if (!validateCompany()) return;
 
+    setLoading(true);
+
     try {
       const formData = new FormData();
 
@@ -2015,6 +2016,8 @@ const WorkoutProgramManagement = () => {
         description: error.message || "Something went wrong.",
         variant: "destructive",
       });
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -2030,6 +2033,8 @@ const WorkoutProgramManagement = () => {
     setSubmittedCompany(true);
 
     if (!validateCompany()) return;
+
+    setLoading(true)
 
     try {
       const formData = new FormData();
@@ -2099,6 +2104,8 @@ const WorkoutProgramManagement = () => {
         description: error.message || "Something went wrong.",
         variant: "destructive",
       });
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -2111,6 +2118,8 @@ const WorkoutProgramManagement = () => {
   };
 
   const deleteCompany = async (companyNo: string) => {
+    setLoading(true);
+
     try {
       const response = await fetch(`${BASE_URL}/delete`, {
         method: "POST",
@@ -2148,6 +2157,8 @@ const WorkoutProgramManagement = () => {
         description: error.message || "Something went wrong.",
         variant: "destructive",
       });
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -2212,6 +2223,7 @@ const WorkoutProgramManagement = () => {
   };
 
   const handleCompanySearch = async () => {
+    setLoading(true);
     try {
       const response = await fetch(`${BASE_URL}/companysearchcriteria`, {
         method: "POST",
@@ -2263,16 +2275,18 @@ const WorkoutProgramManagement = () => {
           "Unable to connect to the server. Please try again later.",
         variant: "destructive",
       });
+    } finally {
+      setLoading(false);
     }
   };
 
   //Company Mapping CRUD Functions
   const handleAddCompanyMapping = () => {
     fetchStatus(),
-      fetchLocation(),
-      fetchUsers(),
-      fetchCompanies(),
-      setEditingCompanyMapping(null);
+    fetchLocation(),
+    fetchUsers(),
+    fetchCompanies(),
+    setEditingCompanyMapping(null);
     setCompanyMappingForm({
       company_code: companyCode,
       user_code: "",
@@ -2310,6 +2324,8 @@ const WorkoutProgramManagement = () => {
 
     if (!validateCompanyMapping()) return;
 
+    setLoading(true);
+
     try {
       const response = await fetch(`${BASE_URL}/addCompanyMappingData`, {
         method: "POST",
@@ -2346,6 +2362,8 @@ const WorkoutProgramManagement = () => {
         description: err.message || "Something went wrong.",
         variant: "destructive",
       });
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -2361,6 +2379,8 @@ const WorkoutProgramManagement = () => {
     setSubmittedCompanyMapping(true);
 
     if (!validateCompanyMapping()) return;
+
+    setLoading(true);
 
     try {
       const response = await fetch(`${BASE_URL}/CompanyMappingUpdate`, {
@@ -2399,6 +2419,8 @@ const WorkoutProgramManagement = () => {
         description: err.message || "Something went wrong.",
         variant: "destructive",
       });
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -2411,6 +2433,8 @@ const WorkoutProgramManagement = () => {
   };
 
   const deleteCompanyMapping = async (keyfiels: string) => {
+    setLoading(true);
+
     try {
       const response = await fetch(`${BASE_URL}/commappingdeleteData`, {
         method: "POST",
@@ -2448,6 +2472,9 @@ const WorkoutProgramManagement = () => {
         description: err.message || "Something went wrong.",
         variant: "destructive",
       });
+
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -2460,6 +2487,8 @@ const WorkoutProgramManagement = () => {
   };
 
   const handleCompanyMappingSearch = async () => {
+    setLoading(true);
+
     try {
       const response = await fetch(`${BASE_URL}/companymappingsearchdata`, {
         method: "POST",
@@ -2508,6 +2537,8 @@ const WorkoutProgramManagement = () => {
           "Unable to connect to the server. Please try again later.",
         variant: "destructive",
       });
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -2532,10 +2563,10 @@ const WorkoutProgramManagement = () => {
   // Location CRUD Functions
   const handleAddLocation = () => {
     fetchCities(),
-      fetchStates(),
-      fetchCountries(),
-      fetchStatus(),
-      setEditingLocation(null);
+    fetchStates(),
+    fetchCountries(),
+    fetchStatus(),
+    setEditingLocation(null);
     setLocationForm({
       location_no: "",
       location_name: "",
@@ -2598,6 +2629,8 @@ const WorkoutProgramManagement = () => {
 
     if (!validateLocation()) return;
 
+    setLoading(true);
+
     try {
       const response = await fetch(`${BASE_URL}/addlocationinfo`, {
         method: "POST",
@@ -2634,6 +2667,8 @@ const WorkoutProgramManagement = () => {
         description: err.message || "Something went wrong.",
         variant: "destructive",
       });
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -2649,6 +2684,8 @@ const WorkoutProgramManagement = () => {
     setSubmittedLocation(true);
 
     if (!validateLocation()) return;
+
+    setLoading(true);
 
     try {
       const response = await fetch(`${BASE_URL}/LocationUpdate`, {
@@ -2687,6 +2724,8 @@ const WorkoutProgramManagement = () => {
         description: err.message || "Something went wrong.",
         variant: "destructive",
       });
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -2699,50 +2738,54 @@ const WorkoutProgramManagement = () => {
   };
 
   const deleteLocation = async (location_no: string) => {
-  try {
-    const response = await fetch(`${BASE_URL}/deletelocation`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "modified-by": userCode,
-      },
-      body: JSON.stringify({
-        location_nos: [location_no],
-      }),
-    });
+    setLoading(true);
 
-    const data = await response.json();
-
-    if (response.ok) {
-      toast({
-        title: "Success",
-        description: data.message || "Location deleted successfully.",
-        variant: "success",
+    try {
+      const response = await fetch(`${BASE_URL}/deletelocation`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "modified-by": userCode,
+        },
+        body: JSON.stringify({
+          location_nos: [location_no],
+        }),
       });
 
-      handleLocationSearch();
-    } else {
+      const data = await response.json();
+
+      if (response.ok) {
+        toast({
+          title: "Success",
+          description: data.message || "Location deleted successfully.",
+          variant: "success",
+        });
+
+        handleLocationSearch();
+      } else {
+        toast({
+          title: "Error",
+          description:
+            data?.message ||
+            data?.error ||
+            data?.detail ||
+            data?.title ||
+            "Failed to delete location.",
+          variant: "destructive",
+        });
+      }
+    } catch (err: any) {
+      console.error(err);
+
       toast({
-        title: "Error",
-        description:
-          data?.message ||
-          data?.error ||
-          data?.detail ||
-          data?.title ||
-          "Failed to delete location.",
+        title: "Server Error",
+        description: err.message || "Something went wrong.",
         variant: "destructive",
       });
+    } finally {
+      setLoading(false);
     }
-  } catch (err: any) {
-    console.error(err);
-
-    toast({
-      title: "Server Error",
-      description: err.message || "Something went wrong.",
-      variant: "destructive",
-    });
-  }
-};
+  };
 
   const handleSaveLocation = async () => {
     if (editingLocation) {
@@ -2753,6 +2796,8 @@ const WorkoutProgramManagement = () => {
   };
 
   const handleLocationSearch = async () => {
+    setLoading(true);
+
     try {
       const response = await fetch(`${BASE_URL}/locationSearchdata`, {
         method: "POST",
@@ -2803,6 +2848,8 @@ const WorkoutProgramManagement = () => {
           "Unable to connect to the server. Please try again later.",
         variant: "destructive",
       });
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -2862,6 +2909,8 @@ const WorkoutProgramManagement = () => {
 
     if (!validateRole()) return;
 
+    setLoading(true);
+
     try {
       const response = await fetch(`${BASE_URL}/addRoleInfoData`, {
         method: "POST",
@@ -2898,6 +2947,8 @@ const WorkoutProgramManagement = () => {
         description: err.message || "Something went wrong.",
         variant: "destructive",
       });
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -2913,6 +2964,8 @@ const WorkoutProgramManagement = () => {
     setSubmittedRole(true);
 
     if (!validateRole()) return;
+
+    setLoading(true);
 
     try {
       const response = await fetch(`${BASE_URL}/RoleUpdates`, {
@@ -2951,6 +3004,8 @@ const WorkoutProgramManagement = () => {
         description: err.message || "Something went wrong.",
         variant: "destructive",
       });
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -2963,6 +3018,8 @@ const WorkoutProgramManagement = () => {
   };
 
   const deleteRole = async (role_id: string) => {
+    setLoading(true);
+
     try {
       const response = await fetch(`${BASE_URL}/roledelete`, {
         method: "POST",
@@ -3001,6 +3058,8 @@ const WorkoutProgramManagement = () => {
         description: err.message || "Something went wrong.",
         variant: "destructive",
       });
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -3013,6 +3072,8 @@ const WorkoutProgramManagement = () => {
   };
 
   const handleRoleSearch = async () => {
+    setLoading(true);
+
     try {
       const response = await fetch(`${BASE_URL}/Rolesearchdata`, {
         method: "POST",
@@ -3059,6 +3120,8 @@ const WorkoutProgramManagement = () => {
           "Unable to connect to the server. Please try again later.",
         variant: "destructive",
       });
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -3080,8 +3143,8 @@ const WorkoutProgramManagement = () => {
   //Role Mapping CRUD Functions
   const handleAddRoleMapping = () => {
     fetchUsers(),
-      fetchRole(),
-      setEditingRoleMapping(null);
+    fetchRole(),
+    setEditingRoleMapping(null);
     setRoleMappingForm({
       company_code: companyCode,
       user_code: "",
@@ -3110,6 +3173,8 @@ const WorkoutProgramManagement = () => {
     setSubmittedRoleMapping(true);
 
     if (!validateRoleMapping()) return;
+
+    setLoading(true);
 
     try {
       const response = await fetch(`${BASE_URL}/addUserRoleMappingData`, {
@@ -3147,6 +3212,8 @@ const WorkoutProgramManagement = () => {
         description: err.message || "Something went wrong.",
         variant: "destructive",
       });
+    }  finally {
+      setLoading(false);
     }
   };
 
@@ -3162,6 +3229,8 @@ const WorkoutProgramManagement = () => {
     setSubmittedRoleMapping(true);
 
     if (!validateRoleMapping()) return;
+
+    setLoading(true);
 
     try {
       const response = await fetch(`${BASE_URL}/RoleMappingUpdate`, {
@@ -3200,6 +3269,8 @@ const WorkoutProgramManagement = () => {
         description: err.message || "Something went wrong.",
         variant: "destructive",
       });
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -3212,6 +3283,8 @@ const WorkoutProgramManagement = () => {
   };
 
   const deleteRoleMapping = async (keyfield: string) => {
+    setLoading(true);
+
     try {
       const response = await fetch(`${BASE_URL}/RollMappingDelete`, {
         method: "POST",
@@ -3249,6 +3322,8 @@ const WorkoutProgramManagement = () => {
         description: err.message || "Something went wrong.",
         variant: "destructive",
       });
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -3261,6 +3336,8 @@ const WorkoutProgramManagement = () => {
   };
 
   const handleRoleMappingSearch = async () => {
+    setLoading(true);
+
     try {
       const response = await fetch(`${BASE_URL}/userrolsearchdata`, {
         method: "POST",
@@ -3309,6 +3386,8 @@ const WorkoutProgramManagement = () => {
           "Unable to connect to the server. Please try again later.",
         variant: "destructive",
       });
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -3330,9 +3409,9 @@ const WorkoutProgramManagement = () => {
   //Role Rights CRUD Functions
   const handleAddRoleRights = () => {
     fetchRole(),
-      fetchPermission(),
-      fetchScreenType(),
-      setEditingRoleRight(null);
+    fetchPermission(),
+    fetchScreenType(),
+    setEditingRoleRight(null);
     setRoleRightsForm({
       company_code: companyCode,
       role_id: "",
@@ -3366,6 +3445,8 @@ const WorkoutProgramManagement = () => {
     setSubmittedRoleRights(true);
 
     if (!validateRoleRights()) return;
+
+    setLoading(true);
 
     try {
       const response = await fetch(`${BASE_URL}/adduserscreenmap`, {
@@ -3403,6 +3484,8 @@ const WorkoutProgramManagement = () => {
         description: err.message || "Something went wrong.",
         variant: "destructive",
       });
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -3418,6 +3501,8 @@ const WorkoutProgramManagement = () => {
     setSubmittedRoleRights(true);
 
     if (!validateRoleRights()) return;
+
+    setLoading(true);
 
     try {
       const response = await fetch(`${BASE_URL}/updateRoleRights`, {
@@ -3456,6 +3541,8 @@ const WorkoutProgramManagement = () => {
         description: err.message || "Something went wrong.",
         variant: "destructive",
       });
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -3468,6 +3555,8 @@ const WorkoutProgramManagement = () => {
   };
 
   const deleteRoleRight = async (keyfield: string) => {
+    setLoading(true);
+
     try {
       const response = await fetch(`${BASE_URL}/userscreenmapdeleteData`, {
         method: "POST",
@@ -3505,6 +3594,8 @@ const WorkoutProgramManagement = () => {
         description: err.message || "Something went wrong.",
         variant: "destructive",
       });
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -3517,6 +3608,8 @@ const WorkoutProgramManagement = () => {
   };
 
   const handleRoleRightsSearch = async () => {
+    setLoading(true)
+
     try {
       const response = await fetch(`${BASE_URL}/userscreensearchdata`, {
         method: "POST",
@@ -3564,6 +3657,8 @@ const WorkoutProgramManagement = () => {
           "Unable to connect to the server. Please try again later.",
         variant: "destructive",
       });
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -3586,9 +3681,9 @@ const WorkoutProgramManagement = () => {
   //User CRUD Functions
   const handleAddUser = () => {
     fetchStatus(),
-      fetchGender(),
-      fetchRole(),
-      setEditingUser(null);
+    fetchGender(),
+    fetchRole(),
+    setEditingUser(null);
     setUserForm({
       company_code: companyCode,
       user_code: "",
@@ -3651,6 +3746,8 @@ const WorkoutProgramManagement = () => {
     setSubmittedUser(true);
 
     if (!validateUser()) return;
+
+    setLoading(true)
 
     try {
       const formData = new FormData();
@@ -3723,6 +3820,8 @@ const WorkoutProgramManagement = () => {
         description: "Something went wrong. Please try again.",
         variant: "destructive",
       });
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -3738,6 +3837,8 @@ const WorkoutProgramManagement = () => {
     setSubmittedUser(true);
 
     if (!validateUser()) return;
+
+    setLoading(true);
 
     try {
       const formData = new FormData();
@@ -3811,6 +3912,8 @@ const WorkoutProgramManagement = () => {
         description: err.message || "Something went wrong.",
         variant: "destructive",
       });
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -3823,6 +3926,8 @@ const WorkoutProgramManagement = () => {
   };
 
   const deleteUser = async (user_code: string) => {
+    setLoading(true)
+
     try {
       const response = await fetch(`${BASE_URL}/userdelete`, {
         method: "POST",
@@ -3861,6 +3966,8 @@ const WorkoutProgramManagement = () => {
         description: err.message || "Something went wrong.",
         variant: "destructive",
       });
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -3873,6 +3980,8 @@ const WorkoutProgramManagement = () => {
   };
 
   const handleUserSearch = async () => {
+    setLoading(true)
+
     try {
       const response = await fetch(`${BASE_URL}/usersearchcriteria`, {
         method: "POST",
@@ -3925,6 +4034,8 @@ const WorkoutProgramManagement = () => {
           "Unable to connect to the server. Please try again later.",
         variant: "destructive",
       });
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -3964,7 +4075,7 @@ const WorkoutProgramManagement = () => {
   //Attribute Detail CRUD Functions
   const handleAddAttribute = () => {
     fetchAttributeHdr(),
-      setEditingAttribute(null);
+    setEditingAttribute(null);
     setAttributeForm({
       company_code: companyCode,
       attributeheader_code: "",
@@ -3998,6 +4109,8 @@ const WorkoutProgramManagement = () => {
     setSubmittedAttributeDet(true);
 
     if (!validateAttributeDet()) return;
+
+    setLoading(true)
 
     try {
       const response = await fetch(`${BASE_URL}/addattridetData`, {
@@ -4036,6 +4149,8 @@ const WorkoutProgramManagement = () => {
         description: err.message || "Something went wrong.",
         variant: "destructive",
       });
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -4051,6 +4166,8 @@ const WorkoutProgramManagement = () => {
     setSubmittedAttributeDet(true);
 
     if (!validateAttributeDet()) return;
+
+    setLoading(true)
 
     try {
       const response = await fetch(`${BASE_URL}/AttributeUpdate`, {
@@ -4090,6 +4207,8 @@ const WorkoutProgramManagement = () => {
         description: err.message || "Something went wrong.",
         variant: "destructive",
       });
+    }  finally {
+      setLoading(false);
     }
   };
 
@@ -4109,6 +4228,7 @@ const WorkoutProgramManagement = () => {
     attributeheader_code: string,
     attributedetails_code: string,
   ) => {
+    setLoading(true)
     try {
       const response = await fetch(`${BASE_URL}/delattridetData`, {
         method: "POST",
@@ -4150,6 +4270,8 @@ const WorkoutProgramManagement = () => {
         description: err.message || "Something went wrong.",
         variant: "destructive",
       });
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -4162,6 +4284,7 @@ const WorkoutProgramManagement = () => {
   };
 
   const handleAttributeSearch = async () => {
+    setLoading(true)
     try {
       const response = await fetch(`${BASE_URL}/attributeSearchdata`, {
         method: "POST",
@@ -4210,6 +4333,8 @@ const WorkoutProgramManagement = () => {
           "Unable to connect to the server. Please try again later.",
         variant: "destructive",
       });
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -4265,6 +4390,8 @@ const WorkoutProgramManagement = () => {
 
     if (!validateAttributeHdr()) return;
 
+    setLoading(true)
+
     try {
       const response = await fetch(`${BASE_URL}/addattriData`, {
         method: "POST",
@@ -4299,15 +4426,17 @@ const WorkoutProgramManagement = () => {
         description: err.message || "Something went wrong.",
         variant: "destructive",
       });
+    } finally {
+      setLoading(false);
     }
   };
 
   // NumberSeries CRUD Functions
   const handleAddNumberSeries = () => {
     fetchStatus(),
-      fetchScreenType(),
-      fetchNumberPrefix(),
-      fetchBillFormat()
+    fetchScreenType(),
+    fetchNumberPrefix(),
+    fetchBillFormat()
     setEditingNumberSeries(null);
     setNumberSeriesForm({
       company_code: companyCode,
@@ -4357,6 +4486,8 @@ const WorkoutProgramManagement = () => {
 
     if (!validateNumberSeries()) return;
 
+    setLoading(true)
+
     try {
       const response = await fetch(`${BASE_URL}/addNumberseries`, {
         method: "POST",
@@ -4393,6 +4524,8 @@ const WorkoutProgramManagement = () => {
         description: err.message || "Something went wrong.",
         variant: "destructive",
       });
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -4408,6 +4541,8 @@ const WorkoutProgramManagement = () => {
     setSubmittedNumberSeries(true);
 
     if (!validateNumberSeries()) return;
+
+    setLoading(true)
 
     try {
       const response = await fetch(`${BASE_URL}/NumberSeriesUpdate`, {
@@ -4446,6 +4581,8 @@ const WorkoutProgramManagement = () => {
         description: error.message || "Something went wrong.",
         variant: "destructive",
       });
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -4458,6 +4595,8 @@ const WorkoutProgramManagement = () => {
   };
 
   const deleteNumberSeries = async (row: any) => {
+    setLoading(true)
+
     try {
       const response = await fetch(`${BASE_URL}/NumberSeriesdeleteData`, {
         method: "POST",
@@ -4501,6 +4640,8 @@ const WorkoutProgramManagement = () => {
         description: err.message,
         variant: "destructive",
       });
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -4535,6 +4676,8 @@ const WorkoutProgramManagement = () => {
   };
 
   const handleSearchNumberSeries = async () => {
+    setLoading(true)
+
     try {
       const response = await fetch(`${BASE_URL}/numberseriessearchdata`, {
         method: "POST",
@@ -4580,6 +4723,8 @@ const WorkoutProgramManagement = () => {
           "Unable to connect to the server. Please try again later.",
         variant: "destructive",
       });
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -5896,7 +6041,7 @@ const WorkoutProgramManagement = () => {
 
   return (
     <div className="min-h-screen bg-gray-50">
-
+      {loading && <Loading />}
       <header className="bg-white shadow-sm border-b sticky top-0 z-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center py-4">
