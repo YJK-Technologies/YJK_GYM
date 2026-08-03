@@ -17,7 +17,7 @@ import { showConfirmToast } from "../../components/ui/show-confirm-toast";
 import { Switch } from "@/components/ui/switch";
 import { useCompany } from "../CompanyContext";
 import { hasActionPermission } from "@/utils/permission";
-
+import Loading from "@/components/Loading";
 interface Trainer {
   id: string;
   name: string;
@@ -36,6 +36,8 @@ interface Trainer {
 const FacultyManagement = () => {
   const navigate = useNavigate();
   const { companyCode, locationCode, userCode } = useCompany();
+  // For loading
+  const [loading, setLoading] = useState(false);
   
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
 
@@ -253,7 +255,7 @@ const FacultyManagement = () => {
   }, []);
 
   useEffect(() => {
-    handleTrainerSearch();
+    // handleTrainerSearch();
     getTrainerCardData();
   }, []);
 
@@ -356,6 +358,7 @@ const FacultyManagement = () => {
       });
       return false;
     }
+    setLoading(true);
 
     try {
       const formData = new FormData();
@@ -437,6 +440,9 @@ const FacultyManagement = () => {
         variant: "destructive",
       });
     }
+    finally {
+    setLoading(false);
+}
   };
 
   const handleUpdateTrainer = () => {
@@ -448,6 +454,7 @@ const FacultyManagement = () => {
   };
 
   const updateTrainer = async () => {
+    
     setSubmittedTrainer(true);
 
     if (!validateTrainer()) return;
@@ -470,6 +477,8 @@ const FacultyManagement = () => {
       });
       return false;
     }
+
+    setLoading(true);
 
     try {
       const formData = new FormData();
@@ -543,6 +552,9 @@ const FacultyManagement = () => {
         variant: "destructive",
       });
     }
+    finally {
+    setLoading(false);
+}
   };
 
   const handleDeleteTrainer = (trainer: any) => {
@@ -550,6 +562,7 @@ const FacultyManagement = () => {
       title: "Delete Trainer",
       description: `Are you sure you want to delete ${trainer.FullName}?`,
       onConfirm: async () => {
+        setLoading(true);
         try {
           const response = await fetch(`${BASE_URL}/GYM_TrainerDelete`, {
             method: "POST",
@@ -592,6 +605,9 @@ const FacultyManagement = () => {
             variant: "destructive",
           });
         }
+        finally {
+    setLoading(false);
+}
       },
     });
   };
@@ -605,6 +621,7 @@ const FacultyManagement = () => {
   };
 
   const handleTrainerSearch = async () => {
+    setLoading(true);
     try {
       const response = await fetch(`${BASE_URL}/getTrainerSC`, {
         method: "POST",
@@ -665,6 +682,9 @@ const FacultyManagement = () => {
         variant: "destructive",
       });
     }
+    finally {
+    setLoading(false);
+}
   };
 
   const getTrainerCardData = async () => {
@@ -763,6 +783,7 @@ const FacultyManagement = () => {
 
   return (
     <div className="min-h-screen bg-gray-50">
+      {loading && <Loading />}
       <header className="bg-white shadow-sm border-b sticky top-0 z-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center py-4">
@@ -1682,7 +1703,7 @@ const FacultyManagement = () => {
                             Specializations: e.target.value,
                           })
                         }
-                        placeholder="e.g., Weight Loss, Strength Training..."
+                        placeholder="Enter Specializations"
                       />
                     </TooltipTrigger>
 
@@ -1708,7 +1729,7 @@ const FacultyManagement = () => {
                             WorkingSchedule: e.target.value,
                           })
                         }
-                        placeholder="e.g., Sun-Thu: 6AM-2PM"
+                        placeholder="Enter Working Schedule"
                       />
                     </TooltipTrigger>
 
