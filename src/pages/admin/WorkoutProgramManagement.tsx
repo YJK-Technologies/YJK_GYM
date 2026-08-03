@@ -67,6 +67,7 @@ import {
 import { showConfirmToast } from "../../components/ui/show-confirm-toast";
 import { useCompany } from "../CompanyContext";
 import { hasActionPermission } from "@/utils/permission";
+import Loading from "@/components/Loading";
 
 interface Exercise {
   name: string;
@@ -143,6 +144,8 @@ interface Stats {
 
 const WorkoutProgramManagement = () => {
   const { companyCode, locationCode, userCode } = useCompany();
+  // For loading
+  const [loading, setLoading] = useState(false);
 
   const navigate = useNavigate();
   const { toast } = useToast();
@@ -265,7 +268,6 @@ const WorkoutProgramManagement = () => {
       getSettingData();
     }
   }, [companyCode, locationCode]);
-
 
   // Start packages useEffect
   const fetchPackageTypes = async () => {
@@ -711,10 +713,10 @@ const WorkoutProgramManagement = () => {
     const selectedExercises =
       program.Exercises.length > 0
         ? program.Exercises.map((exercise: any) => ({
-          name: exercise.Exercises_Name,
-          sets: exercise.Exercises_Count,
-          reps: exercise.Exercises_Repetitions,
-        }))
+            name: exercise.Exercises_Name,
+            sets: exercise.Exercises_Count,
+            reps: exercise.Exercises_Repetitions,
+          }))
         : [{ name: "", sets: 3, reps: "" }];
 
     setProgramForm({
@@ -757,10 +759,7 @@ const WorkoutProgramManagement = () => {
         variant: "destructive",
       });
 
-      if (
-        numberGeneration === "Manual" &&
-        !programForm.id.trim()
-      ) {
+      if (numberGeneration === "Manual" && !programForm.id.trim()) {
         toast({
           title: "Validation",
           description: "Program ID is required.",
@@ -839,6 +838,7 @@ const WorkoutProgramManagement = () => {
   const handleCreateProgram = async () => {
     if (!validateProgram()) return;
 
+    setLoading(true);
     try {
       const facultyIds = programForm.assignedFaculty.map((item) => item.value);
 
@@ -937,6 +937,8 @@ const WorkoutProgramManagement = () => {
         description: err.message,
         variant: "destructive",
       });
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -953,6 +955,7 @@ const WorkoutProgramManagement = () => {
 
     if (!validateProgram()) return;
 
+    setLoading(true);
     try {
       const facultyIds = programForm.assignedFaculty.map((item) => item.value);
 
@@ -1080,6 +1083,8 @@ const WorkoutProgramManagement = () => {
         description: err.message,
         variant: "destructive",
       });
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -1092,6 +1097,7 @@ const WorkoutProgramManagement = () => {
   };
 
   const deleteProgram = async (program: any) => {
+    setLoading(true);
     try {
       // -----------------------------
       // Delete Program Exercises
@@ -1171,10 +1177,13 @@ const WorkoutProgramManagement = () => {
         description: error.message || "Something went wrong.",
         variant: "destructive",
       });
+    } finally {
+      setLoading(false);
     }
   };
 
   const handleProgramSearch = async () => {
+    setLoading(true);
     try {
       const response = await fetch(`${BASE_URL}/programSearchData`, {
         method: "POST",
@@ -1240,6 +1249,8 @@ const WorkoutProgramManagement = () => {
           "Unable to connect to the server. Please try again later.",
         variant: "destructive",
       });
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -1349,13 +1360,13 @@ const WorkoutProgramManagement = () => {
     const associatedPrograms =
       pkg.Programs && pkg.Programs.length > 0
         ? pkg.Programs.map((id: string) => ({
-          programId: id.trim(),
-        }))
+            programId: id.trim(),
+          }))
         : [
-          {
-            programId: "",
-          },
-        ];
+            {
+              programId: "",
+            },
+          ];
 
     setPackageForm({
       id: pkg.package_ID,
@@ -1372,27 +1383,24 @@ const WorkoutProgramManagement = () => {
     setIsPackageDialogOpen(true);
   };
 
-const validatePackage = () => {
-  if (
-    !packageForm.name.trim() ||
-    !packageForm.packageType.trim() ||
-    Number(packageForm.duration_days) <= 0 ||
-    Number(packageForm.price) <= 0 ||
-    packageForm.associatedPrograms.length === 0 ||
-    packageForm.associatedPrograms.some(
-      (item) => !item.programId || !item.programId.trim(),
-    )
-  ) {
-    toast({
-      title: "Required Fields",
-      description: "Please fill all required fields.",
-      variant: "destructive",
-    });
-
+  const validatePackage = () => {
     if (
-        numberGeneration === "Manual" &&
-        !packageForm.id.trim()
-      ) {
+      !packageForm.name.trim() ||
+      !packageForm.packageType.trim() ||
+      Number(packageForm.duration_days) <= 0 ||
+      Number(packageForm.price) <= 0 ||
+      packageForm.associatedPrograms.length === 0 ||
+      packageForm.associatedPrograms.some(
+        (item) => !item.programId || !item.programId.trim(),
+      )
+    ) {
+      toast({
+        title: "Required Fields",
+        description: "Please fill all required fields.",
+        variant: "destructive",
+      });
+
+      if (numberGeneration === "Manual" && !packageForm.id.trim()) {
         toast({
           title: "Validation",
           description: "Package ID is required.",
@@ -1402,54 +1410,54 @@ const validatePackage = () => {
         return false;
       }
 
-    setSubmittedPackage(true);
-    return false;
-  }
+      setSubmittedPackage(true);
+      return false;
+    }
 
-  // Duplicate Program Validation
-  const programIds = packageForm.associatedPrograms
-    .map((item) => item.programId.trim().toLowerCase())
-    .filter((id) => id !== "");
+    // Duplicate Program Validation
+    const programIds = packageForm.associatedPrograms
+      .map((item) => item.programId.trim().toLowerCase())
+      .filter((id) => id !== "");
 
-  const duplicateProgram = programIds.some(
-    (id, index) => programIds.indexOf(id) !== index,
-  );
+    const duplicateProgram = programIds.some(
+      (id, index) => programIds.indexOf(id) !== index,
+    );
 
-  if (duplicateProgram) {
-    toast({
-      title: "Duplicate Program",
-      description: "Duplicate Program is not allowed.",
-      variant: "destructive",
-    });
+    if (duplicateProgram) {
+      toast({
+        title: "Duplicate Program",
+        description: "Duplicate Program is not allowed.",
+        variant: "destructive",
+      });
 
-    setSubmittedPackage(true);
-    return false;
-  }
+      setSubmittedPackage(true);
+      return false;
+    }
 
-  // Duration Validation
-  if (Number(packageForm.duration_days) <= 0) {
-    toast({
-      title: "Invalid Duration",
-      description: "Duration must be greater than zero.",
-      variant: "destructive",
-    });
+    // Duration Validation
+    if (Number(packageForm.duration_days) <= 0) {
+      toast({
+        title: "Invalid Duration",
+        description: "Duration must be greater than zero.",
+        variant: "destructive",
+      });
 
-    return false;
-  }
+      return false;
+    }
 
-  // Price Validation
-  if (Number(packageForm.price) <= 0) {
-    toast({
-      title: "Invalid Price",
-      description: "Price must be greater than zero.",
-      variant: "destructive",
-    });
+    // Price Validation
+    if (Number(packageForm.price) <= 0) {
+      toast({
+        title: "Invalid Price",
+        description: "Price must be greater than zero.",
+        variant: "destructive",
+      });
 
-    return false;
-  }
+      return false;
+    }
 
-  return true;
-};
+    return true;
+  };
 
   const handleSavePackage = async () => {
     if (editingPackage) {
@@ -1470,8 +1478,9 @@ const validatePackage = () => {
   const updatePackage = async () => {
     if (!editingPackage) return;
 
-     if (!validatePackage()) return;
+    if (!validatePackage()) return;
 
+    setLoading(true);
     try {
       const packagePayload = {
         package_ID: packageForm.id,
@@ -1574,6 +1583,8 @@ const validatePackage = () => {
       });
 
       console.error("Package Update Error :", err);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -1674,6 +1685,7 @@ const validatePackage = () => {
     let packageID = "";
     let keyFieldHeader = "";
 
+    setLoading(true);
     try {
       const packagePayload = {
         package_ID: packageForm.id,
@@ -1792,10 +1804,13 @@ const validatePackage = () => {
         description: err.message || "Something went wrong.",
         variant: "destructive",
       });
+    } finally {
+      setLoading(false);
     }
   };
 
   const handlePackageSearch = async () => {
+    setLoading(true);
     try {
       const response = await fetch(`${BASE_URL}/PackageSearchData`, {
         method: "POST",
@@ -1855,6 +1870,8 @@ const validatePackage = () => {
           "Unable to connect to the server. Please try again later.",
         variant: "destructive",
       });
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -1867,6 +1884,7 @@ const validatePackage = () => {
   };
 
   const deletePackage = async (pkg: any) => {
+    setLoading(true);
     try {
       // ----------------------------------
       // Delete Package Details
@@ -1937,6 +1955,8 @@ const validatePackage = () => {
         description: error.message || "Something went wrong.",
         variant: "destructive",
       });
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -2062,6 +2082,7 @@ const validatePackage = () => {
 
     if (!validateMemberShip()) return;
 
+    setLoading(true);
     try {
       // ======================================
       // 1. SAVE HEADER
@@ -2152,6 +2173,8 @@ const validatePackage = () => {
         description: error.message,
         variant: "destructive",
       });
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -2222,6 +2245,7 @@ const validatePackage = () => {
   };
 
   const handleMemberShipSearch = async () => {
+    setLoading(true);
     try {
       const response = await fetch(`${BASE_URL}/membershipSearchData`, {
         method: "POST",
@@ -2276,6 +2300,8 @@ const validatePackage = () => {
           "Unable to connect to the server. Please try again later.",
         variant: "destructive",
       });
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -2291,6 +2317,7 @@ const validatePackage = () => {
     if (!validateMemberShip()) return;
     if (!editingMemberShip) return;
 
+    setLoading(true);
     try {
       // =====================================
       // 1. UPDATE HEADER
@@ -2395,6 +2422,8 @@ const validatePackage = () => {
       });
 
       console.error("Membership Update Error :", err);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -2433,6 +2462,7 @@ const validatePackage = () => {
   };
 
   const deleteMembership = async (membership: any) => {
+    setLoading(true);
     try {
       // ======================================
       // Delete Membership Details
@@ -2507,6 +2537,8 @@ const validatePackage = () => {
         description: error.message || "Something went wrong.",
         variant: "destructive",
       });
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -3094,14 +3126,14 @@ const validatePackage = () => {
                     price: parseFloat(e.target.value) || 0,
                   })
                 }
-              // onChange={(e) => {
-              //   const value = e.target.value.replace(/[^\d.]/g, "");
+                // onChange={(e) => {
+                //   const value = e.target.value.replace(/[^\d.]/g, "");
 
-              //   setPackageSearchForm({
-              //     ...packageSearchForm,
-              //     price: value,
-              //   });
-              // }}
+                //   setPackageSearchForm({
+                //     ...packageSearchForm,
+                //     price: value,
+                //   });
+                // }}
               />
             </TooltipTrigger>
 
@@ -3131,19 +3163,19 @@ const validatePackage = () => {
                     discountPercentage: parseInt(e.target.value) || 0,
                   })
                 }
-              // onChange={(e) => {
-              //   const value = e.target.value.replace(/\D/g, "");
+                // onChange={(e) => {
+                //   const value = e.target.value.replace(/\D/g, "");
 
-              //   if (
-              //     value === "" ||
-              //     (Number(value) >= 0 && Number(value) <= 100)
-              //   ) {
-              //     setPackageSearchForm({
-              //       ...packageSearchForm,
-              //       discountPercentage: value,
-              //     });
-              //   }
-              // }}
+                //   if (
+                //     value === "" ||
+                //     (Number(value) >= 0 && Number(value) <= 100)
+                //   ) {
+                //     setPackageSearchForm({
+                //       ...packageSearchForm,
+                //       discountPercentage: value,
+                //     });
+                //   }
+                // }}
               />
             </TooltipTrigger>
 
@@ -3546,6 +3578,7 @@ const validatePackage = () => {
 
   return (
     <div className="min-h-screen bg-gray-50">
+      {loading && <Loading />}
       <header className="bg-white shadow-sm border-b sticky top-0 z-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center py-4">
@@ -3709,7 +3742,6 @@ const validatePackage = () => {
                         <CardContent className="p-6 h-[680px] flex flex-col justify-between">
                           {/* Scrollable Container with Custom Scrollbar */}
                           <div className="flex-1 overflow-y-auto pr-2 custom-scrollbar space-y-5 min-h-0">
-                                            
                             {/* ================= HEADER ================= */}
                             <div className="flex justify-between items-start pb-3 border-b border-gray-100">
                               <div className="space-y-1">
@@ -3723,17 +3755,22 @@ const validatePackage = () => {
                                   {program.ProgramID || "N/A"}
                                 </p>
                               </div>
-                                            
+
                               <div className="flex gap-1 bg-slate-50 p-1 rounded-lg border border-gray-100">
                                 <TooltipProvider>
                                   <Tooltip>
                                     <TooltipTrigger asChild>
-                                      {hasActionPermission("Programs", "edit") && (
+                                      {hasActionPermission(
+                                        "Programs",
+                                        "edit",
+                                      ) && (
                                         <Button
                                           variant="ghost"
                                           size="icon"
                                           className="h-8 w-8 text-gray-600 hover:text-violet-600 hover:bg-violet-50"
-                                          onClick={() => handleEditProgram(program)}
+                                          onClick={() =>
+                                            handleEditProgram(program)
+                                          }
                                         >
                                           <Edit className="h-4 w-4" />
                                         </Button>
@@ -3744,16 +3781,21 @@ const validatePackage = () => {
                                     </TooltipContent>
                                   </Tooltip>
                                 </TooltipProvider>
-                                    
+
                                 <TooltipProvider>
                                   <Tooltip>
                                     <TooltipTrigger asChild>
-                                      {hasActionPermission("Programs", "delete") && (
+                                      {hasActionPermission(
+                                        "Programs",
+                                        "delete",
+                                      ) && (
                                         <Button
                                           variant="ghost"
                                           size="icon"
                                           className="h-8 w-8 text-red-500 hover:text-red-700 hover:bg-red-50"
-                                          onClick={() => handleDeleteProgram(program)}
+                                          onClick={() =>
+                                            handleDeleteProgram(program)
+                                          }
                                         >
                                           <Trash2 className="h-4 w-4" />
                                         </Button>
@@ -3766,17 +3808,19 @@ const validatePackage = () => {
                                 </TooltipProvider>
                               </div>
                             </div>
-                                    
+
                             {/* ================= GOALS & STATUS ================= */}
                             <div className="flex items-center justify-between bg-violet-50/40 px-4 py-2.5 rounded-lg border border-violet-50">
                               <div className="flex items-center space-x-2">
                                 <TrendingUp className="w-4 h-4 text-violet-600" />
-                                <span className="text-xs text-gray-500 font-medium">Goal:</span>
+                                <span className="text-xs text-gray-500 font-medium">
+                                  Goal:
+                                </span>
                                 <span className="text-sm font-semibold text-slate-800">
                                   {program.Goals}
                                 </span>
                               </div>
-                                    
+
                               <Badge
                                 variant="outline"
                                 className={`font-medium text-xs ${statusBadgeColor}`}
@@ -3789,7 +3833,7 @@ const validatePackage = () => {
                                 {program.is_active || "Close"}
                               </Badge>
                             </div>
-                                
+
                             {/* ================= PROGRAM SPECS ================= */}
                             <div className="grid grid-cols-3 gap-2 bg-slate-50 p-3 rounded-xl border border-slate-100 text-center sm:text-left">
                               <div className="space-y-0.5 border-r border-gray-200 last:border-none px-2">
@@ -3803,38 +3847,41 @@ const validatePackage = () => {
                                   {program.Category}
                                 </p>
                               </div>
-                                
+
                               <div className="space-y-0.5 border-r border-gray-200 last:border-none px-2">
                                 <p className="text-[11px] text-gray-400 uppercase tracking-wider font-semibold flex items-center justify-center sm:justify-start gap-1">
-                                  <Dumbbell className="w-3 h-3 text-slate-400" /> Difficulty
+                                  <Dumbbell className="w-3 h-3 text-slate-400" />{" "}
+                                  Difficulty
                                 </p>
                                 <p className="text-xs font-bold text-violet-600">
                                   {program.Difficulty_level}
                                 </p>
                               </div>
-                                
+
                               <div className="space-y-0.5 px-2">
                                 <p className="text-[11px] text-gray-400 uppercase tracking-wider font-semibold flex items-center justify-center sm:justify-start gap-1">
-                                  <Calendar className="w-3 h-3 text-slate-400" /> Session / Wk
+                                  <Calendar className="w-3 h-3 text-slate-400" />{" "}
+                                  Session / Wk
                                 </p>
                                 <p className="text-xs font-bold text-slate-800">
                                   {program.Sessions_per_week} Sessions
                                 </p>
                               </div>
                             </div>
-                                
+
                             {/* ================= WORKING HOURS ================= */}
                             <div className="space-y-1 px-2">
                               <p className="text-[11px] text-gray-400 uppercase tracking-wider font-semibold flex items-center justify-center sm:justify-start gap-1">
-                                <Clock className="w-3 h-3 text-slate-400" /> Working Hours
+                                <Clock className="w-3 h-3 text-slate-400" />{" "}
+                                Working Hours
                               </p>
                               <div className="flex flex-wrap justify-center sm:justify-start gap-1">
                                 {program.Working_hours ? (
                                   (typeof program.Working_hours === "string"
                                     ? program.Working_hours.split(",")
                                     : Array.isArray(program.Working_hours)
-                                    ? program.Working_hours
-                                    : []
+                                      ? program.Working_hours
+                                      : []
                                   ).map(
                                     (timeSlot: string, idx: number) =>
                                       timeSlot.trim() && (
@@ -3845,7 +3892,7 @@ const validatePackage = () => {
                                         >
                                           {timeSlot.trim()}
                                         </Badge>
-                                      )
+                                      ),
                                   )
                                 ) : (
                                   <span className="text-[11px] text-gray-400 italic">
@@ -3854,31 +3901,36 @@ const validatePackage = () => {
                                 )}
                               </div>
                             </div>
-                              
+
                             {/* ================= FACULTY DETAILS ================= */}
                             <div className="space-y-1.5">
                               <p className="text-xs font-bold text-gray-400 uppercase tracking-wider flex items-center">
-                                <Users className="w-3.5 h-3.5 mr-1.5 text-slate-500" /> Faculty Details
+                                <Users className="w-3.5 h-3.5 mr-1.5 text-slate-500" />{" "}
+                                Faculty Details
                               </p>
                               <div className="flex flex-wrap gap-1.5">
-                                {program.Faculty && program.Faculty.length > 0 ? (
-                                  program.Faculty.map((faculty: string, idx: number) => {
-                                    const trainer = trainers.find(
-                                      (item: any) => item.TrainerID === faculty
-                                    );
-                                  
-                                    return (
-                                      <Badge
-                                        key={idx}
-                                        variant="secondary"
-                                        className="bg-slate-100 text-slate-700 border border-slate-200 px-2.5 py-0.5 text-xs rounded-md"
-                                      >
-                                        {trainer
-                                          ? `${trainer.TrainerID} - ${trainer.FullName}`
-                                          : faculty}
-                                      </Badge>
-                                    );
-                                  })
+                                {program.Faculty &&
+                                program.Faculty.length > 0 ? (
+                                  program.Faculty.map(
+                                    (faculty: string, idx: number) => {
+                                      const trainer = trainers.find(
+                                        (item: any) =>
+                                          item.TrainerID === faculty,
+                                      );
+
+                                      return (
+                                        <Badge
+                                          key={idx}
+                                          variant="secondary"
+                                          className="bg-slate-100 text-slate-700 border border-slate-200 px-2.5 py-0.5 text-xs rounded-md"
+                                        >
+                                          {trainer
+                                            ? `${trainer.TrainerID} - ${trainer.FullName}`
+                                            : faculty}
+                                        </Badge>
+                                      );
+                                    },
+                                  )
                                 ) : (
                                   <span className="text-xs text-gray-400 italic">
                                     No faculty assigned
@@ -3886,44 +3938,51 @@ const validatePackage = () => {
                                 )}
                               </div>
                             </div>
-                              
+
                             {/* ================= EXERCISES DETAILS ================= */}
                             <div className="space-y-2">
                               <p className="text-xs font-bold text-slate-400 uppercase tracking-wider flex items-center border-b border-slate-100 pb-1.5">
-                                <CheckCircle className="w-3.5 h-3.5 mr-1.5 text-emerald-500" /> Exercises Details
+                                <CheckCircle className="w-3.5 h-3.5 mr-1.5 text-emerald-500" />{" "}
+                                Exercises Details
                               </p>
-                              
+
                               <div className="grid grid-cols-12 gap-2 px-3 py-1 bg-slate-100 rounded text-[11px] font-bold text-gray-500 uppercase tracking-wider">
                                 <div className="col-span-6">Name</div>
-                                <div className="col-span-3 text-center">Count / Sets</div>
-                                <div className="col-span-3 text-center">Reps</div>
+                                <div className="col-span-3 text-center">
+                                  Count / Sets
+                                </div>
+                                <div className="col-span-3 text-center">
+                                  Reps
+                                </div>
                               </div>
-                              
+
                               <div className="space-y-1 max-h-[140px] overflow-y-auto pr-1 custom-scrollbar">
                                 {program.Exercises &&
-                                  program.Exercises.map((exercise: any, idx: number) => (
-                                    <div
-                                      key={idx}
-                                      className="grid grid-cols-12 gap-2 px-3 py-2 bg-white border border-gray-100 rounded-lg shadow-sm items-center hover:bg-slate-50 transition-colors"
-                                    >
-                                      <div className="col-span-6 text-xs font-medium text-slate-700 truncate">
-                                        {exercise.Exercises_Name}
+                                  program.Exercises.map(
+                                    (exercise: any, idx: number) => (
+                                      <div
+                                        key={idx}
+                                        className="grid grid-cols-12 gap-2 px-3 py-2 bg-white border border-gray-100 rounded-lg shadow-sm items-center hover:bg-slate-50 transition-colors"
+                                      >
+                                        <div className="col-span-6 text-xs font-medium text-slate-700 truncate">
+                                          {exercise.Exercises_Name}
+                                        </div>
+                                        <div className="col-span-3 text-center text-xs text-slate-600 bg-slate-50 py-0.5 rounded border border-slate-100">
+                                          <b className="text-slate-900">
+                                            {exercise.Exercises_Count}
+                                          </b>
+                                        </div>
+                                        <div className="col-span-3 text-center text-xs text-slate-600 bg-slate-50 py-0.5 rounded border border-slate-100">
+                                          <b className="text-slate-900">
+                                            {exercise.Exercises_Repetitions}
+                                          </b>
+                                        </div>
                                       </div>
-                                      <div className="col-span-3 text-center text-xs text-slate-600 bg-slate-50 py-0.5 rounded border border-slate-100">
-                                        <b className="text-slate-900">
-                                          {exercise.Exercises_Count}
-                                        </b>
-                                      </div>
-                                      <div className="col-span-3 text-center text-xs text-slate-600 bg-slate-50 py-0.5 rounded border border-slate-100">
-                                        <b className="text-slate-900">
-                                          {exercise.Exercises_Repetitions}
-                                        </b>
-                                      </div>
-                                    </div>
-                                  ))}
+                                    ),
+                                  )}
                               </div>
                             </div>
-                                
+
                             {/* ================= DESCRIPTION ================= */}
                             <div className="pt-3 border-t border-gray-100 space-y-1">
                               <p className="text-xs font-bold text-gray-400 uppercase tracking-wider">
@@ -3934,7 +3993,6 @@ const validatePackage = () => {
                                   "No custom description available for this workout program."}
                               </p>
                             </div>
-                                
                           </div>
                         </CardContent>
                       </Card>
@@ -3972,7 +4030,6 @@ const validatePackage = () => {
                         <CardContent className="p-6 h-[400px] flex flex-col justify-between">
                           {/* Scrollable Container with Custom Scrollbar */}
                           <div className="flex-1 overflow-y-auto pr-2 custom-scrollbar space-y-5 min-h-0">
-
                             {/* ================= HEADER ================= */}
                             <div className="flex justify-between items-start pb-3 border-b border-gray-100">
                               <div className="space-y-1">
@@ -3992,7 +4049,10 @@ const validatePackage = () => {
                                 <TooltipProvider>
                                   <Tooltip>
                                     <TooltipTrigger asChild>
-                                      {hasActionPermission("Packages", "edit") && (
+                                      {hasActionPermission(
+                                        "Packages",
+                                        "edit",
+                                      ) && (
                                         <Button
                                           variant="ghost"
                                           size="icon"
@@ -4003,28 +4063,33 @@ const validatePackage = () => {
                                         </Button>
                                       )}
                                     </TooltipTrigger>
-                                    
+
                                     <TooltipContent>
                                       <p>Edit</p>
                                     </TooltipContent>
                                   </Tooltip>
                                 </TooltipProvider>
-                                    
+
                                 <TooltipProvider>
                                   <Tooltip>
                                     <TooltipTrigger asChild>
-                                      {hasActionPermission("Packages", "delete") && (
+                                      {hasActionPermission(
+                                        "Packages",
+                                        "delete",
+                                      ) && (
                                         <Button
                                           variant="ghost"
                                           size="icon"
                                           className="h-8 w-8 text-red-500 hover:text-red-700 hover:bg-red-50"
-                                          onClick={() => handleDeletePackage(pkg)}
+                                          onClick={() =>
+                                            handleDeletePackage(pkg)
+                                          }
                                         >
                                           <Trash2 className="h-4 w-4" />
                                         </Button>
                                       )}
                                     </TooltipTrigger>
-                                    
+
                                     <TooltipContent>
                                       <p>Delete</p>
                                     </TooltipContent>
@@ -4032,17 +4097,19 @@ const validatePackage = () => {
                                 </TooltipProvider>
                               </div>
                             </div>
-                                    
+
                             {/* ================= PRICE + STATUS ================= */}
                             <div className="flex items-center justify-between bg-violet-50/40 px-4 py-2.5 rounded-lg border border-violet-50">
                               <div className="flex items-center gap-2">
                                 <IndianRupee className="w-4 h-4 text-violet-600" />
-                                <span className="text-xs text-gray-500 font-medium">Price :</span>
+                                <span className="text-xs text-gray-500 font-medium">
+                                  Price :
+                                </span>
                                 <span className="text-sm font-semibold text-slate-800">
                                   ₹ {pkg.price}
                                 </span>
                               </div>
-                                    
+
                               <Badge
                                 variant="outline"
                                 className={`font-medium text-xs ${statusBadgeColor}`}
@@ -4055,7 +4122,7 @@ const validatePackage = () => {
                                 {pkg.is_active || "Close"}
                               </Badge>
                             </div>
-                                
+
                             {/* ================= PACKAGE INFORMATION ================= */}
                             <div className="grid grid-cols-3 gap-2 bg-slate-50 p-3 rounded-xl border border-slate-100 text-center sm:text-left">
                               {/* Package Type */}
@@ -4070,7 +4137,7 @@ const validatePackage = () => {
                                   {pkg.package_type}
                                 </p>
                               </div>
-                                
+
                               {/* Duration */}
                               <div className="space-y-0.5 border-r border-gray-200 last:border-none px-2">
                                 <p className="text-[11px] text-gray-400 uppercase tracking-wider font-semibold flex items-center justify-center sm:justify-start gap-1">
@@ -4081,7 +4148,7 @@ const validatePackage = () => {
                                   {pkg.duration_days} Days
                                 </p>
                               </div>
-                                
+
                               {/* Discount */}
                               <div className="space-y-0.5 px-2">
                                 <p className="text-[11px] text-gray-400 uppercase tracking-wider font-semibold flex items-center justify-center sm:justify-start gap-1">
@@ -4093,33 +4160,36 @@ const validatePackage = () => {
                                 </p>
                               </div>
                             </div>
-                                
+
                             {/* ================= ASSOCIATED PROGRAMS ================= */}
                             <div className="space-y-2">
                               <p className="text-xs font-bold text-gray-400 uppercase tracking-wider flex items-center">
                                 <Dumbbell className="w-3.5 h-3.5 mr-1.5 text-violet-600" />
                                 Associated Programs
                               </p>
-                                
+
                               <div className="flex flex-wrap gap-1.5">
                                 {pkg.Programs && pkg.Programs.length > 0 ? (
-                                  pkg.Programs.map((program: string, index: number) => {
-                                    const programDetails = ProgramsID.find(
-                                      (item: any) => item.ProgramID === program
-                                    );
-                                  
-                                    return (
-                                      <Badge
-                                        key={index}
-                                        variant="secondary"
-                                        className="bg-violet-50 text-violet-700 border border-violet-100 px-2.5 py-0.5 text-xs rounded-md"
-                                      >
-                                        {programDetails
-                                          ? `${programDetails.ProgramID} - ${programDetails.ProgramName}`
-                                          : program}
-                                      </Badge>
-                                    );
-                                  })
+                                  pkg.Programs.map(
+                                    (program: string, index: number) => {
+                                      const programDetails = ProgramsID.find(
+                                        (item: any) =>
+                                          item.ProgramID === program,
+                                      );
+
+                                      return (
+                                        <Badge
+                                          key={index}
+                                          variant="secondary"
+                                          className="bg-violet-50 text-violet-700 border border-violet-100 px-2.5 py-0.5 text-xs rounded-md"
+                                        >
+                                          {programDetails
+                                            ? `${programDetails.ProgramID} - ${programDetails.ProgramName}`
+                                            : program}
+                                        </Badge>
+                                      );
+                                    },
+                                  )
                                 ) : (
                                   <span className="text-xs text-gray-400 italic">
                                     No Programs Assigned
@@ -4127,14 +4197,14 @@ const validatePackage = () => {
                                 )}
                               </div>
                             </div>
-                              
+
                             {/* ================= FEATURES ================= */}
                             <div className="space-y-2">
                               <p className="text-xs font-bold text-slate-400 uppercase tracking-wider flex items-center border-b border-slate-100 pb-1.5">
                                 <CheckCircle className="w-3.5 h-3.5 mr-1.5 text-emerald-500" />
                                 Package Features
                               </p>
-                              
+
                               <div className="flex flex-wrap gap-2">
                                 {pkg.features ? (
                                   pkg.features
@@ -4155,7 +4225,6 @@ const validatePackage = () => {
                                 )}
                               </div>
                             </div>
-                              
                           </div>
                         </CardContent>
                       </Card>
@@ -4192,7 +4261,6 @@ const validatePackage = () => {
                         <CardContent className="p-6 h-[260px] flex flex-col justify-between">
                           {/* Scrollable Container with Custom Scrollbar */}
                           <div className="flex-1 overflow-y-auto pr-2 custom-scrollbar space-y-5 min-h-0">
-
                             {/* ================= HEADER ================= */}
                             <div className="flex justify-between items-start pb-3 border-b border-gray-100">
                               <div className="space-y-1">
@@ -4211,7 +4279,10 @@ const validatePackage = () => {
                                 <TooltipProvider>
                                   <Tooltip>
                                     <TooltipTrigger asChild>
-                                      {hasActionPermission("Memberships", "edit") && (
+                                      {hasActionPermission(
+                                        "Memberships",
+                                        "edit",
+                                      ) && (
                                         <Button
                                           variant="ghost"
                                           size="icon"
@@ -4229,11 +4300,14 @@ const validatePackage = () => {
                                     </TooltipContent>
                                   </Tooltip>
                                 </TooltipProvider>
-                                    
+
                                 <TooltipProvider>
                                   <Tooltip>
                                     <TooltipTrigger asChild>
-                                      {hasActionPermission("Memberships", "delete") && (
+                                      {hasActionPermission(
+                                        "Memberships",
+                                        "delete",
+                                      ) && (
                                         <Button
                                           variant="ghost"
                                           size="icon"
@@ -4253,7 +4327,7 @@ const validatePackage = () => {
                                 </TooltipProvider>
                               </div>
                             </div>
-                                    
+
                             {/* ================= STATUS BAR ================= */}
                             <div className="flex items-center justify-between bg-violet-50/40 px-4 py-2.5 rounded-lg border border-violet-50">
                               <span className="text-xs text-slate-600 font-semibold uppercase tracking-wider">
@@ -4271,35 +4345,40 @@ const validatePackage = () => {
                                 {membership.Status || "Inactive"}
                               </Badge>
                             </div>
-                                
+
                             {/* ================= ASSOCIATED PACKAGES ================= */}
                             <div className="space-y-2">
                               <p className="text-xs font-bold text-gray-400 uppercase tracking-wider flex items-center border-b border-slate-100 pb-1.5">
                                 <Dumbbell className="w-3.5 h-3.5 mr-1.5 text-violet-600" />
                                 Linked Packages
                               </p>
-                                
+
                               <div className="flex flex-wrap gap-2">
-                                {membership.Packages && membership.Packages.length > 0 ? (
-                                  membership.Packages.map((pkg: any, index: number) => (
-                                    <TooltipProvider key={pkg.package_ID || index}>
-                                      <Tooltip>
-                                        <TooltipTrigger asChild>
-                                          <Badge
-                                            variant="secondary"
-                                            className="bg-violet-50 text-violet-700 border border-violet-100 px-2.5 py-1 text-xs rounded-md font-medium shadow-sm cursor-help transition-colors hover:bg-violet-100"
-                                          >
-                                            {pkg.package_Name}
-                                          </Badge>
-                                        </TooltipTrigger>
-                                        <TooltipContent>
-                                          <p className="font-mono text-xs">
-                                            ID: {pkg.package_ID}
-                                          </p>
-                                        </TooltipContent>
-                                      </Tooltip>
-                                    </TooltipProvider>
-                                  ))
+                                {membership.Packages &&
+                                membership.Packages.length > 0 ? (
+                                  membership.Packages.map(
+                                    (pkg: any, index: number) => (
+                                      <TooltipProvider
+                                        key={pkg.package_ID || index}
+                                      >
+                                        <Tooltip>
+                                          <TooltipTrigger asChild>
+                                            <Badge
+                                              variant="secondary"
+                                              className="bg-violet-50 text-violet-700 border border-violet-100 px-2.5 py-1 text-xs rounded-md font-medium shadow-sm cursor-help transition-colors hover:bg-violet-100"
+                                            >
+                                              {pkg.package_Name}
+                                            </Badge>
+                                          </TooltipTrigger>
+                                          <TooltipContent>
+                                            <p className="font-mono text-xs">
+                                              ID: {pkg.package_ID}
+                                            </p>
+                                          </TooltipContent>
+                                        </Tooltip>
+                                      </TooltipProvider>
+                                    ),
+                                  )
                                 ) : (
                                   <span className="text-xs text-gray-400 italic">
                                     No Packages Linked
@@ -4307,7 +4386,6 @@ const validatePackage = () => {
                                 )}
                               </div>
                             </div>
-                              
                           </div>
                         </CardContent>
                       </Card>
@@ -4352,7 +4430,9 @@ const validatePackage = () => {
                         <Input
                           id="programId"
                           value={programForm.id}
-                          readOnly={!!editingProgram || numberGeneration === "Auto"}
+                          readOnly={
+                            !!editingProgram || numberGeneration === "Auto"
+                          }
                           className={
                             !!editingProgram || numberGeneration === "Auto"
                               ? "bg-gray-100 cursor-not-allowed"
@@ -4365,9 +4445,15 @@ const validatePackage = () => {
                           }
                           maxLength={20}
                           onChange={(e) => {
-                            if (!editingProgram && numberGeneration === "Manual") {
-                              const value = e.target.value.replace(/[^a-zA-Z0-9]/g, "");
-                            
+                            if (
+                              !editingProgram &&
+                              numberGeneration === "Manual"
+                            ) {
+                              const value = e.target.value.replace(
+                                /[^a-zA-Z0-9]/g,
+                                "",
+                              );
+
                               setProgramForm({
                                 ...programForm,
                                 id: value,
@@ -4376,14 +4462,14 @@ const validatePackage = () => {
                           }}
                         />
                       </TooltipTrigger>
-                        
+
                       <TooltipContent>
                         <p>
                           {!!editingProgram
                             ? "Program ID cannot be edited"
                             : numberGeneration === "Auto"
-                            ? "Program ID is Auto Generated"
-                            : "Enter Program ID"}
+                              ? "Program ID is Auto Generated"
+                              : "Enter Program ID"}
                         </p>
                       </TooltipContent>
                     </Tooltip>
@@ -4724,7 +4810,7 @@ const validatePackage = () => {
                     htmlFor="faculty"
                     className={
                       submittedPrograms &&
-                        programForm.assignedFaculty.length === 0
+                      programForm.assignedFaculty.length === 0
                         ? "text-red-500"
                         : ""
                     }
@@ -4761,13 +4847,14 @@ const validatePackage = () => {
               <div className="space-y-4">
                 <div className="flex justify-between items-center">
                   <h4
-                    className={`font-medium text-sm text-gray-700 ${submittedPrograms &&
+                    className={`font-medium text-sm text-gray-700 ${
+                      submittedPrograms &&
                       programForm.exercises.some(
                         (e) => !e.name.trim() || !e.sets || !e.reps,
                       )
-                      ? "text-red-500"
-                      : "text-gray-700"
-                      }`}
+                        ? "text-red-500"
+                        : "text-gray-700"
+                    }`}
                   >
                     Exercises*
                   </h4>
@@ -4971,7 +5058,7 @@ const validatePackage = () => {
             if (!open) {
               setSubmittedPackage(false);
             }
-            setIsPackageDialogOpen (open)
+            setIsPackageDialogOpen(open);
           }}
         >
           <DialogContent className="max-w-lg max-h-[90vh] overflow-y-auto">
@@ -4996,7 +5083,9 @@ const validatePackage = () => {
                         <Input
                           id="packageId"
                           value={packageForm.id}
-                          readOnly={!!editingPackage || numberGeneration === "Auto"}
+                          readOnly={
+                            !!editingPackage || numberGeneration === "Auto"
+                          }
                           className={
                             !!editingPackage || numberGeneration === "Auto"
                               ? "bg-gray-100 cursor-not-allowed"
@@ -5009,9 +5098,15 @@ const validatePackage = () => {
                           }
                           maxLength={20}
                           onChange={(e) => {
-                            if (!editingPackage && numberGeneration === "Manual") {
-                              const value = e.target.value.replace(/[^a-zA-Z0-9]/g, "");
-                            
+                            if (
+                              !editingPackage &&
+                              numberGeneration === "Manual"
+                            ) {
+                              const value = e.target.value.replace(
+                                /[^a-zA-Z0-9]/g,
+                                "",
+                              );
+
                               setPackageForm({
                                 ...packageForm,
                                 id: value,
@@ -5020,14 +5115,14 @@ const validatePackage = () => {
                           }}
                         />
                       </TooltipTrigger>
-                        
+
                       <TooltipContent>
                         <p>
                           {!!editingPackage
                             ? "Package ID cannot be edited"
                             : numberGeneration === "Auto"
-                            ? "Package ID is Auto Generated"
-                            : "Enter Package ID"}
+                              ? "Package ID is Auto Generated"
+                              : "Enter Package ID"}
                         </p>
                       </TooltipContent>
                     </Tooltip>
@@ -5036,11 +5131,14 @@ const validatePackage = () => {
               </div>
               {/* Package Details */}
               <div className="space-y-2">
-                <Label htmlFor="pkgName" className={
-                        submittedPackage && !packageForm.name
-                          ? "text-red-500"
-                          : ""
-                      }>Package Name*</Label>
+                <Label
+                  htmlFor="pkgName"
+                  className={
+                    submittedPackage && !packageForm.name ? "text-red-500" : ""
+                  }
+                >
+                  Package Name*
+                </Label>
                 <TooltipProvider>
                   <Tooltip>
                     <TooltipTrigger asChild>
@@ -5114,11 +5212,16 @@ const validatePackage = () => {
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="price" className={
-                        submittedPackage && !packageForm.price
-                          ? "text-red-500"
-                          : ""
-                      }>Price*</Label>
+                  <Label
+                    htmlFor="price"
+                    className={
+                      submittedPackage && !packageForm.price
+                        ? "text-red-500"
+                        : ""
+                    }
+                  >
+                    Price*
+                  </Label>
                   <TooltipProvider>
                     <Tooltip>
                       <TooltipTrigger asChild>
@@ -5172,11 +5275,16 @@ const validatePackage = () => {
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="pkgdays" className={
-                        submittedPackage && !packageForm.duration_days
-                          ? "text-red-500"
-                          : ""
-                      }>Duration Days*</Label>
+                  <Label
+                    htmlFor="pkgdays"
+                    className={
+                      submittedPackage && !packageForm.duration_days
+                        ? "text-red-500"
+                        : ""
+                    }
+                  >
+                    Duration Days*
+                  </Label>
                   <TooltipProvider>
                     <Tooltip>
                       <TooltipTrigger asChild>
@@ -5207,7 +5315,7 @@ const validatePackage = () => {
                 <Label
                   className={
                     submittedPackage &&
-                      packageForm.associatedPrograms.some((p) => !p.programId)
+                    packageForm.associatedPrograms.some((p) => !p.programId)
                       ? "text-red-500"
                       : ""
                   }
@@ -5320,7 +5428,7 @@ const validatePackage = () => {
                     <Button
                       variant="outline"
                       onClick={() => {
-                        setIsPackageDialogOpen(false)
+                        setIsPackageDialogOpen(false);
                         setSubmittedPackage(false);
                       }}
                     >
@@ -5401,7 +5509,9 @@ const validatePackage = () => {
                         <Input
                           id="membershipId"
                           value={MemberShipForm.MemberShipType_id}
-                          readOnly={!!editingMemberShip || numberGeneration === "Auto"}
+                          readOnly={
+                            !!editingMemberShip || numberGeneration === "Auto"
+                          }
                           className={
                             !!editingMemberShip || numberGeneration === "Auto"
                               ? "bg-gray-100 cursor-not-allowed"
@@ -5414,9 +5524,15 @@ const validatePackage = () => {
                           }
                           maxLength={20}
                           onChange={(e) => {
-                            if (!editingMemberShip && numberGeneration === "Manual") {
-                              const value = e.target.value.replace(/[^a-zA-Z0-9]/g, "");
-                            
+                            if (
+                              !editingMemberShip &&
+                              numberGeneration === "Manual"
+                            ) {
+                              const value = e.target.value.replace(
+                                /[^a-zA-Z0-9]/g,
+                                "",
+                              );
+
                               setMemberShipForm({
                                 ...MemberShipForm,
                                 MemberShipType_id: value,
@@ -5425,14 +5541,14 @@ const validatePackage = () => {
                           }}
                         />
                       </TooltipTrigger>
-                        
+
                       <TooltipContent>
                         <p>
                           {!!editingMemberShip
                             ? "Membership ID cannot be edited"
                             : numberGeneration === "Auto"
-                            ? "Membership ID is Auto Generated"
-                            : "Enter Membership ID"}
+                              ? "Membership ID is Auto Generated"
+                              : "Enter Membership ID"}
                         </p>
                       </TooltipContent>
                     </Tooltip>
@@ -5480,7 +5596,7 @@ const validatePackage = () => {
                 <Label
                   className={
                     submittedMemberShips &&
-                      MemberShipForm.PackageIDName.some((p) => !p.package_ID)
+                    MemberShipForm.PackageIDName.some((p) => !p.package_ID)
                       ? "text-red-500"
                       : ""
                   }

@@ -1,23 +1,78 @@
 import React, { useState, useEffect } from "react";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle,} from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue,} from "@/components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Switch } from "@/components/ui/switch";
 import { Textarea } from "@/components/ui/textarea";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow,} from "@/components/ui/table";
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger,} from "@/components/ui/dialog";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 import { useNavigate } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
-import { ArrowLeft, Settings, Send, FileText, History, Mail, MessageSquare, Phone, Eye, EyeOff, TestTube, Save, Plus, Edit, Trash2,
-  Copy, Check, X, Clock, AlertCircle, Users, ChevronRight,} from "lucide-react";
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger,} from "@/components/ui/tooltip";
+import {
+  ArrowLeft,
+  Settings,
+  Send,
+  FileText,
+  History,
+  Mail,
+  MessageSquare,
+  Phone,
+  Eye,
+  EyeOff,
+  TestTube,
+  Save,
+  Plus,
+  Edit,
+  Trash2,
+  Copy,
+  Check,
+  X,
+  Clock,
+  AlertCircle,
+  Users,
+  ChevronRight,
+} from "lucide-react";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import { showConfirmToast } from "../../components/ui/show-confirm-toast";
 import { BASE_URL } from "../ApiConfig";
 import { useCompany } from "../CompanyContext";
+import Loading from "@/components/Loading";
 
 // Types
 interface EmailSettings {
@@ -79,6 +134,8 @@ interface NotificationHistory {
 
 const NotificationManagement = () => {
   const { companyCode, locationCode, userCode } = useCompany();
+  // For loading
+  const [loading, setLoading] = useState(false);
 
   const navigate = useNavigate();
   const { toast } = useToast();
@@ -148,7 +205,8 @@ const NotificationManagement = () => {
           </h2>
 
           <p className="mt-2 text-gray-500">
-            You don't have permission to access any module in Notification Management.
+            You don't have permission to access any module in Notification
+            Management.
           </p>
 
           <Button className="mt-6" onClick={() => navigate("/AdminDashboard")}>
@@ -159,156 +217,156 @@ const NotificationManagement = () => {
     );
   }
 
-    const [numberGeneration, setNumberGeneration] = useState("Auto");
-  
-    useEffect(() => {
-      const getSettingData = async () => {
-        try {
-          const response = await fetch(`${BASE_URL}/getSettingScreenData`, {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-              Company_code: companyCode,
-              Location_code: locationCode,
-            }),
-          });
-  
-          if (!response.ok) {
-            throw new Error("Failed to fetch setting data");
-          }
-  
-          const data = await response.json();
-  
-          if (Array.isArray(data) && data.length > 0) {
-            setNumberGeneration(data[0].NumberGeneration || "Auto");
-          } else {
-            setNumberGeneration("Auto");
-          }
-        } catch (err) {
-          console.error("Error fetching settings:", err);
-          setNumberGeneration("Auto");
-        }
-      };
-  
-      if (companyCode && locationCode) {
-        getSettingData();
-      }
-    }, [companyCode, locationCode]);
-
-  const fetchSMTPPorts = async () => {
-  try {
-    const response = await fetch(`${BASE_URL}/getSMTPPorts`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        company_code: companyCode,
-      }),
-    });
-
-    const data = await response.json();
-
-    if (response.ok) {
-      setSmtpPorts(data);
-    }
-  } catch (err) {
-    console.log(err);
-  }
-};
-
-const fetchSSLTypes = async () => {
-  try {
-    const response = await fetch(`${BASE_URL}/getSSLTypes`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        company_code: companyCode,
-      }),
-    });
-
-    const data = await response.json();
-
-    if (response.ok) {
-      setSslTypes(data);
-    }
-  } catch (err) {
-    console.log(err);
-  }
-};
-
-const fetchSMSProviders = async () => {
-  try {
-    const response = await fetch(`${BASE_URL}/getSMSProviders`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        company_code: companyCode,
-      }),
-    });
-
-    const data = await response.json();
-
-    if (response.ok) {
-      setSmsProviders(data);
-    }
-  } catch (err) {
-    console.log(err);
-  }
-};
-
-const fetchCountryCodes = async () => {
-  try {
-    const response = await fetch(`${BASE_URL}/getCountryCodes`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        company_code: companyCode,
-      }),
-    });
-
-    const data = await response.json();
-
-    if (response.ok) {
-      setCountryCodes(data);
-    }
-  } catch (err) {
-    console.log(err);
-  }
-};
-
-const fetchWhatsappProviders = async () => {
-  try {
-    const response = await fetch(`${BASE_URL}/getWhatsappProviders`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        company_code: companyCode,
-      }),
-    });
-
-    const data = await response.json();
-
-    if (response.ok) {
-      setWhatsappProviders(data);
-    }
-  } catch (err) {
-    console.log(err);
-  }
-};
+  const [numberGeneration, setNumberGeneration] = useState("Auto");
 
   useEffect(() => {
-  loadData();
+    const getSettingData = async () => {
+      try {
+        const response = await fetch(`${BASE_URL}/getSettingScreenData`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            Company_code: companyCode,
+            Location_code: locationCode,
+          }),
+        });
+
+        if (!response.ok) {
+          throw new Error("Failed to fetch setting data");
+        }
+
+        const data = await response.json();
+
+        if (Array.isArray(data) && data.length > 0) {
+          setNumberGeneration(data[0].NumberGeneration || "Auto");
+        } else {
+          setNumberGeneration("Auto");
+        }
+      } catch (err) {
+        console.error("Error fetching settings:", err);
+        setNumberGeneration("Auto");
+      }
+    };
+
+    if (companyCode && locationCode) {
+      getSettingData();
+    }
+  }, [companyCode, locationCode]);
+
+  const fetchSMTPPorts = async () => {
+    try {
+      const response = await fetch(`${BASE_URL}/getSMTPPorts`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          company_code: companyCode,
+        }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        setSmtpPorts(data);
+      }
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
+  const fetchSSLTypes = async () => {
+    try {
+      const response = await fetch(`${BASE_URL}/getSSLTypes`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          company_code: companyCode,
+        }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        setSslTypes(data);
+      }
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
+  const fetchSMSProviders = async () => {
+    try {
+      const response = await fetch(`${BASE_URL}/getSMSProviders`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          company_code: companyCode,
+        }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        setSmsProviders(data);
+      }
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
+  const fetchCountryCodes = async () => {
+    try {
+      const response = await fetch(`${BASE_URL}/getCountryCodes`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          company_code: companyCode,
+        }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        setCountryCodes(data);
+      }
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
+  const fetchWhatsappProviders = async () => {
+    try {
+      const response = await fetch(`${BASE_URL}/getWhatsappProviders`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          company_code: companyCode,
+        }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        setWhatsappProviders(data);
+      }
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
+  useEffect(() => {
+    loadData();
   }, []);
 
   const loadData = async () => {
@@ -324,14 +382,14 @@ const fetchWhatsappProviders = async () => {
   // Settings state
   const [EmailsubmittedSettings, setEmailSubmittedSettings] = useState(false);
   const [SmssubmittedSettings, setSmsSubmittedSettings] = useState(false);
-  const [WhatsAppsubmittedSettings, setWhatsAppSubmittedSettings] = useState(false);
+  const [WhatsAppsubmittedSettings, setWhatsAppSubmittedSettings] =
+    useState(false);
 
   const [smtpPorts, setSmtpPorts] = useState<any[]>([]);
   const [sslTypes, setSslTypes] = useState<any[]>([]);
   const [smsProviders, setSmsProviders] = useState<any[]>([]);
   const [countryCodes, setCountryCodes] = useState<any[]>([]);
   const [whatsappProviders, setWhatsappProviders] = useState<any[]>([]);
-
 
   const [emailSettings, setEmailSettings] = useState<EmailSettings>({
     smtpHostID: "",
@@ -416,7 +474,8 @@ const fetchWhatsappProviders = async () => {
       name: "Payment Confirmation",
       channel: "email",
       subject: "Payment Received - RUW Fitness",
-      content: "Dear {{name}}, Your payment of {{amount}} has been received. Thank you for your continued membership.",
+      content:
+        "Dear {{name}}, Your payment of {{amount}} has been received. Thank you for your continued membership.",
       // content: "Dear {{name}}, Your payment of BHD {{amount}} has been received. Thank you for your continued membership.",
       category: "alert",
       isActive: true,
@@ -634,77 +693,73 @@ const fetchWhatsappProviders = async () => {
   };
 
   const validateEmailSettings = () => {
-  if (
-    !emailSettings.smtpHost.trim() ||
-    !emailSettings.smtpPort.trim() ||
-    !emailSettings.smtpUsername.trim() ||
-    !emailSettings.smtpPassword.trim() ||
-    !emailSettings.fromEmail.trim() ||
-    !emailSettings.fromName.trim() ||
-    !emailSettings.useSsl.trim()
-  ) {
-    toast({
-      title: "Required Fields",
-      description: "Please fill all required fields.",
-      variant: "destructive",
-    });
-
     if (
-      numberGeneration === "Manual" &&
-      !emailSettings.smtpHostID.trim()
+      !emailSettings.smtpHost.trim() ||
+      !emailSettings.smtpPort.trim() ||
+      !emailSettings.smtpUsername.trim() ||
+      !emailSettings.smtpPassword.trim() ||
+      !emailSettings.fromEmail.trim() ||
+      !emailSettings.fromName.trim() ||
+      !emailSettings.useSsl.trim()
     ) {
       toast({
-        title: "Validation",
-        description: "SMTP Host ID is required.",
+        title: "Required Fields",
+        description: "Please fill all required fields.",
+        variant: "destructive",
+      });
+
+      if (numberGeneration === "Manual" && !emailSettings.smtpHostID.trim()) {
+        toast({
+          title: "Validation",
+          description: "SMTP Host ID is required.",
+          variant: "destructive",
+        });
+
+        return false;
+      }
+
+      setEmailSubmittedSettings(true);
+      return false;
+    }
+
+    // SMTP Port Validation
+    if (
+      Number(emailSettings.smtpPort) <= 0 ||
+      Number(emailSettings.smtpPort) > 65535
+    ) {
+      toast({
+        title: "Invalid SMTP Port",
+        description: "SMTP Port must be between 1 and 65535.",
         variant: "destructive",
       });
 
       return false;
     }
 
-    setEmailSubmittedSettings(true);
-    return false;
-  }
+    // Email Validation
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
-  // SMTP Port Validation
-  if (
-    Number(emailSettings.smtpPort) <= 0 ||
-    Number(emailSettings.smtpPort) > 65535
-  ) {
-    toast({
-      title: "Invalid SMTP Port",
-      description: "SMTP Port must be between 1 and 65535.",
-      variant: "destructive",
-    });
+    if (!emailRegex.test(emailSettings.fromEmail)) {
+      toast({
+        title: "Invalid Email",
+        description: "Please enter a valid From Email address.",
+        variant: "destructive",
+      });
 
-    return false;
-  }
+      return false;
+    }
 
-  // Email Validation
-  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-
-  if (!emailRegex.test(emailSettings.fromEmail)) {
-    toast({
-      title: "Invalid Email",
-      description: "Please enter a valid From Email address.",
-      variant: "destructive",
-    });
-
-    return false;
-  }
-
-  return true;
-};
+    return true;
+  };
 
   const handleSaveEmailSettings = async () => {
-  setEmailSubmittedSettings(true);
+    setEmailSubmittedSettings(true);
 
-  if (!validateEmailSettings()) return;
+    if (!validateEmailSettings()) return;
 
-  try {
-    const response = await fetch(
-      `${BASE_URL}/EmailConfiInsert`,
-      {
+    setLoading(true);
+    try {
+      const response = await fetch(`${BASE_URL}/EmailConfiInsert`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -722,77 +777,74 @@ const fetchWhatsappProviders = async () => {
           Location_code: locationCode,
           created_by: userCode,
         }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok || !data.success) {
+        throw new Error(data.message || "Unable to save Email SMTP Settings.");
       }
-    );
 
-    const data = await response.json();
+      setEmailSubmittedSettings(false);
 
-    if (!response.ok || !data.success) {
-      throw new Error(data.message || "Unable to save Email SMTP Settings.");
+      toast({
+        title: "SMTP Settings Saved",
+        description: "Email SMTP Settings saved successfully.",
+        variant: "success",
+      });
+
+      // Refresh Data
+      // handleEmailSettingsSearch();
+    } catch (error: any) {
+      toast({
+        title: "Error",
+        description: error.message,
+        variant: "destructive",
+      });
+    } finally {
+      setLoading(false);
     }
+  };
 
-    setEmailSubmittedSettings(false);
-
-    toast({
-      title: "SMTP Settings Saved",
-      description: "Email SMTP Settings saved successfully.",
-      variant: "success",
-    });
-
-    // Refresh Data
-    // handleEmailSettingsSearch(); 
-  } catch (error: any) {
-    toast({
-      title: "Error",
-      description: error.message,
-      variant: "destructive",
-    });
-  }
-};
-
-const validateSmsSettings = () => {
-  if (
-    !smsSettings.provider.trim() ||
-    !smsSettings.apiKey.trim() ||
-    !smsSettings.apiSecret.trim() ||
-    !smsSettings.senderId.trim() ||
-    !smsSettings.countryCode.trim()
-  ) {
-    toast({
-      title: "Required Fields",
-      description: "Please fill all required fields.",
-      variant: "destructive",
-    });
-
+  const validateSmsSettings = () => {
     if (
-      numberGeneration === "Manual" &&
-      !smsSettings.SmsSettingsId.trim()
+      !smsSettings.provider.trim() ||
+      !smsSettings.apiKey.trim() ||
+      !smsSettings.apiSecret.trim() ||
+      !smsSettings.senderId.trim() ||
+      !smsSettings.countryCode.trim()
     ) {
       toast({
-        title: "Validation",
-        description: "SMS Settings ID is required.",
+        title: "Required Fields",
+        description: "Please fill all required fields.",
         variant: "destructive",
       });
 
+      if (numberGeneration === "Manual" && !smsSettings.SmsSettingsId.trim()) {
+        toast({
+          title: "Validation",
+          description: "SMS Settings ID is required.",
+          variant: "destructive",
+        });
+
+        return false;
+      }
+
+      setSmsSubmittedSettings(true);
       return false;
     }
 
+    return true;
+  };
+
+  const handleSaveSmsSettings = async () => {
     setSmsSubmittedSettings(true);
-    return false;
-  }
 
-  return true;
-};
+    if (!validateSmsSettings()) return;
 
-const handleSaveSmsSettings = async () => {
-  setSmsSubmittedSettings(true);
-
-  if (!validateSmsSettings()) return;
-
-  try {
-    const response = await fetch(
-      `${BASE_URL}/SMSConfiInsert`,
-      {
+    setLoading(true);
+    try {
+      const response = await fetch(`${BASE_URL}/SMSConfiInsert`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -808,78 +860,76 @@ const handleSaveSmsSettings = async () => {
           Location_code: locationCode,
           created_by: userCode,
         }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok || !data.success) {
+        throw new Error(data.message || "Unable to save SMS Settings.");
       }
-    );
 
-    const data = await response.json();
+      setSmsSubmittedSettings(false);
 
-    if (!response.ok || !data.success) {
-      throw new Error(
-        data.message || "Unable to save SMS Settings."
-      );
+      toast({
+        title: "SMS Settings Saved",
+        description: "SMS Settings saved successfully.",
+        variant: "success",
+      });
+
+      // handleSMSSearch();
+    } catch (error: any) {
+      toast({
+        title: "Error",
+        description: error.message,
+        variant: "destructive",
+      });
+    } finally {
+      setLoading(false);
     }
+  };
 
-    setSmsSubmittedSettings(false);
-
-    toast({
-      title: "SMS Settings Saved",
-      description: "SMS Settings saved successfully.",
-      variant: "success",
-    });
-
-    // handleSMSSearch();
-  } catch (error: any) {
-    toast({
-      title: "Error",
-      description: error.message,
-      variant: "destructive",
-    });
-  }
-};
-
-const validateWhatsAppSettings = () => {
-  if (
-    !whatsAppSettings.provider.trim() ||
-    // !whatsAppSettings.apiKey.trim() ||
-    !whatsAppSettings.phoneNumberId.trim() ||
-    !whatsAppSettings.accessToken.trim() ||
-    !whatsAppSettings.businessAccountId.trim()
-  ) {
-    toast({
-      title: "Required Fields",
-      description: "Please fill all required fields.",
-      variant: "destructive",
-    });
-
+  const validateWhatsAppSettings = () => {
     if (
-      numberGeneration === "Manual" &&
-      !whatsAppSettings.whatsappSettingsId.trim()
+      !whatsAppSettings.provider.trim() ||
+      // !whatsAppSettings.apiKey.trim() ||
+      !whatsAppSettings.phoneNumberId.trim() ||
+      !whatsAppSettings.accessToken.trim() ||
+      !whatsAppSettings.businessAccountId.trim()
     ) {
       toast({
-        title: "Validation",
-        description: "WhatsApp Settings ID is required.",
+        title: "Required Fields",
+        description: "Please fill all required fields.",
         variant: "destructive",
       });
 
+      if (
+        numberGeneration === "Manual" &&
+        !whatsAppSettings.whatsappSettingsId.trim()
+      ) {
+        toast({
+          title: "Validation",
+          description: "WhatsApp Settings ID is required.",
+          variant: "destructive",
+        });
+
+        return false;
+      }
+
+      setWhatsAppSubmittedSettings(true);
       return false;
     }
 
+    return true;
+  };
+
+  const handleSaveWhatsAppSettings = async () => {
     setWhatsAppSubmittedSettings(true);
-    return false;
-  }
 
-  return true;
-};
+    if (!validateWhatsAppSettings()) return;
 
-const handleSaveWhatsAppSettings = async () => {
-  setWhatsAppSubmittedSettings(true);
-
-  if (!validateWhatsAppSettings()) return;
-
-  try {
-    const response = await fetch(
-      `${BASE_URL}/WhatsappSettingsInsert`,
-      {
+    setLoading(true);
+    try {
+      const response = await fetch(`${BASE_URL}/WhatsappSettingsInsert`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -895,35 +945,34 @@ const handleSaveWhatsAppSettings = async () => {
           Location_code: locationCode,
           created_by: userCode,
         }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok || !data.success) {
+        throw new Error(data.message || "Unable to save WhatsApp Settings.");
       }
-    );
 
-    const data = await response.json();
+      setWhatsAppSubmittedSettings(false);
 
-    if (!response.ok || !data.success) {
-      throw new Error(
-        data.message || "Unable to save WhatsApp Settings."
-      );
+      toast({
+        title: "WhatsApp Settings Saved",
+        description: "WhatsApp API Settings saved successfully.",
+        variant: "success",
+      });
+
+      // Refresh Data
+      // handleWhatsAppSettingsSearch();
+    } catch (error: any) {
+      toast({
+        title: "Error",
+        description: error.message,
+        variant: "destructive",
+      });
+    } finally {
+      setLoading(false);
     }
-
-    setWhatsAppSubmittedSettings(false);
-
-    toast({
-      title: "WhatsApp Settings Saved",
-      description: "WhatsApp API Settings saved successfully.",
-      variant: "success",
-    });
-
-    // Refresh Data
-    // handleWhatsAppSettingsSearch();
-  } catch (error: any) {
-    toast({
-      title: "Error",
-      description: error.message,
-      variant: "destructive",
-    });
-  }
-};
+  };
 
   const handleSendNotification = () => {
     if (!notificationMessage.trim()) {
@@ -1032,6 +1081,7 @@ const handleSaveWhatsAppSettings = async () => {
 
   return (
     <div className="min-h-screen bg-background">
+      {loading && <Loading />}
       <header className="bg-card shadow-sm border-b sticky top-0 z-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center py-4">
@@ -1147,25 +1197,25 @@ const handleSaveWhatsAppSettings = async () => {
                   <div className="space-y-2">
                     <Label>SMTP Host</Label>
                     <TooltipProvider>
-                    <Tooltip>
-                      <TooltipTrigger asChild>
-                    <Input
-                      value={emailSettings.smtpHost}
-                      onChange={(e) =>
-                        setEmailSettings({
-                          ...emailSettings,
-                          smtpHost: e.target.value,
-                        })
-                      }
-                      placeholder="smtp.gmail.com"
-                    />
-                  </TooltipTrigger>
-                  
-                  <TooltipContent>
-                  <p>Enter SMTP Host</p>
-                  </TooltipContent>
-                    </Tooltip>
-                  </TooltipProvider>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <Input
+                            value={emailSettings.smtpHost}
+                            onChange={(e) =>
+                              setEmailSettings({
+                                ...emailSettings,
+                                smtpHost: e.target.value,
+                              })
+                            }
+                            placeholder="smtp.gmail.com"
+                          />
+                        </TooltipTrigger>
+
+                        <TooltipContent>
+                          <p>Enter SMTP Host</p>
+                        </TooltipContent>
+                      </Tooltip>
+                    </TooltipProvider>
                   </div>
                   <div className="space-y-2">
                     <Label
@@ -1177,7 +1227,7 @@ const handleSaveWhatsAppSettings = async () => {
                     >
                       SMTP Port *
                     </Label>
-                    
+
                     <TooltipProvider>
                       <Tooltip>
                         <TooltipTrigger asChild>
@@ -1194,7 +1244,7 @@ const handleSaveWhatsAppSettings = async () => {
                               <SelectTrigger>
                                 <SelectValue placeholder="Select SMTP Port" />
                               </SelectTrigger>
-                            
+
                               <SelectContent>
                                 {smtpPorts.map((item: any) => (
                                   <SelectItem
@@ -1208,7 +1258,7 @@ const handleSaveWhatsAppSettings = async () => {
                             </Select>
                           </div>
                         </TooltipTrigger>
-                              
+
                         <TooltipContent>
                           <p>Select SMTP Port</p>
                         </TooltipContent>
@@ -1221,25 +1271,25 @@ const handleSaveWhatsAppSettings = async () => {
                   <div className="space-y-2">
                     <Label>SMTP Username</Label>
                     <TooltipProvider>
-                    <Tooltip>
-                    <TooltipTrigger asChild>
-                    <Input
-                      value={emailSettings.smtpUsername}
-                      onChange={(e) =>
-                        setEmailSettings({
-                          ...emailSettings,
-                          smtpUsername: e.target.value,
-                        })
-                      }
-                      placeholder="your-email@gmail.com"
-                    />
-                    </TooltipTrigger>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <Input
+                            value={emailSettings.smtpUsername}
+                            onChange={(e) =>
+                              setEmailSettings({
+                                ...emailSettings,
+                                smtpUsername: e.target.value,
+                              })
+                            }
+                            placeholder="your-email@gmail.com"
+                          />
+                        </TooltipTrigger>
                         <TooltipContent>
                           <p>Enter SMTP Username</p>
                         </TooltipContent>
                       </Tooltip>
                     </TooltipProvider>
-                  </div>                  
+                  </div>
                   <div className="space-y-2">
                     <Label
                       className={
@@ -1250,13 +1300,17 @@ const handleSaveWhatsAppSettings = async () => {
                     >
                       SMTP Password *
                     </Label>
-                    
+
                     <TooltipProvider>
                       <Tooltip>
                         <TooltipTrigger asChild>
                           <div className="relative">
                             <Input
-                              type={showPasswords["emailPassword"] ? "text" : "password"}
+                              type={
+                                showPasswords["emailPassword"]
+                                  ? "text"
+                                  : "password"
+                              }
                               value={emailSettings.smtpPassword}
                               onChange={(e) =>
                                 setEmailSettings({
@@ -1282,7 +1336,7 @@ const handleSaveWhatsAppSettings = async () => {
                             </Button>
                           </div>
                         </TooltipTrigger>
-                            
+
                         <TooltipContent>
                           <p>Enter SMTP Password</p>
                         </TooltipContent>
@@ -1333,7 +1387,7 @@ const handleSaveWhatsAppSettings = async () => {
                     >
                       From Display Name *
                     </Label>
-                    
+
                     <TooltipProvider>
                       <Tooltip>
                         <TooltipTrigger asChild>
@@ -1348,7 +1402,7 @@ const handleSaveWhatsAppSettings = async () => {
                             placeholder="RUW Fitness"
                           />
                         </TooltipTrigger>
-                          
+
                         <TooltipContent>
                           <p>Enter From Display Name</p>
                         </TooltipContent>
@@ -1357,54 +1411,54 @@ const handleSaveWhatsAppSettings = async () => {
                   </div>
                 </div>
                 <div className="grid grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <Label
-                    className={
-                      EmailsubmittedSettings && !emailSettings.useSsl
-                        ? "text-red-500"
-                        : ""
-                    }
-                  >
-                    Use SSL / TLS *
-                  </Label>
-                  
-                  <TooltipProvider>
-                    <Tooltip>
-                      <TooltipTrigger asChild>
-                        <div>
-                          <Select
-                            value={emailSettings.useSsl}
-                            onValueChange={(value) =>
-                              setEmailSettings({
-                                ...emailSettings,
-                                useSsl: value,
-                              })
-                            }
-                          >
-                            <SelectTrigger>
-                              <SelectValue placeholder="Select SSL Type" />
-                            </SelectTrigger>
-                          
-                            <SelectContent>
-                              {sslTypes.map((item: any) => (
-                                <SelectItem
-                                  key={item.attributedetails_name}
-                                  value={item.attributedetails_name}
-                                >
-                                  {item.attributedetails_name}
-                                </SelectItem>
-                              ))}
-                            </SelectContent>
-                          </Select>
-                        </div>
-                      </TooltipTrigger>
-                            
-                      <TooltipContent>
-                        <p>Select SSL/TLS</p>
-                      </TooltipContent>
-                    </Tooltip>
-                  </TooltipProvider>
-                </div>
+                  <div className="space-y-2">
+                    <Label
+                      className={
+                        EmailsubmittedSettings && !emailSettings.useSsl
+                          ? "text-red-500"
+                          : ""
+                      }
+                    >
+                      Use SSL / TLS *
+                    </Label>
+
+                    <TooltipProvider>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <div>
+                            <Select
+                              value={emailSettings.useSsl}
+                              onValueChange={(value) =>
+                                setEmailSettings({
+                                  ...emailSettings,
+                                  useSsl: value,
+                                })
+                              }
+                            >
+                              <SelectTrigger>
+                                <SelectValue placeholder="Select SSL Type" />
+                              </SelectTrigger>
+
+                              <SelectContent>
+                                {sslTypes.map((item: any) => (
+                                  <SelectItem
+                                    key={item.attributedetails_name}
+                                    value={item.attributedetails_name}
+                                  >
+                                    {item.attributedetails_name}
+                                  </SelectItem>
+                                ))}
+                              </SelectContent>
+                            </Select>
+                          </div>
+                        </TooltipTrigger>
+
+                        <TooltipContent>
+                          <p>Select SSL/TLS</p>
+                        </TooltipContent>
+                      </Tooltip>
+                    </TooltipProvider>
+                  </div>
                 </div>
 
                 <div className="flex gap-2 pt-4">
@@ -1422,7 +1476,7 @@ const handleSaveWhatsAppSettings = async () => {
                           </Button>
                         </span>
                       </TooltipTrigger>
-                                            
+
                       <TooltipContent>
                         <p>
                           {testingEmail
@@ -1431,7 +1485,7 @@ const handleSaveWhatsAppSettings = async () => {
                         </p>
                       </TooltipContent>
                     </Tooltip>
-                          
+
                     <Tooltip>
                       <TooltipTrigger asChild>
                         <Button onClick={handleSaveEmailSettings}>
@@ -1439,7 +1493,7 @@ const handleSaveWhatsAppSettings = async () => {
                           Save Settings
                         </Button>
                       </TooltipTrigger>
-                          
+
                       <TooltipContent>
                         <p>Save Email SMTP Settings</p>
                       </TooltipContent>
@@ -1517,54 +1571,54 @@ const handleSaveWhatsAppSettings = async () => {
                   </TooltipProvider>
                 </div> */}
                 <div className="grid grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <Label
-                    className={
-                      SmssubmittedSettings && !smsSettings.provider
-                        ? "text-red-500"
-                        : ""
-                    }
-                  >
-                    SMS Provider *
-                  </Label>
-                  
-                  <TooltipProvider>
-                    <Tooltip>
-                      <TooltipTrigger asChild>
-                        <div>
-                          <Select
-                            value={smsSettings.provider}
-                            onValueChange={(value) =>
-                              setSmsSettings({
-                                ...smsSettings,
-                                provider: value,
-                              })
-                            }
-                          >
-                            <SelectTrigger>
-                              <SelectValue placeholder="Select SMS Provider" />
-                            </SelectTrigger>
-                          
-                            <SelectContent>
-                              {smsProviders.map((item: any) => (
-                                <SelectItem
-                                  key={item.attributedetails_name}
-                                  value={item.attributedetails_name}
-                                >
-                                  {item.attributedetails_name}
-                                </SelectItem>
-                              ))}
-                            </SelectContent>
-                          </Select>
-                        </div>
-                      </TooltipTrigger>
-                            
-                      <TooltipContent>
-                        <p>Select SMS Provider</p>
-                      </TooltipContent>
-                    </Tooltip>
-                  </TooltipProvider>
-                </div>
+                  <div className="space-y-2">
+                    <Label
+                      className={
+                        SmssubmittedSettings && !smsSettings.provider
+                          ? "text-red-500"
+                          : ""
+                      }
+                    >
+                      SMS Provider *
+                    </Label>
+
+                    <TooltipProvider>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <div>
+                            <Select
+                              value={smsSettings.provider}
+                              onValueChange={(value) =>
+                                setSmsSettings({
+                                  ...smsSettings,
+                                  provider: value,
+                                })
+                              }
+                            >
+                              <SelectTrigger>
+                                <SelectValue placeholder="Select SMS Provider" />
+                              </SelectTrigger>
+
+                              <SelectContent>
+                                {smsProviders.map((item: any) => (
+                                  <SelectItem
+                                    key={item.attributedetails_name}
+                                    value={item.attributedetails_name}
+                                  >
+                                    {item.attributedetails_name}
+                                  </SelectItem>
+                                ))}
+                              </SelectContent>
+                            </Select>
+                          </div>
+                        </TooltipTrigger>
+
+                        <TooltipContent>
+                          <p>Select SMS Provider</p>
+                        </TooltipContent>
+                      </Tooltip>
+                    </TooltipProvider>
+                  </div>
                   <div className="space-y-2">
                     <Label
                       className={
@@ -1575,7 +1629,7 @@ const handleSaveWhatsAppSettings = async () => {
                     >
                       Default Country Code *
                     </Label>
-                    
+
                     <TooltipProvider>
                       <Tooltip>
                         <TooltipTrigger asChild>
@@ -1592,7 +1646,7 @@ const handleSaveWhatsAppSettings = async () => {
                               <SelectTrigger>
                                 <SelectValue placeholder="Select Country Code" />
                               </SelectTrigger>
-                            
+
                               <SelectContent>
                                 {countryCodes.map((item: any) => (
                                   <SelectItem
@@ -1606,7 +1660,7 @@ const handleSaveWhatsAppSettings = async () => {
                             </Select>
                           </div>
                         </TooltipTrigger>
-                              
+
                         <TooltipContent>
                           <p>Select Default Country Code</p>
                         </TooltipContent>
@@ -1625,13 +1679,15 @@ const handleSaveWhatsAppSettings = async () => {
                     >
                       API Key *
                     </Label>
-                    
+
                     <TooltipProvider>
                       <Tooltip>
                         <TooltipTrigger asChild>
                           <div className="relative">
                             <Input
-                              type={showPasswords["smsApiKey"] ? "text" : "password"}
+                              type={
+                                showPasswords["smsApiKey"] ? "text" : "password"
+                              }
                               value={smsSettings.apiKey}
                               onChange={(e) =>
                                 setSmsSettings({
@@ -1641,7 +1697,7 @@ const handleSaveWhatsAppSettings = async () => {
                               }
                               placeholder="••••••••"
                             />
-                  
+
                             <Button
                               type="button"
                               variant="ghost"
@@ -1657,62 +1713,66 @@ const handleSaveWhatsAppSettings = async () => {
                             </Button>
                           </div>
                         </TooltipTrigger>
-                            
+
                         <TooltipContent>
                           <p>Enter SMS API Key</p>
                         </TooltipContent>
                       </Tooltip>
                     </TooltipProvider>
                   </div>
-                <div className="space-y-2">
-                  <Label
-                    className={
-                      SmssubmittedSettings && !smsSettings.apiSecret
-                        ? "text-red-500"
-                        : ""
-                    }
-                  >
-                    API Secret *
-                  </Label>
-                  
-                  <TooltipProvider>
-                    <Tooltip>
-                      <TooltipTrigger asChild>
-                        <div className="relative">
-                          <Input
-                            type={showPasswords["smsApiSecret"] ? "text" : "password"}
-                            value={smsSettings.apiSecret}
-                            onChange={(e) =>
-                              setSmsSettings({
-                                ...smsSettings,
-                                apiSecret: e.target.value,
-                              })
-                            }
-                            placeholder="••••••••"
-                          />
+                  <div className="space-y-2">
+                    <Label
+                      className={
+                        SmssubmittedSettings && !smsSettings.apiSecret
+                          ? "text-red-500"
+                          : ""
+                      }
+                    >
+                      API Secret *
+                    </Label>
 
-                          <Button
-                            type="button"
-                            variant="ghost"
-                            size="sm"
-                            className="absolute right-1 top-1 h-8 w-8 p-0"
-                            onClick={() => togglePassword("smsApiSecret")}
-                          >
-                            {showPasswords["smsApiSecret"] ? (
-                              <EyeOff className="h-4 w-4" />
-                            ) : (
-                              <Eye className="h-4 w-4" />
-                            )}
-                          </Button>
-                        </div>
-                      </TooltipTrigger>
-                          
-                      <TooltipContent>
-                        <p>Enter SMS API Secret</p>
-                      </TooltipContent>
-                    </Tooltip>
-                  </TooltipProvider>
-                </div>                
+                    <TooltipProvider>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <div className="relative">
+                            <Input
+                              type={
+                                showPasswords["smsApiSecret"]
+                                  ? "text"
+                                  : "password"
+                              }
+                              value={smsSettings.apiSecret}
+                              onChange={(e) =>
+                                setSmsSettings({
+                                  ...smsSettings,
+                                  apiSecret: e.target.value,
+                                })
+                              }
+                              placeholder="••••••••"
+                            />
+
+                            <Button
+                              type="button"
+                              variant="ghost"
+                              size="sm"
+                              className="absolute right-1 top-1 h-8 w-8 p-0"
+                              onClick={() => togglePassword("smsApiSecret")}
+                            >
+                              {showPasswords["smsApiSecret"] ? (
+                                <EyeOff className="h-4 w-4" />
+                              ) : (
+                                <Eye className="h-4 w-4" />
+                              )}
+                            </Button>
+                          </div>
+                        </TooltipTrigger>
+
+                        <TooltipContent>
+                          <p>Enter SMS API Secret</p>
+                        </TooltipContent>
+                      </Tooltip>
+                    </TooltipProvider>
+                  </div>
                 </div>
                 <div className="space-y-2">
                   <Label
@@ -1724,7 +1784,7 @@ const handleSaveWhatsAppSettings = async () => {
                   >
                     Sender ID / Number *
                   </Label>
-                  
+
                   <TooltipProvider>
                     <Tooltip>
                       <TooltipTrigger asChild>
@@ -1739,52 +1799,52 @@ const handleSaveWhatsAppSettings = async () => {
                           placeholder="RUWGYM"
                         />
                       </TooltipTrigger>
-                        
+
                       <TooltipContent>
                         <p>Enter Sender ID / Number</p>
                       </TooltipContent>
                     </Tooltip>
                   </TooltipProvider>
                 </div>
-              <div className="flex gap-2 pt-4">
-                <TooltipProvider>
-                  <Tooltip>
-                    <TooltipTrigger asChild>
-                      <Button
-                        variant="outline"
-                        onClick={handleTestSms}
-                        disabled={testingSms}
-                      >
-                        <TestTube className="h-4 w-4 mr-2" />
-                        {testingSms ? "Testing..." : "Test SMS"}
-                      </Button>
-                    </TooltipTrigger>
+                <div className="flex gap-2 pt-4">
+                  <TooltipProvider>
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <Button
+                          variant="outline"
+                          onClick={handleTestSms}
+                          disabled={testingSms}
+                        >
+                          <TestTube className="h-4 w-4 mr-2" />
+                          {testingSms ? "Testing..." : "Test SMS"}
+                        </Button>
+                      </TooltipTrigger>
 
-                    <TooltipContent>
-                      <p>
-                        {testingSms
-                          ? "Testing SMS Configuration..."
-                          : "Test SMS Configuration"}
-                      </p>
-                    </TooltipContent>
-                  </Tooltip>
-                </TooltipProvider>
-                        
-                <TooltipProvider>
-                  <Tooltip>
-                    <TooltipTrigger asChild>
-                      <Button onClick={handleSaveSmsSettings}>
-                        <Save className="h-4 w-4 mr-2" />
-                        Save Settings
-                      </Button>
-                    </TooltipTrigger>
-                        
-                    <TooltipContent>
-                      <p>Save SMS Settings</p>
-                    </TooltipContent>
-                  </Tooltip>
-                </TooltipProvider>
-              </div>
+                      <TooltipContent>
+                        <p>
+                          {testingSms
+                            ? "Testing SMS Configuration..."
+                            : "Test SMS Configuration"}
+                        </p>
+                      </TooltipContent>
+                    </Tooltip>
+                  </TooltipProvider>
+
+                  <TooltipProvider>
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <Button onClick={handleSaveSmsSettings}>
+                          <Save className="h-4 w-4 mr-2" />
+                          Save Settings
+                        </Button>
+                      </TooltipTrigger>
+
+                      <TooltipContent>
+                        <p>Save SMS Settings</p>
+                      </TooltipContent>
+                    </Tooltip>
+                  </TooltipProvider>
+                </div>
               </CardContent>
             </Card>
 
@@ -1861,7 +1921,7 @@ const handleSaveWhatsAppSettings = async () => {
                     >
                       WhatsApp Provider *
                     </Label>
-                    
+
                     <TooltipProvider>
                       <Tooltip>
                         <TooltipTrigger asChild>
@@ -1878,7 +1938,7 @@ const handleSaveWhatsAppSettings = async () => {
                               <SelectTrigger>
                                 <SelectValue placeholder="Select WhatsApp Provider" />
                               </SelectTrigger>
-                            
+
                               <SelectContent>
                                 {whatsappProviders.map((item: any) => (
                                   <SelectItem
@@ -1892,7 +1952,7 @@ const handleSaveWhatsAppSettings = async () => {
                             </Select>
                           </div>
                         </TooltipTrigger>
-                              
+
                         <TooltipContent>
                           <p>Select WhatsApp Provider</p>
                         </TooltipContent>
@@ -1902,14 +1962,15 @@ const handleSaveWhatsAppSettings = async () => {
                   <div className="space-y-2">
                     <Label
                       className={
-                        WhatsAppsubmittedSettings && !whatsAppSettings.phoneNumberId
+                        WhatsAppsubmittedSettings &&
+                        !whatsAppSettings.phoneNumberId
                           ? "text-red-500"
                           : ""
                       }
                     >
                       Phone Number ID *
                     </Label>
-                    
+
                     <TooltipProvider>
                       <Tooltip>
                         <TooltipTrigger asChild>
@@ -1924,7 +1985,7 @@ const handleSaveWhatsAppSettings = async () => {
                             placeholder="Enter Phone Number ID"
                           />
                         </TooltipTrigger>
-                          
+
                         <TooltipContent>
                           <p>Enter Phone Number ID</p>
                         </TooltipContent>
@@ -1936,7 +1997,8 @@ const handleSaveWhatsAppSettings = async () => {
                   <div className="space-y-2">
                     <Label
                       className={
-                        WhatsAppsubmittedSettings && !whatsAppSettings.accessToken
+                        WhatsAppsubmittedSettings &&
+                        !whatsAppSettings.accessToken
                           ? "text-red-500"
                           : ""
                       }
@@ -1949,7 +2011,11 @@ const handleSaveWhatsAppSettings = async () => {
                         <TooltipTrigger asChild>
                           <div className="relative">
                             <Input
-                              type={showPasswords["whatsappToken"] ? "text" : "password"}
+                              type={
+                                showPasswords["whatsappToken"]
+                                  ? "text"
+                                  : "password"
+                              }
                               value={whatsAppSettings.accessToken}
                               onChange={(e) =>
                                 setWhatsAppSettings({
@@ -1985,14 +2051,15 @@ const handleSaveWhatsAppSettings = async () => {
                   <div className="space-y-2">
                     <Label
                       className={
-                        WhatsAppsubmittedSettings && !whatsAppSettings.businessAccountId
+                        WhatsAppsubmittedSettings &&
+                        !whatsAppSettings.businessAccountId
                           ? "text-red-500"
                           : ""
                       }
                     >
                       Business Account ID *
                     </Label>
-                    
+
                     <TooltipProvider>
                       <Tooltip>
                         <TooltipTrigger asChild>
@@ -2007,7 +2074,7 @@ const handleSaveWhatsAppSettings = async () => {
                             placeholder="Enter Business Account ID"
                           />
                         </TooltipTrigger>
-                          
+
                         <TooltipContent>
                           <p>Enter Business Account ID</p>
                         </TooltipContent>
@@ -2017,7 +2084,7 @@ const handleSaveWhatsAppSettings = async () => {
                 </div>
                 <div className="space-y-2">
                   <Label>Webhook URL (Read Only)</Label>
-                                          
+
                   <TooltipProvider>
                     <Tooltip>
                       <TooltipTrigger asChild>
@@ -2027,7 +2094,7 @@ const handleSaveWhatsAppSettings = async () => {
                           className="bg-muted"
                         />
                       </TooltipTrigger>
-                                          
+
                       <TooltipContent>
                         <p>Webhook URL is generated automatically</p>
                       </TooltipContent>
@@ -2047,7 +2114,7 @@ const handleSaveWhatsAppSettings = async () => {
                           {testingWhatsApp ? "Testing..." : "Test WhatsApp"}
                         </Button>
                       </TooltipTrigger>
-                                          
+
                       <TooltipContent>
                         <p>
                           {testingWhatsApp
@@ -2057,7 +2124,7 @@ const handleSaveWhatsAppSettings = async () => {
                       </TooltipContent>
                     </Tooltip>
                   </TooltipProvider>
-                          
+
                   <TooltipProvider>
                     <Tooltip>
                       <TooltipTrigger asChild>
@@ -2066,7 +2133,7 @@ const handleSaveWhatsAppSettings = async () => {
                           Save Settings
                         </Button>
                       </TooltipTrigger>
-                          
+
                       <TooltipContent>
                         <p>Save WhatsApp Settings</p>
                       </TooltipContent>

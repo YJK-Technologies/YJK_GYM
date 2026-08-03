@@ -1,23 +1,67 @@
-
-import React, { useState, useEffect } from 'react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
-import { Switch } from '@/components/ui/switch';
-import { Textarea } from '@/components/ui/textarea';
-import { useNavigate } from 'react-router-dom';
-import { useToast } from '@/hooks/use-toast';
-import { BASE_URL } from '../ApiConfig';
+import React, { useState, useEffect } from "react";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import { Switch } from "@/components/ui/switch";
+import { Textarea } from "@/components/ui/textarea";
+import { useNavigate } from "react-router-dom";
+import { useToast } from "@/hooks/use-toast";
+import { BASE_URL } from "../ApiConfig";
 import AgGridTable from "@/components/ui/ag-grid-table";
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
-import { showConfirmToast } from '../../components/ui/show-confirm-toast';
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
+import { showConfirmToast } from "../../components/ui/show-confirm-toast";
 import { useCompany } from "../CompanyContext";
-import { ArrowLeft, Plus, Pencil, Trash2, Tag, Percent, DollarSign, Calendar, CheckCircle, XCircle, Clock, Copy, RefreshCw, RotateCcw, Search } from 'lucide-react';
-import ReactMultiSelect, { MultiSelectOption, } from "@/components/ui/react-multi-select";
+import {
+  ArrowLeft,
+  Plus,
+  Pencil,
+  Trash2,
+  Tag,
+  Percent,
+  DollarSign,
+  Calendar,
+  CheckCircle,
+  XCircle,
+  Clock,
+  Copy,
+  RefreshCw,
+  RotateCcw,
+  Search,
+} from "lucide-react";
+import ReactMultiSelect, {
+  MultiSelectOption,
+} from "@/components/ui/react-multi-select";
+import Loading from "@/components/Loading";
+
 // Types
 interface Coupon {
   id: string;
@@ -37,15 +81,15 @@ interface Coupon {
   KeyField: string;
 }
 
-
 const CouponManagement = () => {
   const { companyCode, locationCode, userCode } = useCompany();
+  // For loading
+  const [loading, setLoading] = useState(false);
 
   const navigate = useNavigate();
   const { toast } = useToast();
   const [DiscountType, setDiscountType] = useState<any[]>([]);
   const [AppPackages, setAppPackages] = useState<any[]>([]);
-
 
   const fetchDiscountType = async () => {
     try {
@@ -99,82 +143,82 @@ const CouponManagement = () => {
     value: item.package_ID,
   }));
 
-
   useEffect(() => {
     const loadData = async () => {
-      await Promise.all([
-        fetchDiscountType(),
-        fetchAppPackages(),
-      ]);
+      await Promise.all([fetchDiscountType(), fetchAppPackages()]);
     };
 
     loadData();
   }, []);
 
   const [coupons, setCoupons] = useState<Coupon[]>([]);
-  const [searchTerm, setSearchTerm] = useState('');
-  const [statusFilter, setStatusFilter] = useState<string>('all');
+  const [searchTerm, setSearchTerm] = useState("");
+  const [statusFilter, setStatusFilter] = useState<string>("all");
 
-    const [numberGeneration, setNumberGeneration] = useState("Auto");
-  
-    useEffect(() => {
-      const getSettingData = async () => {
-        try {
-          const response = await fetch(`${BASE_URL}/getSettingScreenData`, {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-              Company_code: companyCode,
-              Location_code: locationCode,
-            }),
-          });
-  
-          if (!response.ok) {
-            throw new Error("Failed to fetch setting data");
-          }
-  
-          const data = await response.json();
-  
-          if (Array.isArray(data) && data.length > 0) {
-            setNumberGeneration(data[0].NumberGeneration || "Auto");
-          } else {
-            setNumberGeneration("Auto");
-          }
-        } catch (err) {
-          console.error("Error fetching settings:", err);
+  const [numberGeneration, setNumberGeneration] = useState("Auto");
+
+  useEffect(() => {
+    const getSettingData = async () => {
+      try {
+        const response = await fetch(`${BASE_URL}/getSettingScreenData`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            Company_code: companyCode,
+            Location_code: locationCode,
+          }),
+        });
+
+        if (!response.ok) {
+          throw new Error("Failed to fetch setting data");
+        }
+
+        const data = await response.json();
+
+        if (Array.isArray(data) && data.length > 0) {
+          setNumberGeneration(data[0].NumberGeneration || "Auto");
+        } else {
           setNumberGeneration("Auto");
         }
-      };
-  
-      if (companyCode && locationCode) {
-        getSettingData();
+      } catch (err) {
+        console.error("Error fetching settings:", err);
+        setNumberGeneration("Auto");
       }
-    }, [companyCode, locationCode]);
-  
-  
+    };
+
+    if (companyCode && locationCode) {
+      getSettingData();
+    }
+  }, [companyCode, locationCode]);
 
   // Dialog state
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [editingCoupon, setEditingCoupon] = useState<Coupon | null>(null);
-  const [dashboardStats, setDashboardStats] = useState({ totalCoupons: 0, activeCoupons: 0, totalDiscountGiven: 0, mostUsedCoupon: "", mostUsedCount: 0, });
+  const [dashboardStats, setDashboardStats] = useState({
+    totalCoupons: 0,
+    activeCoupons: 0,
+    totalDiscountGiven: 0,
+    mostUsedCoupon: "",
+    mostUsedCount: 0,
+  });
 
   // Form state
   const [formData, setFormData] = useState({
-    CouponID: '',
-    code: '',
-    description: '',
-    discountType: '',
+    CouponID: "",
+    code: "",
+    description: "",
+    discountType: "",
     discountValue: 0,
     minimumPurchase: 0,
-    validFrom: '',
-    validUntil: '',
+    validFrom: "",
+    validUntil: "",
     maxUses: null as number | null,
     // applicablePackages: "",
     applicablePackages: [] as { label: string; value: string }[],
     isActive: true,
-    KeyField: ""
+    KeyField: "",
   });
 
   const [submittedCoupon, setSubmittedCoupon] = useState(false);
@@ -188,21 +232,21 @@ const CouponManagement = () => {
     Applicable_Packages: "",
     Status: "",
     Valid_From: "",
-    Valid_Until: ""
+    Valid_Until: "",
   });
 
   // Stats
   // const activeCoupons = coupons.filter(c => c.status === 'Active').length;
   // const totalDiscountGiven = 1765.5; // Sample calculation
-  // const mostUsedCoupon = coupons.reduce((prev, curr) => 
+  // const mostUsedCoupon = coupons.reduce((prev, curr) =>
   //   prev.currentUses > curr.currentUses ? prev : curr
   // );
 
   // Filter coupons
 
   const generateCouponCode = () => {
-    const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
-    let code = '';
+    const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+    let code = "";
     for (let i = 0; i < 8; i++) {
       code += chars.charAt(Math.floor(Math.random() * chars.length));
     }
@@ -223,24 +267,24 @@ const CouponManagement = () => {
         validUntil: coupon.validUntil,
         maxUses: coupon.maxUses,
         applicablePackages: coupon.applicablePackages,
-        isActive: coupon.status === 'Active',
-        KeyField: coupon.KeyField
+        isActive: coupon.status === "Active",
+        KeyField: coupon.KeyField,
       });
     } else {
       setEditingCoupon(null);
       setFormData({
-        CouponID: '',
-        code: '',
-        description: '',
-        discountType: '',
+        CouponID: "",
+        code: "",
+        description: "",
+        discountType: "",
         discountValue: 0,
         minimumPurchase: 0,
-        validFrom: '',
-        validUntil: '',
+        validFrom: "",
+        validUntil: "",
         maxUses: null,
         applicablePackages: [],
         isActive: true,
-        KeyField: ''
+        KeyField: "",
       });
     }
     setIsDialogOpen(true);
@@ -304,16 +348,13 @@ const CouponManagement = () => {
           ?.split(",")
           .map((id: string) => {
             const pkg = AppPackages.find(
-              (item: any) => item.package_ID === id.trim()
+              (item: any) => item.package_ID === id.trim(),
             );
-          
-            return pkg
-              ? `${pkg.package_ID} - ${pkg.package_Name}`
-              : id.trim();
-              
+
+            return pkg ? `${pkg.package_ID} - ${pkg.package_Name}` : id.trim();
           })
           .join(", ");
-        
+
         return packages || "";
       },
     },
@@ -400,16 +441,12 @@ const CouponManagement = () => {
       // applicablePackages: coupon.Applicable_Packages ?? "",
       applicablePackages: coupon.Applicable_Packages
         ? coupon.Applicable_Packages.split(",").map((id: string) => {
-          const pkg = AppPackages.find(
-            (item: any) => item.package_ID === id
-          );
-          return {
-            value: id,
-            label: pkg
-              ? `${pkg.package_ID} - ${pkg.package_Name}`
-              : id,
-          };
-        })
+            const pkg = AppPackages.find((item: any) => item.package_ID === id);
+            return {
+              value: id,
+              label: pkg ? `${pkg.package_ID} - ${pkg.package_Name}` : id,
+            };
+          })
         : [],
       isActive:
         coupon.Status === "Active" ||
@@ -418,13 +455,17 @@ const CouponManagement = () => {
       KeyField: coupon.KeyField ?? "",
     });
 
-
     setIsDialogOpen(true);
   };
 
   const validateCoupon = () => {
-    if (!formData.code || !formData.discountType || !formData.maxUses
-      || !formData.validFrom || !formData.validUntil || formData.applicablePackages.length === 0
+    if (
+      !formData.code ||
+      !formData.discountType ||
+      !formData.maxUses ||
+      !formData.validFrom ||
+      !formData.validUntil ||
+      formData.applicablePackages.length === 0
     ) {
       toast({
         title: "Required Fields",
@@ -454,6 +495,7 @@ const CouponManagement = () => {
 
     if (!validateCoupon()) return;
 
+    setLoading(true);
     try {
       const response = await fetch(`${BASE_URL}/couponInsertData`, {
         method: "POST",
@@ -473,7 +515,8 @@ const CouponManagement = () => {
           Current_Uses: 0,
           // Applicable_Packages: formData.applicablePackages,
           Applicable_Packages: formData.applicablePackages
-            .map((item: any) => item.value).join(","),
+            .map((item: any) => item.value)
+            .join(","),
           Status: formData.isActive ? "Active" : "Inactive",
           Company_Code: companyCode,
           Location_Code: locationCode,
@@ -509,6 +552,8 @@ const CouponManagement = () => {
         description: err.message || "Something went wrong.",
         variant: "destructive",
       });
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -525,6 +570,7 @@ const CouponManagement = () => {
 
     if (!validateCoupon()) return;
 
+    setLoading(true);
     try {
       const response = await fetch(`${BASE_URL}/couponUpdateData`, {
         method: "POST",
@@ -543,12 +589,13 @@ const CouponManagement = () => {
           Max_Uses: formData.maxUses || 0,
           // Applicable_Packages: formData.applicablePackages,
           Applicable_Packages: formData.applicablePackages
-            .map((item) => item.value).join(","),
+            .map((item) => item.value)
+            .join(","),
           Status: formData.isActive ? "Active" : "Inactive",
           Company_Code: companyCode,
           Location_Code: locationCode,
           modified_by: userCode,
-          KeyField: formData.KeyField
+          KeyField: formData.KeyField,
         }),
       });
 
@@ -567,7 +614,6 @@ const CouponManagement = () => {
 
         handleCouponSearch();
         await getCouponDashboard();
-
       } else {
         toast({
           title: "Error",
@@ -581,6 +627,8 @@ const CouponManagement = () => {
         description: err.message || "Something went wrong.",
         variant: "destructive",
       });
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -601,6 +649,7 @@ const CouponManagement = () => {
   };
 
   const deleteCoupon = async (KeyField: string) => {
+    setLoading(true);
     try {
       const response = await fetch(`${BASE_URL}/couponDeleteData`, {
         method: "POST",
@@ -612,7 +661,6 @@ const CouponManagement = () => {
         },
         body: JSON.stringify({
           CouponIDs: [KeyField],
-
         }),
       });
 
@@ -641,6 +689,8 @@ const CouponManagement = () => {
         description: err.message || "Something went wrong.",
         variant: "destructive",
       });
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -680,7 +730,7 @@ const CouponManagement = () => {
   };
 
   const handleCouponSearch = async () => {
-
+    setLoading(true);
     try {
       const response = await fetch(`${BASE_URL}/couponSearchData`, {
         method: "POST",
@@ -694,7 +744,9 @@ const CouponManagement = () => {
           Coupon_Code: CouponSearchForm.Coupon_Code,
           Description: CouponSearchForm.Description,
           Discount_Type: CouponSearchForm.Discount_Type,
-          Discount_Value: CouponSearchForm.Discount_Value ? CouponSearchForm.Discount_Value : 0,
+          Discount_Value: CouponSearchForm.Discount_Value
+            ? CouponSearchForm.Discount_Value
+            : 0,
           Applicable_Packages: CouponSearchForm.Applicable_Packages,
           Status: CouponSearchForm.Status,
           Valid_From: CouponSearchForm.Valid_From,
@@ -706,8 +758,7 @@ const CouponManagement = () => {
 
       if (response.ok) {
         setCoupons(data);
-      }
-      else if (response.status === 404) {
+      } else if (response.status === 404) {
         setCoupons([]);
 
         toast({
@@ -715,8 +766,7 @@ const CouponManagement = () => {
           description: data?.message || "No matching coupons found.",
           variant: "destructive",
         });
-      }
-      else {
+      } else {
         setCoupons([]);
 
         toast({
@@ -725,9 +775,7 @@ const CouponManagement = () => {
           variant: "destructive",
         });
       }
-
     } catch (error) {
-
       console.error("Search Error:", error);
 
       setCoupons([]);
@@ -739,9 +787,9 @@ const CouponManagement = () => {
           "Unable to connect to the server. Please try again later.",
         variant: "destructive",
       });
-
+    } finally {
+      setLoading(false);
     }
-
   };
 
   const handleReset = () => {
@@ -754,7 +802,7 @@ const CouponManagement = () => {
       Applicable_Packages: "",
       Status: "",
       Valid_From: "",
-      Valid_Until: ""
+      Valid_Until: "",
     });
 
     setCoupons([]);
@@ -762,35 +810,35 @@ const CouponManagement = () => {
 
   return (
     <div className="min-h-screen bg-gray-50">
-
+      {loading && <Loading />}
       <header className="bg-white shadow-sm border-b sticky top-0 z-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center py-4">
             <div className="flex items-center gap-2 sm:gap-4 min-w-0">
               <Button
                 variant="ghost"
-                onClick={() => navigate('/AdminDashboard')}
+                onClick={() => navigate("/AdminDashboard")}
                 className="flex items-center px-2 sm:px-4"
               >
                 <ArrowLeft className="h-4 w-4 mr-2" />
                 <span className="hidden sm:inline ml-2">Back</span>
               </Button>
-              <h1 className="text-lg sm:text-xl lg:text-2xl font-bold text-gray-900 truncate">Coupon Management</h1>
+              <h1 className="text-lg sm:text-xl lg:text-2xl font-bold text-gray-900 truncate">
+                Coupon Management
+              </h1>
             </div>
             <TooltipProvider>
               <Tooltip>
                 <TooltipTrigger asChild>
-            <Button
-              onClick={() => handleOpenDialog()}
-              className="shrink-0 px-2 sm:px-4"
-            >
-              <Plus className="h-4 w-4 sm:mr-2" />
-              <span className="hidden sm:inline">
-                Add Coupon
-              </span>
-            </Button>
-            </TooltipTrigger>
-            
+                  <Button
+                    onClick={() => handleOpenDialog()}
+                    className="shrink-0 px-2 sm:px-4"
+                  >
+                    <Plus className="h-4 w-4 sm:mr-2" />
+                    <span className="hidden sm:inline">Add Coupon</span>
+                  </Button>
+                </TooltipTrigger>
+
                 <TooltipContent>Add Coupon</TooltipContent>
               </Tooltip>
             </TooltipProvider>
@@ -801,7 +849,6 @@ const CouponManagement = () => {
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Stats Cards */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-
           {/* Active Coupons */}
           <Card>
             <CardContent className="p-6">
@@ -837,7 +884,8 @@ const CouponManagement = () => {
                   </p>
 
                   <p className="text-2xl font-bold text-gray-900">
-                    {/*BHD*/} {Number(dashboardStats.totalDiscountGiven).toFixed(3)}
+                    {/*BHD*/}{" "}
+                    {Number(dashboardStats.totalDiscountGiven).toFixed(3)}
                   </p>
                 </div>
               </div>
@@ -868,15 +916,12 @@ const CouponManagement = () => {
               </div>
             </CardContent>
           </Card>
-
         </div>
 
         {/* Search and Filters  */}
         <Card className="mb-6">
-
           <CardContent className="p-4">
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-x-4 gap-y-6">
-
               <div className="space-y-2">
                 <Label htmlFor="code">Coupon Code </Label>
                 <div className="flex space-x-2">
@@ -886,7 +931,12 @@ const CouponManagement = () => {
                         <Input
                           id="code"
                           value={CouponSearchForm.CouponID}
-                          onChange={(e) => setCouponSearchForm({ ...CouponSearchForm, CouponID: e.target.value.toUpperCase() })}
+                          onChange={(e) =>
+                            setCouponSearchForm({
+                              ...CouponSearchForm,
+                              CouponID: e.target.value.toUpperCase(),
+                            })
+                          }
                           placeholder="Coupon Code"
                           className="font-mono"
                         />
@@ -909,7 +959,13 @@ const CouponManagement = () => {
                       <div>
                         <Select
                           value={CouponSearchForm.Discount_Type}
-                          onValueChange={(value) => setCouponSearchForm({ ...CouponSearchForm, Discount_Type: value, })}>
+                          onValueChange={(value) =>
+                            setCouponSearchForm({
+                              ...CouponSearchForm,
+                              Discount_Type: value,
+                            })
+                          }
+                        >
                           <SelectTrigger>
                             <SelectValue placeholder="Select Discount Type" />
                           </SelectTrigger>
@@ -943,7 +999,12 @@ const CouponManagement = () => {
                       <Input
                         id="description"
                         value={CouponSearchForm.Description}
-                        onChange={(e) => setCouponSearchForm({ ...CouponSearchForm, Description: e.target.value })}
+                        onChange={(e) =>
+                          setCouponSearchForm({
+                            ...CouponSearchForm,
+                            Description: e.target.value,
+                          })
+                        }
                         placeholder="Enter coupon description..."
                       />
                     </TooltipTrigger>
@@ -957,7 +1018,8 @@ const CouponManagement = () => {
 
               <div className="space-y-2">
                 <Label htmlFor="discountValue">
-                  Discount Value {/*({CouponSearchForm.Discount_Type === 'Percentage' ? '%' : 'BHD'})*/}
+                  Discount Value{" "}
+                  {/*({CouponSearchForm.Discount_Type === 'Percentage' ? '%' : 'BHD'})*/}
                 </Label>
                 <TooltipProvider>
                   <Tooltip>
@@ -973,7 +1035,11 @@ const CouponManagement = () => {
                           })
                         }
                         min={0}
-                        max={CouponSearchForm.Discount_Type === "Percentage" ? 100 : undefined}
+                        max={
+                          CouponSearchForm.Discount_Type === "Percentage"
+                            ? 100
+                            : undefined
+                        }
                       />
                     </TooltipTrigger>
 
@@ -993,7 +1059,12 @@ const CouponManagement = () => {
                         id="validFrom"
                         type="date"
                         value={CouponSearchForm.Valid_From}
-                        onChange={(e) => setCouponSearchForm({ ...CouponSearchForm, Valid_From: e.target.value })}
+                        onChange={(e) =>
+                          setCouponSearchForm({
+                            ...CouponSearchForm,
+                            Valid_From: e.target.value,
+                          })
+                        }
                       />
                     </TooltipTrigger>
 
@@ -1012,7 +1083,12 @@ const CouponManagement = () => {
                         id="validUntil"
                         type="date"
                         value={CouponSearchForm.Valid_Until}
-                        onChange={(e) => setCouponSearchForm({ ...CouponSearchForm, Valid_Until: e.target.value })}
+                        onChange={(e) =>
+                          setCouponSearchForm({
+                            ...CouponSearchForm,
+                            Valid_Until: e.target.value,
+                          })
+                        }
                       />
                     </TooltipTrigger>
 
@@ -1032,7 +1108,13 @@ const CouponManagement = () => {
                       <div>
                         <Select
                           value={CouponSearchForm.Applicable_Packages}
-                          onValueChange={(value) => setCouponSearchForm({ ...CouponSearchForm, Applicable_Packages: value, })}>
+                          onValueChange={(value) =>
+                            setCouponSearchForm({
+                              ...CouponSearchForm,
+                              Applicable_Packages: value,
+                            })
+                          }
+                        >
                           <SelectTrigger>
                             <SelectValue placeholder="Select Applicable Packages" />
                           </SelectTrigger>
@@ -1057,7 +1139,6 @@ const CouponManagement = () => {
                   </Tooltip>
                 </TooltipProvider>
               </div>
-
             </div>
 
             <div className="flex justify-end gap-4 mt-6">
@@ -1099,7 +1180,6 @@ const CouponManagement = () => {
               </TooltipProvider>
             </div>
           </CardContent>
-
         </Card>
 
         {/*Coupon Table */}
@@ -1122,69 +1202,86 @@ const CouponManagement = () => {
       </main>
 
       {/* Add/Edit Coupon Dialog */}
-      <Dialog open={isDialogOpen} onOpenChange={(open) => {
-        if (!open) {
-          setSubmittedCoupon(false);
-        }
-        setIsDialogOpen(open)
-      }}>
+      <Dialog
+        open={isDialogOpen}
+        onOpenChange={(open) => {
+          if (!open) {
+            setSubmittedCoupon(false);
+          }
+          setIsDialogOpen(open);
+        }}
+      >
         <DialogContent className="max-w-2xl">
           <DialogHeader>
-            <DialogTitle>{editingCoupon ? 'Edit Coupon' : 'Create New Coupon'}</DialogTitle>
+            <DialogTitle>
+              {editingCoupon ? "Edit Coupon" : "Create New Coupon"}
+            </DialogTitle>
             <DialogDescription>
-              {editingCoupon ? 'Update coupon details' : 'Add a new discount or offer code'}
+              {editingCoupon
+                ? "Update coupon details"
+                : "Add a new discount or offer code"}
             </DialogDescription>
           </DialogHeader>
-              <div className="space-y-4">
-                <div className="space-y-2">
-                  <Label htmlFor="couponId">Coupon ID</Label>
-                  <TooltipProvider>
-                    <Tooltip>
-                      <TooltipTrigger asChild>
-                        <Input
-                          id="couponId"
-                          value={formData.CouponID}
-                          readOnly={!!editingCoupon || numberGeneration === "Auto"}
-                          className={
-                            !!editingCoupon || numberGeneration === "Auto"
-                              ? "bg-gray-100 cursor-not-allowed"
-                              : ""
-                          }
-                          placeholder={
-                            numberGeneration === "Auto"
-                              ? "Auto Generated"
-                              : "Enter Coupon ID"
-                          }
-                          maxLength={20}
-                          onChange={(e) => {
-                            if (!editingCoupon && numberGeneration === "Manual") {
-                              const value = e.target.value.replace(/[^a-zA-Z0-9]/g, "");
-                              setFormData({
-                                ...formData,
-                                CouponID: value,
-                              });
-                            }
-                          }}
-                        />
-                      </TooltipTrigger>
-                        
-                      <TooltipContent>
-                        <p>
-                          {!!editingCoupon
-                            ? "Coupon ID cannot be edited"
-                            : numberGeneration === "Auto"
-                            ? "Coupon ID is Auto Generated"
-                            : "Enter Coupon ID"}
-                        </p>
-                      </TooltipContent>
-                    </Tooltip>
-                  </TooltipProvider>
-                </div>
-              </div>
+          <div className="space-y-4">
+            <div className="space-y-2">
+              <Label htmlFor="couponId">Coupon ID</Label>
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Input
+                      id="couponId"
+                      value={formData.CouponID}
+                      readOnly={!!editingCoupon || numberGeneration === "Auto"}
+                      className={
+                        !!editingCoupon || numberGeneration === "Auto"
+                          ? "bg-gray-100 cursor-not-allowed"
+                          : ""
+                      }
+                      placeholder={
+                        numberGeneration === "Auto"
+                          ? "Auto Generated"
+                          : "Enter Coupon ID"
+                      }
+                      maxLength={20}
+                      onChange={(e) => {
+                        if (!editingCoupon && numberGeneration === "Manual") {
+                          const value = e.target.value.replace(
+                            /[^a-zA-Z0-9]/g,
+                            "",
+                          );
+                          setFormData({
+                            ...formData,
+                            CouponID: value,
+                          });
+                        }
+                      }}
+                    />
+                  </TooltipTrigger>
+
+                  <TooltipContent>
+                    <p>
+                      {!!editingCoupon
+                        ? "Coupon ID cannot be edited"
+                        : numberGeneration === "Auto"
+                          ? "Coupon ID is Auto Generated"
+                          : "Enter Coupon ID"}
+                    </p>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+            </div>
+          </div>
           <div className="grid gap-4 py-4">
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
-                <Label htmlFor="code" className={submittedCoupon && !formData.code ? "text-red-500" : ""}>Coupon Code*</Label>
+                <Label
+                  htmlFor="code"
+                  className={
+                    submittedCoupon && !formData.code ? "text-red-500" : ""
+                  }
+                >
+                  Coupon Code*
+                </Label>
                 <TooltipProvider>
                   <Tooltip>
                     <TooltipTrigger asChild>
@@ -1192,11 +1289,20 @@ const CouponManagement = () => {
                         <Input
                           id="code"
                           value={formData.code}
-                          onChange={(e) => setFormData({ ...formData, code: e.target.value.toUpperCase() })}
+                          onChange={(e) =>
+                            setFormData({
+                              ...formData,
+                              code: e.target.value.toUpperCase(),
+                            })
+                          }
                           placeholder="SAVE20"
                           className="font-mono"
                         />
-                        <Button variant="outline" type="button" onClick={generateCouponCode}>
+                        <Button
+                          variant="outline"
+                          type="button"
+                          onClick={generateCouponCode}
+                        >
                           <RefreshCw className="h-4 w-4" />
                         </Button>
                       </div>
@@ -1210,14 +1316,25 @@ const CouponManagement = () => {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="discountType" className={submittedCoupon && !formData.discountType ? "text-red-500" : ""}>Discount Type*</Label>
+                <Label
+                  htmlFor="discountType"
+                  className={
+                    submittedCoupon && !formData.discountType
+                      ? "text-red-500"
+                      : ""
+                  }
+                >
+                  Discount Type*
+                </Label>
                 <TooltipProvider>
                   <Tooltip>
                     <TooltipTrigger asChild>
                       <div>
                         <Select
                           value={formData.discountType}
-                          onValueChange={(value) => setFormData({ ...formData, discountType: value })}
+                          onValueChange={(value) =>
+                            setFormData({ ...formData, discountType: value })
+                          }
                         >
                           <SelectTrigger>
                             <SelectValue placeholder="Select Discount Type" />
@@ -1252,7 +1369,12 @@ const CouponManagement = () => {
                     <Textarea
                       id="description"
                       value={formData.description}
-                      onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+                      onChange={(e) =>
+                        setFormData({
+                          ...formData,
+                          description: e.target.value,
+                        })
+                      }
                       placeholder="Enter coupon description..."
                     />
                   </TooltipTrigger>
@@ -1266,8 +1388,16 @@ const CouponManagement = () => {
 
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
-                <Label htmlFor="discountValue" className={submittedCoupon && !formData.discountValue ? "text-red-500" : ""}>
-                  Discount Value* {/*({formData.discountType === 'percentage' ? '%' : 'BHD'})*/}
+                <Label
+                  htmlFor="discountValue"
+                  className={
+                    submittedCoupon && !formData.discountValue
+                      ? "text-red-500"
+                      : ""
+                  }
+                >
+                  Discount Value*{" "}
+                  {/*({formData.discountType === 'percentage' ? '%' : 'BHD'})*/}
                 </Label>
                 <TooltipProvider>
                   <Tooltip>
@@ -1276,9 +1406,18 @@ const CouponManagement = () => {
                         id="discountValue"
                         type="number"
                         value={formData.discountValue}
-                        onChange={(e) => setFormData({ ...formData, discountValue: parseFloat(e.target.value) || 0 })}
+                        onChange={(e) =>
+                          setFormData({
+                            ...formData,
+                            discountValue: parseFloat(e.target.value) || 0,
+                          })
+                        }
                         min={0}
-                        max={formData.discountType === 'percentage' ? 100 : undefined}
+                        max={
+                          formData.discountType === "percentage"
+                            ? 100
+                            : undefined
+                        }
                       />
                     </TooltipTrigger>
 
@@ -1297,7 +1436,12 @@ const CouponManagement = () => {
                         id="minimumPurchase"
                         type="number"
                         value={formData.minimumPurchase}
-                        onChange={(e) => setFormData({ ...formData, minimumPurchase: parseFloat(e.target.value) || 0 })}
+                        onChange={(e) =>
+                          setFormData({
+                            ...formData,
+                            minimumPurchase: parseFloat(e.target.value) || 0,
+                          })
+                        }
                         min={0}
                         step={0.001}
                       />
@@ -1313,7 +1457,14 @@ const CouponManagement = () => {
 
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
-                <Label htmlFor="validFrom" className={submittedCoupon && !formData.validFrom ? "text-red-500" : ""}>Valid From*</Label>
+                <Label
+                  htmlFor="validFrom"
+                  className={
+                    submittedCoupon && !formData.validFrom ? "text-red-500" : ""
+                  }
+                >
+                  Valid From*
+                </Label>
                 <TooltipProvider>
                   <Tooltip>
                     <TooltipTrigger asChild>
@@ -1321,7 +1472,12 @@ const CouponManagement = () => {
                         id="validFrom"
                         type="date"
                         value={formData.validFrom}
-                        onChange={(e) => setFormData({ ...formData, validFrom: e.target.value })}
+                        onChange={(e) =>
+                          setFormData({
+                            ...formData,
+                            validFrom: e.target.value,
+                          })
+                        }
                       />
                     </TooltipTrigger>
 
@@ -1332,7 +1488,16 @@ const CouponManagement = () => {
                 </TooltipProvider>
               </div>
               <div className="space-y-2">
-                <Label htmlFor="validUntil" className={submittedCoupon && !formData.validUntil ? "text-red-500" : ""}>Valid Until*</Label>
+                <Label
+                  htmlFor="validUntil"
+                  className={
+                    submittedCoupon && !formData.validUntil
+                      ? "text-red-500"
+                      : ""
+                  }
+                >
+                  Valid Until*
+                </Label>
                 <TooltipProvider>
                   <Tooltip>
                     <TooltipTrigger asChild>
@@ -1340,7 +1505,12 @@ const CouponManagement = () => {
                         id="validUntil"
                         type="date"
                         value={formData.validUntil}
-                        onChange={(e) => setFormData({ ...formData, validUntil: e.target.value })}
+                        onChange={(e) =>
+                          setFormData({
+                            ...formData,
+                            validUntil: e.target.value,
+                          })
+                        }
                       />
                     </TooltipTrigger>
 
@@ -1354,15 +1524,29 @@ const CouponManagement = () => {
 
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
-                <Label htmlFor="maxUses" className={submittedCoupon && !formData.maxUses ? "text-red-500" : ""}>Maximum Uses*</Label>
+                <Label
+                  htmlFor="maxUses"
+                  className={
+                    submittedCoupon && !formData.maxUses ? "text-red-500" : ""
+                  }
+                >
+                  Maximum Uses*
+                </Label>
                 <TooltipProvider>
                   <Tooltip>
                     <TooltipTrigger asChild>
                       <Input
                         id="maxUses"
                         type="number"
-                        value={formData.maxUses || ''}
-                        onChange={(e) => setFormData({ ...formData, maxUses: e.target.value ? parseInt(e.target.value) : null })}
+                        value={formData.maxUses || ""}
+                        onChange={(e) =>
+                          setFormData({
+                            ...formData,
+                            maxUses: e.target.value
+                              ? parseInt(e.target.value)
+                              : null,
+                          })
+                        }
                         min={1}
                       />
                     </TooltipTrigger>
@@ -1375,8 +1559,16 @@ const CouponManagement = () => {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="packages" className={submittedCoupon && formData.applicablePackages.length === 0 ? "text-red-500" : ""}>
-                  Applicable Packages*</Label>
+                <Label
+                  htmlFor="packages"
+                  className={
+                    submittedCoupon && formData.applicablePackages.length === 0
+                      ? "text-red-500"
+                      : ""
+                  }
+                >
+                  Applicable Packages*
+                </Label>
 
                 <TooltipProvider>
                   <Tooltip>
@@ -1407,7 +1599,9 @@ const CouponManagement = () => {
               <Switch
                 id="isActive"
                 checked={formData.isActive}
-                onCheckedChange={(checked) => setFormData({ ...formData, isActive: checked })}
+                onCheckedChange={(checked) =>
+                  setFormData({ ...formData, isActive: checked })
+                }
               />
               <Label htmlFor="isActive">Active</Label>
             </div>
@@ -1416,7 +1610,13 @@ const CouponManagement = () => {
             <TooltipProvider>
               <Tooltip>
                 <TooltipTrigger asChild>
-                  <Button variant="outline" onClick={() => { setIsDialogOpen(false); setSubmittedCoupon(false); }}>
+                  <Button
+                    variant="outline"
+                    onClick={() => {
+                      setIsDialogOpen(false);
+                      setSubmittedCoupon(false);
+                    }}
+                  >
                     Cancel
                   </Button>
                 </TooltipTrigger>
@@ -1431,14 +1631,12 @@ const CouponManagement = () => {
               <Tooltip>
                 <TooltipTrigger asChild>
                   <Button onClick={handleSaveCoupon}>
-                    {editingCoupon ? 'Update Coupon' : 'Create Coupon'}
+                    {editingCoupon ? "Update Coupon" : "Create Coupon"}
                   </Button>
                 </TooltipTrigger>
 
                 <TooltipContent>
-                  <p>
-                    {editingCoupon ? "Update Coupon" : "Create a Coupon"}
-                  </p>
+                  <p>{editingCoupon ? "Update Coupon" : "Create a Coupon"}</p>
                 </TooltipContent>
               </Tooltip>
             </TooltipProvider>

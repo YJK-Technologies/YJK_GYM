@@ -1,15 +1,54 @@
 import React, { useState, useEffect } from "react";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle,} from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger,} from "@/components/ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 import { useNavigate } from "react-router-dom";
-import { ArrowLeft, Plus, Edit, Trash2, GraduationCap, Mail, Search, RotateCcw, Phone, Clock, Award, Users, Eye, EyeOff,} from "lucide-react";
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger, } from "@/components/ui/tooltip";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue,} from "@/components/ui/select";
+import {
+  ArrowLeft,
+  Plus,
+  Edit,
+  Trash2,
+  GraduationCap,
+  Mail,
+  Search,
+  RotateCcw,
+  Phone,
+  Clock,
+  Award,
+  Users,
+  Eye,
+  EyeOff,
+} from "lucide-react";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { BASE_URL } from "../ApiConfig";
 import { useToast } from "@/hooks/use-toast";
 import ImageUpload from "../ImageUpload";
@@ -17,7 +56,7 @@ import { showConfirmToast } from "../../components/ui/show-confirm-toast";
 import { Switch } from "@/components/ui/switch";
 import { useCompany } from "../CompanyContext";
 import { hasActionPermission } from "@/utils/permission";
-
+import Loading from "@/components/Loading";
 interface Trainer {
   id: string;
   name: string;
@@ -36,7 +75,9 @@ interface Trainer {
 const FacultyManagement = () => {
   const navigate = useNavigate();
   const { companyCode, locationCode, userCode } = useCompany();
-  
+  // For loading
+  const [loading, setLoading] = useState(false);
+
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
 
   const { toast } = useToast();
@@ -75,44 +116,43 @@ const FacultyManagement = () => {
     ActiveTrainers: 0,
   });
 
-    const [numberGeneration, setNumberGeneration] = useState("Auto");
-  
-    useEffect(() => {
-      const getSettingData = async () => {
-        try {
-          const response = await fetch(`${BASE_URL}/getSettingScreenData`, {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-              Company_code: companyCode,
-              Location_code: locationCode,
-            }),
-          });
-  
-          if (!response.ok) {
-            throw new Error("Failed to fetch setting data");
-          }
-  
-          const data = await response.json();
-  
-          if (Array.isArray(data) && data.length > 0) {
-            setNumberGeneration(data[0].NumberGeneration || "Auto");
-          } else {
-            setNumberGeneration("Auto");
-          }
-        } catch (err) {
-          console.error("Error fetching settings:", err);
+  const [numberGeneration, setNumberGeneration] = useState("Auto");
+
+  useEffect(() => {
+    const getSettingData = async () => {
+      try {
+        const response = await fetch(`${BASE_URL}/getSettingScreenData`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            Company_code: companyCode,
+            Location_code: locationCode,
+          }),
+        });
+
+        if (!response.ok) {
+          throw new Error("Failed to fetch setting data");
+        }
+
+        const data = await response.json();
+
+        if (Array.isArray(data) && data.length > 0) {
+          setNumberGeneration(data[0].NumberGeneration || "Auto");
+        } else {
           setNumberGeneration("Auto");
         }
-      };
-  
-      if (companyCode && locationCode) {
-        getSettingData();
+      } catch (err) {
+        console.error("Error fetching settings:", err);
+        setNumberGeneration("Auto");
       }
-    }, [companyCode, locationCode]);
-  
+    };
+
+    if (companyCode && locationCode) {
+      getSettingData();
+    }
+  }, [companyCode, locationCode]);
 
   const [TrainerForm, setTrainerForm] = useState({
     company_code: "",
@@ -253,7 +293,7 @@ const FacultyManagement = () => {
   }, []);
 
   useEffect(() => {
-    handleTrainerSearch();
+    // handleTrainerSearch();
     getTrainerCardData();
   }, []);
 
@@ -356,6 +396,7 @@ const FacultyManagement = () => {
       });
       return false;
     }
+    setLoading(true);
 
     try {
       const formData = new FormData();
@@ -413,7 +454,7 @@ const FacultyManagement = () => {
         toast({
           title: "Success",
           description: data.message || "Trainer created successfully.",
-          variant: "success"
+          variant: "success",
         });
 
         setIsTrainerDialogOpen(false);
@@ -436,6 +477,8 @@ const FacultyManagement = () => {
         description: "Something went wrong. Please try again.",
         variant: "destructive",
       });
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -470,6 +513,8 @@ const FacultyManagement = () => {
       });
       return false;
     }
+
+    setLoading(true);
 
     try {
       const formData = new FormData();
@@ -518,7 +563,7 @@ const FacultyManagement = () => {
         toast({
           title: "Success",
           description: data.message || "Trainer updated successfully.",
-          variant: "success"
+          variant: "success",
         });
 
         setEditingTrainer(null);
@@ -542,6 +587,8 @@ const FacultyManagement = () => {
         description: err.message || "Something went wrong.",
         variant: "destructive",
       });
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -550,6 +597,7 @@ const FacultyManagement = () => {
       title: "Delete Trainer",
       description: `Are you sure you want to delete ${trainer.FullName}?`,
       onConfirm: async () => {
+        setLoading(true);
         try {
           const response = await fetch(`${BASE_URL}/GYM_TrainerDelete`, {
             method: "POST",
@@ -571,7 +619,7 @@ const FacultyManagement = () => {
             toast({
               title: "Success",
               description: data.message || "Trainer deleted successfully.",
-              variant: "success"
+              variant: "success",
             });
 
             handleTrainerSearch();
@@ -591,6 +639,8 @@ const FacultyManagement = () => {
             description: err.message,
             variant: "destructive",
           });
+        } finally {
+          setLoading(false);
         }
       },
     });
@@ -605,6 +655,7 @@ const FacultyManagement = () => {
   };
 
   const handleTrainerSearch = async () => {
+    setLoading(true);
     try {
       const response = await fetch(`${BASE_URL}/getTrainerSC`, {
         method: "POST",
@@ -664,6 +715,8 @@ const FacultyManagement = () => {
           "Unable to connect to the server. Please try again later.",
         variant: "destructive",
       });
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -763,6 +816,7 @@ const FacultyManagement = () => {
 
   return (
     <div className="min-h-screen bg-gray-50">
+      {loading && <Loading />}
       <header className="bg-white shadow-sm border-b sticky top-0 z-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center py-4">
@@ -789,13 +843,13 @@ const FacultyManagement = () => {
                   <Tooltip>
                     <TooltipTrigger asChild>
                       {hasActionPermission("AdminFaculty", "add") && (
-                      <Button
-                        onClick={handleAddTrainer}
-                        className="shrink-0 px-2 sm:px-4"
-                      >
-                        <Plus className="h-4 w-4 sm:mr-2" />
-                        <span className="hidden sm:inline">Add Trainer</span>
-                      </Button>
+                        <Button
+                          onClick={handleAddTrainer}
+                          className="shrink-0 px-2 sm:px-4"
+                        >
+                          <Plus className="h-4 w-4 sm:mr-2" />
+                          <span className="hidden sm:inline">Add Trainer</span>
+                        </Button>
                       )}
                     </TooltipTrigger>
 
@@ -816,51 +870,59 @@ const FacultyManagement = () => {
 
                   <div className="space-y-4">
                     <div className="space-y-2">
-                    <Label htmlFor="trainerId">Trainer ID</Label>
-                    <TooltipProvider>
-                      <Tooltip>
-                        <TooltipTrigger asChild>
-                          <Input
-                            id="trainerId"
-                            value={TrainerForm.TrainerID}
-                            readOnly={!!editingTrainer || numberGeneration === "Auto"}
-                            className={
-                              !!editingTrainer || numberGeneration === "Auto"
-                                ? "bg-gray-100 cursor-not-allowed"
-                                : ""
-                            }
-                            placeholder={
-                              numberGeneration === "Auto"
-                                ? "Auto Generated"
-                                : "Enter Trainer ID"
-                            }
-                            maxLength={20}
-                            onChange={(e) => {
-                              if (!editingTrainer && numberGeneration === "Manual") {
-                                const value = e.target.value.replace(/[^a-zA-Z0-9]/g, "");
-                              
-                                setTrainerForm({
-                                  ...TrainerForm,
-                                  TrainerID: value,
-                                });
+                      <Label htmlFor="trainerId">Trainer ID</Label>
+                      <TooltipProvider>
+                        <Tooltip>
+                          <TooltipTrigger asChild>
+                            <Input
+                              id="trainerId"
+                              value={TrainerForm.TrainerID}
+                              readOnly={
+                                !!editingTrainer || numberGeneration === "Auto"
                               }
-                            }}
-                          />
-                        </TooltipTrigger>
-                          
-                        <TooltipContent>
-                          <p>
-                            {!!editingTrainer
-                              ? "Trainer ID cannot be edited"
-                              : numberGeneration === "Auto"
-                              ? "Trainer ID is Auto Generated"
-                              : "Enter Trainer ID"}
-                          </p>
-                        </TooltipContent>
-                      </Tooltip>
-                    </TooltipProvider>
+                              className={
+                                !!editingTrainer || numberGeneration === "Auto"
+                                  ? "bg-gray-100 cursor-not-allowed"
+                                  : ""
+                              }
+                              placeholder={
+                                numberGeneration === "Auto"
+                                  ? "Auto Generated"
+                                  : "Enter Trainer ID"
+                              }
+                              maxLength={20}
+                              onChange={(e) => {
+                                if (
+                                  !editingTrainer &&
+                                  numberGeneration === "Manual"
+                                ) {
+                                  const value = e.target.value.replace(
+                                    /[^a-zA-Z0-9]/g,
+                                    "",
+                                  );
+
+                                  setTrainerForm({
+                                    ...TrainerForm,
+                                    TrainerID: value,
+                                  });
+                                }
+                              }}
+                            />
+                          </TooltipTrigger>
+
+                          <TooltipContent>
+                            <p>
+                              {!!editingTrainer
+                                ? "Trainer ID cannot be edited"
+                                : numberGeneration === "Auto"
+                                  ? "Trainer ID is Auto Generated"
+                                  : "Enter Trainer ID"}
+                            </p>
+                          </TooltipContent>
+                        </Tooltip>
+                      </TooltipProvider>
+                    </div>
                   </div>
-                </div>
 
                   <div className="grid gap-4 py-4">
                     <div className="grid grid-cols-2 gap-4">
@@ -900,8 +962,6 @@ const FacultyManagement = () => {
                       </div>
 
                       <div className="space-y-2">
-                        {/* <Label htmlFor="email">Email*</Label>
-                        <Input id="email" type="email" placeholder="trainer@ruw.edu.bh" /> */}
                         <Label
                           htmlFor="name"
                           className={
@@ -1682,7 +1742,7 @@ const FacultyManagement = () => {
                             Specializations: e.target.value,
                           })
                         }
-                        placeholder="e.g., Weight Loss, Strength Training..."
+                        placeholder="Enter Specializations"
                       />
                     </TooltipTrigger>
 
@@ -1708,7 +1768,7 @@ const FacultyManagement = () => {
                             WorkingSchedule: e.target.value,
                           })
                         }
-                        placeholder="e.g., Sun-Thu: 6AM-2PM"
+                        placeholder="Enter Working Schedule"
                       />
                     </TooltipTrigger>
 
@@ -1819,7 +1879,6 @@ const FacultyManagement = () => {
                   <CardContent className="p-6 h-[480px] flex flex-col justify-between">
                     {/* Scrollable Container with Custom Scrollbar */}
                     <div className="flex-1 overflow-y-auto pr-2 custom-scrollbar space-y-4 min-h-0">
-                                
                       {/* ================= HEADER ================= */}
                       <div className="flex items-start justify-between">
                         <div className="flex items-center">
@@ -1850,7 +1909,7 @@ const FacultyManagement = () => {
                             </Badge>
                           </div>
                         </div>
-                              
+
                         <div className="flex gap-2">
                           {hasActionPermission("AdminFaculty", "edit") && (
                             <Button
@@ -1873,7 +1932,7 @@ const FacultyManagement = () => {
                           )}
                         </div>
                       </div>
-                        
+
                       {/* ================= CONTACT & SCHEDULE ================= */}
                       <div className="space-y-3">
                         <div className="flex items-center text-sm text-gray-600">
@@ -1893,7 +1952,7 @@ const FacultyManagement = () => {
                           {trainer.AssignedMembers} members assigned
                         </div>
                       </div>
-                        
+
                       {/* ================= SPECIALIZATIONS ================= */}
                       <div>
                         <p className="text-sm font-medium text-gray-700 mb-2">
@@ -1919,7 +1978,7 @@ const FacultyManagement = () => {
                               : null}
                         </div>
                       </div>
-                              
+
                       {/* ================= CERTIFICATIONS ================= */}
                       <div>
                         <p className="text-sm font-medium text-gray-700 mb-2">
@@ -1953,7 +2012,7 @@ const FacultyManagement = () => {
                               : null}
                         </div>
                       </div>
-                              
+
                       {/* ================= BIOGRAPHY ================= */}
                       {trainer.Biography && (
                         <div>
@@ -1965,7 +2024,6 @@ const FacultyManagement = () => {
                           </p>
                         </div>
                       )}
-                  
                     </div>
                   </CardContent>
                 </Card>
