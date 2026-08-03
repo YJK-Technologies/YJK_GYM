@@ -31,6 +31,7 @@ import {
 } from "lucide-react";
 import { useCompany } from "../CompanyContext";
 import { BASE_URL } from "../ApiConfig";
+import Loading from "@/components/Loading";
 
 interface WorkoutProgram {
   id: string;
@@ -67,6 +68,8 @@ const WorkoutPrograms = () => {
   const [categoryFilter, setCategoryFilter] = useState("all");
   const [selectedProgram, setSelectedProgram] = useState<string | null>(null);
   const { companyCode, locationCode, userCode } = useCompany();
+  // For loading
+  const [loading, setLoading] = useState(false);
   const memberId = userCode;
 
   // Needed
@@ -116,49 +119,49 @@ const WorkoutPrograms = () => {
   };
 
   useEffect(() => {
-  loadMemberPrograms();
-}, []);
+    loadMemberPrograms();
+  }, []);
 
   const loadMemberPrograms = async (category = "") => {
-  try {
-    const response = await fetch(`${BASE_URL}/memberProgramSearchData`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        Category: category,
-        MemberID: memberId,
-        Company_code: companyCode,
-        Location_code: locationCode,
-      }),
-    });
+    setLoading(true);
+    try {
+      const response = await fetch(`${BASE_URL}/memberProgramSearchData`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          Category: category,
+          MemberID: memberId,
+          Company_code: companyCode,
+          Location_code: locationCode,
+        }),
+      });
 
-    const data = await response.json();
+      const data = await response.json();
 
-    if (response.ok) {
-      const formattedPrograms = data.map((program: any) => ({
-        ...program,
-        Exercises: program.Exercises
-          ? JSON.parse(program.Exercises)
-          : [],
-        Faculty: program.Faculty
-          ? program.Faculty.split(",")
-          : [],
-      }));
+      if (response.ok) {
+        const formattedPrograms = data.map((program: any) => ({
+          ...program,
+          Exercises: program.Exercises ? JSON.parse(program.Exercises) : [],
+          Faculty: program.Faculty ? program.Faculty.split(",") : [],
+        }));
 
-      setPrograms(formattedPrograms);
-    } else {
+        setPrograms(formattedPrograms);
+      } else {
+        setPrograms([]);
+      }
+    } catch (err) {
+      console.error(err);
       setPrograms([]);
+    } finally {
+      setLoading(false);
     }
-  } catch (err) {
-    console.error(err);
-    setPrograms([]);
-  }
-};
+  };
 
   return (
     <div className="min-h-screen bg-gray-50">
+      {loading && <Loading />}
       <header className="bg-white shadow-sm border-b">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center py-4">
@@ -193,14 +196,14 @@ const WorkoutPrograms = () => {
                   className="pl-10"
                 />
               </div>
-                <Select
-                  value={categoryFilter}
-                  onValueChange={(value) => {
-                    setCategoryFilter(value);
-                  
-                    loadMemberPrograms(value === "all" ? "" : value);
-                  }}
-                >
+              <Select
+                value={categoryFilter}
+                onValueChange={(value) => {
+                  setCategoryFilter(value);
+
+                  loadMemberPrograms(value === "all" ? "" : value);
+                }}
+              >
                 <SelectTrigger className="w-full sm:w-48">
                   <SelectValue placeholder="All Categories" />
                 </SelectTrigger>

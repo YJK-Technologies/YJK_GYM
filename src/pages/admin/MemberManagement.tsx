@@ -65,6 +65,7 @@ import {
 import { showConfirmToast } from "../../components/ui/show-confirm-toast";
 import { useCompany } from "../CompanyContext";
 import { hasActionPermission } from "@/utils/permission";
+import Loading from "@/components/Loading";
 
 interface Member {
   MemberID: string;
@@ -102,6 +103,8 @@ interface MemberStats {
 
 const MemberManagement = () => {
   const { companyCode, locationCode, userCode } = useCompany();
+  // For loading
+  const [loading, setLoading] = useState(false);
 
   const emptyMember: Member = {
     MemberID: "",
@@ -326,42 +329,41 @@ const MemberManagement = () => {
 
   const [numberGeneration, setNumberGeneration] = useState("Auto");
 
-    useEffect(() => {
-      const getSettingData = async () => {
-        try {
-          const response = await fetch(`${BASE_URL}/getSettingScreenData`, {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-              Company_code: companyCode,
-              Location_code: locationCode,
-            }),
-          });
-  
-          if (!response.ok) {
-            throw new Error("Failed to fetch setting data");
-          }
-  
-          const data = await response.json();
-  
-          if (Array.isArray(data) && data.length > 0) {
-            setNumberGeneration(data[0].NumberGeneration || "Auto");
-          } else {
-            setNumberGeneration("Auto");
-          }
-        } catch (err) {
-          console.error("Error fetching settings:", err);
+  useEffect(() => {
+    const getSettingData = async () => {
+      try {
+        const response = await fetch(`${BASE_URL}/getSettingScreenData`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            Company_code: companyCode,
+            Location_code: locationCode,
+          }),
+        });
+
+        if (!response.ok) {
+          throw new Error("Failed to fetch setting data");
+        }
+
+        const data = await response.json();
+
+        if (Array.isArray(data) && data.length > 0) {
+          setNumberGeneration(data[0].NumberGeneration || "Auto");
+        } else {
           setNumberGeneration("Auto");
         }
-      };
-  
-      if (companyCode && locationCode) {
-        getSettingData();
+      } catch (err) {
+        console.error("Error fetching settings:", err);
+        setNumberGeneration("Auto");
       }
-    }, [companyCode, locationCode]);
-  
+    };
+
+    if (companyCode && locationCode) {
+      getSettingData();
+    }
+  }, [companyCode, locationCode]);
 
   const [memberSearchForm, setMemberSearchForm] = useState({
     MemberID: "",
@@ -749,6 +751,7 @@ const MemberManagement = () => {
   };
 
   const deleteMember = async (memberID: string) => {
+    setLoading(true);
     try {
       const response = await fetch(`${BASE_URL}/memberDeleteData`, {
         method: "POST",
@@ -788,6 +791,8 @@ const MemberManagement = () => {
         description: err.message || "Something went wrong.",
         variant: "destructive",
       });
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -889,6 +894,7 @@ const MemberManagement = () => {
 
     if (!validatePlanExpiryDate()) return;
 
+    setLoading(true);
     try {
       const form = new FormData();
 
@@ -946,9 +952,9 @@ const MemberManagement = () => {
 
       if (response.ok) {
         setFormData((prev) => ({
-    ...prev,
-    MemberID: data.MemberID,
-  }));
+          ...prev,
+          MemberID: data.MemberID,
+        }));
 
         toast({
           title: "Success",
@@ -979,6 +985,8 @@ const MemberManagement = () => {
         description: "Something went wrong. Please try again.",
         variant: "destructive",
       });
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -1041,6 +1049,7 @@ const MemberManagement = () => {
 
     if (!validatePlanExpiryDate()) return;
 
+    setLoading(true);
     try {
       const form = new FormData();
       Object.entries(formData).forEach(([key, value]) => {
@@ -1126,6 +1135,8 @@ const MemberManagement = () => {
         description: err.message || "Something went wrong.",
         variant: "destructive",
       });
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -1314,6 +1325,7 @@ const MemberManagement = () => {
 
     if (!validatePlanExpiryDate()) return;
 
+    setLoading(true);
     try {
       const response = await fetch(`${BASE_URL}/searchMemberData`, {
         method: "POST",
@@ -1371,6 +1383,8 @@ const MemberManagement = () => {
           "Unable to connect to the server. Please try again later.",
         variant: "destructive",
       });
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -1388,6 +1402,7 @@ const MemberManagement = () => {
 
   return (
     <div className="min-h-screen bg-gray-50">
+      {loading && <Loading />}
       <header className="bg-white shadow-sm border-b sticky top-0 z-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center py-4">
@@ -1988,14 +2003,16 @@ const MemberManagement = () => {
             <div className="space-y-4">
               <div className="space-y-2">
                 <Label htmlFor="memberId">Member ID</Label>
-                              
+
                 <TooltipProvider>
                   <Tooltip>
                     <TooltipTrigger asChild>
                       <Input
                         id="memberId"
                         value={formData.MemberID}
-                        readOnly={!!editingMember || numberGeneration === "Auto"}
+                        readOnly={
+                          !!editingMember || numberGeneration === "Auto"
+                        }
                         className={
                           !!editingMember || numberGeneration === "Auto"
                             ? "bg-gray-100 cursor-not-allowed"
@@ -2009,8 +2026,11 @@ const MemberManagement = () => {
                         maxLength={20}
                         onChange={(e) => {
                           if (!editingMember && numberGeneration === "Manual") {
-                            const value = e.target.value.replace(/[^a-zA-Z0-9]/g, "");
-                          
+                            const value = e.target.value.replace(
+                              /[^a-zA-Z0-9]/g,
+                              "",
+                            );
+
                             setFormData((prev) => ({
                               ...prev,
                               MemberID: value,
@@ -2019,14 +2039,14 @@ const MemberManagement = () => {
                         }}
                       />
                     </TooltipTrigger>
-                      
+
                     <TooltipContent>
                       <p>
                         {!!editingMember
                           ? "Member ID cannot be edited"
                           : numberGeneration === "Auto"
-                          ? "Member ID is Auto Generated"
-                          : "Enter Member ID"}
+                            ? "Member ID is Auto Generated"
+                            : "Enter Member ID"}
                       </p>
                     </TooltipContent>
                   </Tooltip>
@@ -2542,12 +2562,12 @@ const MemberManagement = () => {
 
                   <div className="space-y-2">
                     <Label
-                      // htmlFor="membershipType"
-                      // className={
-                      //   submittedMember && !formData.DietPlanID
-                      //     ? "text-red-500"
-                      //     : ""
-                      // }
+                    // htmlFor="membershipType"
+                    // className={
+                    //   submittedMember && !formData.DietPlanID
+                    //     ? "text-red-500"
+                    //     : ""
+                    // }
                     >
                       Diet Plan
                     </Label>

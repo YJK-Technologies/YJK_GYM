@@ -9,6 +9,7 @@ import { dbService } from '@/services/database';
 import { useToast } from '@/hooks/use-toast';
 import { BASE_URL } from "../ApiConfig";
 import { useCompany } from "../CompanyContext";
+import Loading from "@/components/Loading";
 
 interface Program {
   programid: string;
@@ -23,6 +24,8 @@ const MemberWorkouts = () => {
   const [programs, setPrograms] = useState([]);
   const [loading, setLoading] = useState(true);
   const { companyCode, locationCode, userCode } = useCompany();
+  // For loading
+    const [loadingData, setLoadingData] = useState(false);
 
   // Mock member ID - in a real app, this would come from authentication
   // Mock member ID
@@ -95,8 +98,9 @@ const sampleWorkouts = [
   }, []);
 
   const loadWorkoutData = async () => {
+
   try {
-    setLoading(true);
+    setLoadingData(true);
 
     const response = await fetch(`${BASE_URL}/getMemberProgarmDetails`, {
       method: "POST",
@@ -133,7 +137,7 @@ const sampleWorkouts = [
       variant: "destructive",
     });
   } finally {
-    setLoading(false);
+    setLoadingData(false);
   }
 };
 
@@ -159,19 +163,20 @@ const handleStartWorkout = (programid: string) => {
   });
 };
 
-  if (loading) {
-    return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-blue-600 mx-auto"></div>
-          <p className="mt-4 text-gray-600">Loading workouts...</p>
-        </div>
-      </div>
-    );
-  }
+  // if (loading) {
+  //   return (
+  //     <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+  //       <div className="text-center">
+  //         <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-blue-600 mx-auto"></div>
+  //         <p className="mt-4 text-gray-600">Loading workouts...</p>
+  //       </div>
+  //     </div>
+  //   );
+  // }
 
   return (
     <div className="min-h-screen bg-gray-50">
+      {loadingData && <Loading />}
       <header className="bg-white shadow-sm border-b">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center py-4">
