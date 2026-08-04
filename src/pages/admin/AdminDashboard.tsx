@@ -469,7 +469,7 @@ const AdminDashboard = () => {
             <div className="space-y-4">
               <div className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
                 <div>
-                  <p className="font-medium">New member registration</p>
+                  <p className="font-medium">New Member Registration</p>
                   <p className="text-sm text-gray-600">
                     {newMemberRegistration
                       ? `${newMemberRegistration.MemberID} - ${newMemberRegistration.Full_Name} joined ${newMemberRegistration.MemberShipType_id} - ${newMemberRegistration.MemberShipType_Name}`
@@ -480,7 +480,7 @@ const AdminDashboard = () => {
               </div>
               <div className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
                 <div>
-                  <p className="font-medium">Payment received</p>
+                  <p className="font-medium">Payment Received</p>
                   <p className="text-sm text-gray-600">
                     {paymentReceived
                       ? `${paymentReceived.MemberID} - ${paymentReceived.Full_Name} joined ${paymentReceived.package_ID} - ${paymentReceived.Package_Name}`
@@ -491,7 +491,7 @@ const AdminDashboard = () => {
               </div>
               <div className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
                 <div>
-                  <p className="font-medium">Workout program assigned</p>
+                  <p className="font-medium">Workout Program Assigned</p>
                   <p className="text-sm text-gray-600">
                     {workoutProgramAssigned
                       ? `${workoutProgramAssigned.ProgramID} - ${workoutProgramAssigned.ProgramName} joined ${workoutProgramAssigned.TrainerID} - ${workoutProgramAssigned.FullName}`

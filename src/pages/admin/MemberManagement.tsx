@@ -1964,7 +1964,7 @@ const MemberManagement = () => {
             {/* <CardTitle>Members ({members.length})</CardTitle> */}
             <CardTitle>Members</CardTitle>
             <CardDescription>
-              Manage gym members with CPR as primary identifier
+              Manage gym members and their details
             </CardDescription>
           </CardHeader>
           <CardContent>
