@@ -1418,7 +1418,7 @@ const PaymentManagement = () => {
 
     // Company Name
     const companyName =
-      paymentHistoryData.length > 0 ? paymentHistoryData[0].Company_Name : "";
+      paymentHistoryData.length > 0 ? paymentHistoryData[0].company_name : "";
 
     // -------------------------
     // Collect AG Grid data
@@ -2407,7 +2407,7 @@ const PaymentManagement = () => {
 
                           <div className="text-right">
                             <p className="font-semibold">
-                              {coupon.TotalUses} uses
+                              {coupon.Uses} uses
                             </p>
 
                             <p className="text-sm text-red-600">

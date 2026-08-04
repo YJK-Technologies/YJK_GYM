@@ -138,6 +138,30 @@ const CouponManagement = () => {
     }
   };
 
+  const fetchStatus = async () => {
+      try {
+        const response = await fetch(`${BASE_URL}/status`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            company_code: companyCode,
+          }),
+        });
+  
+        const data = await response.json();
+  
+        if (response.ok) {
+          setStatus(data);
+        } else {
+          console.error("Failed to fetch status");
+        }
+      } catch (error) {
+        console.error("Error fetching status:", error);
+      }
+    };
+
   const packageOptions = AppPackages.map((item: any) => ({
     label: `${item.package_ID} - ${item.package_Name}`,
     value: item.package_ID,
@@ -145,7 +169,7 @@ const CouponManagement = () => {
 
   useEffect(() => {
     const loadData = async () => {
-      await Promise.all([fetchDiscountType(), fetchAppPackages()]);
+      await Promise.all([fetchDiscountType(), fetchAppPackages(), fetchStatus()]);
     };
 
     loadData();
@@ -156,6 +180,8 @@ const CouponManagement = () => {
   const [statusFilter, setStatusFilter] = useState<string>("all");
 
   const [numberGeneration, setNumberGeneration] = useState("Auto");
+
+  const [status, setStatus] = useState<any[]>([]);
 
   useEffect(() => {
     const getSettingData = async () => {
@@ -922,8 +948,9 @@ const CouponManagement = () => {
         <Card className="mb-6">
           <CardContent className="p-4">
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-x-4 gap-y-6">
+
               <div className="space-y-2">
-                <Label htmlFor="code">Coupon Code </Label>
+                <Label htmlFor="code">Coupon ID</Label>
                 <div className="flex space-x-2">
                   <TooltipProvider>
                     <Tooltip>
@@ -937,13 +964,41 @@ const CouponManagement = () => {
                               CouponID: e.target.value.toUpperCase(),
                             })
                           }
+                          placeholder="Coupon ID"
+                          className="font-mono"
+                        />
+                      </TooltipTrigger>
+
+                      <TooltipContent>
+                        <p>Enter Coupon ID</p>
+                      </TooltipContent>
+                    </Tooltip>
+                  </TooltipProvider>
+                </div>
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="code">Coupon Code</Label>
+                <div className="flex space-x-2">
+                  <TooltipProvider>
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <Input
+                          id="code"
+                          value={CouponSearchForm.Coupon_Code}
+                          onChange={(e) =>
+                            setCouponSearchForm({
+                              ...CouponSearchForm,
+                              Coupon_Code: e.target.value.toUpperCase(),
+                            })
+                          }
                           placeholder="Coupon Code"
                           className="font-mono"
                         />
                       </TooltipTrigger>
 
                       <TooltipContent>
-                        <p>Select Coupon Code</p>
+                        <p>Enter Coupon Code</p>
                       </TooltipContent>
                     </Tooltip>
                   </TooltipProvider>
@@ -1010,7 +1065,7 @@ const CouponManagement = () => {
                     </TooltipTrigger>
 
                     <TooltipContent>
-                      <p>Select Description</p>
+                      <p>Enter Description</p>
                     </TooltipContent>
                   </Tooltip>
                 </TooltipProvider>
@@ -1044,7 +1099,7 @@ const CouponManagement = () => {
                     </TooltipTrigger>
 
                     <TooltipContent>
-                      <p>Select Discount Value</p>
+                      <p>Enter Discount Value</p>
                     </TooltipContent>
                   </Tooltip>
                 </TooltipProvider>
@@ -1074,6 +1129,7 @@ const CouponManagement = () => {
                   </Tooltip>
                 </TooltipProvider>
               </div>
+
               <div className="space-y-2">
                 <Label htmlFor="validUntil">Valid Until</Label>
                 <TooltipProvider>
@@ -1135,6 +1191,47 @@ const CouponManagement = () => {
 
                     <TooltipContent>
                       <p>Select Applicable Packages</p>
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
+              </div>
+
+              <div className="space-y-2">
+                <Label>Status</Label>
+
+                <TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <div>
+                        <Select
+                          value={CouponSearchForm.Status}
+                          onValueChange={(value) =>
+                            setCouponSearchForm({
+                              ...CouponSearchForm,
+                              Status: value,
+                            })
+                          }
+                        >
+                          <SelectTrigger>
+                            <SelectValue placeholder="Select Status" />
+                          </SelectTrigger>
+
+                          <SelectContent>
+                            {status.map((item: any) => (
+                              <SelectItem
+                                key={item.attributedetails_name}
+                                value={item.attributedetails_name}
+                              >
+                                {item.attributedetails_name}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      </div>
+                    </TooltipTrigger>
+
+                    <TooltipContent>
+                      <p>Select Status</p>
                     </TooltipContent>
                   </Tooltip>
                 </TooltipProvider>
@@ -1309,7 +1406,7 @@ const CouponManagement = () => {
                     </TooltipTrigger>
 
                     <TooltipContent>
-                      <p>Select Coupon Code</p>
+                      <p>Enter Coupon Code</p>
                     </TooltipContent>
                   </Tooltip>
                 </TooltipProvider>
@@ -1380,7 +1477,7 @@ const CouponManagement = () => {
                   </TooltipTrigger>
 
                   <TooltipContent>
-                    <p>Select Description</p>
+                    <p>Enter Description</p>
                   </TooltipContent>
                 </Tooltip>
               </TooltipProvider>
@@ -1422,7 +1519,7 @@ const CouponManagement = () => {
                     </TooltipTrigger>
 
                     <TooltipContent>
-                      <p>Select Discount Value</p>
+                      <p>Enter Discount Value</p>
                     </TooltipContent>
                   </Tooltip>
                 </TooltipProvider>
@@ -1448,7 +1545,7 @@ const CouponManagement = () => {
                     </TooltipTrigger>
 
                     <TooltipContent>
-                      <p>Select Minimum Purchase</p>
+                      <p>Enter Minimum Purchase</p>
                     </TooltipContent>
                   </Tooltip>
                 </TooltipProvider>
@@ -1552,7 +1649,7 @@ const CouponManagement = () => {
                     </TooltipTrigger>
 
                     <TooltipContent>
-                      <p>Select Maximum Uses (leave empty for unlimited)</p>
+                      <p>Enter Maximum Uses (leave empty for unlimited)</p>
                     </TooltipContent>
                   </Tooltip>
                 </TooltipProvider>
