@@ -624,6 +624,40 @@ const PaymentManagement = () => {
 
   const MembersColumnDefs = [
     {
+      headerName: "Action",
+      field: "action",
+      filter: false,
+      sortable: false,
+      cellRenderer: (params: any) => (
+        <Button
+          size="sm"
+          onClick={() => {
+            const member = {
+              cpr: params.data.MemberID,
+              name: params.data.Full_name,
+              email: params.data.Email,
+              phone: params.data.Mobile,
+              membershipStatus: params.data.Membership_type,
+            };
+
+            setSelectedMember(member);
+
+            // Fetch packages linked to this member
+            fetchMemberPackages(member.cpr);
+
+            // Clear previously selected package
+            setSelectedPackage(null);
+            setAppliedCoupon(null);
+
+            resetMemberSearch();
+            setMemberHelpOpen(false);
+          }}
+        >
+          Select
+        </Button>
+      ),
+    },
+    {
       headerName: "Member ID",
       field: "MemberID",
       sortable: true,
@@ -668,40 +702,6 @@ const PaymentManagement = () => {
         >
           {params.value}
         </Badge>
-      ),
-    },
-    {
-      headerName: "Action",
-      field: "action",
-      filter: false,
-      sortable: false,
-      cellRenderer: (params: any) => (
-        <Button
-          size="sm"
-          onClick={() => {
-            const member = {
-              cpr: params.data.MemberID,
-              name: params.data.Full_name,
-              email: params.data.Email,
-              phone: params.data.Mobile,
-              membershipStatus: params.data.Membership_type,
-            };
-
-            setSelectedMember(member);
-
-            // Fetch packages linked to this member
-            fetchMemberPackages(member.cpr);
-
-            // Clear previously selected package
-            setSelectedPackage(null);
-            setAppliedCoupon(null);
-
-            resetMemberSearch();
-            setMemberHelpOpen(false);
-          }}
-        >
-          Select
-        </Button>
       ),
     },
   ];
@@ -2283,7 +2283,7 @@ const PaymentManagement = () => {
                   </Select>
                 </div>
 
-                <div className="ag-theme-alpine h-[550px] w-full">
+                <div className="ag-theme-alpine h-[550px] w-full mt-4">
                   <AgGridTable
                     rowData={filteredPaymentHistory}
                     columnDefs={paymentHistoryColumns}
@@ -2441,7 +2441,7 @@ const PaymentManagement = () => {
       >
         <DialogContent className="sm:max-w-6xl w-[95vw] h-[90vh] sm:h-[85vh] flex flex-col p-4 sm:p-6 overflow-hidden">
           <DialogHeader className="shrink-0 pb-2">
-            <DialogTitle>Select Member</DialogTitle>
+            <DialogTitle>Member Help</DialogTitle>
             <DialogDescription>
               Search and select a member from the GYM
             </DialogDescription>

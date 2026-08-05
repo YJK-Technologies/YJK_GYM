@@ -41,6 +41,8 @@ const AdminDashboard = () => {
     TotalMembers: 0,
     ActivePrograms: 0,
     MonthlyRevenue: 0,
+    Company_Name: "",
+    Location_Name: "",
   });
 
   // For Recent Activities
@@ -303,6 +305,19 @@ const AdminDashboard = () => {
               Admin Dashboard
             </h1>
 
+            {/* Company & Location + Profile Menu */}
+            <div className="flex items-center space-x-12">
+            
+              {/* Company & Location */}
+              <div className="hidden md:flex flex-col items-center text-center">
+                <span className="text-lg font-bold text-gray-800">
+                  {dashboardData.Company_Name}
+                </span>
+                <span className="text-xs text-gray-500">
+                  {dashboardData.Location_Name}
+                </span>
+              </div>
+
             {/* Dynamic Profile/Menu Dropdown */}
             <div className="relative" ref={menuRef}>
               <button
@@ -390,6 +405,7 @@ const AdminDashboard = () => {
                   </button>
                 </div>
               )}
+            </div>
             </div>
           </div>
         </div>
