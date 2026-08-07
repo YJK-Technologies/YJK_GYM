@@ -566,68 +566,68 @@ const MemberManagement = () => {
     },
     ...(showActionColumn
       ? [
-          {
-            headerName: "Actions",
-            width: 170,
-            minWidth: 170,
-            maxWidth: 170,
-            sortable: false,
-            filter: false,
-            cellStyle: {
-              display: "flex",
-              justifyContent: "center",
-              alignItems: "center",
-            },
-            cellRenderer: (params: any) => (
-              <div className="flex gap-2">
-                {hasActionPermission("AdminMembers", "view") && (
-                  <Tooltip>
-                    <TooltipTrigger asChild>
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        onClick={() => handleViewMember(params.data)}
-                      >
-                        <Eye className="h-4 w-4" />
-                      </Button>
-                    </TooltipTrigger>
-                    <TooltipContent>View</TooltipContent>
-                  </Tooltip>
-                )}
-
-                {hasActionPermission("AdminMembers", "edit") && (
-                  <Tooltip>
-                    <TooltipTrigger asChild>
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        onClick={() => handleEditMember(params.data)}
-                      >
-                        <Pencil className="h-4 w-4" />
-                      </Button>
-                    </TooltipTrigger>
-                    <TooltipContent>Edit</TooltipContent>
-                  </Tooltip>
-                )}
-
-                {hasActionPermission("AdminMembers", "delete") && (
-                  <Tooltip>
-                    <TooltipTrigger asChild>
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        onClick={() => handleDeleteMember(params.data.MemberID)}
-                      >
-                        <Trash2 className="h-4 w-4 text-red-500" />
-                      </Button>
-                    </TooltipTrigger>
-                    <TooltipContent>Delete</TooltipContent>
-                  </Tooltip>
-                )}
-              </div>
-            ),
+        {
+          headerName: "Actions",
+          width: 170,
+          minWidth: 170,
+          maxWidth: 170,
+          sortable: false,
+          filter: false,
+          cellStyle: {
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
           },
-        ]
+          cellRenderer: (params: any) => (
+            <div className="flex gap-2">
+              {hasActionPermission("AdminMembers", "view") && (
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => handleViewMember(params.data)}
+                    >
+                      <Eye className="h-4 w-4" />
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent>View</TooltipContent>
+                </Tooltip>
+              )}
+
+              {hasActionPermission("AdminMembers", "edit") && (
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => handleEditMember(params.data)}
+                    >
+                      <Pencil className="h-4 w-4" />
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent>Edit</TooltipContent>
+                </Tooltip>
+              )}
+
+              {hasActionPermission("AdminMembers", "delete") && (
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => handleDeleteMember(params.data.MemberID)}
+                    >
+                      <Trash2 className="h-4 w-4 text-red-500" />
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent>Delete</TooltipContent>
+                </Tooltip>
+              )}
+            </div>
+          ),
+        },
+      ]
       : []),
   ];
 
@@ -2990,20 +2990,42 @@ const MemberManagement = () => {
             )}
 
             <DialogFooter>
-              <Button
-                variant="outline"
-                onClick={() => setIsViewDialogOpen(false)}
-              >
-                Close
-              </Button>
-              <Button
-                onClick={() => {
-                  setIsViewDialogOpen(false);
-                  if (viewingMember) handleEditMember(viewingMember);
-                }}
-              >
-                Edit Member
-              </Button>
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Button
+                      variant="outline"
+                      onClick={() => setIsViewDialogOpen(false)}
+                    >
+                      Close
+                    </Button>
+                  </TooltipTrigger>
+
+                  <TooltipContent>
+                    <p>Cancel</p>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Button
+                      onClick={() => {
+                        setIsViewDialogOpen(false);
+                        if (viewingMember) handleEditMember(viewingMember);
+                      }}
+                    >
+                      Edit Member
+                    </Button>
+                  </TooltipTrigger>
+
+                  <TooltipContent>
+                    <p> Edit Member</p>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+
             </DialogFooter>
           </DialogContent>
         </Dialog>

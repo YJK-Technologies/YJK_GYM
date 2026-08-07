@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import {
   Card,
   CardContent,
@@ -11,14 +11,6 @@ import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
 import {
   Select,
   SelectContent,
@@ -48,9 +40,7 @@ import {
   CheckCircle,
   XCircle,
   Search,
-  Filter,
   Download,
-  Upload,
   Settings,
   Receipt,
   Tag,
@@ -264,6 +254,7 @@ const PaymentManagement = () => {
 
   // New Payment Form State
   const [members, setMembers] = useState<Member[]>([]);
+  const [memberData, setMemberData] = useState<any[]>([]);
   const [memberSearchResults, setMemberSearchResults] = useState<any[]>([]);
   const resetMemberSearch = () => {
     setMemberSearch({
@@ -306,7 +297,11 @@ const PaymentManagement = () => {
   const [couponCode, setCouponCode] = useState("");
   const [appliedCoupon, setAppliedCoupon] = useState<{
     Coupon_Code: string;
-    discount: number;
+    Discount_Type: string;
+    Discount_Value: number;
+    Discount_Amount: number;
+    Final_Amount: number;
+    Original_Amount: number;
   } | null>(null);
   const [paymentMethod, setPaymentMethod] = useState<
     "Cash" | "Online" | "BenefitPay" | null
@@ -386,6 +381,37 @@ const PaymentManagement = () => {
   useEffect(() => {
     if (companyCode && locationCode) {
       getDashboardKPI();
+    }
+  }, [companyCode, locationCode]);
+
+  const fetchMembersData = async () => {
+    try {
+      const response = await fetch(`${BASE_URL}/getMemberDropDown`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          Company_code: companyCode,
+          Location_code: locationCode,
+        }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        setMemberData(data);
+      } else {
+        console.error("Failed to fetch status");
+      }
+    } catch (error) {
+      console.error("Error fetching status:", error);
+    }
+  };
+
+  useEffect(() => {
+    if (companyCode && locationCode) {
+      fetchMembersData();
     }
   }, [companyCode, locationCode]);
 
@@ -500,9 +526,13 @@ const PaymentManagement = () => {
         throw new Error(data.message || "Failed to fetch Recent Payments");
       }
 
+      const memberLookup = Object.fromEntries(
+        memberData.map((m: any) => [m.MemberID, m.Full_name])
+      );
+
       const paymentData = data.map((item: any) => ({
         id: item.payment_id,
-        memberName: item.MemberID,
+        memberName: `${item.MemberID} - ${memberLookup[item.MemberID] ?? ""}`,
         finalAmount: Number(item.final_amount),
         paymentMethod: item.payment_method,
         status: item.status,
@@ -515,11 +545,15 @@ const PaymentManagement = () => {
   };
 
   useEffect(() => {
-    if (companyCode && locationCode) {
+    if (
+      companyCode &&
+      locationCode &&
+      memberData.length > 0
+    ) {
       getRecentPayments();
     }
-  }, [companyCode, locationCode]);
-
+  }, [companyCode, locationCode, memberData]);
+  
   // Filter payments
   const filteredPaymentHistory = paymentHistoryData.filter((row: any) => {
     const search = searchTerm.toLowerCase();
@@ -538,13 +572,6 @@ const PaymentManagement = () => {
 
     return matchesSearch && matchesStatus && matchesMethod;
   });
-
-  // Filter members for search
-  const filteredMembers = members.filter(
-    (member) =>
-      member.name.toLowerCase().includes(memberSearchTerm.toLowerCase()) ||
-      member.cpr.includes(memberSearchTerm),
-  );
 
   // For search dropdown
   const fetchStatus = async () => {
@@ -863,6 +890,7 @@ const PaymentManagement = () => {
           package_ID: selectedPackage?.package_ID,
           Company_code: companyCode,
           Location_code: locationCode,
+          Amount: packageDetails[0].Amount,
         }),
       });
 
@@ -909,26 +937,17 @@ const PaymentManagement = () => {
           MemberID: selectedMember.cpr,
           MemberShipType_id: packageDetails[0]?.MemberShipType_id,
           package_ID: selectedPackage.package_ID,
-
           original_amount: Number(packageDetails[0]?.Amount),
-          discount_amount: appliedCoupon?.discount || 0,
-          final_amount: calculateTotal(),
-
+          discount_amount: appliedCoupon?.Discount_Amount ?? 0,
+          final_amount: appliedCoupon?.Final_Amount ?? Number(packageDetails[0]?.Amount),
           payment_method: paymentMethod,
-
           Coupon_Code: appliedCoupon?.Coupon_Code || "",
-
           status: "Completed",
-
           payment_date: new Date(),
-
           notes: paymentNotes,
-
           keyfield: "",
-
           company_code: companyCode,
           location_code: locationCode,
-
           created_by: userCode,
         }),
       });
@@ -992,11 +1011,15 @@ const PaymentManagement = () => {
         return;
       }
 
-      const discountAmount = Number(coupon.Discount_Value);
+      const discountAmount = Number(coupon.Discount_Amount);
 
       setAppliedCoupon({
         Coupon_Code: coupon.Coupon_Code,
-        discount: discountAmount,
+        Discount_Type: coupon.Discount_Type,
+        Discount_Value: Number(coupon.Discount_Value),
+        Discount_Amount: Number(coupon.Discount_Amount),
+        Final_Amount: Number(coupon.Final_Amount),
+        Original_Amount: Number(coupon.Original_Amount),
       });
 
       toast({
@@ -1204,101 +1227,7 @@ const PaymentManagement = () => {
         return getStatusBadge(params.value);
       },
     },
-    // {
-    //   headerName: "Posted",
-    //   field: "postedToExternal",
-    //   minWidth: 130,
-    //   cellRenderer: (params: any) =>
-    //     params.value ? "Posted" : "Not Posted",
-    // },
   ];
-
-  const calculateTotal = () => {
-    if (!selectedPackage) return 0;
-
-    if (!packageDetails || packageDetails.length === 0) {
-      return 0;
-    }
-
-    return (
-      Number(packageDetails[0]?.Amount || 0) - (appliedCoupon?.discount || 0)
-    );
-  };
-
-  const handleProcessPayment = () => {
-    if (!selectedMember || !selectedPackage || !paymentMethod) {
-      toast({
-        title: "Missing Information",
-        description: "Please fill in all required fields",
-        variant: "destructive",
-      });
-      return;
-    }
-
-    const newPayment: Payment = {
-      id: `PAY-2024-${String(payments.length + 1).padStart(3, "0")}`,
-      memberCpr: selectedMember.cpr,
-      memberName: selectedMember.name,
-      packageId: selectedPackage.package_ID,
-      packageName: selectedPackage.package_Name,
-
-      originalAmount: Number(packageDetails[0].Amount),
-      discountAmount: appliedCoupon?.discount || 0,
-      finalAmount: calculateTotal(),
-      paymentMethod,
-      couponCode: appliedCoupon?.Coupon_Code || null,
-      status: "Completed",
-      paymentDate: new Date().toISOString().split("T")[0],
-      receiptNumber: `REC-2024-${String(payments.length + 1).padStart(3, "0")}`,
-      notes: paymentNotes,
-      postedToExternal: false,
-    };
-
-    setPayments([newPayment, ...payments]);
-
-    // Reset form
-    setSelectedMember(null);
-    setMemberSearchTerm("");
-    setSelectedPackage(null);
-    setCouponCode("");
-    setAppliedCoupon(null);
-    setPaymentMethod(null);
-    setPaymentNotes("");
-
-    toast({
-      title: "Payment Processed!",
-      description: `Receipt ${newPayment.receiptNumber} generated successfully`,
-    });
-  };
-
-  const handlePostToExternal = (paymentId: string) => {
-    setPayments(
-      payments.map((p) =>
-        p.id === paymentId ? { ...p, postedToExternal: true } : p,
-      ),
-    );
-    toast({
-      title: "Posted to External System",
-      description: `Payment ${paymentId} has been synced`,
-    });
-  };
-
-  const handleBulkPost = () => {
-    const unpostedPayments = payments.filter(
-      (p) => !p.postedToExternal && p.status === "Completed",
-    );
-    setPayments(
-      payments.map((p) =>
-        !p.postedToExternal && p.status === "Completed"
-          ? { ...p, postedToExternal: true }
-          : p,
-      ),
-    );
-    toast({
-      title: "Bulk Post Complete",
-      description: `${unpostedPayments.length} payments synced to external system`,
-    });
-  };
 
   const getPaymentMethodBadge = (method: string) => {
     switch (method) {
@@ -1742,41 +1671,11 @@ const PaymentManagement = () => {
                 <CardTitle>Recent Payments</CardTitle>
               </CardHeader>
               <CardContent>
-                {/* <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead>Payment ID</TableHead>
-                      <TableHead>Member</TableHead>
-                      <TableHead>Amount</TableHead>
-                      <TableHead>Method</TableHead>
-                      <TableHead>Status</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {payments.slice(0, 5).map((payment) => (
-                      <TableRow key={payment.id}>
-                        <TableCell className="font-medium">
-                          {payment.id}
-                        </TableCell>
-                        <TableCell>{payment.memberName}</TableCell>
-                        <TableCell className="font-semibold text-green-600">
-                           {payment.finalAmount.toFixed(3)}
-                        </TableCell>
-                        <TableCell>
-                          {getPaymentMethodBadge(payment.paymentMethod)}
-                        </TableCell>
-                        <TableCell>{getStatusBadge(payment.status)}</TableCell>
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table> */}
 
                 <div className="ag-theme-alpine h-[340px] w-full">
                   <AgGridTable
                     rowData={payments.slice(0, 5)}
                     columnDefs={recentPaymentColumns}
-                    // pagination={true}
-                    //                 paginationPageSize={10}
                     height="340px"
                   />
                 </div>
@@ -2083,14 +1982,17 @@ const PaymentManagement = () => {
                           {appliedCoupon.Coupon_Code}
                         </p>
                         <p className="text-sm text-green-600">
-                          -{/*BHD*/} {appliedCoupon.discount.toFixed(3)}{" "}
+                          -{/*BHD*/} {appliedCoupon.Discount_Amount.toFixed(3)}{"  "}
                           discount
                         </p>
                       </div>
                       <Button
                         variant="ghost"
                         size="sm"
-                        onClick={() => setAppliedCoupon(null)}
+                        onClick={() => {
+                          setAppliedCoupon(null);
+                          setCouponCode("");
+                        }}
                       >
                         Remove
                       </Button>
@@ -2182,7 +2084,7 @@ const PaymentManagement = () => {
                     <div className="flex justify-between">
                       <span className="text-gray-600">Original Price:</span>
                       <span>
-                        {/*BHD*/}{" "}
+                        {/*BHD*/}
                         {packageDetails.length > 0
                           ? Number(packageDetails[0].Amount).toFixed(3)
                           : "0.000"}
@@ -2192,7 +2094,7 @@ const PaymentManagement = () => {
                       <div className="flex justify-between text-red-600">
                         <span>Discount ({appliedCoupon.Coupon_Code}):</span>
                         <span>
-                          -{/*BHD*/} {appliedCoupon.discount.toFixed(3)}
+                          -{/*BHD*/} {appliedCoupon.Discount_Amount.toFixed(3)}
                         </span>
                       </div>
                     )}
@@ -2200,7 +2102,11 @@ const PaymentManagement = () => {
                     <div className="flex justify-between text-xl font-bold text-green-600">
                       <span>Total Payable:</span>
                       <span>
-                        {/*BHD*/} {calculateTotal().toFixed(3)}
+                        {/*BHD*/} {(
+                          appliedCoupon
+                            ? appliedCoupon.Final_Amount
+                            : Number(packageDetails[0]?.Amount || 0)
+                        ).toFixed(3)}
                       </span>
                     </div>
                     <Button
@@ -2311,8 +2217,8 @@ const PaymentManagement = () => {
                     <p className="text-sm text-green-600">
                       {reportCardData
                         ? `${Number(reportCardData.DailyAveragePercentage) >= 0 ? "+" : ""}${Number(
-                            reportCardData.DailyAveragePercentage,
-                          ).toFixed(2)}% vs last week`
+                          reportCardData.DailyAveragePercentage,
+                        ).toFixed(2)}% vs last week`
                         : "0% vs last week"}
                     </p>
                   </div>
@@ -2330,8 +2236,8 @@ const PaymentManagement = () => {
                     <p className="text-sm text-green-600">
                       {reportCardData
                         ? `${Number(reportCardData.WeeklyRevenuePercentage) >= 0 ? "+" : ""}${Number(
-                            reportCardData.WeeklyRevenuePercentage,
-                          ).toFixed(2)}% vs last week`
+                          reportCardData.WeeklyRevenuePercentage,
+                        ).toFixed(2)}% vs last week`
                         : "0% vs last week"}
                     </p>
                   </div>
