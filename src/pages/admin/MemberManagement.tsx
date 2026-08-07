@@ -25,14 +25,12 @@ import {
   DialogDescription,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
   DialogFooter,
 } from "@/components/ui/dialog";
 import { Switch } from "@/components/ui/switch";
 import { useNavigate } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
 import { format } from "date-fns";
-import { cn } from "@/lib/utils";
 import {
   ArrowLeft,
   Search,
@@ -66,6 +64,9 @@ import { showConfirmToast } from "../../components/ui/show-confirm-toast";
 import { useCompany } from "../CompanyContext";
 import { hasActionPermission } from "@/utils/permission";
 import Loading from "@/components/Loading";
+import ReactSingleSelect, {
+  SingleSelectOption,
+} from "@/components/ui/react-single-select";
 
 interface Member {
   MemberID: string;
@@ -137,7 +138,9 @@ const MemberManagement = () => {
   const { toast } = useToast();
   const [gender, setGender] = useState<any[]>([]);
   const [membershipType, setMembershipType] = useState<any[]>([]);
+  const [selectedMembership, setSelectedMembership] = useState<SingleSelectOption | null>(null);
   const [dietPlanType, setDietPlanType] = useState<any[]>([]);
+  const [selectedDietPlan, setSelectedDietPlan] = useState<SingleSelectOption | null>(null);
   const [relationship, setRelationship] = useState<any[]>([]);
   const [status, setStatus] = useState<any[]>([]);
   const [statsData, setStatsData] = useState<MemberStats>({
@@ -199,6 +202,11 @@ const MemberManagement = () => {
     }
   };
 
+  const membershipOptions = membershipType.map((item: any) => ({
+    value: item.MemberShipType_id,
+    label: `${item.MemberShipType_id} - ${item.MemberShipType_Name}`,
+  }));
+
   const fetchDietPlanType = async () => {
     try {
       const response = await fetch(`${BASE_URL}/getDietPlanNameId`, {
@@ -223,6 +231,11 @@ const MemberManagement = () => {
       console.error("Error fetching status:", error);
     }
   };
+
+  const dietPlanOptions = dietPlanType.map((item: any) => ({
+    value: item.DietPlanID,
+    label: `${item.DietPlanID} - ${item.Diet_Name}`,
+  }));
 
   const fetchRelationship = async () => {
     try {
@@ -383,6 +396,8 @@ const MemberManagement = () => {
     expiry_date_from: "",
     expiry_date_to: "",
   });
+  const [selectedSearchMembership, setSelectedSearchMembership] = useState<SingleSelectOption | null>(null);
+  const [selectedSearchDietPlan, setSelectedSearchDietPlan] = useState<SingleSelectOption | null>(null);
 
   const handleMemberFiles = async (files: (File | null)[]) => {
     const convertedImages = await Promise.all(
@@ -728,17 +743,7 @@ const MemberManagement = () => {
       : membershipId;
   };
 
-  const getDietPlanDisplay = (DietPlanID: string) => {
-    const dietPlan = dietPlanType.find(
-      (item: any) => item.MemberShipType_id === DietPlanID,
-    );
-
-    return dietPlan
-      ? `${dietPlan.MemberShipType_id} - ${dietPlan.Diet_Name}`
-      : DietPlanID;
-  };
-
-  const selectedDietPlan = dietPlanType.find(
+  const selectedDietPlans = dietPlanType.find(
     (item: any) => item.DietPlanID === viewingMember?.DietPlanID,
   );
 
@@ -1702,31 +1707,19 @@ const MemberManagement = () => {
                   <Tooltip>
                     <TooltipTrigger asChild>
                       <div>
-                        <Select
-                          value={memberSearchForm.Membership_type}
-                          onValueChange={(value) =>
+                        <ReactSingleSelect
+                          options={membershipOptions}
+                          value={selectedSearchMembership}
+                          onChange={(option) => {
+                            setSelectedSearchMembership(option);
+
                             setMemberSearchForm({
                               ...memberSearchForm,
-                              Membership_type: value,
-                            })
-                          }
-                        >
-                          <SelectTrigger>
-                            <SelectValue placeholder="Select Membership Type" />
-                          </SelectTrigger>
-
-                          <SelectContent>
-                            {membershipType.map((membershipType) => (
-                              <SelectItem
-                                key={membershipType.MemberShipType_id}
-                                value={membershipType.MemberShipType_id}
-                              >
-                                {membershipType.MemberShipType_id} -{" "}
-                                {membershipType.MemberShipType_Name}
-                              </SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
+                              Membership_type: option?.value || "",
+                            });
+                          }}
+                          placeholder="Select Membership Type"
+                        />
                       </div>
                     </TooltipTrigger>
 
@@ -1744,31 +1737,19 @@ const MemberManagement = () => {
                   <Tooltip>
                     <TooltipTrigger asChild>
                       <div>
-                        <Select
-                          value={memberSearchForm.DietPlanID}
-                          onValueChange={(value) =>
+                        <ReactSingleSelect
+                          options={dietPlanOptions}
+                          value={selectedSearchDietPlan}
+                          onChange={(option) => {
+                            setSelectedSearchDietPlan(option);
+
                             setMemberSearchForm({
                               ...memberSearchForm,
-                              DietPlanID: value,
-                            })
-                          }
-                        >
-                          <SelectTrigger>
-                            <SelectValue placeholder="Select Diet Plan" />
-                          </SelectTrigger>
-
-                          <SelectContent>
-                            {dietPlanType.map((dietPlanType: any) => (
-                              <SelectItem
-                                key={dietPlanType.DietPlanID}
-                                value={dietPlanType.DietPlanID}
-                              >
-                                {dietPlanType.DietPlanID} -{" "}
-                                {dietPlanType.Diet_Name}
-                              </SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
+                              DietPlanID: option?.value || "",
+                            });
+                          }}
+                          placeholder="Select Diet Plan"
+                        />
                       </div>
                     </TooltipTrigger>
 
@@ -2526,30 +2507,19 @@ const MemberManagement = () => {
                       <Tooltip>
                         <TooltipTrigger asChild>
                           <div>
-                            <Select
-                              value={formData.Membership_type}
-                              onValueChange={(value) =>
+                            <ReactSingleSelect
+                              options={membershipOptions}
+                              value={selectedMembership}
+                              onChange={(option) => {
+                                setSelectedMembership(option);
+
                                 setFormData({
                                   ...formData,
-                                  Membership_type: value,
-                                })
-                              }
-                            >
-                              <SelectTrigger>
-                                <SelectValue placeholder="Select Membership Type" />
-                              </SelectTrigger>
-                              <SelectContent>
-                                {membershipType.map((membershipType: any) => (
-                                  <SelectItem
-                                    key={membershipType.MemberShipType_id}
-                                    value={membershipType.MemberShipType_id}
-                                  >
-                                    {membershipType.MemberShipType_id} -{" "}
-                                    {membershipType.MemberShipType_Name}
-                                  </SelectItem>
-                                ))}
-                              </SelectContent>
-                            </Select>
+                                  Membership_type: option?.value || "",
+                                });
+                              }}
+                              placeholder="Select Membership Type"
+                            />
                           </div>
                         </TooltipTrigger>
 
@@ -2575,30 +2545,19 @@ const MemberManagement = () => {
                       <Tooltip>
                         <TooltipTrigger asChild>
                           <div>
-                            <Select
-                              value={formData.DietPlanID}
-                              onValueChange={(value) =>
+                            <ReactSingleSelect
+                              options={dietPlanOptions}
+                              value={selectedDietPlan}
+                              onChange={(option) => {
+                                setSelectedDietPlan(option);
+
                                 setFormData({
                                   ...formData,
-                                  DietPlanID: value,
-                                })
-                              }
-                            >
-                              <SelectTrigger>
-                                <SelectValue placeholder="Select Diet Plan" />
-                              </SelectTrigger>
-                              <SelectContent>
-                                {dietPlanType.map((dietPlanType: any) => (
-                                  <SelectItem
-                                    key={dietPlanType.DietPlanID}
-                                    value={dietPlanType.DietPlanID}
-                                  >
-                                    {dietPlanType.DietPlanID} -{" "}
-                                    {dietPlanType.Diet_Name}
-                                  </SelectItem>
-                                ))}
-                              </SelectContent>
-                            </Select>
+                                  DietPlanID: option?.value || "",
+                                });
+                              }}
+                              placeholder="Select Diet Plan"
+                            />
                           </div>
                         </TooltipTrigger>
 
@@ -2976,12 +2935,12 @@ const MemberManagement = () => {
                     <CardContent className="space-y-2">
                       <p>
                         <span className="font-medium">Diet Plan ID:</span>{" "}
-                        {selectedDietPlan?.DietPlanID || "N/A"}
+                        {selectedDietPlans?.DietPlanID || "N/A"}
                       </p>
 
                       <p>
                         <span className="font-medium">Diet Plan Name:</span>{" "}
-                        {selectedDietPlan?.Diet_Name || "N/A"}
+                        {selectedDietPlans?.Diet_Name || "N/A"}
                       </p>
                     </CardContent>
                   </Card>
