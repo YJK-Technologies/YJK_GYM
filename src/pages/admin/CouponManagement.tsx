@@ -139,28 +139,28 @@ const CouponManagement = () => {
   };
 
   const fetchStatus = async () => {
-      try {
-        const response = await fetch(`${BASE_URL}/status`, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            company_code: companyCode,
-          }),
-        });
-  
-        const data = await response.json();
-  
-        if (response.ok) {
-          setStatus(data);
-        } else {
-          console.error("Failed to fetch status");
-        }
-      } catch (error) {
-        console.error("Error fetching status:", error);
+    try {
+      const response = await fetch(`${BASE_URL}/status`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          company_code: companyCode,
+        }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        setStatus(data);
+      } else {
+        console.error("Failed to fetch status");
       }
-    };
+    } catch (error) {
+      console.error("Error fetching status:", error);
+    }
+  };
 
   const packageOptions = AppPackages.map((item: any) => ({
     label: `${item.package_ID} - ${item.package_Name}`,
@@ -344,26 +344,41 @@ const CouponManagement = () => {
       field: "Discount_Value",
       minWidth: 140,
     },
+    // {
+    //   headerName: "Valid From",
+    //   field: "Valid_From",
+    //   minWidth: 140,
+    // },
+    // {
+    //   headerName: "Valid Until",
+    //   field: "Valid_Until",
+    //   minWidth: 140,
+    // },
     {
-      headerName: "Valid From",
-      field: "Valid_From",
-      minWidth: 140,
+      headerName: "Valid Period",
+      minWidth: 260,
+      cellRenderer: (params: any) => {
+        const validFrom = params.data.Valid_From || "-";
+        const validUntil = params.data.Valid_Until || "-";
+
+        return (
+          <span>
+            {validFrom} <strong>to</strong> {validUntil}
+          </span>
+        );
+      },
     },
+    // {
+    //   headerName: "Current Uses",
+    //   field: "CurrentUses",
+    //   hide: true,
+    //   minWidth: 130,
+    // },
     {
-      headerName: "Valid Until",
-      field: "Valid_Until",
-      minWidth: 140,
-    },
-    {
-      headerName: "Current Uses",
-      field: "CurrentUses",
-      hide: true,
+      headerName: "Usage",
       minWidth: 130,
-    },
-    {
-      headerName: "Max Uses",
-      field: "Max_Uses",
-      minWidth: 130,
+      valueGetter: (params: any) =>
+        `${params.data.Current_Uses ?? 0}/${params.data.Max_Uses ?? 0}`,
     },
     {
       headerName: "Applicable Packages",
@@ -467,12 +482,12 @@ const CouponManagement = () => {
       // applicablePackages: coupon.Applicable_Packages ?? "",
       applicablePackages: coupon.Applicable_Packages
         ? coupon.Applicable_Packages.split(",").map((id: string) => {
-            const pkg = AppPackages.find((item: any) => item.package_ID === id);
-            return {
-              value: id,
-              label: pkg ? `${pkg.package_ID} - ${pkg.package_Name}` : id,
-            };
-          })
+          const pkg = AppPackages.find((item: any) => item.package_ID === id);
+          return {
+            value: id,
+            label: pkg ? `${pkg.package_ID} - ${pkg.package_Name}` : id,
+          };
+        })
         : [],
       isActive:
         coupon.Status === "Active" ||
