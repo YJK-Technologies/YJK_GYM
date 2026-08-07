@@ -103,11 +103,18 @@ const ImageUpload = ({ images, onImagesChange, maxImages = 3, label = "Project I
           <div key={index} className="relative">
             {images[index] ? (
               <div className="relative group">
-                <img
+                {/* <img
                   src={images[index]!}
                   alt={`Project image ${index + 1}`}
                   className="w-full h-32 object-cover rounded-lg border"
-                />
+                /> */}
+                <div className="w-full h-32 border rounded-lg bg-muted flex items-center justify-center overflow-hidden">
+                  <img
+                    src={images[index]!}
+                    alt={`Project image ${index + 1}`}
+                    className="max-w-full max-h-full object-contain"
+                  />
+                </div>
                 <Button
                   type="button"
                   variant="destructive"
