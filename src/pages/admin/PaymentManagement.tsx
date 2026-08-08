@@ -77,25 +77,9 @@ import * as XLSX from "xlsx";
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
 import Loading from "@/components/Loading";
-
-// Types
-interface Payment {
-  id: string;
-  memberCpr: string;
-  memberName: string;
-  packageId: string;
-  packageName: string;
-  originalAmount: number;
-  discountAmount: number;
-  finalAmount: number;
-  paymentMethod: "Cash" | "Online" | "BenefitPay";
-  couponCode: string | null;
-  status: "Completed" | "Pending" | "Failed";
-  paymentDate: string;
-  receiptNumber: string;
-  notes: string;
-  postedToExternal: boolean;
-}
+import ReactSingleSelect, {
+  SingleSelectOption,
+} from "@/components/ui/react-single-select";
 
 interface Member {
   cpr: string;
@@ -253,7 +237,6 @@ const PaymentManagement = () => {
   const [methodFilter, setMethodFilter] = useState<string>("all");
 
   // New Payment Form State
-  const [members, setMembers] = useState<Member[]>([]);
   const [memberData, setMemberData] = useState<any[]>([]);
   const [memberSearchResults, setMemberSearchResults] = useState<any[]>([]);
   const resetMemberSearch = () => {
@@ -287,8 +270,6 @@ const PaymentManagement = () => {
 
   const [gender, setGender] = useState<any[]>([]);
   const [statusList, setStatusList] = useState<any[]>([]);
-
-  const [memberSearchTerm, setMemberSearchTerm] = useState("");
 
   const [packages, setPackages] = useState<PackageOption[]>([]);
   const [selectedPackage, setSelectedPackage] = useState<PackageOption | null>(
@@ -408,6 +389,11 @@ const PaymentManagement = () => {
       console.error("Error fetching status:", error);
     }
   };
+
+  const membershipOptions: SingleSelectOption[] = memberData.map((item: any) => ({
+    value: item.MemberID,
+    label: `${item.MemberID} - ${item.Full_name}`,
+  }));
 
   useEffect(() => {
     if (companyCode && locationCode) {
@@ -553,7 +539,7 @@ const PaymentManagement = () => {
       getRecentPayments();
     }
   }, [companyCode, locationCode, memberData]);
-  
+
   // Filter payments
   const filteredPaymentHistory = paymentHistoryData.filter((row: any) => {
     const search = searchTerm.toLowerCase();
@@ -598,6 +584,11 @@ const PaymentManagement = () => {
     }
   };
 
+  const statusOptions: SingleSelectOption[] = statusList.map((item: any) => ({
+    value: item.attributedetails_name,
+    label: item.attributedetails_name,
+  }));
+
   const fetchGender = async () => {
     try {
       const response = await fetch(`${BASE_URL}/gender`, {
@@ -622,32 +613,10 @@ const PaymentManagement = () => {
     }
   };
 
-  const fetchPackages = async () => {
-    try {
-      const response = await fetch(`${BASE_URL}/getMeberShipPackages`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          Company_code: companyCode,
-          Location_code: locationCode,
-        }),
-      });
-
-      const data = await response.json();
-
-      if (response.ok) {
-        setPackages(data);
-
-        console.log(data);
-      } else {
-        console.error("Failed to fetch status");
-      }
-    } catch (error) {
-      console.error("Error fetching status:", error);
-    }
-  };
+  const genderOptions: SingleSelectOption[] = gender.map((item: any) => ({
+    value: item.attributedetails_name,
+    label: item.attributedetails_name,
+  }));
 
   const MembersColumnDefs = [
     {
@@ -850,6 +819,11 @@ const PaymentManagement = () => {
       setPackages([]);
     }
   };
+
+  const packageOptions: SingleSelectOption[] = packages.map((pkg: any) => ({
+    value: pkg.package_ID,
+    label: `${pkg.package_ID} - ${pkg.package_Name}`,
+  }));
 
   const fetchPaymentProgramDetails = async (packageID: string) => {
     try {
@@ -1815,58 +1789,61 @@ const PaymentManagement = () => {
                   <CardDescription>Choose a membership package</CardDescription>
                 </CardHeader>
                 <CardContent className="flex-1 overflow-y-auto space-y-4 px-6 custom-scrollbar">
-                  <Select
-                    open={selectedMember ? undefined : false}
-                    value={selectedPackage?.package_ID || ""}
-                    onValueChange={(value) => {
-                      const pkg = packages.find(
-                        (p: any) => p.package_ID === value,
-                      );
-
-                      setSelectedPackage(pkg || null);
-                      setAppliedCoupon(null);
-
-                      if (pkg) {
-                        fetchPaymentProgramDetails(pkg.package_ID);
-                      }
-                    }}
-                  >
-                    <TooltipProvider>
-                      <Tooltip>
-                        <TooltipTrigger asChild>
-                          <SelectTrigger
-                            onClick={() => {
+                  <TooltipProvider>
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <div
+                          onClick={() => {
+                            if (!selectedMember) {
+                              toast({
+                                title: "Select Member",
+                                description:
+                                  "Please select a member before selecting a package.",
+                                variant: "destructive",
+                              });
+                            }
+                          }}
+                        >
+                          <ReactSingleSelect
+                            options={packageOptions}
+                            value={
+                              packageOptions.find(
+                                (option) =>
+                                  option.value === selectedPackage?.package_ID
+                              ) || null
+                            }
+                            onChange={(selected) => {
                               if (!selectedMember) {
-                                toast({
-                                  title: "Select Member",
-                                  description:
-                                    "Please select a member before selecting a package.",
-                                  variant: "destructive",
-                                });
+                                return;
+                              }
+
+                              const pkg =
+                                packages.find(
+                                  (p: any) => p.package_ID === selected?.value
+                                ) || null;
+
+                              setSelectedPackage(pkg);
+                              setAppliedCoupon(null);
+
+                              if (pkg) {
+                                fetchPaymentProgramDetails(pkg.package_ID);
                               }
                             }}
-                          >
-                            <SelectValue placeholder="Select a Package" />
-                          </SelectTrigger>
-                        </TooltipTrigger>
+                            placeholder="Select a Package"
+                            isDisabled={!selectedMember}
+                          />
+                        </div>
+                      </TooltipTrigger>
 
-                        <TooltipContent>
-                          <p>
-                            {selectedMember
-                              ? "Select a membership package"
-                              : "Please select a member first"}
-                          </p>
-                        </TooltipContent>
-                      </Tooltip>
-                    </TooltipProvider>
-                    <SelectContent>
-                      {packages.map((pkg: any) => (
-                        <SelectItem key={pkg.package_ID} value={pkg.package_ID}>
-                          {pkg.package_ID} - {pkg.package_Name}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
+                      <TooltipContent>
+                        <p>
+                          {selectedMember
+                            ? "Select a membership package"
+                            : "Please select a member first"}
+                        </p>
+                      </TooltipContent>
+                    </Tooltip>
+                  </TooltipProvider>
                   {selectedPackage && packageDetails.length > 0 && (
                     <div className="mt-4 p-4 bg-gray-50 rounded-lg space-y-2">
                       <p className="font-semibold">
@@ -2355,7 +2332,6 @@ const PaymentManagement = () => {
 
           {/* Main Content Area - Added px-1.5 for focus ring breathing room */}
           <div className="flex-1 flex flex-col min-h-0 overflow-y-auto space-y-4 px-1.5">
-            {/* Search Filters Grid - Added p-1 wrapper to prevent outline truncation */}
             <div className="p-1">
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 shrink-0">
                 <div className="space-y-2">
@@ -2396,29 +2372,22 @@ const PaymentManagement = () => {
                   <Label className="text-xs sm:text-sm font-medium">
                     Gender
                   </Label>
-                  <Select
-                    value={memberSearch.Gender}
-                    onValueChange={(value) =>
+                  <ReactSingleSelect
+                    options={genderOptions}
+                    value={
+                      genderOptions.find(
+                        (option) => option.value === memberSearch.Gender
+                      ) || null
+                    }
+                    onChange={(selected) => {
                       setMemberSearch({
                         ...memberSearch,
-                        Gender: value,
-                      })
-                    }
-                  >
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select Gender" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {gender.map((item: any) => (
-                        <SelectItem
-                          key={item.attributedetails_name}
-                          value={item.attributedetails_name}
-                        >
-                          {item.attributedetails_name}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
+                        Gender: selected?.value || "",
+                      });
+                    }}
+                    placeholder="Select Gender"
+                  />
+
                 </div>
 
                 <div className="space-y-2">
@@ -2493,29 +2462,21 @@ const PaymentManagement = () => {
                   <Label className="text-xs sm:text-sm font-medium">
                     Status
                   </Label>
-                  <Select
-                    value={memberSearch.is_active}
-                    onValueChange={(value) =>
+                  <ReactSingleSelect
+                    options={statusOptions}
+                    value={
+                      statusOptions.find(
+                        (option) => option.value === memberSearch.is_active
+                      ) || null
+                    }
+                    onChange={(selected) => {
                       setMemberSearch({
                         ...memberSearch,
-                        is_active: value,
-                      })
-                    }
-                  >
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select Status" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {statusList.map((item: any) => (
-                        <SelectItem
-                          key={item.attributedetails_name}
-                          value={item.attributedetails_name}
-                        >
-                          {item.attributedetails_name}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
+                        is_active: selected?.value || "",
+                      });
+                    }}
+                    placeholder="Select Status"
+                  />
                 </div>
               </div>
             </div>
