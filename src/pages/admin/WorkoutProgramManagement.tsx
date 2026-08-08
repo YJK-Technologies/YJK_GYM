@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import {
   Card,
   CardContent,
@@ -20,7 +20,6 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
 } from "@/components/ui/dialog";
 import {
   Select,
@@ -36,8 +35,6 @@ import {
   Plus,
   Minus,
   Search,
-  Phone,
-  Mail,
   TrendingUp,
   RotateCcw,
   Dumbbell,
@@ -46,11 +43,8 @@ import {
   Clock,
   Edit,
   Trash2,
-  Eye,
   Calendar,
-  DollarSign,
   CheckCircle,
-  XCircle,
   IndianRupee,
   BadgePercent,
 } from "lucide-react";
@@ -68,15 +62,14 @@ import { showConfirmToast } from "../../components/ui/show-confirm-toast";
 import { useCompany } from "../CompanyContext";
 import { hasActionPermission } from "@/utils/permission";
 import Loading from "@/components/Loading";
+import ReactSingleSelect, {
+  SingleSelectOption,
+} from "@/components/ui/react-single-select";
 
 interface Exercise {
   name: string;
   sets: number;
   reps: number;
-}
-
-interface AssociatedProgram {
-  programId: string;
 }
 
 interface WorkoutProgram {
@@ -103,18 +96,14 @@ interface WorkoutPackage {
   durationDays: number;
   price: number;
   programId: string;
-  // associatedPrograms: AssociatedProgram[];
   programName: string;
   features: string[];
   discountPercentage: number;
   isActive: boolean;
-  // facultyId: string;
-  // facultyName: string;
   duration_days: number;
   KeyField: string;
 }
 
-// For MemberShip
 interface WorkoutMemberShip {
   MemberShipType_id: string;
   MemberShipType_Name: string;
@@ -126,14 +115,6 @@ interface WorkoutMemberShip {
   }[];
   Keyfield: string;
 }
-
-// Sample Faculty Data
-const sampleFaculty = [
-  { id: "FAC001", name: "Ahmed Al-Rashid" },
-  { id: "FAC002", name: "Omar Khalil" },
-  { id: "FAC003", name: "Fatima Hassan" },
-  { id: "FAC004", name: "Mohammed Ali" },
-];
 
 interface Stats {
   TotalPrograms: number;
@@ -216,11 +197,10 @@ const WorkoutProgramManagement = () => {
     );
   }
 
-  const [searchTerm, setSearchTerm] = useState("");
   const [packages, setPackages] = useState<WorkoutPackage[]>([]);
   const [category, setCategory] = useState<any[]>([]);
-  const [PackageTypes, setPackageTypes] = useState<any[]>([]); //Package
-  const [ProgramsID, setProgramsID] = useState<any[]>([]); //Package drop
+  const [PackageTypes, setPackageTypes] = useState<any[]>([]);
+  const [ProgramsID, setProgramsID] = useState<any[]>([]);
   const [difficultyLevel, setDifficultyLevel] = useState<any[]>([]);
   const [trainers, setTrainers] = useState<any[]>([]);
   const [status, setStatus] = useState<any[]>([]);
@@ -294,6 +274,11 @@ const WorkoutProgramManagement = () => {
     }
   };
 
+  const packageOptions: SingleSelectOption[] = PackageTypes.map((item: any) => ({
+    value: item.attributedetails_name,
+    label: item.attributedetails_name,
+  }));
+
   const fetchPrograms = async () => {
     try {
       const response = await fetch(`${BASE_URL}/getPrograms`, {
@@ -319,12 +304,10 @@ const WorkoutProgramManagement = () => {
     }
   };
 
-  const programOptions: MultiSelectOption[] = ProgramsID.map(
-    (program: any) => ({
-      value: program.ProgramID,
-      label: `${program.ProgramID} - ${program.ProgramName}`,
-    }),
-  );
+  const programOptions: SingleSelectOption[] = ProgramsID.map((item: any) => ({
+    value: item.ProgramID,
+    label: `${item.ProgramID} - ${item.ProgramName}`,
+  }));
   //End packages useeffect
 
   const fetchCategory = async () => {
@@ -351,6 +334,11 @@ const WorkoutProgramManagement = () => {
     }
   };
 
+  const categoryOptions: SingleSelectOption[] = category.map((item: any) => ({
+    value: item.attributedetails_name,
+    label: item.attributedetails_name,
+  }));
+
   const fetchDifficultyLevel = async () => {
     try {
       const response = await fetch(`${BASE_URL}/getDifficultyLevel`, {
@@ -374,6 +362,11 @@ const WorkoutProgramManagement = () => {
       console.error("Error fetching difficulty levels:", error);
     }
   };
+
+  const difficultyLevelOptions: SingleSelectOption[] = difficultyLevel.map((item: any) => ({
+    value: item.attributedetails_name,
+    label: item.attributedetails_name,
+  }));
 
   const fetchTrainers = async () => {
     try {
@@ -399,6 +392,11 @@ const WorkoutProgramManagement = () => {
       console.error("Error fetching trainers:", error);
     }
   };
+
+  const trainerSearchOptions: SingleSelectOption[] = trainers.map((item: any) => ({
+    value: item.TrainerID,
+    label: `${item.TrainerID} - ${item.FullName}`,
+  }));
 
   const trainerOptions: MultiSelectOption[] = trainers.map((trainer: any) => ({
     value: trainer.TrainerID,
@@ -428,6 +426,11 @@ const WorkoutProgramManagement = () => {
       console.error("Error fetching status:", error);
     }
   };
+
+  const statusOptions: SingleSelectOption[] = status.map((item: any) => ({
+    value: item.attributedetails_name,
+    label: item.attributedetails_name,
+  }));
 
   const fetchWorkoutData = async () => {
     try {
@@ -483,6 +486,11 @@ const WorkoutProgramManagement = () => {
       console.error("Error fetching status:", error);
     }
   };
+
+  const packagesOptions: SingleSelectOption[] = GetPackages.map((item: any) => ({
+    value: item.package_ID,
+    label: `${item.package_ID} - ${item.package_Name}`,
+  }));
 
   useEffect(() => {
     const loadData = async () => {
@@ -633,50 +641,6 @@ const WorkoutProgramManagement = () => {
     },
   ];
 
-  const getDurationDays = (type: string): number => {
-    switch (type) {
-      case "Monthly":
-        return 30;
-      case "Quarterly":
-        return 90;
-      case "Half-Yearly":
-        return 180;
-      default:
-        return 30;
-    }
-  };
-
-  const getPackageTypeBadge = (type: string, discount: number) => {
-    switch (type) {
-      case "Monthly":
-        return <Badge className="bg-purple-500">30 Days</Badge>;
-      case "Quarterly":
-        return (
-          <div className="flex gap-1">
-            <Badge className="bg-green-500">90 Days</Badge>
-            {discount > 0 && (
-              <Badge variant="outline" className="text-green-600">
-                Save {discount}%
-              </Badge>
-            )}
-          </div>
-        );
-      case "Half-Yearly":
-        return (
-          <div className="flex gap-1">
-            <Badge className="bg-purple-500">180 Days</Badge>
-            {discount > 0 && (
-              <Badge variant="outline" className="text-purple-600">
-                Best Value - Save {discount}%
-              </Badge>
-            )}
-          </div>
-        );
-      default:
-        return <Badge>{type}</Badge>;
-    }
-  };
-
   // Program CRUD Functions
   const handleAddProgram = () => {
     setEditingProgram(null);
@@ -713,10 +677,10 @@ const WorkoutProgramManagement = () => {
     const selectedExercises =
       program.Exercises.length > 0
         ? program.Exercises.map((exercise: any) => ({
-            name: exercise.Exercises_Name,
-            sets: exercise.Exercises_Count,
-            reps: exercise.Exercises_Repetitions,
-          }))
+          name: exercise.Exercises_Name,
+          sets: exercise.Exercises_Count,
+          reps: exercise.Exercises_Repetitions,
+        }))
         : [{ name: "", sets: 3, reps: "" }];
 
     setProgramForm({
@@ -1360,13 +1324,13 @@ const WorkoutProgramManagement = () => {
     const associatedPrograms =
       pkg.Programs && pkg.Programs.length > 0
         ? pkg.Programs.map((id: string) => ({
-            programId: id.trim(),
-          }))
+          programId: id.trim(),
+        }))
         : [
-            {
-              programId: "",
-            },
-          ];
+          {
+            programId: "",
+          },
+        ];
 
     setPackageForm({
       id: pkg.package_ID,
@@ -1977,27 +1941,7 @@ const WorkoutProgramManagement = () => {
     setProgramForm({ ...programForm, exercises: newExercises });
   };
 
-  const filteredPackages = packages.filter((p: any) => {
-    const search = searchTerm.toLowerCase();
-
-    return (
-      (p.package_ID ?? "").toLowerCase().includes(search) ||
-      (p.package_Name ?? "").toLowerCase().includes(search) ||
-      (p.package_type ?? "").toLowerCase().includes(search) ||
-      (p.features ?? "").toLowerCase().includes(search) ||
-      (p.Programs ?? []).join(", ").toLowerCase().includes(search)
-    );
-  });
-
-  // const filteredPackages = packages.filter(
-  //   (p) =>
-  //     p.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-  //     p.programName.toLowerCase().includes(searchTerm.toLowerCase())
-  //   //  || p.facultyName.toLowerCase().includes(searchTerm.toLowerCase()),
-  // );
-
   const removeExerciseField = (indexToRemove: number) => {
-    // Prevent deleting if it's the only row left, keeping at least 1 row active
     if (programForm.exercises.length <= 1) {
       setProgramForm({
         ...programForm,
@@ -2598,29 +2542,21 @@ const WorkoutProgramManagement = () => {
           <Tooltip>
             <TooltipTrigger asChild>
               <div>
-                <Select
-                  value={programSearchForm.category}
-                  onValueChange={(value) =>
+                <ReactSingleSelect
+                  options={categoryOptions}
+                  value={
+                    categoryOptions.find(
+                      (option) => option.value === programSearchForm.category
+                    ) || null
+                  }
+                  onChange={(selected) => {
                     setProgramSearchForm({
                       ...programSearchForm,
-                      category: value,
-                    })
-                  }
-                >
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select Category" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {category.map((category: any) => (
-                      <SelectItem
-                        key={category.attributedetails_name}
-                        value={category.attributedetails_name}
-                      >
-                        {category.attributedetails_name}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
+                      category: selected?.value || "",
+                    });
+                  }}
+                  placeholder="Select Category"
+                />
               </div>
             </TooltipTrigger>
 
@@ -2637,29 +2573,21 @@ const WorkoutProgramManagement = () => {
           <Tooltip>
             <TooltipTrigger asChild>
               <div>
-                <Select
-                  value={programSearchForm.difficultyLevel}
-                  onValueChange={(value) =>
+                <ReactSingleSelect
+                  options={difficultyLevelOptions}
+                  value={
+                    difficultyLevelOptions.find(
+                      (option) => option.value === programSearchForm.difficultyLevel
+                    ) || null
+                  }
+                  onChange={(selected) => {
                     setProgramSearchForm({
                       ...programSearchForm,
-                      difficultyLevel: value,
-                    })
-                  }
-                >
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select Difficulty" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {difficultyLevel.map((difficultyLevel: any) => (
-                      <SelectItem
-                        key={difficultyLevel.attributedetails_name}
-                        value={difficultyLevel.attributedetails_name}
-                      >
-                        {difficultyLevel.attributedetails_name}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
+                      difficultyLevel: selected?.value || "",
+                    });
+                  }}
+                  placeholder="Select Difficulty Level"
+                />
               </div>
             </TooltipTrigger>
 
@@ -2721,63 +2649,27 @@ const WorkoutProgramManagement = () => {
         </TooltipProvider>
       </div>
 
-      {/* <div className="space-y-2">
-        <Label htmlFor="faculty">Assigned Faculty</Label>
-        <TooltipProvider>
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <div>
-                <ReactMultiSelect
-                  options={trainerOptions}
-                  value={programSearchForm.assignedFaculty}
-                  placeholder="Select Assigned Faculty"
-                  onChange={(selected) =>
-                    setProgramSearchForm({
-                      ...programSearchForm,
-                      assignedFaculty: selected,
-                    })
-                  }
-                />
-              </div>
-            </TooltipTrigger>
-
-            <TooltipContent>
-              <p>Select Assigned Faculty</p>
-            </TooltipContent>
-          </Tooltip>
-        </TooltipProvider>
-      </div> */}
-
       <div className="space-y-2">
         <Label htmlFor="faculty">Assigned Faculty</Label>
         <TooltipProvider>
           <Tooltip>
             <TooltipTrigger asChild>
               <div>
-                <Select
-                  value={programSearchForm.assignedFaculty}
-                  onValueChange={(value) =>
+                <ReactSingleSelect
+                  options={trainerSearchOptions}
+                  value={
+                    trainerSearchOptions.find(
+                      (option) => option.value === programSearchForm.assignedFaculty
+                    ) || null
+                  }
+                  onChange={(selected) => {
                     setProgramSearchForm({
                       ...programSearchForm,
-                      assignedFaculty: value,
-                    })
-                  }
-                >
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select Assigned Faculty" />
-                  </SelectTrigger>
-
-                  <SelectContent>
-                    {trainers.map((trainers: any) => (
-                      <SelectItem
-                        key={trainers.TrainerID}
-                        value={trainers.TrainerID}
-                      >
-                        {trainers.TrainerID} - {trainers.FullName}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
+                      assignedFaculty: selected?.value || "",
+                    });
+                  }}
+                  placeholder="Select Assigned Faculty"
+                />
               </div>
             </TooltipTrigger>
 
@@ -2795,30 +2687,21 @@ const WorkoutProgramManagement = () => {
           <Tooltip>
             <TooltipTrigger asChild>
               <div>
-                <Select
-                  value={programSearchForm.isActive}
-                  onValueChange={(value) =>
+                <ReactSingleSelect
+                  options={statusOptions}
+                  value={
+                    statusOptions.find(
+                      (option) => option.value === programSearchForm.isActive
+                    ) || null
+                  }
+                  onChange={(selected) => {
                     setProgramSearchForm({
                       ...programSearchForm,
-                      isActive: value,
-                    })
-                  }
-                >
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select Status" />
-                  </SelectTrigger>
-
-                  <SelectContent>
-                    {status.map((item: any) => (
-                      <SelectItem
-                        key={item.attributedetails_name}
-                        value={item.attributedetails_name}
-                      >
-                        {item.attributedetails_name}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
+                      isActive: selected?.value || "",
+                    });
+                  }}
+                  placeholder="Select Status"
+                />
               </div>
             </TooltipTrigger>
 
@@ -3074,30 +2957,21 @@ const WorkoutProgramManagement = () => {
           <Tooltip>
             <TooltipTrigger asChild>
               <div>
-                <Select
-                  value={packageSearchForm.packageType}
-                  onValueChange={(value) =>
+                <ReactSingleSelect
+                  options={packageOptions}
+                  value={
+                    packageOptions.find(
+                      (option) => option.value === packageSearchForm.packageType
+                    ) || null
+                  }
+                  onChange={(selected) => {
                     setPackageSearchForm({
                       ...packageSearchForm,
-                      packageType: value,
-                    })
-                  }
-                >
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select Package Type" />
-                  </SelectTrigger>
-
-                  <SelectContent>
-                    {PackageTypes.map((item: any) => (
-                      <SelectItem
-                        key={item.attributedetails_name}
-                        value={item.attributedetails_name}
-                      >
-                        {item.attributedetails_name}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
+                      packageType: selected?.value || "",
+                    });
+                  }}
+                  placeholder="Select Package Type"
+                />
               </div>
             </TooltipTrigger>
 
@@ -3126,14 +3000,6 @@ const WorkoutProgramManagement = () => {
                     price: parseFloat(e.target.value) || 0,
                   })
                 }
-                // onChange={(e) => {
-                //   const value = e.target.value.replace(/[^\d.]/g, "");
-
-                //   setPackageSearchForm({
-                //     ...packageSearchForm,
-                //     price: value,
-                //   });
-                // }}
               />
             </TooltipTrigger>
 
@@ -3163,19 +3029,6 @@ const WorkoutProgramManagement = () => {
                     discountPercentage: parseInt(e.target.value) || 0,
                   })
                 }
-                // onChange={(e) => {
-                //   const value = e.target.value.replace(/\D/g, "");
-
-                //   if (
-                //     value === "" ||
-                //     (Number(value) >= 0 && Number(value) <= 100)
-                //   ) {
-                //     setPackageSearchForm({
-                //       ...packageSearchForm,
-                //       discountPercentage: value,
-                //     });
-                //   }
-                // }}
               />
             </TooltipTrigger>
 
@@ -3217,48 +3070,6 @@ const WorkoutProgramManagement = () => {
         </TooltipProvider>
       </div>
 
-      {/* Associated Program */}
-      {/* <div className="space-y-2">
-      <Label>Associated Program</Label>
-
-      <TooltipProvider>
-        <Tooltip>
-          <TooltipTrigger asChild>
-            <div>
-              <Select
-                value={packageSearchForm.id}
-                onValueChange={(value) =>
-                  setPackageSearchForm({
-                    ...packageSearchForm,
-                    id: value,
-                  })
-                }
-              >
-                <SelectTrigger>
-                  <SelectValue placeholder="Select Associated Program" />
-                </SelectTrigger>
-
-                <SelectContent>
-                  {ProgramsID.map((item: any) => (
-                    <SelectItem
-                      key={item.ProgramID}
-                      value={item.ProgramID}
-                    >
-                      {item.ProgramID} - {item.ProgramName}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-          </TooltipTrigger>
-
-          <TooltipContent>
-            <p>Select Associated Program</p>
-          </TooltipContent>
-        </Tooltip>
-      </TooltipProvider>
-    </div> */}
-
       {/* Features */}
       <div className="space-y-2">
         <Label>Features</Label>
@@ -3294,30 +3105,21 @@ const WorkoutProgramManagement = () => {
           <Tooltip>
             <TooltipTrigger asChild>
               <div>
-                <Select
-                  value={packageSearchForm.isActive}
-                  onValueChange={(value) =>
+                <ReactSingleSelect
+                  options={statusOptions}
+                  value={
+                    statusOptions.find(
+                      (option) => option.value === packageSearchForm.isActive
+                    ) || null
+                  }
+                  onChange={(selected) => {
                     setPackageSearchForm({
                       ...packageSearchForm,
-                      isActive: value,
-                    })
-                  }
-                >
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select Status" />
-                  </SelectTrigger>
-
-                  <SelectContent>
-                    {status.map((item: any) => (
-                      <SelectItem
-                        key={item.attributedetails_name}
-                        value={item.attributedetails_name}
-                      >
-                        {item.attributedetails_name}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
+                      isActive: selected?.value || "",
+                    });
+                  }}
+                  placeholder="Select Status"
+                />
               </div>
             </TooltipTrigger>
 
@@ -3394,27 +3196,21 @@ const WorkoutProgramManagement = () => {
           <Tooltip>
             <TooltipTrigger asChild>
               <div>
-                <Select
-                  value={MemberShipSearchForm.package_ID}
-                  onValueChange={(value) =>
+                <ReactSingleSelect
+                  options={packagesOptions}
+                  value={
+                    packagesOptions.find(
+                      (option) => option.value === MemberShipSearchForm.package_ID
+                    ) || null
+                  }
+                  onChange={(selected) => {
                     setMemberShipSearchForm({
                       ...MemberShipSearchForm,
-                      package_ID: value,
-                    })
-                  }
-                >
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select Package ID - Name" />
-                  </SelectTrigger>
-
-                  <SelectContent>
-                    {GetPackages.map((item: any) => (
-                      <SelectItem key={item.package_ID} value={item.package_ID}>
-                        {item.package_ID} - {item.package_Name}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
+                      package_ID: selected?.value || "",
+                    });
+                  }}
+                  placeholder="Select Package ID - Name"
+                />
               </div>
             </TooltipTrigger>
 
@@ -3433,30 +3229,21 @@ const WorkoutProgramManagement = () => {
           <Tooltip>
             <TooltipTrigger asChild>
               <div>
-                <Select
-                  value={MemberShipSearchForm.Status}
-                  onValueChange={(value) =>
+                <ReactSingleSelect
+                  options={statusOptions}
+                  value={
+                    statusOptions.find(
+                      (option) => option.value === MemberShipSearchForm.Status
+                    ) || null
+                  }
+                  onChange={(selected) => {
                     setMemberShipSearchForm({
                       ...MemberShipSearchForm,
-                      Status: value,
-                    })
-                  }
-                >
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select Status" />
-                  </SelectTrigger>
-
-                  <SelectContent>
-                    {status.map((item: any) => (
-                      <SelectItem
-                        key={item.attributedetails_name}
-                        value={item.attributedetails_name}
-                      >
-                        {item.attributedetails_name}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
+                      Status: selected?.value || "",
+                    });
+                  }}
+                  placeholder="Select Status"
+                />
               </div>
             </TooltipTrigger>
 
@@ -3764,17 +3551,17 @@ const WorkoutProgramManagement = () => {
                                         "Programs",
                                         "edit",
                                       ) && (
-                                        <Button
-                                          variant="ghost"
-                                          size="icon"
-                                          className="h-8 w-8 text-gray-600 hover:text-violet-600 hover:bg-violet-50"
-                                          onClick={() =>
-                                            handleEditProgram(program)
-                                          }
-                                        >
-                                          <Edit className="h-4 w-4" />
-                                        </Button>
-                                      )}
+                                          <Button
+                                            variant="ghost"
+                                            size="icon"
+                                            className="h-8 w-8 text-gray-600 hover:text-violet-600 hover:bg-violet-50"
+                                            onClick={() =>
+                                              handleEditProgram(program)
+                                            }
+                                          >
+                                            <Edit className="h-4 w-4" />
+                                          </Button>
+                                        )}
                                     </TooltipTrigger>
                                     <TooltipContent>
                                       <p>Edit</p>
@@ -3789,17 +3576,17 @@ const WorkoutProgramManagement = () => {
                                         "Programs",
                                         "delete",
                                       ) && (
-                                        <Button
-                                          variant="ghost"
-                                          size="icon"
-                                          className="h-8 w-8 text-red-500 hover:text-red-700 hover:bg-red-50"
-                                          onClick={() =>
-                                            handleDeleteProgram(program)
-                                          }
-                                        >
-                                          <Trash2 className="h-4 w-4" />
-                                        </Button>
-                                      )}
+                                          <Button
+                                            variant="ghost"
+                                            size="icon"
+                                            className="h-8 w-8 text-red-500 hover:text-red-700 hover:bg-red-50"
+                                            onClick={() =>
+                                              handleDeleteProgram(program)
+                                            }
+                                          >
+                                            <Trash2 className="h-4 w-4" />
+                                          </Button>
+                                        )}
                                     </TooltipTrigger>
                                     <TooltipContent>
                                       <p>Delete</p>
@@ -3826,9 +3613,8 @@ const WorkoutProgramManagement = () => {
                                 className={`font-medium text-xs ${statusBadgeColor}`}
                               >
                                 <span
-                                  className={`w-1.5 h-1.5 rounded-full mr-1.5 ${
-                                    isActive ? "bg-green-500" : "bg-gray-400"
-                                  }`}
+                                  className={`w-1.5 h-1.5 rounded-full mr-1.5 ${isActive ? "bg-green-500" : "bg-gray-400"
+                                    }`}
                                 ></span>
                                 {program.is_active || "Close"}
                               </Badge>
@@ -3910,7 +3696,7 @@ const WorkoutProgramManagement = () => {
                               </p>
                               <div className="flex flex-wrap gap-1.5">
                                 {program.Faculty &&
-                                program.Faculty.length > 0 ? (
+                                  program.Faculty.length > 0 ? (
                                   program.Faculty.map(
                                     (faculty: string, idx: number) => {
                                       const trainer = trainers.find(
@@ -4053,15 +3839,15 @@ const WorkoutProgramManagement = () => {
                                         "Packages",
                                         "edit",
                                       ) && (
-                                        <Button
-                                          variant="ghost"
-                                          size="icon"
-                                          className="h-8 w-8 text-gray-600 hover:text-violet-600 hover:bg-violet-50"
-                                          onClick={() => handleEditPackage(pkg)}
-                                        >
-                                          <Edit className="h-4 w-4" />
-                                        </Button>
-                                      )}
+                                          <Button
+                                            variant="ghost"
+                                            size="icon"
+                                            className="h-8 w-8 text-gray-600 hover:text-violet-600 hover:bg-violet-50"
+                                            onClick={() => handleEditPackage(pkg)}
+                                          >
+                                            <Edit className="h-4 w-4" />
+                                          </Button>
+                                        )}
                                     </TooltipTrigger>
 
                                     <TooltipContent>
@@ -4077,17 +3863,17 @@ const WorkoutProgramManagement = () => {
                                         "Packages",
                                         "delete",
                                       ) && (
-                                        <Button
-                                          variant="ghost"
-                                          size="icon"
-                                          className="h-8 w-8 text-red-500 hover:text-red-700 hover:bg-red-50"
-                                          onClick={() =>
-                                            handleDeletePackage(pkg)
-                                          }
-                                        >
-                                          <Trash2 className="h-4 w-4" />
-                                        </Button>
-                                      )}
+                                          <Button
+                                            variant="ghost"
+                                            size="icon"
+                                            className="h-8 w-8 text-red-500 hover:text-red-700 hover:bg-red-50"
+                                            onClick={() =>
+                                              handleDeletePackage(pkg)
+                                            }
+                                          >
+                                            <Trash2 className="h-4 w-4" />
+                                          </Button>
+                                        )}
                                     </TooltipTrigger>
 
                                     <TooltipContent>
@@ -4115,9 +3901,8 @@ const WorkoutProgramManagement = () => {
                                 className={`font-medium text-xs ${statusBadgeColor}`}
                               >
                                 <span
-                                  className={`w-1.5 h-1.5 rounded-full mr-1.5 ${
-                                    isActive ? "bg-green-500" : "bg-gray-400"
-                                  }`}
+                                  className={`w-1.5 h-1.5 rounded-full mr-1.5 ${isActive ? "bg-green-500" : "bg-gray-400"
+                                    }`}
                                 ></span>
                                 {pkg.is_active || "Close"}
                               </Badge>
@@ -4283,17 +4068,17 @@ const WorkoutProgramManagement = () => {
                                         "Memberships",
                                         "edit",
                                       ) && (
-                                        <Button
-                                          variant="ghost"
-                                          size="icon"
-                                          className="h-8 w-8 text-gray-600 hover:text-violet-600 hover:bg-violet-50"
-                                          onClick={() =>
-                                            handleEditMemberShip(membership)
-                                          }
-                                        >
-                                          <Edit className="h-4 w-4" />
-                                        </Button>
-                                      )}
+                                          <Button
+                                            variant="ghost"
+                                            size="icon"
+                                            className="h-8 w-8 text-gray-600 hover:text-violet-600 hover:bg-violet-50"
+                                            onClick={() =>
+                                              handleEditMemberShip(membership)
+                                            }
+                                          >
+                                            <Edit className="h-4 w-4" />
+                                          </Button>
+                                        )}
                                     </TooltipTrigger>
                                     <TooltipContent>
                                       <p>Edit</p>
@@ -4308,17 +4093,17 @@ const WorkoutProgramManagement = () => {
                                         "Memberships",
                                         "delete",
                                       ) && (
-                                        <Button
-                                          variant="ghost"
-                                          size="icon"
-                                          className="h-8 w-8 text-red-500 hover:text-red-700 hover:bg-red-50"
-                                          onClick={() =>
-                                            handleDeleteMembership(membership)
-                                          }
-                                        >
-                                          <Trash2 className="h-4 w-4" />
-                                        </Button>
-                                      )}
+                                          <Button
+                                            variant="ghost"
+                                            size="icon"
+                                            className="h-8 w-8 text-red-500 hover:text-red-700 hover:bg-red-50"
+                                            onClick={() =>
+                                              handleDeleteMembership(membership)
+                                            }
+                                          >
+                                            <Trash2 className="h-4 w-4" />
+                                          </Button>
+                                        )}
                                     </TooltipTrigger>
                                     <TooltipContent>
                                       <p>Delete</p>
@@ -4338,9 +4123,8 @@ const WorkoutProgramManagement = () => {
                                 className={`font-medium text-xs ${statusBadgeColor}`}
                               >
                                 <span
-                                  className={`w-1.5 h-1.5 rounded-full mr-1.5 ${
-                                    isActive ? "bg-green-500" : "bg-gray-400"
-                                  }`}
+                                  className={`w-1.5 h-1.5 rounded-full mr-1.5 ${isActive ? "bg-green-500" : "bg-gray-400"
+                                    }`}
                                 ></span>
                                 {membership.Status || "Inactive"}
                               </Badge>
@@ -4355,7 +4139,7 @@ const WorkoutProgramManagement = () => {
 
                               <div className="flex flex-wrap gap-2">
                                 {membership.Packages &&
-                                membership.Packages.length > 0 ? (
+                                  membership.Packages.length > 0 ? (
                                   membership.Packages.map(
                                     (pkg: any, index: number) => (
                                       <TooltipProvider
@@ -4534,29 +4318,21 @@ const WorkoutProgramManagement = () => {
                       <Tooltip>
                         <TooltipTrigger asChild>
                           <div>
-                            <Select
-                              value={programForm.category}
-                              onValueChange={(value) =>
+                            <ReactSingleSelect
+                              options={categoryOptions}
+                              value={
+                                categoryOptions.find(
+                                  (option) => option.value === programForm.category
+                                ) || null
+                              }
+                              onChange={(selected) => {
                                 setProgramForm({
                                   ...programForm,
-                                  category: value,
-                                })
-                              }
-                            >
-                              <SelectTrigger>
-                                <SelectValue placeholder="Select category" />
-                              </SelectTrigger>
-                              <SelectContent>
-                                {category.map((category: any) => (
-                                  <SelectItem
-                                    key={category.attributedetails_name}
-                                    value={category.attributedetails_name}
-                                  >
-                                    {category.attributedetails_name}
-                                  </SelectItem>
-                                ))}
-                              </SelectContent>
-                            </Select>
+                                  category: selected?.value || "",
+                                });
+                              }}
+                              placeholder="Select Category"
+                            />
                           </div>
                         </TooltipTrigger>
 
@@ -4583,31 +4359,21 @@ const WorkoutProgramManagement = () => {
                       <Tooltip>
                         <TooltipTrigger asChild>
                           <div>
-                            <Select
-                              value={programForm.difficultyLevel}
-                              onValueChange={(value) =>
+                            <ReactSingleSelect
+                              options={difficultyLevelOptions}
+                              value={
+                                difficultyLevelOptions.find(
+                                  (option) => option.value === programForm.difficultyLevel
+                                ) || null
+                              }
+                              onChange={(selected) => {
                                 setProgramForm({
                                   ...programForm,
-                                  difficultyLevel: value,
-                                })
-                              }
-                            >
-                              <SelectTrigger>
-                                <SelectValue placeholder="Select difficulty" />
-                              </SelectTrigger>
-                              <SelectContent>
-                                {difficultyLevel.map((difficultyLevel: any) => (
-                                  <SelectItem
-                                    key={difficultyLevel.attributedetails_name}
-                                    value={
-                                      difficultyLevel.attributedetails_name
-                                    }
-                                  >
-                                    {difficultyLevel.attributedetails_name}
-                                  </SelectItem>
-                                ))}
-                              </SelectContent>
-                            </Select>
+                                  difficultyLevel: selected?.value || "",
+                                });
+                              }}
+                              placeholder="Select Difficulty Level"
+                            />
                           </div>
                         </TooltipTrigger>
 
@@ -4810,7 +4576,7 @@ const WorkoutProgramManagement = () => {
                     htmlFor="faculty"
                     className={
                       submittedPrograms &&
-                      programForm.assignedFaculty.length === 0
+                        programForm.assignedFaculty.length === 0
                         ? "text-red-500"
                         : ""
                     }
@@ -4847,14 +4613,13 @@ const WorkoutProgramManagement = () => {
               <div className="space-y-4">
                 <div className="flex justify-between items-center">
                   <h4
-                    className={`font-medium text-sm text-gray-700 ${
-                      submittedPrograms &&
+                    className={`font-medium text-sm text-gray-700 ${submittedPrograms &&
                       programForm.exercises.some(
                         (e) => !e.name.trim() || !e.sets || !e.reps,
                       )
-                        ? "text-red-500"
-                        : "text-gray-700"
-                    }`}
+                      ? "text-red-500"
+                      : "text-gray-700"
+                      }`}
                   >
                     Exercises*
                   </h4>
@@ -5315,7 +5080,7 @@ const WorkoutProgramManagement = () => {
                 <Label
                   className={
                     submittedPackage &&
-                    packageForm.associatedPrograms.some((p) => !p.programId)
+                      packageForm.associatedPrograms.some((p) => !p.programId)
                       ? "text-red-500"
                       : ""
                   }
@@ -5330,27 +5095,18 @@ const WorkoutProgramManagement = () => {
                         <Tooltip>
                           <TooltipTrigger asChild>
                             <div>
-                              <Select
-                                value={program.programId}
-                                onValueChange={(value) =>
-                                  updatePrograms(index, value)
+                              <ReactSingleSelect
+                                options={programOptions}
+                                value={
+                                  programOptions.find(
+                                    (option) => option.value === program.programId
+                                  ) || null
                                 }
-                              >
-                                <SelectTrigger>
-                                  <SelectValue placeholder="Select Program" />
-                                </SelectTrigger>
-
-                                <SelectContent>
-                                  {ProgramsID.map((item: any) => (
-                                    <SelectItem
-                                      key={item.ProgramID}
-                                      value={item.ProgramID}
-                                    >
-                                      {item.ProgramID} - {item.ProgramName}
-                                    </SelectItem>
-                                  ))}
-                                </SelectContent>
-                              </Select>
+                                onChange={(selected) =>
+                                  updatePrograms(index, selected?.value || "")
+                                }
+                                placeholder="Select Associated Program"
+                              />
                             </div>
                           </TooltipTrigger>
 
@@ -5596,7 +5352,7 @@ const WorkoutProgramManagement = () => {
                 <Label
                   className={
                     submittedMemberShips &&
-                    MemberShipForm.PackageIDName.some((p) => !p.package_ID)
+                      MemberShipForm.PackageIDName.some((p) => !p.package_ID)
                       ? "text-red-500"
                       : ""
                   }
@@ -5611,27 +5367,18 @@ const WorkoutProgramManagement = () => {
                         <Tooltip>
                           <TooltipTrigger asChild>
                             <div>
-                              <Select
-                                value={program.package_ID}
-                                onValueChange={(value) =>
-                                  updatePackages(index, value)
+                              <ReactSingleSelect
+                                options={packagesOptions}
+                                value={
+                                  packagesOptions.find(
+                                    (option) => option.value === program.package_ID
+                                  ) || null
                                 }
-                              >
-                                <SelectTrigger>
-                                  <SelectValue placeholder="Select Package ID - Name" />
-                                </SelectTrigger>
-
-                                <SelectContent>
-                                  {GetPackages.map((item: any) => (
-                                    <SelectItem
-                                      key={item.package_ID}
-                                      value={item.package_ID}
-                                    >
-                                      {item.package_ID} - {item.package_Name}
-                                    </SelectItem>
-                                  ))}
-                                </SelectContent>
-                              </Select>
+                                onChange={(selected) =>
+                                  updatePackages(index, selected?.value || "")
+                                }
+                                placeholder="Select Package ID - Name"
+                              />
                             </div>
                           </TooltipTrigger>
 

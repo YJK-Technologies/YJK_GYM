@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import {
   Card,
   CardContent,
@@ -24,7 +24,6 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
 } from "@/components/ui/dialog";
 import { Switch } from "@/components/ui/switch";
 import { Textarea } from "@/components/ui/textarea";
@@ -48,11 +47,6 @@ import {
   Tag,
   Percent,
   DollarSign,
-  Calendar,
-  CheckCircle,
-  XCircle,
-  Clock,
-  Copy,
   RefreshCw,
   RotateCcw,
   Search,
@@ -61,6 +55,9 @@ import ReactMultiSelect, {
   MultiSelectOption,
 } from "@/components/ui/react-multi-select";
 import Loading from "@/components/Loading";
+import ReactSingleSelect, {
+  SingleSelectOption,
+} from "@/components/ui/react-single-select";
 
 // Types
 interface Coupon {
@@ -90,6 +87,7 @@ const CouponManagement = () => {
   const { toast } = useToast();
   const [DiscountType, setDiscountType] = useState<any[]>([]);
   const [AppPackages, setAppPackages] = useState<any[]>([]);
+  const [status, setStatus] = useState<any[]>([]);
 
   const fetchDiscountType = async () => {
     try {
@@ -115,6 +113,11 @@ const CouponManagement = () => {
     }
   };
 
+  const discountTypeOptions: SingleSelectOption[] = DiscountType.map((item: any) => ({
+    value: item.attributedetails_name,
+    label: item.attributedetails_name,
+  }));
+
   const fetchAppPackages = async () => {
     try {
       const response = await fetch(`${BASE_URL}/getAppPackages`, {
@@ -137,6 +140,11 @@ const CouponManagement = () => {
       console.error("Error fetching packages:", error);
     }
   };
+
+  const appPackagesOptions: SingleSelectOption[] = AppPackages.map((item: any) => ({
+    value: item.package_ID,
+    label: `${item.package_ID} - ${item.package_Name}`,
+  }));
 
   const fetchStatus = async () => {
     try {
@@ -162,9 +170,19 @@ const CouponManagement = () => {
     }
   };
 
-  const packageOptions = AppPackages.map((item: any) => ({
-    label: `${item.package_ID} - ${item.package_Name}`,
-    value: item.package_ID,
+  const statusOptions: SingleSelectOption[] = status.map((item: any) => ({
+    value: item.attributedetails_name,
+    label: item.attributedetails_name,
+  }));
+
+  // const packageOptions = AppPackages.map((item: any) => ({
+  //   label: `${item.package_ID} - ${item.package_Name}`,
+  //   value: item.package_ID,
+  // }));
+
+  const packageOptions: MultiSelectOption[] = AppPackages.map((trainer: any) => ({
+    value: trainer.package_ID,
+    label: `${trainer.package_ID} - ${trainer.package_Name}`,
   }));
 
   useEffect(() => {
@@ -176,12 +194,7 @@ const CouponManagement = () => {
   }, []);
 
   const [coupons, setCoupons] = useState<Coupon[]>([]);
-  const [searchTerm, setSearchTerm] = useState("");
-  const [statusFilter, setStatusFilter] = useState<string>("all");
-
   const [numberGeneration, setNumberGeneration] = useState("Auto");
-
-  const [status, setStatus] = useState<any[]>([]);
 
   useEffect(() => {
     const getSettingData = async () => {
@@ -241,8 +254,7 @@ const CouponManagement = () => {
     validFrom: "",
     validUntil: "",
     maxUses: null as number | null,
-    // applicablePackages: "",
-    applicablePackages: [] as { label: string; value: string }[],
+    applicablePackages: [] as MultiSelectOption[],
     isActive: true,
     KeyField: "",
   });
@@ -260,15 +272,6 @@ const CouponManagement = () => {
     Valid_From: "",
     Valid_Until: "",
   });
-
-  // Stats
-  // const activeCoupons = coupons.filter(c => c.status === 'Active').length;
-  // const totalDiscountGiven = 1765.5; // Sample calculation
-  // const mostUsedCoupon = coupons.reduce((prev, curr) =>
-  //   prev.currentUses > curr.currentUses ? prev : curr
-  // );
-
-  // Filter coupons
 
   const generateCouponCode = () => {
     const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
@@ -1027,30 +1030,21 @@ const CouponManagement = () => {
                   <Tooltip>
                     <TooltipTrigger asChild>
                       <div>
-                        <Select
-                          value={CouponSearchForm.Discount_Type}
-                          onValueChange={(value) =>
+                        <ReactSingleSelect
+                          options={discountTypeOptions}
+                          value={
+                            discountTypeOptions.find(
+                              (option) => option.value === CouponSearchForm.Discount_Type
+                            ) || null
+                          }
+                          onChange={(selected) => {
                             setCouponSearchForm({
                               ...CouponSearchForm,
-                              Discount_Type: value,
-                            })
-                          }
-                        >
-                          <SelectTrigger>
-                            <SelectValue placeholder="Select Discount Type" />
-                          </SelectTrigger>
-
-                          <SelectContent>
-                            {DiscountType.map((DiscountType: any) => (
-                              <SelectItem
-                                key={DiscountType.attributedetails_name}
-                                value={DiscountType.attributedetails_name}
-                              >
-                                {DiscountType.attributedetails_name}
-                              </SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
+                              Discount_Type: selected?.value || "",
+                            });
+                          }}
+                          placeholder="Select Discount Type"
+                        />
                       </div>
                     </TooltipTrigger>
 
@@ -1088,7 +1082,7 @@ const CouponManagement = () => {
 
               <div className="space-y-2">
                 <Label htmlFor="discountValue">
-                  Discount Value{" "}
+                  Discount Value
                   {/*({CouponSearchForm.Discount_Type === 'Percentage' ? '%' : 'BHD'})*/}
                 </Label>
                 <TooltipProvider>
@@ -1177,30 +1171,21 @@ const CouponManagement = () => {
                   <Tooltip>
                     <TooltipTrigger asChild>
                       <div>
-                        <Select
-                          value={CouponSearchForm.Applicable_Packages}
-                          onValueChange={(value) =>
+                        <ReactSingleSelect
+                          options={appPackagesOptions}
+                          value={
+                            appPackagesOptions.find(
+                              (option) => option.value === CouponSearchForm.Applicable_Packages
+                            ) || null
+                          }
+                          onChange={(selected) => {
                             setCouponSearchForm({
                               ...CouponSearchForm,
-                              Applicable_Packages: value,
-                            })
-                          }
-                        >
-                          <SelectTrigger>
-                            <SelectValue placeholder="Select Applicable Packages" />
-                          </SelectTrigger>
-
-                          <SelectContent>
-                            {AppPackages.map((item: any) => (
-                              <SelectItem
-                                key={item.package_ID}
-                                value={item.package_ID}
-                              >
-                                {item.package_ID} - {item.package_Name}
-                              </SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
+                              Applicable_Packages: selected?.value || "",
+                            });
+                          }}
+                          placeholder="Select Applicable Packages"
+                        />
                       </div>
                     </TooltipTrigger>
 
@@ -1218,30 +1203,21 @@ const CouponManagement = () => {
                   <Tooltip>
                     <TooltipTrigger asChild>
                       <div>
-                        <Select
-                          value={CouponSearchForm.Status}
-                          onValueChange={(value) =>
+                        <ReactSingleSelect
+                          options={statusOptions}
+                          value={
+                            statusOptions.find(
+                              (option) => option.value === CouponSearchForm.Status
+                            ) || null
+                          }
+                          onChange={(selected) => {
                             setCouponSearchForm({
                               ...CouponSearchForm,
-                              Status: value,
-                            })
-                          }
-                        >
-                          <SelectTrigger>
-                            <SelectValue placeholder="Select Status" />
-                          </SelectTrigger>
-
-                          <SelectContent>
-                            {status.map((item: any) => (
-                              <SelectItem
-                                key={item.attributedetails_name}
-                                value={item.attributedetails_name}
-                              >
-                                {item.attributedetails_name}
-                              </SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
+                              Status: selected?.value || "",
+                            });
+                          }}
+                          placeholder="Select Status"
+                        />
                       </div>
                     </TooltipTrigger>
 
@@ -1442,26 +1418,21 @@ const CouponManagement = () => {
                   <Tooltip>
                     <TooltipTrigger asChild>
                       <div>
-                        <Select
-                          value={formData.discountType}
-                          onValueChange={(value) =>
-                            setFormData({ ...formData, discountType: value })
+                        <ReactSingleSelect
+                          options={discountTypeOptions}
+                          value={
+                            discountTypeOptions.find(
+                              (option) => option.value === formData.discountType
+                            ) || null
                           }
-                        >
-                          <SelectTrigger>
-                            <SelectValue placeholder="Select Discount Type" />
-                          </SelectTrigger>
-                          <SelectContent>
-                            {DiscountType.map((DiscountType: any) => (
-                              <SelectItem
-                                key={DiscountType.attributedetails_code}
-                                value={DiscountType.attributedetails_code}
-                              >
-                                {DiscountType.attributedetails_name}
-                              </SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
+                          onChange={(selected) => {
+                            setFormData({
+                              ...formData,
+                              discountType: selected?.value || "",
+                            });
+                          }}
+                          placeholder="Select Discount Type"
+                        />
                       </div>
                     </TooltipTrigger>
 
