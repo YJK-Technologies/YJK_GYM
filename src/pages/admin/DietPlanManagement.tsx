@@ -17,7 +17,6 @@ import {
   DialogDescription,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
   DialogFooter,
 } from "@/components/ui/dialog";
 import { useNavigate } from "react-router-dom";
@@ -30,7 +29,6 @@ import {
   Flame,
   Target,
   Clock,
-  Copy,
   Users,
 } from "lucide-react";
 import {
@@ -47,15 +45,9 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import {
-  GraduationCap,
-  Mail,
   Minus,
   Search,
   RotateCcw,
-  Phone,
-  Award,
-  Eye,
-  EyeOff,
 } from "lucide-react";
 import { BASE_URL } from "../ApiConfig";
 import { useCompany } from "../CompanyContext";
@@ -67,6 +59,9 @@ import { showConfirmToast } from "../../components/ui/show-confirm-toast";
 import { useToast } from "@/hooks/use-toast";
 import { hasActionPermission } from "@/utils/permission";
 import Loading from "@/components/Loading";
+import ReactSingleSelect, {
+  SingleSelectOption,
+} from "@/components/ui/react-single-select";
 
 interface Meal {
   name: string;
@@ -136,10 +131,7 @@ interface WorkoutDietPlan {
 
 const DietPlanManagement = () => {
   const navigate = useNavigate();
-  const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
-  const [selectedPlan, setSelectedPlan] = useState<WorkoutDietPlan | null>(
-    null,
-  );
+  const [selectedPlan, setSelectedPlan] = useState<WorkoutDietPlan | null>(null);
 
   // Const - Needed
   const { companyCode, locationCode, userCode } = useCompany();
@@ -243,8 +235,6 @@ const DietPlanManagement = () => {
   const [EssentialsDrop, setEssentialsDrop] = useState<any[]>([]);
   const [DurationDrop, setDurationDrop] = useState<any[]>([]);
   const [status, setStatus] = useState<any[]>([]);
-
-  // Const - temporary state for trainers list
   const [trainers, setTrainers] = useState<any[]>([]);
 
   // Const - duplicate rows - Meals
@@ -374,6 +364,11 @@ const DietPlanManagement = () => {
     }
   };
 
+  const mealTypeOptions: SingleSelectOption[] = MealTypeDrop.map((item: any) => ({
+    value: item.attributedetails_code,
+    label: item.attributedetails_name,
+  }));
+
   const fetchEssentials = async () => {
     try {
       const response = await fetch(`${BASE_URL}/getEssentials`, {
@@ -398,6 +393,11 @@ const DietPlanManagement = () => {
     }
   };
 
+  const essentialsOptions: SingleSelectOption[] = EssentialsDrop.map((item: any) => ({
+    value: item.attributedetails_code,
+    label: item.attributedetails_name,
+  }));
+
   const fetchDuration = async () => {
     try {
       const response = await fetch(`${BASE_URL}/getDuration`, {
@@ -421,6 +421,11 @@ const DietPlanManagement = () => {
       console.error("Error fetching difficulty levels:", error);
     }
   };
+
+  const durationOptions: SingleSelectOption[] = DurationDrop.map((item: any) => ({
+    value: item.attributedetails_code,
+    label: item.attributedetails_name,
+  }));
 
   const fetchTrainers = async () => {
     try {
@@ -447,6 +452,16 @@ const DietPlanManagement = () => {
     }
   };
 
+  const trainersOptions: SingleSelectOption[] = trainers.map((item: any) => ({
+    value: item.TrainerID,
+    label: `${item.TrainerID} - ${item.FullName}`,
+  }));
+
+  const trainerOptions: MultiSelectOption[] = trainers.map((trainer: any) => ({
+    value: trainer.TrainerID,
+    label: `${trainer.TrainerID} - ${trainer.FullName}`,
+  }));
+
   const fetchStatus = async () => {
     try {
       const response = await fetch(`${BASE_URL}/status`, {
@@ -471,9 +486,9 @@ const DietPlanManagement = () => {
     }
   };
 
-  const trainerOptions: MultiSelectOption[] = trainers.map((trainer: any) => ({
-    value: trainer.TrainerID,
-    label: `${trainer.TrainerID} - ${trainer.FullName}`,
+  const statusOptions: SingleSelectOption[] = status.map((item: any) => ({
+    value: item.attributedetails_name,
+    label: item.attributedetails_name,
   }));
 
   useEffect(() => {
@@ -1052,7 +1067,7 @@ const DietPlanManagement = () => {
         if (!detailInsert.ok || !detailInsertResult.success) {
           throw new Error(
             detailInsertResult.message ||
-              "Failed while inserting diet plan details.",
+            "Failed while inserting diet plan details.",
           );
         }
       }
@@ -1124,7 +1139,7 @@ const DietPlanManagement = () => {
         if (!mealInsert.ok || !mealInsertResult.success) {
           throw new Error(
             mealInsertResult.message ||
-              "Failed while inserting diet plan meals.",
+            "Failed while inserting diet plan meals.",
           );
         }
       }
@@ -1641,30 +1656,21 @@ const DietPlanManagement = () => {
                   <Tooltip>
                     <TooltipTrigger asChild>
                       <div>
-                        <Select
-                          value={DietPlanSearchForm.TrainerID}
-                          onValueChange={(value) =>
+                        <ReactSingleSelect
+                          options={trainersOptions}
+                          value={
+                            trainersOptions.find(
+                              (option) => option.value === DietPlanSearchForm.TrainerID
+                            ) || null
+                          }
+                          onChange={(selected) => {
                             setDietPlanSearchForm({
                               ...DietPlanSearchForm,
-                              TrainerID: value,
-                            })
-                          }
-                        >
-                          <SelectTrigger>
-                            <SelectValue placeholder="Select Trainer ID - Name" />
-                          </SelectTrigger>
-
-                          <SelectContent>
-                            {trainers.map((trainers: any) => (
-                              <SelectItem
-                                key={trainers.TrainerID}
-                                value={trainers.TrainerID}
-                              >
-                                {trainers.TrainerID} - {trainers.FullName}
-                              </SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
+                              TrainerID: selected?.value || "",
+                            });
+                          }}
+                          placeholder="Select Trainer ID - Name"
+                        />
                       </div>
                     </TooltipTrigger>
 
@@ -1682,30 +1688,21 @@ const DietPlanManagement = () => {
                   <Tooltip>
                     <TooltipTrigger asChild>
                       <div>
-                        <Select
-                          value={DietPlanSearchForm.Is_Active}
-                          onValueChange={(value) =>
+                        <ReactSingleSelect
+                          options={statusOptions}
+                          value={
+                            statusOptions.find(
+                              (option) => option.value === DietPlanSearchForm.Is_Active
+                            ) || null
+                          }
+                          onChange={(selected) => {
                             setDietPlanSearchForm({
                               ...DietPlanSearchForm,
-                              Is_Active: value,
-                            })
-                          }
-                        >
-                          <SelectTrigger>
-                            <SelectValue placeholder="Select Status" />
-                          </SelectTrigger>
-
-                          <SelectContent>
-                            {status.map((item: any) => (
-                              <SelectItem
-                                key={item.attributedetails_name}
-                                value={item.attributedetails_name}
-                              >
-                                {item.attributedetails_name}
-                              </SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
+                              Is_Active: selected?.value || "",
+                            });
+                          }}
+                          placeholder="Select Status"
+                        />
                       </div>
                     </TooltipTrigger>
 
@@ -1832,14 +1829,14 @@ const DietPlanManagement = () => {
                                     "AdminDietPlans",
                                     "edit",
                                   ) && (
-                                    <Button
-                                      variant="ghost"
-                                      size="icon"
-                                      onClick={() => handleEditDietPlan(plan)}
-                                    >
-                                      <Edit className="h-4 w-4" />
-                                    </Button>
-                                  )}
+                                      <Button
+                                        variant="ghost"
+                                        size="icon"
+                                        onClick={() => handleEditDietPlan(plan)}
+                                      >
+                                        <Edit className="h-4 w-4" />
+                                      </Button>
+                                    )}
                                 </TooltipTrigger>
                                 <TooltipContent>
                                   <p>Edit</p>
@@ -1854,15 +1851,15 @@ const DietPlanManagement = () => {
                                     "AdminDietPlans",
                                     "edit",
                                   ) && (
-                                    <Button
-                                      variant="ghost"
-                                      size="icon"
-                                      onClick={() => handleDeleteDietPlan(plan)}
-                                      className="text-red-500 hover:text-red-700"
-                                    >
-                                      <Trash2 className="h-4 w-4" />
-                                    </Button>
-                                  )}
+                                      <Button
+                                        variant="ghost"
+                                        size="icon"
+                                        onClick={() => handleDeleteDietPlan(plan)}
+                                        className="text-red-500 hover:text-red-700"
+                                      >
+                                        <Trash2 className="h-4 w-4" />
+                                      </Button>
+                                    )}
                                 </TooltipTrigger>
                                 <TooltipContent>
                                   <p>Delete</p>
@@ -2270,37 +2267,34 @@ const DietPlanManagement = () => {
                         >
                           Essentials*
                         </Label>
-                        <Select
-                          value={PlanDetails.Essentials}
-                          onValueChange={(value) =>
-                            updateDietPlanDetail(index, "Essentials", value)
-                          }
-                        >
-                          <TooltipProvider>
-                            <Tooltip>
-                              <TooltipTrigger asChild>
-                                <SelectTrigger className="w-full">
-                                  <SelectValue placeholder="Select Essentials" />
-                                </SelectTrigger>
-                              </TooltipTrigger>
+                        <TooltipProvider>
+                          <Tooltip>
+                            <TooltipTrigger asChild>
+                              <div>
+                                <ReactSingleSelect
+                                  options={essentialsOptions}
+                                  value={
+                                    essentialsOptions.find(
+                                      (option) => option.value === PlanDetails.Essentials
+                                    ) || null
+                                  }
+                                  onChange={(selected) =>
+                                    updateDietPlanDetail(
+                                      index,
+                                      "Essentials",
+                                      selected?.value || ""
+                                    )
+                                  }
+                                  placeholder="Select Essentials"
+                                />
+                              </div>
+                            </TooltipTrigger>
 
-                              <TooltipContent>
-                                <p>Select Essentials</p>
-                              </TooltipContent>
-                            </Tooltip>
-                          </TooltipProvider>
-
-                          <SelectContent>
-                            {EssentialsDrop.map((status: any) => (
-                              <SelectItem
-                                key={status.attributedetails_code}
-                                value={status.attributedetails_code}
-                              >
-                                {status.attributedetails_name}
-                              </SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
+                            <TooltipContent>
+                              <p>Select Essentials</p>
+                            </TooltipContent>
+                          </Tooltip>
+                        </TooltipProvider>
                       </div>
 
                       {/* Daily Calories Target Input */}
@@ -2308,7 +2302,7 @@ const DietPlanManagement = () => {
                         <Label
                           className={
                             submittedDietPlans &&
-                            !PlanDetails.Daily_Calories_Target
+                              !PlanDetails.Daily_Calories_Target
                               ? "text-red-500"
                               : ""
                           }
@@ -2358,38 +2352,36 @@ const DietPlanManagement = () => {
                         >
                           Duration (Week)*
                         </Label>
-                        <Select
-                          value={PlanDetails.Duration}
-                          onValueChange={(value) =>
-                            updateDietPlanDetail(index, "Duration", value)
-                          }
-                        >
-                          <TooltipProvider>
-                            <Tooltip>
-                              <TooltipTrigger asChild>
-                                <SelectTrigger className="w-full">
-                                  <SelectValue placeholder="Select Duration" />
-                                </SelectTrigger>
-                              </TooltipTrigger>
+                        <TooltipProvider>
+                          <Tooltip>
+                            <TooltipTrigger asChild>
+                              <div>
+                                <ReactSingleSelect
+                                  options={durationOptions}
+                                  value={
+                                    durationOptions.find(
+                                      (option) => option.value === PlanDetails.Duration
+                                    ) || null
+                                  }
+                                  onChange={(selected) =>
+                                    updateDietPlanDetail(
+                                      index,
+                                      "Duration",
+                                      selected?.value || ""
+                                    )
+                                  }
+                                  placeholder="Select Duration"
+                                />
+                              </div>
+                            </TooltipTrigger>
 
-                              <TooltipContent>
-                                <p>Select Duration</p>
-                              </TooltipContent>
-                            </Tooltip>
-                          </TooltipProvider>
-
-                          <SelectContent>
-                            {DurationDrop.map((status: any) => (
-                              <SelectItem
-                                key={status.attributedetails_code}
-                                value={status.attributedetails_code}
-                              >
-                                {status.attributedetails_name}
-                              </SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
+                            <TooltipContent>
+                              <p>Select Duration</p>
+                            </TooltipContent>
+                          </Tooltip>
+                        </TooltipProvider>
                       </div>
+
                     </div>
 
                     {/* Action Buttons */}
@@ -2443,37 +2435,35 @@ const DietPlanManagement = () => {
                       >
                         Meal Type*
                       </Label>
-                      <Select
-                        value={meal.Meal_Type}
-                        onValueChange={(value) =>
-                          updateMealRow(index, "Meal_Type", value)
-                        }
-                      >
-                        <TooltipProvider>
-                          <Tooltip>
-                            <TooltipTrigger asChild>
-                              <SelectTrigger className="w-full">
-                                <SelectValue placeholder="e.g. Breakfast" />
-                              </SelectTrigger>
-                            </TooltipTrigger>
 
-                            <TooltipContent>
-                              <p>Select Meal Type</p>
-                            </TooltipContent>
-                          </Tooltip>
-                        </TooltipProvider>
+                      <TooltipProvider>
+                        <Tooltip>
+                          <TooltipTrigger asChild>
+                            <div>
+                              <ReactSingleSelect
+                                options={mealTypeOptions}
+                                value={
+                                  mealTypeOptions.find(
+                                    (option) => option.value === meal.Meal_Type
+                                  ) || null
+                                }
+                                onChange={(selected) =>
+                                  updateMealRow(
+                                    index,
+                                    "Meal_Type",
+                                    selected?.value || ""
+                                  )
+                                }
+                                placeholder="e.g. Breakfast"
+                              />
+                            </div>
+                          </TooltipTrigger>
 
-                        <SelectContent>
-                          {MealTypeDrop.map((status: any) => (
-                            <SelectItem
-                              key={status.attributedetails_code}
-                              value={status.attributedetails_code}
-                            >
-                              {status.attributedetails_name}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
+                          <TooltipContent>
+                            <p>Select Meal Type</p>
+                          </TooltipContent>
+                        </Tooltip>
+                      </TooltipProvider>
                     </div>
 
                     {/* Meal Name */}

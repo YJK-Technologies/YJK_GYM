@@ -73,6 +73,9 @@ import { showConfirmToast } from "../../components/ui/show-confirm-toast";
 import { BASE_URL } from "../ApiConfig";
 import { useCompany } from "../CompanyContext";
 import Loading from "@/components/Loading";
+import ReactSingleSelect, {
+  SingleSelectOption,
+} from "@/components/ui/react-single-select";
 
 // Types
 interface EmailSettings {
@@ -255,6 +258,12 @@ const NotificationManagement = () => {
     }
   }, [companyCode, locationCode]);
 
+  const [smtpPorts, setSmtpPorts] = useState<any[]>([]);
+  const [sslTypes, setSslTypes] = useState<any[]>([]);
+  const [smsProviders, setSmsProviders] = useState<any[]>([]);
+  const [countryCodes, setCountryCodes] = useState<any[]>([]);
+  const [whatsappProviders, setWhatsappProviders] = useState<any[]>([]);
+
   const fetchSMTPPorts = async () => {
     try {
       const response = await fetch(`${BASE_URL}/getSMTPPorts`, {
@@ -276,6 +285,11 @@ const NotificationManagement = () => {
       console.log(err);
     }
   };
+
+  const smtpPortsOptions: SingleSelectOption[] = smtpPorts.map((item: any) => ({
+    value: item.attributedetails_name,
+    label: item.attributedetails_name,
+  }));
 
   const fetchSSLTypes = async () => {
     try {
@@ -299,6 +313,11 @@ const NotificationManagement = () => {
     }
   };
 
+  const sslTypesOptions: SingleSelectOption[] = sslTypes.map((item: any) => ({
+    value: item.attributedetails_name,
+    label: item.attributedetails_name,
+  }));
+
   const fetchSMSProviders = async () => {
     try {
       const response = await fetch(`${BASE_URL}/getSMSProviders`, {
@@ -320,6 +339,11 @@ const NotificationManagement = () => {
       console.log(err);
     }
   };
+
+  const smsProvidersOptions: SingleSelectOption[] = smsProviders.map((item: any) => ({
+    value: item.attributedetails_name,
+    label: item.attributedetails_name,
+  }));
 
   const fetchCountryCodes = async () => {
     try {
@@ -343,6 +367,11 @@ const NotificationManagement = () => {
     }
   };
 
+  const countryCodesOptions: SingleSelectOption[] = countryCodes.map((item: any) => ({
+    value: item.attributedetails_name,
+    label: item.attributedetails_name,
+  }));
+
   const fetchWhatsappProviders = async () => {
     try {
       const response = await fetch(`${BASE_URL}/getWhatsappProviders`, {
@@ -365,6 +394,11 @@ const NotificationManagement = () => {
     }
   };
 
+  const whatsappProvidersOptions: SingleSelectOption[] = whatsappProviders.map((item: any) => ({
+    value: item.attributedetails_name,
+    label: item.attributedetails_name,
+  }));
+
   useEffect(() => {
     loadData();
   }, []);
@@ -384,12 +418,6 @@ const NotificationManagement = () => {
   const [SmssubmittedSettings, setSmsSubmittedSettings] = useState(false);
   const [WhatsAppsubmittedSettings, setWhatsAppSubmittedSettings] =
     useState(false);
-
-  const [smtpPorts, setSmtpPorts] = useState<any[]>([]);
-  const [sslTypes, setSslTypes] = useState<any[]>([]);
-  const [smsProviders, setSmsProviders] = useState<any[]>([]);
-  const [countryCodes, setCountryCodes] = useState<any[]>([]);
-  const [whatsappProviders, setWhatsappProviders] = useState<any[]>([]);
 
   const [emailSettings, setEmailSettings] = useState<EmailSettings>({
     smtpHostID: "",
@@ -1232,30 +1260,21 @@ const NotificationManagement = () => {
                       <Tooltip>
                         <TooltipTrigger asChild>
                           <div>
-                            <Select
-                              value={emailSettings.smtpPort}
-                              onValueChange={(value) =>
+                            <ReactSingleSelect
+                              options={smtpPortsOptions}
+                              value={
+                                smtpPortsOptions.find(
+                                  (option) => option.value === emailSettings.smtpPort
+                                ) || null
+                              }
+                              onChange={(selected) => {
                                 setEmailSettings({
                                   ...emailSettings,
-                                  smtpPort: value,
-                                })
-                              }
-                            >
-                              <SelectTrigger>
-                                <SelectValue placeholder="Select SMTP Port" />
-                              </SelectTrigger>
-
-                              <SelectContent>
-                                {smtpPorts.map((item: any) => (
-                                  <SelectItem
-                                    key={item.attributedetails_name}
-                                    value={item.attributedetails_name}
-                                  >
-                                    {item.attributedetails_name}
-                                  </SelectItem>
-                                ))}
-                              </SelectContent>
-                            </Select>
+                                  smtpPort: selected?.value || "",
+                                });
+                              }}
+                              placeholder="Select SMTP Port"
+                            />
                           </div>
                         </TooltipTrigger>
 
@@ -1426,30 +1445,21 @@ const NotificationManagement = () => {
                       <Tooltip>
                         <TooltipTrigger asChild>
                           <div>
-                            <Select
-                              value={emailSettings.useSsl}
-                              onValueChange={(value) =>
+                            <ReactSingleSelect
+                              options={sslTypesOptions}
+                              value={
+                                sslTypesOptions.find(
+                                  (option) => option.value === emailSettings.useSsl
+                                ) || null
+                              }
+                              onChange={(selected) => {
                                 setEmailSettings({
                                   ...emailSettings,
-                                  useSsl: value,
-                                })
-                              }
-                            >
-                              <SelectTrigger>
-                                <SelectValue placeholder="Select SSL Type" />
-                              </SelectTrigger>
-
-                              <SelectContent>
-                                {sslTypes.map((item: any) => (
-                                  <SelectItem
-                                    key={item.attributedetails_name}
-                                    value={item.attributedetails_name}
-                                  >
-                                    {item.attributedetails_name}
-                                  </SelectItem>
-                                ))}
-                              </SelectContent>
-                            </Select>
+                                  useSsl: selected?.value || "",
+                                });
+                              }}
+                              placeholder="Select SSL Type"
+                            />
                           </div>
                         </TooltipTrigger>
 
@@ -1586,30 +1596,21 @@ const NotificationManagement = () => {
                       <Tooltip>
                         <TooltipTrigger asChild>
                           <div>
-                            <Select
-                              value={smsSettings.provider}
-                              onValueChange={(value) =>
+                            <ReactSingleSelect
+                              options={smsProvidersOptions}
+                              value={
+                                smsProvidersOptions.find(
+                                  (option) => option.value === smsSettings.provider
+                                ) || null
+                              }
+                              onChange={(selected) => {
                                 setSmsSettings({
                                   ...smsSettings,
-                                  provider: value,
-                                })
-                              }
-                            >
-                              <SelectTrigger>
-                                <SelectValue placeholder="Select SMS Provider" />
-                              </SelectTrigger>
-
-                              <SelectContent>
-                                {smsProviders.map((item: any) => (
-                                  <SelectItem
-                                    key={item.attributedetails_name}
-                                    value={item.attributedetails_name}
-                                  >
-                                    {item.attributedetails_name}
-                                  </SelectItem>
-                                ))}
-                              </SelectContent>
-                            </Select>
+                                  provider: selected?.value || "",
+                                });
+                              }}
+                              placeholder="Select SMS Provider"
+                            />
                           </div>
                         </TooltipTrigger>
 
@@ -1634,30 +1635,21 @@ const NotificationManagement = () => {
                       <Tooltip>
                         <TooltipTrigger asChild>
                           <div>
-                            <Select
-                              value={smsSettings.countryCode}
-                              onValueChange={(value) =>
+                            <ReactSingleSelect
+                              options={countryCodesOptions}
+                              value={
+                                countryCodesOptions.find(
+                                  (option) => option.value === smsSettings.countryCode
+                                ) || null
+                              }
+                              onChange={(selected) => {
                                 setSmsSettings({
                                   ...smsSettings,
-                                  countryCode: value,
-                                })
-                              }
-                            >
-                              <SelectTrigger>
-                                <SelectValue placeholder="Select Country Code" />
-                              </SelectTrigger>
-
-                              <SelectContent>
-                                {countryCodes.map((item: any) => (
-                                  <SelectItem
-                                    key={item.attributedetails_name}
-                                    value={item.attributedetails_name}
-                                  >
-                                    {item.attributedetails_name}
-                                  </SelectItem>
-                                ))}
-                              </SelectContent>
-                            </Select>
+                                  countryCode: selected?.value || "",
+                                });
+                              }}
+                              placeholder="Select Country Code"
+                            />
                           </div>
                         </TooltipTrigger>
 
@@ -1926,30 +1918,21 @@ const NotificationManagement = () => {
                       <Tooltip>
                         <TooltipTrigger asChild>
                           <div>
-                            <Select
-                              value={whatsAppSettings.provider}
-                              onValueChange={(value) =>
+                            <ReactSingleSelect
+                              options={whatsappProvidersOptions}
+                              value={
+                                whatsappProvidersOptions.find(
+                                  (option) => option.value === whatsAppSettings.provider
+                                ) || null
+                              }
+                              onChange={(selected) => {
                                 setWhatsAppSettings({
                                   ...whatsAppSettings,
-                                  provider: value,
-                                })
-                              }
-                            >
-                              <SelectTrigger>
-                                <SelectValue placeholder="Select WhatsApp Provider" />
-                              </SelectTrigger>
-
-                              <SelectContent>
-                                {whatsappProviders.map((item: any) => (
-                                  <SelectItem
-                                    key={item.attributedetails_name}
-                                    value={item.attributedetails_name}
-                                  >
-                                    {item.attributedetails_name}
-                                  </SelectItem>
-                                ))}
-                              </SelectContent>
-                            </Select>
+                                  provider: selected?.value || "",
+                                });
+                              }}
+                              placeholder="Select WhatsApp Provider"
+                            />
                           </div>
                         </TooltipTrigger>
 
@@ -1963,7 +1946,7 @@ const NotificationManagement = () => {
                     <Label
                       className={
                         WhatsAppsubmittedSettings &&
-                        !whatsAppSettings.phoneNumberId
+                          !whatsAppSettings.phoneNumberId
                           ? "text-red-500"
                           : ""
                       }
@@ -1998,7 +1981,7 @@ const NotificationManagement = () => {
                     <Label
                       className={
                         WhatsAppsubmittedSettings &&
-                        !whatsAppSettings.accessToken
+                          !whatsAppSettings.accessToken
                           ? "text-red-500"
                           : ""
                       }
@@ -2052,7 +2035,7 @@ const NotificationManagement = () => {
                     <Label
                       className={
                         WhatsAppsubmittedSettings &&
-                        !whatsAppSettings.businessAccountId
+                          !whatsAppSettings.businessAccountId
                           ? "text-red-500"
                           : ""
                       }

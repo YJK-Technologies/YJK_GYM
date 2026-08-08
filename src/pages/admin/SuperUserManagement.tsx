@@ -65,6 +65,9 @@ import { showConfirmToast } from "../../components/ui/show-confirm-toast";
 import { useCompany } from "../CompanyContext";
 import { hasActionPermission } from "@/utils/permission";
 import Loading from "@/components/Loading";
+import ReactSingleSelect, {
+  SingleSelectOption,
+} from "@/components/ui/react-single-select";
 
 const WorkoutProgramManagement = () => {
   const { companyCode, locationCode, userCode } = useCompany();
@@ -90,7 +93,6 @@ const WorkoutProgramManagement = () => {
   const [roleRight, setRoleRight] = useState<any[]>([]);
 
   //User Screen
-  const [logInLogOut, setLogInLogOut] = useState<any[]>([]);
   const [gender, setGender] = useState<any[]>([]);
   const [showPassword, setShowPassword] = useState(false);
 
@@ -126,6 +128,11 @@ const WorkoutProgramManagement = () => {
     }
   };
 
+  const citiesOptions: SingleSelectOption[] = cities.map((item: any) => ({
+    value: item.attributedetails_name,
+    label: item.attributedetails_name,
+  }));
+
   const fetchStates = async () => {
     try {
       const response = await fetch(`${BASE_URL}/state`, {
@@ -149,6 +156,11 @@ const WorkoutProgramManagement = () => {
       console.error("Error fetching states:", error);
     }
   };
+
+  const statesOptions: SingleSelectOption[] = states.map((item: any) => ({
+    value: item.attributedetails_name,
+    label: item.attributedetails_name,
+  }));
 
   const fetchCountries = async () => {
     try {
@@ -174,6 +186,11 @@ const WorkoutProgramManagement = () => {
     }
   };
 
+  const countriesOptions: SingleSelectOption[] = countries.map((item: any) => ({
+    value: item.attributedetails_name,
+    label: item.attributedetails_name,
+  }));
+
   const fetchStatus = async () => {
     try {
       const response = await fetch(`${BASE_URL}/status`, {
@@ -198,6 +215,11 @@ const WorkoutProgramManagement = () => {
     }
   };
 
+  const statusOptions: SingleSelectOption[] = status.map((item: any) => ({
+    value: item.attributedetails_name,
+    label: item.attributedetails_name,
+  }));
+
   const fetchLocation = async () => {
     try {
       const response = await fetch(`${BASE_URL}/locationno`);
@@ -212,6 +234,11 @@ const WorkoutProgramManagement = () => {
       console.error("Error fetching locations:", error);
     }
   };
+
+  const locationOptions: SingleSelectOption[] = location.map((item: any) => ({
+    value: item.location_no,
+    label: `${item.location_no} - ${item.location_name}`,
+  }));
 
   const fetchUsers = async () => {
     try {
@@ -228,6 +255,11 @@ const WorkoutProgramManagement = () => {
     }
   };
 
+  const userOptions: SingleSelectOption[] = user.map((item: any) => ({
+    value: item.user_code,
+    label: `${item.user_code} - ${item.user_name}`,
+  }));
+
   const fetchCompanies = async () => {
     try {
       const response = await fetch(`${BASE_URL}/Companyno`);
@@ -242,6 +274,11 @@ const WorkoutProgramManagement = () => {
       console.error("Error fetching companies:", error);
     }
   };
+
+  const companyOptions: SingleSelectOption[] = company.map((item: any) => ({
+    value: item.company_no,
+    label: `${item.company_no} - ${item.company_name}`,
+  }));
 
   const fetchRole = async () => {
     try {
@@ -266,6 +303,11 @@ const WorkoutProgramManagement = () => {
       console.error("Error fetching companies:", error);
     }
   };
+
+  const roleOptions: SingleSelectOption[] = role.map((item: any) => ({
+    value: item.role_id,
+    label: `${item.role_id} - ${item.role_name}`,
+  }));
 
   //Role Rights Screen
   const fetchPermission = async () => {
@@ -292,6 +334,11 @@ const WorkoutProgramManagement = () => {
     }
   };
 
+  const permissionOptions: SingleSelectOption[] = permission.map((item: any) => ({
+    value: item.attributedetails_name,
+    label: item.attributedetails_name,
+  }));
+
   const fetchRoleRight = async () => {
     try {
       const response = await fetch(`${BASE_URL}/roleid`, {
@@ -315,6 +362,11 @@ const WorkoutProgramManagement = () => {
       console.error("Error fetching companies:", error);
     }
   };
+
+  const roleRightOptions: SingleSelectOption[] = roleRight.map((item: any) => ({
+    value: item.role_id,
+    label: `${item.role_id} - ${item.role_name}`,
+  }));
 
   const fetchScreen = async () => {
     try {
@@ -340,31 +392,12 @@ const WorkoutProgramManagement = () => {
     }
   };
 
+  const screenOptions: SingleSelectOption[] = screen.map((item: any) => ({
+    value: item.attributedetails_code,
+    label: item.attributedetails_name,
+  }));
+
   // Added by Dinesh Gokul - 23-06-2026 for User
-  const fetchLogInLogOut = async () => {
-    try {
-      const response = await fetch(`${BASE_URL}/Loginorout`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          company_code: companyCode,
-        }),
-      });
-
-      const data = await response.json();
-
-      if (response.ok) {
-        setLogInLogOut(data);
-      } else {
-        console.error("Failed to fetch status");
-      }
-    } catch (error) {
-      console.error("Error fetching status:", error);
-    }
-  };
-
   const fetchGender = async () => {
     try {
       const response = await fetch(`${BASE_URL}/gender`, {
@@ -388,6 +421,11 @@ const WorkoutProgramManagement = () => {
       console.error("Error fetching status:", error);
     }
   };
+
+  const genderOptions: SingleSelectOption[] = gender.map((item: any) => ({
+    value: item.attributedetails_code,
+    label: item.attributedetails_name,
+  }));
 
   //Attribute Detail Screen
   const fetchAttributeHdr = async () => {
@@ -414,6 +452,11 @@ const WorkoutProgramManagement = () => {
     }
   };
 
+  const attributehdrOptions: SingleSelectOption[] = attributehdr.map((item: any) => ({
+    value: item.attributeheader_code,
+    label: `${item.attributeheader_code} - ${item.attributeheader_name}`,
+  }));
+
   //Number series Detail Screen
   const fetchScreenType = async () => {
     try {
@@ -439,6 +482,11 @@ const WorkoutProgramManagement = () => {
     }
   };
 
+  const screenTypeOptions: SingleSelectOption[] = ScreenType.map((item: any) => ({
+    value: item.attributedetails_name,
+    label: item.attributedetails_name,
+  }));
+
   const fetchNumberPrefix = async () => {
     try {
       const response = await fetch(`${BASE_URL}/getboolean`, {
@@ -462,6 +510,11 @@ const WorkoutProgramManagement = () => {
       console.error("Error fetching ScreenType:", error);
     }
   };
+
+  const numberPrefixOptions: SingleSelectOption[] = NumberPrefix.map((item: any) => ({
+    value: item.attributedetails_name,
+    label: item.attributedetails_name,
+  }));
 
   const fetchBillFormat = async () => {
     try {
@@ -487,6 +540,11 @@ const WorkoutProgramManagement = () => {
     }
   };
 
+  const billFormatOptions: SingleSelectOption[] = BillFormat.map((item: any) => ({
+    value: item.attributedetails_name,
+    label: item.attributedetails_name,
+  }));
+
   useEffect(() => {
     const loadData = async () => {
       await Promise.all([
@@ -501,7 +559,6 @@ const WorkoutProgramManagement = () => {
         fetchPermission(),
         fetchRoleRight(),
         fetchScreen(),
-        fetchLogInLogOut(),
         fetchGender(),
         fetchAttributeHdr(),
         fetchScreenType(),
@@ -1876,11 +1933,11 @@ const WorkoutProgramManagement = () => {
   //Company CRUD Functions
   const handleAddCompany = () => {
     fetchCities(),
-    fetchStates(),
-    fetchCountries(),
-    fetchStatus(),
-    fetchLocation(),
-    setEditingCompany(null);
+      fetchStates(),
+      fetchCountries(),
+      fetchStatus(),
+      fetchLocation(),
+      setEditingCompany(null);
     setCompanyForm({
       company_no: "",
       company_name: "",
@@ -2283,10 +2340,10 @@ const WorkoutProgramManagement = () => {
   //Company Mapping CRUD Functions
   const handleAddCompanyMapping = () => {
     fetchStatus(),
-    fetchLocation(),
-    fetchUsers(),
-    fetchCompanies(),
-    setEditingCompanyMapping(null);
+      fetchLocation(),
+      fetchUsers(),
+      fetchCompanies(),
+      setEditingCompanyMapping(null);
     setCompanyMappingForm({
       company_code: companyCode,
       user_code: "",
@@ -2563,10 +2620,10 @@ const WorkoutProgramManagement = () => {
   // Location CRUD Functions
   const handleAddLocation = () => {
     fetchCities(),
-    fetchStates(),
-    fetchCountries(),
-    fetchStatus(),
-    setEditingLocation(null);
+      fetchStates(),
+      fetchCountries(),
+      fetchStatus(),
+      setEditingLocation(null);
     setLocationForm({
       location_no: "",
       location_name: "",
@@ -3143,8 +3200,8 @@ const WorkoutProgramManagement = () => {
   //Role Mapping CRUD Functions
   const handleAddRoleMapping = () => {
     fetchUsers(),
-    fetchRole(),
-    setEditingRoleMapping(null);
+      fetchRole(),
+      setEditingRoleMapping(null);
     setRoleMappingForm({
       company_code: companyCode,
       user_code: "",
@@ -3212,7 +3269,7 @@ const WorkoutProgramManagement = () => {
         description: err.message || "Something went wrong.",
         variant: "destructive",
       });
-    }  finally {
+    } finally {
       setLoading(false);
     }
   };
@@ -3409,9 +3466,9 @@ const WorkoutProgramManagement = () => {
   //Role Rights CRUD Functions
   const handleAddRoleRights = () => {
     fetchRole(),
-    fetchPermission(),
-    fetchScreenType(),
-    setEditingRoleRight(null);
+      fetchPermission(),
+      fetchScreenType(),
+      setEditingRoleRight(null);
     setRoleRightsForm({
       company_code: companyCode,
       role_id: "",
@@ -3681,9 +3738,9 @@ const WorkoutProgramManagement = () => {
   //User CRUD Functions
   const handleAddUser = () => {
     fetchStatus(),
-    fetchGender(),
-    fetchRole(),
-    setEditingUser(null);
+      fetchGender(),
+      fetchRole(),
+      setEditingUser(null);
     setUserForm({
       company_code: companyCode,
       user_code: "",
@@ -4075,7 +4132,7 @@ const WorkoutProgramManagement = () => {
   //Attribute Detail CRUD Functions
   const handleAddAttribute = () => {
     fetchAttributeHdr(),
-    setEditingAttribute(null);
+      setEditingAttribute(null);
     setAttributeForm({
       company_code: companyCode,
       attributeheader_code: "",
@@ -4207,7 +4264,7 @@ const WorkoutProgramManagement = () => {
         description: err.message || "Something went wrong.",
         variant: "destructive",
       });
-    }  finally {
+    } finally {
       setLoading(false);
     }
   };
@@ -4434,9 +4491,9 @@ const WorkoutProgramManagement = () => {
   // NumberSeries CRUD Functions
   const handleAddNumberSeries = () => {
     fetchStatus(),
-    fetchScreenType(),
-    fetchNumberPrefix(),
-    fetchBillFormat()
+      fetchScreenType(),
+      fetchNumberPrefix(),
+      fetchBillFormat()
     setEditingNumberSeries(null);
     setNumberSeriesForm({
       company_code: companyCode,
@@ -4969,30 +5026,21 @@ const WorkoutProgramManagement = () => {
           <Tooltip>
             <TooltipTrigger asChild>
               <div>
-                <Select
-                  value={companySearchForm.status}
-                  onValueChange={(value) =>
+                <ReactSingleSelect
+                  options={statusOptions}
+                  value={
+                    statusOptions.find(
+                      (option) => option.value === companySearchForm.status
+                    ) || null
+                  }
+                  onChange={(selected) => {
                     setCompanySearchForm({
                       ...companySearchForm,
-                      status: value,
-                    })
-                  }
-                >
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select Status" />
-                  </SelectTrigger>
-
-                  <SelectContent>
-                    {status.map((item: any) => (
-                      <SelectItem
-                        key={item.attributedetails_name}
-                        value={item.attributedetails_name}
-                      >
-                        {item.attributedetails_name}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
+                      status: selected?.value || "",
+                    });
+                  }}
+                  placeholder="Select Status"
+                />
               </div>
             </TooltipTrigger>
 
@@ -5085,29 +5133,21 @@ const WorkoutProgramManagement = () => {
           <Tooltip>
             <TooltipTrigger asChild>
               <div>
-                <Select
-                  value={companyMappingSearchForm.status}
-                  onValueChange={(value) =>
+                <ReactSingleSelect
+                  options={statusOptions}
+                  value={
+                    statusOptions.find(
+                      (option) => option.value === companyMappingSearchForm.status
+                    ) || null
+                  }
+                  onChange={(selected) => {
                     setCompanyMappingSearchForm({
                       ...companyMappingSearchForm,
-                      status: value,
-                    })
-                  }
-                >
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select Status" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {status.map((item: any) => (
-                      <SelectItem
-                        key={item.attributedetails_code}
-                        value={item.attributedetails_code}
-                      >
-                        {item.attributedetails_name}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
+                      status: selected?.value || "",
+                    });
+                  }}
+                  placeholder="Select Status"
+                />
               </div>
             </TooltipTrigger>
 
@@ -5272,30 +5312,21 @@ const WorkoutProgramManagement = () => {
           <Tooltip>
             <TooltipTrigger asChild>
               <div>
-                <Select
-                  value={locationSearchForm.status}
-                  onValueChange={(value) =>
+                <ReactSingleSelect
+                  options={statusOptions}
+                  value={
+                    statusOptions.find(
+                      (option) => option.value === locationSearchForm.status
+                    ) || null
+                  }
+                  onChange={(selected) => {
                     setLocationSearchForm({
                       ...locationSearchForm,
-                      status: value,
-                    })
-                  }
-                >
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select Status" />
-                  </SelectTrigger>
-
-                  <SelectContent>
-                    {status.map((status: any) => (
-                      <SelectItem
-                        key={status.attributedetails_name}
-                        value={status.attributedetails_name}
-                      >
-                        {status.attributedetails_name}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
+                      status: selected?.value || "",
+                    });
+                  }}
+                  placeholder="Select Status"
+                />
               </div>
             </TooltipTrigger>
 
@@ -5638,41 +5669,32 @@ const WorkoutProgramManagement = () => {
 
       <div className="space-y-2">
         <Label>User Status</Label>
+        <TooltipProvider>
+          <Tooltip>
+            <TooltipTrigger asChild><div>
+              <ReactSingleSelect
+                options={statusOptions}
+                value={
+                  statusOptions.find(
+                    (option) => option.value === usersSearchForm.user_status
+                  ) || null
+                }
+                onChange={(selected) => {
+                  setusersSearchForm({
+                    ...usersSearchForm,
+                    user_status: selected?.value || "",
+                  });
+                }}
+                placeholder="Select User Status"
+              />
+            </div>
+            </TooltipTrigger>
 
-        <Select
-          value={usersSearchForm.user_status}
-          onValueChange={(value) =>
-            setusersSearchForm({
-              ...usersSearchForm,
-              user_status: value,
-            })
-          }
-        >
-          <TooltipProvider>
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <SelectTrigger>
-                  <SelectValue placeholder="Select User Status" />
-                </SelectTrigger>
-              </TooltipTrigger>
-
-              <TooltipContent>
-                <p>Select User Status</p>
-              </TooltipContent>
-            </Tooltip>
-          </TooltipProvider>
-
-          <SelectContent>
-            {status.map((item: any) => (
-              <SelectItem
-                key={item.attributedetails_code}
-                value={item.attributedetails_code}
-              >
-                {item.attributedetails_name}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
+            <TooltipContent>
+              <p>Select User Status</p>
+            </TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
       </div>
 
       <div className="space-y-2">
@@ -5702,41 +5724,33 @@ const WorkoutProgramManagement = () => {
 
       <div className="space-y-2">
         <Label>Gender</Label>
+        <TooltipProvider>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <div>
+                <ReactSingleSelect
+                  options={genderOptions}
+                  value={
+                    genderOptions.find(
+                      (option) => option.value === usersSearchForm.gender
+                    ) || null
+                  }
+                  onChange={(selected) => {
+                    setusersSearchForm({
+                      ...usersSearchForm,
+                      gender: selected?.value || "",
+                    });
+                  }}
+                  placeholder="Select Gender"
+                />
+              </div>
+            </TooltipTrigger>
 
-        <Select
-          value={usersSearchForm.gender}
-          onValueChange={(value) =>
-            setusersSearchForm({
-              ...usersSearchForm,
-              gender: value,
-            })
-          }
-        >
-          <TooltipProvider>
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <SelectTrigger>
-                  <SelectValue placeholder="Select Gender" />
-                </SelectTrigger>
-              </TooltipTrigger>
-
-              <TooltipContent>
-                <p>Select Gender</p>
-              </TooltipContent>
-            </Tooltip>
-          </TooltipProvider>
-
-          <SelectContent>
-            {gender.map((gender: any) => (
-              <SelectItem
-                key={gender.attributedetails_code}
-                value={gender.attributedetails_code}
-              >
-                {gender.attributedetails_name}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
+            <TooltipContent>
+              <p>Select Gender</p>
+            </TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
       </div>
     </div>
   );
@@ -5858,29 +5872,21 @@ const WorkoutProgramManagement = () => {
           <Tooltip>
             <TooltipTrigger asChild>
               <div>
-                <Select
-                  value={numberSeriesSearchForm.Screen_Type}
-                  onValueChange={(value) =>
+                <ReactSingleSelect
+                  options={screenTypeOptions}
+                  value={
+                    screenTypeOptions.find(
+                      (option) => option.value === numberSeriesSearchForm.Screen_Type
+                    ) || null
+                  }
+                  onChange={(selected) => {
                     setnumberSeriesSearchForm({
                       ...numberSeriesSearchForm,
-                      Screen_Type: value,
-                    })
-                  }
-                >
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select Screen Type" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {ScreenType.map((Screen_Type: any) => (
-                      <SelectItem
-                        key={Screen_Type.attributedetails_name}
-                        value={Screen_Type.attributedetails_name}
-                      >
-                        {Screen_Type.attributedetails_name}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
+                      Screen_Type: selected?.value || "",
+                    });
+                  }}
+                  placeholder="Select Screen Type"
+                />
               </div>
             </TooltipTrigger>
 
@@ -6611,26 +6617,21 @@ const WorkoutProgramManagement = () => {
                       <Tooltip>
                         <TooltipTrigger asChild>
                           <div>
-                            <Select
-                              value={companyForm.city}
-                              onValueChange={(value) =>
-                                setCompanyForm({ ...companyForm, city: value })
+                            <ReactSingleSelect
+                              options={citiesOptions}
+                              value={
+                                citiesOptions.find(
+                                  (option) => option.value === companyForm.city
+                                ) || null
                               }
-                            >
-                              <SelectTrigger>
-                                <SelectValue placeholder="Select City" />
-                              </SelectTrigger>
-                              <SelectContent>
-                                {cities.map((city: any) => (
-                                  <SelectItem
-                                    key={city.attributedetails_name}
-                                    value={city.attributedetails_name}
-                                  >
-                                    {city.attributedetails_name}
-                                  </SelectItem>
-                                ))}
-                              </SelectContent>
-                            </Select>
+                              onChange={(selected) => {
+                                setCompanyForm({
+                                  ...companyForm,
+                                  city: selected?.value || "",
+                                });
+                              }}
+                              placeholder="Select City" 
+                            />
                           </div>
                         </TooltipTrigger>
 
@@ -6656,26 +6657,21 @@ const WorkoutProgramManagement = () => {
                       <Tooltip>
                         <TooltipTrigger asChild>
                           <div>
-                            <Select
-                              value={companyForm.state}
-                              onValueChange={(value) =>
-                                setCompanyForm({ ...companyForm, state: value })
+                            <ReactSingleSelect
+                              options={statesOptions}
+                              value={
+                                statesOptions.find(
+                                  (option) => option.value === companyForm.state
+                                ) || null
                               }
-                            >
-                              <SelectTrigger>
-                                <SelectValue placeholder="Select State" />
-                              </SelectTrigger>
-                              <SelectContent>
-                                {states.map((state: any) => (
-                                  <SelectItem
-                                    key={state.attributedetails_name}
-                                    value={state.attributedetails_name}
-                                  >
-                                    {state.attributedetails_name}
-                                  </SelectItem>
-                                ))}
-                              </SelectContent>
-                            </Select>
+                              onChange={(selected) => {
+                                setCompanyForm({
+                                  ...companyForm,
+                                  state: selected?.value || "",
+                                });
+                              }} 
+                              placeholder="Select State" 
+                            />
                           </div>
                         </TooltipTrigger>
 
@@ -6737,29 +6733,21 @@ const WorkoutProgramManagement = () => {
                       <Tooltip>
                         <TooltipTrigger asChild>
                           <div>
-                            <Select
-                              value={companyForm.country}
-                              onValueChange={(value) =>
+                            <ReactSingleSelect
+                              options={countriesOptions}
+                              value={
+                                countriesOptions.find(
+                                  (option) => option.value === companyForm.country
+                                ) || null
+                              }
+                              onChange={(selected) => {
                                 setCompanyForm({
                                   ...companyForm,
-                                  country: value,
-                                })
-                              }
-                            >
-                              <SelectTrigger>
-                                <SelectValue placeholder="Select Country" />
-                              </SelectTrigger>
-                              <SelectContent>
-                                {countries.map((country: any) => (
-                                  <SelectItem
-                                    key={country.attributedetails_name}
-                                    value={country.attributedetails_name}
-                                  >
-                                    {country.attributedetails_name}
-                                  </SelectItem>
-                                ))}
-                              </SelectContent>
-                            </Select>
+                                  country: selected?.value || "",
+                                });
+                              }} 
+                              placeholder="Select Country" 
+                            />  
                           </div>
                         </TooltipTrigger>
 
@@ -6819,30 +6807,22 @@ const WorkoutProgramManagement = () => {
                       <Tooltip>
                         <TooltipTrigger asChild>
                           <div>
-                            <Select
-                              value={companyForm.status}
-                              onValueChange={(value) =>
+                            <ReactSingleSelect
+                              options={statusOptions}
+                              value={
+                                statusOptions.find(
+                                  (option) => option.value === companyForm.status
+                                ) || null
+                              }
+                              onChange={(selected) => {
                                 setCompanyForm({
                                   ...companyForm,
-                                  status: value,
-                                })
-                              }
-                            >
-                              <SelectTrigger>
-                                <SelectValue placeholder="Select Status" />
-                              </SelectTrigger>
-                              <SelectContent>
-                                {status.map((status: any) => (
-                                  <SelectItem
-                                    key={status.attributedetails_name}
-                                    value={status.attributedetails_name}
-                                  >
-                                    {status.attributedetails_name}
-                                  </SelectItem>
-                                ))}
-                              </SelectContent>
-                            </Select>
-                          </div>
+                                  status: selected?.value || "",
+                                });
+                              }} 
+                              placeholder="Select Status" 
+                            />
+                          </div> 
                         </TooltipTrigger>
 
                         <TooltipContent>
@@ -7006,30 +6986,21 @@ const WorkoutProgramManagement = () => {
                       <Tooltip>
                         <TooltipTrigger asChild>
                           <div>
-                            <Select
-                              value={companyForm.location_no}
-                              onValueChange={(value) =>
+                            <ReactSingleSelect
+                              options={locationOptions}
+                              value={
+                                locationOptions.find(
+                                  (option) => option.value === companyForm.location_no
+                                ) || null
+                              }
+                              onChange={(selected) => {
                                 setCompanyForm({
                                   ...companyForm,
-                                  location_no: value,
-                                })
-                              }
-                            >
-                              <SelectTrigger>
-                                <SelectValue placeholder="Select Location" />
-                              </SelectTrigger>
-                              <SelectContent>
-                                {location.map((location: any) => (
-                                  <SelectItem
-                                    key={location.location_no}
-                                    value={location.location_no}
-                                  >
-                                    {location.location_no} -{" "}
-                                    {location.location_name}
-                                  </SelectItem>
-                                ))}
-                              </SelectContent>
-                            </Select>
+                                  location_no: selected?.value || "",
+                                });
+                              }} 
+                              placeholder="Select Location" 
+                            />
                           </div>
                         </TooltipTrigger>
 
@@ -7133,29 +7104,21 @@ const WorkoutProgramManagement = () => {
                       <Tooltip>
                         <TooltipTrigger asChild>
                           <div>
-                            <Select
-                              value={companyMappingForm.user_code}
-                              onValueChange={(value) =>
+                            <ReactSingleSelect
+                              options={userOptions}
+                              value={
+                                userOptions.find(
+                                  (option) => option.value === companyMappingForm.user_code
+                                ) || null
+                              }
+                              onChange={(selected) => {
                                 setCompanyMappingForm({
                                   ...companyMappingForm,
-                                  user_code: value,
-                                })
-                              }
-                            >
-                              <SelectTrigger>
-                                <SelectValue placeholder="Select User Code" />
-                              </SelectTrigger>
-                              <SelectContent>
-                                {user.map((user: any) => (
-                                  <SelectItem
-                                    key={user.user_code}
-                                    value={user.user_code}
-                                  >
-                                    {user.user_code} - {user.user_name}
-                                  </SelectItem>
-                                ))}
-                              </SelectContent>
-                            </Select>
+                                  user_code: selected?.value || "",
+                                });
+                              }}
+                              placeholder="Select User Code"
+                            />
                           </div>
                         </TooltipTrigger>
 
@@ -7182,30 +7145,21 @@ const WorkoutProgramManagement = () => {
                       <Tooltip>
                         <TooltipTrigger asChild>
                           <div>
-                            <Select
-                              value={companyMappingForm.company_no}
-                              onValueChange={(value) =>
+                            <ReactSingleSelect
+                              options={companyOptions}
+                              value={
+                                companyOptions.find(
+                                  (option) => option.value === companyMappingForm.company_no
+                                ) || null
+                              }
+                              onChange={(selected) => {
                                 setCompanyMappingForm({
                                   ...companyMappingForm,
-                                  company_no: value,
-                                })
-                              }
-                            >
-                              <SelectTrigger>
-                                <SelectValue placeholder="Select Company Code" />
-                              </SelectTrigger>
-                              <SelectContent>
-                                {company.map((company: any) => (
-                                  <SelectItem
-                                    key={company.company_no}
-                                    value={company.company_no}
-                                  >
-                                    {company.company_no} -{" "}
-                                    {company.company_name}
-                                  </SelectItem>
-                                ))}
-                              </SelectContent>
-                            </Select>
+                                  company_no: selected?.value || "",
+                                });
+                              }}
+                              placeholder="Select Company Code"
+                            />
                           </div>
                         </TooltipTrigger>
 
@@ -7232,30 +7186,21 @@ const WorkoutProgramManagement = () => {
                       <Tooltip>
                         <TooltipTrigger asChild>
                           <div>
-                            <Select
-                              value={companyMappingForm.location_no}
-                              onValueChange={(value) =>
+                            <ReactSingleSelect
+                              options={locationOptions}
+                              value={
+                                locationOptions.find(
+                                  (option) => option.value === companyMappingForm.location_no
+                                ) || null
+                              }
+                              onChange={(selected) => {
                                 setCompanyMappingForm({
                                   ...companyMappingForm,
-                                  location_no: value,
-                                })
-                              }
-                            >
-                              <SelectTrigger>
-                                <SelectValue placeholder="Select Location No" />
-                              </SelectTrigger>
-                              <SelectContent>
-                                {location.map((location: any) => (
-                                  <SelectItem
-                                    key={location.location_no}
-                                    value={location.location_no}
-                                  >
-                                    {location.location_no} -{" "}
-                                    {location.location_name}
-                                  </SelectItem>
-                                ))}
-                              </SelectContent>
-                            </Select>
+                                  location_no: selected?.value || "",
+                                });
+                              }}
+                              placeholder="Select Location No"
+                            />
                           </div>
                         </TooltipTrigger>
 
@@ -7281,29 +7226,21 @@ const WorkoutProgramManagement = () => {
                       <Tooltip>
                         <TooltipTrigger asChild>
                           <div>
-                            <Select
-                              value={companyMappingForm.status}
-                              onValueChange={(value) =>
+                            <ReactSingleSelect
+                              options={statusOptions}
+                              value={
+                                statusOptions.find(
+                                  (option) => option.value === companyMappingForm.status
+                                ) || null
+                              }
+                              onChange={(selected) => {
                                 setCompanyMappingForm({
                                   ...companyMappingForm,
-                                  status: value,
-                                })
-                              }
-                            >
-                              <SelectTrigger>
-                                <SelectValue placeholder="Select Status" />
-                              </SelectTrigger>
-                              <SelectContent>
-                                {status.map((status: any) => (
-                                  <SelectItem
-                                    key={status.attributedetails_code}
-                                    value={status.attributedetails_code}
-                                  >
-                                    {status.attributedetails_name}
-                                  </SelectItem>
-                                ))}
-                              </SelectContent>
-                            </Select>
+                                  status: selected?.value || "",
+                                });
+                              }}
+                              placeholder="Select Status"
+                            />
                           </div>
                         </TooltipTrigger>
 
@@ -7629,29 +7566,21 @@ const WorkoutProgramManagement = () => {
                       <Tooltip>
                         <TooltipTrigger asChild>
                           <div>
-                            <Select
-                              value={locationForm.city}
-                              onValueChange={(value) =>
+                            <ReactSingleSelect
+                              options={citiesOptions}
+                              value={
+                                citiesOptions.find(
+                                  (option) => option.value === locationForm.city
+                                ) || null
+                              }
+                              onChange={(selected) => {
                                 setLocationForm({
                                   ...locationForm,
-                                  city: value,
-                                })
-                              }
-                            >
-                              <SelectTrigger>
-                                <SelectValue placeholder="Select City" />
-                              </SelectTrigger>
-                              <SelectContent>
-                                {cities.map((city: any) => (
-                                  <SelectItem
-                                    key={city.attributedetails_name}
-                                    value={city.attributedetails_name}
-                                  >
-                                    {city.attributedetails_name}
-                                  </SelectItem>
-                                ))}
-                              </SelectContent>
-                            </Select>
+                                  city: selected?.value || "",
+                                });
+                              }}
+                              placeholder="Select City"
+                            />
                           </div>
                         </TooltipTrigger>
 
@@ -7677,29 +7606,21 @@ const WorkoutProgramManagement = () => {
                       <Tooltip>
                         <TooltipTrigger asChild>
                           <div>
-                            <Select
-                              value={locationForm.state}
-                              onValueChange={(value) =>
+                            <ReactSingleSelect
+                              options={statesOptions}
+                              value={
+                                statesOptions.find(
+                                  (option) => option.value === locationForm.state
+                                ) || null
+                              }
+                              onChange={(selected) => {
                                 setLocationForm({
                                   ...locationForm,
-                                  state: value,
-                                })
-                              }
-                            >
-                              <SelectTrigger>
-                                <SelectValue placeholder="Select State" />
-                              </SelectTrigger>
-                              <SelectContent>
-                                {states.map((city: any) => (
-                                  <SelectItem
-                                    key={city.attributedetails_name}
-                                    value={city.attributedetails_name}
-                                  >
-                                    {city.attributedetails_name}
-                                  </SelectItem>
-                                ))}
-                              </SelectContent>
-                            </Select>
+                                  state: selected?.value || "",
+                                });
+                              }}
+                              placeholder="Select State"
+                            />
                           </div>
                         </TooltipTrigger>
 
@@ -7761,29 +7682,21 @@ const WorkoutProgramManagement = () => {
                       <Tooltip>
                         <TooltipTrigger asChild>
                           <div>
-                            <Select
-                              value={locationForm.country}
-                              onValueChange={(value) =>
+                            <ReactSingleSelect
+                              options={countriesOptions}
+                              value={
+                                countriesOptions.find(
+                                  (option) => option.value === locationForm.country
+                                ) || null
+                              }
+                              onChange={(selected) => {
                                 setLocationForm({
                                   ...locationForm,
-                                  country: value,
-                                })
-                              }
-                            >
-                              <SelectTrigger>
-                                <SelectValue placeholder="Select Country" />
-                              </SelectTrigger>
-                              <SelectContent>
-                                {countries.map((country: any) => (
-                                  <SelectItem
-                                    key={country.attributedetails_name}
-                                    value={country.attributedetails_name}
-                                  >
-                                    {country.attributedetails_name}
-                                  </SelectItem>
-                                ))}
-                              </SelectContent>
-                            </Select>
+                                  country: selected?.value || "",
+                                });
+                              }}
+                              placeholder="Select Country"
+                            />
                           </div>
                         </TooltipTrigger>
 
@@ -7843,29 +7756,21 @@ const WorkoutProgramManagement = () => {
                       <Tooltip>
                         <TooltipTrigger asChild>
                           <div>
-                            <Select
-                              value={locationForm.status}
-                              onValueChange={(value) =>
+                            <ReactSingleSelect
+                              options={statusOptions}
+                              value={
+                                statusOptions.find(
+                                  (option) => option.value === locationForm.status
+                                ) || null
+                              }
+                              onChange={(selected) => {
                                 setLocationForm({
                                   ...locationForm,
-                                  status: value,
-                                })
-                              }
-                            >
-                              <SelectTrigger>
-                                <SelectValue placeholder="Select Status" />
-                              </SelectTrigger>
-                              <SelectContent>
-                                {status.map((status: any) => (
-                                  <SelectItem
-                                    key={status.attributedetails_name}
-                                    value={status.attributedetails_name}
-                                  >
-                                    {status.attributedetails_name}
-                                  </SelectItem>
-                                ))}
-                              </SelectContent>
-                            </Select>
+                                  status: selected?.value || "",
+                                });
+                              }}
+                              placeholder="Select Status"
+                            />
                           </div>
                         </TooltipTrigger>
 
@@ -8166,29 +8071,21 @@ const WorkoutProgramManagement = () => {
                       <Tooltip>
                         <TooltipTrigger asChild>
                           <div>
-                            <Select
-                              value={roleMappingForm.user_code}
-                              onValueChange={(value) =>
+                            <ReactSingleSelect
+                              options={userOptions}
+                              value={
+                                userOptions.find(
+                                  (option) => option.value === roleMappingForm.user_code
+                                ) || null
+                              }
+                              onChange={(selected) => {
                                 setRoleMappingForm({
                                   ...roleMappingForm,
-                                  user_code: value,
-                                })
-                              }
-                            >
-                              <SelectTrigger>
-                                <SelectValue placeholder="Select User Code" />
-                              </SelectTrigger>
-                              <SelectContent>
-                                {user.map((user: any) => (
-                                  <SelectItem
-                                    key={user.user_code}
-                                    value={user.user_code}
-                                  >
-                                    {user.user_code} - {user.user_name}
-                                  </SelectItem>
-                                ))}
-                              </SelectContent>
-                            </Select>
+                                  user_code: selected?.value || "",
+                                });
+                              }}
+                              placeholder="Select User Code"
+                            />
                           </div>
                         </TooltipTrigger>
 
@@ -8214,29 +8111,21 @@ const WorkoutProgramManagement = () => {
                       <Tooltip>
                         <TooltipTrigger asChild>
                           <div>
-                            <Select
-                              value={roleMappingForm.role_id}
-                              onValueChange={(value) =>
+                            <ReactSingleSelect
+                              options={roleOptions}
+                              value={
+                                roleOptions.find(
+                                  (option) => option.value === roleMappingForm.role_id
+                                ) || null
+                              }
+                              onChange={(selected) => {
                                 setRoleMappingForm({
                                   ...roleMappingForm,
-                                  role_id: value,
-                                })
-                              }
-                            >
-                              <SelectTrigger>
-                                <SelectValue placeholder="Select Role ID" />
-                              </SelectTrigger>
-                              <SelectContent>
-                                {role.map((role: any) => (
-                                  <SelectItem
-                                    key={role.role_id}
-                                    value={role.role_id}
-                                  >
-                                    {role.role_id} - {role.role_name}
-                                  </SelectItem>
-                                ))}
-                              </SelectContent>
-                            </Select>
+                                  role_id: selected?.value || "",
+                                });
+                              }}
+                              placeholder="Select Role ID"
+                            />
                           </div>
                         </TooltipTrigger>
 
@@ -8333,29 +8222,21 @@ const WorkoutProgramManagement = () => {
                       <Tooltip>
                         <TooltipTrigger asChild>
                           <div>
-                            <Select
-                              value={roleRightsForm.role_id}
-                              onValueChange={(value) =>
+                            <ReactSingleSelect
+                              options={roleRightOptions}
+                              value={
+                                roleRightOptions.find(
+                                  (option) => option.value === roleRightsForm.role_id
+                                ) || null
+                              }
+                              onChange={(selected) => {
                                 setRoleRightsForm({
                                   ...roleRightsForm,
-                                  role_id: value,
-                                })
-                              }
-                            >
-                              <SelectTrigger>
-                                <SelectValue placeholder="Select Role ID" />
-                              </SelectTrigger>
-                              <SelectContent>
-                                {roleRight.map((roleRight: any) => (
-                                  <SelectItem
-                                    key={roleRight.role_id}
-                                    value={roleRight.role_id}
-                                  >
-                                    {roleRight.role_id} - {roleRight.role_name}
-                                  </SelectItem>
-                                ))}
-                              </SelectContent>
-                            </Select>
+                                  role_id: selected?.value || "",
+                                });
+                              }}
+                              placeholder="Select Role ID"
+                            />
                           </div>
                         </TooltipTrigger>
 
@@ -8381,29 +8262,21 @@ const WorkoutProgramManagement = () => {
                       <Tooltip>
                         <TooltipTrigger asChild>
                           <div>
-                            <Select
-                              value={roleRightsForm.screen_type}
-                              onValueChange={(value) =>
+                            <ReactSingleSelect
+                              options={screenOptions}
+                              value={
+                                screenOptions.find(
+                                  (option) => option.value === roleRightsForm.screen_type
+                                ) || null
+                              }
+                              onChange={(selected) => {
                                 setRoleRightsForm({
                                   ...roleRightsForm,
-                                  screen_type: value,
-                                })
-                              }
-                            >
-                              <SelectTrigger>
-                                <SelectValue placeholder="Select Screen Type" />
-                              </SelectTrigger>
-                              <SelectContent>
-                                {screen.map((screen: any) => (
-                                  <SelectItem
-                                    key={screen.attributedetails_code}
-                                    value={screen.attributedetails_code}
-                                  >
-                                    {screen.attributedetails_name}
-                                  </SelectItem>
-                                ))}
-                              </SelectContent>
-                            </Select>
+                                  screen_type: selected?.value || "",
+                                });
+                              }}
+                              placeholder="Select Screen Type"
+                            />
                           </div>
                         </TooltipTrigger>
 
@@ -8429,29 +8302,21 @@ const WorkoutProgramManagement = () => {
                       <Tooltip>
                         <TooltipTrigger asChild>
                           <div>
-                            <Select
-                              value={roleRightsForm.permission_type}
-                              onValueChange={(value) =>
+                            <ReactSingleSelect
+                              options={permissionOptions}
+                              value={
+                                permissionOptions.find(
+                                  (option) => option.value === roleRightsForm.permission_type
+                                ) || null
+                              }
+                              onChange={(selected) => {
                                 setRoleRightsForm({
                                   ...roleRightsForm,
-                                  permission_type: value,
-                                })
-                              }
-                            >
-                              <SelectTrigger>
-                                <SelectValue placeholder="Select Permission Type" />
-                              </SelectTrigger>
-                              <SelectContent>
-                                {permission.map((permission: any) => (
-                                  <SelectItem
-                                    key={permission.attributedetails_name}
-                                    value={permission.attributedetails_name}
-                                  >
-                                    {permission.attributedetails_name}
-                                  </SelectItem>
-                                ))}
-                              </SelectContent>
-                            </Select>
+                                  permission_type: selected?.value || "",
+                                });
+                              }}
+                              placeholder="Select Permission Type"
+                            />
                           </div>
                         </TooltipTrigger>
 
@@ -8726,37 +8591,33 @@ const WorkoutProgramManagement = () => {
                     >
                       Status*
                     </Label>
-                    <Select
-                      value={userForm.user_status}
-                      onValueChange={(value) =>
-                        setUserForm({ ...userForm, user_status: value })
-                      }
-                    >
-                      <TooltipProvider>
-                        <Tooltip>
-                          <TooltipTrigger asChild>
-                            <SelectTrigger>
-                              <SelectValue placeholder="Select Status" />
-                            </SelectTrigger>
-                          </TooltipTrigger>
+                    <TooltipProvider>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <div>
+                            <ReactSingleSelect
+                              options={statusOptions}
+                              value={
+                                statusOptions.find(
+                                  (option) => option.value === userForm.user_status
+                                ) || null
+                              }
+                              onChange={(selected) => {
+                                setUserForm({
+                                  ...userForm,
+                                  user_status: selected?.value || "",
+                                });
+                              }}
+                              placeholder="Select Status"
+                            />
+                          </div>
+                        </TooltipTrigger>
 
-                          <TooltipContent>
-                            <p>Select the Status</p>
-                          </TooltipContent>
-                        </Tooltip>
-                      </TooltipProvider>
-
-                      <SelectContent>
-                        {status.map((status: any) => (
-                          <SelectItem
-                            key={status.attributedetails_code}
-                            value={status.attributedetails_code}
-                          >
-                            {status.attributedetails_name}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
+                        <TooltipContent>
+                          <p>Select the Status</p>
+                        </TooltipContent>
+                      </Tooltip>
+                    </TooltipProvider>
                   </div>
 
                   <div className="space-y-2">
@@ -8768,35 +8629,33 @@ const WorkoutProgramManagement = () => {
                     >
                       Role ID*
                     </Label>
+                    <TooltipProvider>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <div>
+                            <ReactSingleSelect
+                              options={roleOptions}
+                              value={
+                                roleOptions.find(
+                                  (option) => option.value === userForm.role_id
+                                ) || null
+                              }
+                              onChange={(selected) => {
+                                setUserForm({
+                                  ...userForm,
+                                  role_id: selected?.value || "",
+                                });
+                              }}
+                              placeholder="Select Role ID"
+                            />
+                          </div>
+                        </TooltipTrigger>
 
-                    <Select
-                      value={userForm.role_id}
-                      onValueChange={(value) =>
-                        setUserForm({ ...userForm, role_id: value })
-                      }
-                    >
-                      <TooltipProvider>
-                        <Tooltip>
-                          <TooltipTrigger asChild>
-                            <SelectTrigger>
-                              <SelectValue placeholder="Select Role ID" />
-                            </SelectTrigger>
-                          </TooltipTrigger>
-
-                          <TooltipContent>
-                            <p>Select Role ID</p>
-                          </TooltipContent>
-                        </Tooltip>
-                      </TooltipProvider>
-
-                      <SelectContent>
-                        {role.map((role: any) => (
-                          <SelectItem key={role.role_id} value={role.role_id}>
-                            {role.role_id} - {role.role_name}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
+                        <TooltipContent>
+                          <p>Select Role ID</p>
+                        </TooltipContent>
+                      </Tooltip>
+                    </TooltipProvider>
                   </div>
 
                   <div className="space-y-2">
@@ -8867,38 +8726,33 @@ const WorkoutProgramManagement = () => {
 
                   <div className="space-y-2">
                     <Label htmlFor="Gender">Gender</Label>
+                    <TooltipProvider>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <div>
+                            <ReactSingleSelect
+                              options={genderOptions}
+                              value={
+                                roleOptions.find(
+                                  (option) => option.value === userForm.gender
+                                ) || null
+                              }
+                              onChange={(selected) => {
+                                setUserForm({
+                                  ...userForm,
+                                  gender: selected?.value || "",
+                                });
+                              }}
+                              placeholder="Select Gender"
+                            />
+                          </div>
+                        </TooltipTrigger>
 
-                    <Select
-                      value={userForm.gender}
-                      onValueChange={(value) =>
-                        setUserForm({ ...userForm, gender: value })
-                      }
-                    >
-                      <TooltipProvider>
-                        <Tooltip>
-                          <TooltipTrigger asChild>
-                            <SelectTrigger>
-                              <SelectValue placeholder="Select Gender" />
-                            </SelectTrigger>
-                          </TooltipTrigger>
-
-                          <TooltipContent>
-                            <p>Select Gender</p>
-                          </TooltipContent>
-                        </Tooltip>
-                      </TooltipProvider>
-
-                      <SelectContent>
-                        {gender.map((status: any) => (
-                          <SelectItem
-                            key={status.attributedetails_code}
-                            value={status.attributedetails_code}
-                          >
-                            {status.attributedetails_name}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
+                        <TooltipContent>
+                          <p>Select Gender</p>
+                        </TooltipContent>
+                      </Tooltip>
+                    </TooltipProvider>
                   </div>
 
                   <div className="space-x-2">
@@ -9008,33 +8862,22 @@ const WorkoutProgramManagement = () => {
                         <Tooltip>
                           <TooltipTrigger asChild>
                             <div className="flex-1">
-                              <Select
-                                value={attributeForm.attributeheader_code}
-                                onValueChange={(value) =>
+                              <ReactSingleSelect
+                                options={attributehdrOptions}
+                                isDisabled={!!editingAttribute}
+                                value={
+                                  attributehdrOptions.find(
+                                    (option) => option.value === attributeForm.attributeheader_code
+                                  ) || null
+                                }
+                                onChange={(selected) => {
                                   setAttributeForm({
                                     ...attributeForm,
-                                    attributeheader_code: value,
-                                  })
-                                }
-                                disabled={!!editingAttribute}
-                              >
-                                <SelectTrigger className="flex-1">
-                                  <SelectValue placeholder="Select Code" />
-                                </SelectTrigger>
-                                <SelectContent>
-                                  {attributehdr.map((attributeheader: any) => (
-                                    <SelectItem
-                                      key={attributeheader.attributeheader_code}
-                                      value={
-                                        attributeheader.attributeheader_code
-                                      }
-                                    >
-                                      {attributeheader.attributeheader_code} -{" "}
-                                      {attributeheader.attributeheader_name}
-                                    </SelectItem>
-                                  ))}
-                                </SelectContent>
-                              </Select>
+                                    attributeheader_code: selected?.value || "",
+                                  });
+                                }}
+                                placeholder="Select Code"
+                              />
                             </div>
                           </TooltipTrigger>
 
@@ -9314,29 +9157,21 @@ const WorkoutProgramManagement = () => {
                   <Tooltip>
                     <TooltipTrigger asChild>
                       <div>
-                        <Select
-                          value={attributeHdrForm.status}
-                          onValueChange={(value) =>
+                        <ReactSingleSelect
+                          options={statusOptions}
+                          value={
+                            statusOptions.find(
+                              (option) => option.value === attributeHdrForm.status
+                            ) || null
+                          }
+                          onChange={(selected) => {
                             setAttributeHdrForm({
                               ...attributeHdrForm,
-                              status: value,
-                            })
-                          }
-                        >
-                          <SelectTrigger>
-                            <SelectValue placeholder="Select Status" />
-                          </SelectTrigger>
-                          <SelectContent>
-                            {status.map((status: any) => (
-                              <SelectItem
-                                key={status.attributedetails_code}
-                                value={status.attributedetails_code}
-                              >
-                                {status.attributedetails_name}
-                              </SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
+                              status: selected?.value || "",
+                            });
+                          }}
+                          placeholder="Select Status"
+                        />
                       </div>
                     </TooltipTrigger>
 
@@ -9430,29 +9265,22 @@ const WorkoutProgramManagement = () => {
                       <Tooltip>
                         <TooltipTrigger asChild>
                           <div>
-                            <Select
-                              value={numberSeriesForm.Screen_Type}
-                              onValueChange={(value) =>
+                            <ReactSingleSelect
+                              options={screenTypeOptions}
+                              isDisabled={!!editingNumberSeries}
+                              value={
+                                screenTypeOptions.find(
+                                  (option) => option.value === numberSeriesForm.Screen_Type
+                                ) || null
+                              }
+                              onChange={(selected) => {
                                 setNumberSeriesForm({
                                   ...numberSeriesForm,
-                                  Screen_Type: value,
-                                })
-                              }
-                            >
-                              <SelectTrigger>
-                                <SelectValue placeholder="Select Screen Type" />
-                              </SelectTrigger>
-                              <SelectContent>
-                                {ScreenType.map((Screen_Type: any) => (
-                                  <SelectItem
-                                    key={Screen_Type.attributedetails_name}
-                                    value={Screen_Type.attributedetails_name}
-                                  >
-                                    {Screen_Type.attributedetails_name}
-                                  </SelectItem>
-                                ))}
-                              </SelectContent>
-                            </Select>
+                                  Screen_Type: selected?.value || "",
+                                });
+                              }}
+                              placeholder="Select Screen Type"
+                            />
                           </div>
                         </TooltipTrigger>
 
@@ -9694,29 +9522,21 @@ const WorkoutProgramManagement = () => {
                       <Tooltip>
                         <TooltipTrigger asChild>
                           <div>
-                            <Select
-                              value={numberSeriesForm.number_prefix}
-                              onValueChange={(value) =>
+                            <ReactSingleSelect
+                              options={numberPrefixOptions}
+                              value={
+                                numberPrefixOptions.find(
+                                  (option) => option.value === numberSeriesForm.number_prefix
+                                ) || null
+                              }
+                              onChange={(selected) => {
                                 setNumberSeriesForm({
                                   ...numberSeriesForm,
-                                  number_prefix: value,
-                                })
-                              }
-                            >
-                              <SelectTrigger>
-                                <SelectValue placeholder="Select Number Prefix" />
-                              </SelectTrigger>
-                              <SelectContent>
-                                {NumberPrefix.map((Number_Prefix: any) => (
-                                  <SelectItem
-                                    key={Number_Prefix.attributedetails_name}
-                                    value={Number_Prefix.attributedetails_name}
-                                  >
-                                    {Number_Prefix.attributedetails_name}
-                                  </SelectItem>
-                                ))}
-                              </SelectContent>
-                            </Select>
+                                  number_prefix: selected?.value || "",
+                                });
+                              }}
+                              placeholder="Select Number Prefix"
+                            />
                           </div>
                         </TooltipTrigger>
 
@@ -9742,29 +9562,21 @@ const WorkoutProgramManagement = () => {
                       <Tooltip>
                         <TooltipTrigger asChild>
                           <div>
-                            <Select
-                              value={numberSeriesForm.bill_format}
-                              onValueChange={(value) =>
+                            <ReactSingleSelect
+                              options={billFormatOptions}
+                              value={
+                                billFormatOptions.find(
+                                  (option) => option.value === numberSeriesForm.bill_format
+                                ) || null
+                              }
+                              onChange={(selected) => {
                                 setNumberSeriesForm({
                                   ...numberSeriesForm,
-                                  bill_format: value,
-                                })
-                              }
-                            >
-                              <SelectTrigger>
-                                <SelectValue placeholder="Select Bill Format" />
-                              </SelectTrigger>
-                              <SelectContent>
-                                {BillFormat.map((bill_format: any) => (
-                                  <SelectItem
-                                    key={bill_format.attributedetails_name}
-                                    value={bill_format.attributedetails_name}
-                                  >
-                                    {bill_format.attributedetails_name}
-                                  </SelectItem>
-                                ))}
-                              </SelectContent>
-                            </Select>
+                                  bill_format: selected?.value || "",
+                                });
+                              }}
+                              placeholder="Select Bill Format"
+                            />
                           </div>
                         </TooltipTrigger>
 
@@ -9790,29 +9602,21 @@ const WorkoutProgramManagement = () => {
                       <Tooltip>
                         <TooltipTrigger asChild>
                           <div>
-                            <Select
-                              value={numberSeriesForm.Status}
-                              onValueChange={(value) =>
+                            <ReactSingleSelect
+                              options={statusOptions}
+                              value={
+                                statusOptions.find(
+                                  (option) => option.value === numberSeriesForm.Status
+                                ) || null
+                              }
+                              onChange={(selected) => {
                                 setNumberSeriesForm({
                                   ...numberSeriesForm,
-                                  Status: value,
-                                })
-                              }
-                            >
-                              <SelectTrigger>
-                                <SelectValue placeholder="Select Status" />
-                              </SelectTrigger>
-                              <SelectContent>
-                                {status.map((status: any) => (
-                                  <SelectItem
-                                    key={status.attributedetails_name}
-                                    value={status.attributedetails_name}
-                                  >
-                                    {status.attributedetails_name}
-                                  </SelectItem>
-                                ))}
-                              </SelectContent>
-                            </Select>
+                                  Status: selected?.value || "",
+                                });
+                              }}
+                              placeholder="Select Status"
+                            />
                           </div>
                         </TooltipTrigger>
 

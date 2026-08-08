@@ -48,7 +48,7 @@ const customStyles: StylesConfig<SingleSelectOption, false> = {
 
   placeholder: (provided) => ({
     ...provided,
-    color: "hsl(var(--muted-foreground))",
+    color: "hsl(var(--foreground))",
     fontSize: "14px",
   }),
 

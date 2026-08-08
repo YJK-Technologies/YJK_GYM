@@ -13,13 +13,6 @@ import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Textarea } from "@/components/ui/textarea";
 import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import {
   Dialog,
   DialogContent,
   DialogDescription,
@@ -138,9 +131,7 @@ const MemberManagement = () => {
   const { toast } = useToast();
   const [gender, setGender] = useState<any[]>([]);
   const [membershipType, setMembershipType] = useState<any[]>([]);
-  const [selectedMembership, setSelectedMembership] = useState<SingleSelectOption | null>(null);
   const [dietPlanType, setDietPlanType] = useState<any[]>([]);
-  const [selectedDietPlan, setSelectedDietPlan] = useState<SingleSelectOption | null>(null);
   const [relationship, setRelationship] = useState<any[]>([]);
   const [status, setStatus] = useState<any[]>([]);
   const [statsData, setStatsData] = useState<MemberStats>({
@@ -177,6 +168,11 @@ const MemberManagement = () => {
     }
   };
 
+  const genderOptions: SingleSelectOption[] = gender.map((item: any) => ({
+    value: item.attributedetails_code,
+    label: item.attributedetails_name,
+  }));
+
   const fetchMembershipType = async () => {
     try {
       const response = await fetch(`${BASE_URL}/getMeberShipTypeName`, {
@@ -202,7 +198,7 @@ const MemberManagement = () => {
     }
   };
 
-  const membershipOptions = membershipType.map((item: any) => ({
+  const membershipOptions: SingleSelectOption[] = membershipType.map((item: any) => ({
     value: item.MemberShipType_id,
     label: `${item.MemberShipType_id} - ${item.MemberShipType_Name}`,
   }));
@@ -232,7 +228,7 @@ const MemberManagement = () => {
     }
   };
 
-  const dietPlanOptions = dietPlanType.map((item: any) => ({
+  const dietPlanOptions: SingleSelectOption[] = dietPlanType.map((item: any) => ({
     value: item.DietPlanID,
     label: `${item.DietPlanID} - ${item.Diet_Name}`,
   }));
@@ -260,6 +256,11 @@ const MemberManagement = () => {
       console.error("Error fetching status:", error);
     }
   };
+
+  const relationshipOptions: SingleSelectOption[] = relationship.map((item: any) => ({
+    value: item.attributedetails_name,
+    label: item.attributedetails_name,
+  }));
 
   const fetchMembersData = async () => {
     try {
@@ -311,6 +312,11 @@ const MemberManagement = () => {
       console.error("Error fetching status:", error);
     }
   };
+
+  const statusOptions: SingleSelectOption[] = status.map((item: any) => ({
+    value: item.attributedetails_name,
+    label: item.attributedetails_name,
+  }));
 
   useEffect(() => {
     const loadData = async () => {
@@ -396,8 +402,6 @@ const MemberManagement = () => {
     expiry_date_from: "",
     expiry_date_to: "",
   });
-  const [selectedSearchMembership, setSelectedSearchMembership] = useState<SingleSelectOption | null>(null);
-  const [selectedSearchDietPlan, setSelectedSearchDietPlan] = useState<SingleSelectOption | null>(null);
 
   const handleMemberFiles = async (files: (File | null)[]) => {
     const convertedImages = await Promise.all(
@@ -1597,30 +1601,21 @@ const MemberManagement = () => {
                   <Tooltip>
                     <TooltipTrigger asChild>
                       <div>
-                        <Select
-                          value={memberSearchForm.Gender}
-                          onValueChange={(value) =>
+                        <ReactSingleSelect
+                          options={genderOptions}
+                          value={
+                            genderOptions.find(
+                              (option) => option.value === memberSearchForm.Gender
+                            ) || null
+                          }
+                          onChange={(selected) => {
                             setMemberSearchForm({
                               ...memberSearchForm,
-                              Gender: value,
-                            })
-                          }
-                        >
-                          <SelectTrigger>
-                            <SelectValue placeholder="Select Gender" />
-                          </SelectTrigger>
-
-                          <SelectContent>
-                            {gender.map((gender: any) => (
-                              <SelectItem
-                                key={gender.attributedetails_name}
-                                value={gender.attributedetails_name}
-                              >
-                                {gender.attributedetails_name}
-                              </SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
+                              Gender: selected?.value || "",
+                            });
+                          }}
+                          placeholder="Select Gender"
+                        />
                       </div>
                     </TooltipTrigger>
 
@@ -1709,13 +1704,15 @@ const MemberManagement = () => {
                       <div>
                         <ReactSingleSelect
                           options={membershipOptions}
-                          value={selectedSearchMembership}
-                          onChange={(option) => {
-                            setSelectedSearchMembership(option);
-
+                          value={
+                            membershipOptions.find(
+                              (option) => option.value === memberSearchForm.Membership_type
+                            ) || null
+                          }
+                          onChange={(selected) => {
                             setMemberSearchForm({
                               ...memberSearchForm,
-                              Membership_type: option?.value || "",
+                              Membership_type: selected?.value || "",
                             });
                           }}
                           placeholder="Select Membership Type"
@@ -1739,13 +1736,15 @@ const MemberManagement = () => {
                       <div>
                         <ReactSingleSelect
                           options={dietPlanOptions}
-                          value={selectedSearchDietPlan}
-                          onChange={(option) => {
-                            setSelectedSearchDietPlan(option);
-
+                          value={
+                            dietPlanOptions.find(
+                              (option) => option.value === memberSearchForm.DietPlanID
+                            ) || null
+                          }
+                          onChange={(selected) => {
                             setMemberSearchForm({
                               ...memberSearchForm,
-                              DietPlanID: option?.value || "",
+                              DietPlanID: selected?.value || "",
                             });
                           }}
                           placeholder="Select Diet Plan"
@@ -1863,30 +1862,21 @@ const MemberManagement = () => {
                   <Tooltip>
                     <TooltipTrigger asChild>
                       <div>
-                        <Select
-                          value={memberSearchForm.is_active}
-                          onValueChange={(value) =>
+                        <ReactSingleSelect
+                          options={statusOptions}
+                          value={
+                            statusOptions.find(
+                              (option) => option.value === memberSearchForm.is_active
+                            ) || null
+                          }
+                          onChange={(selected) => {
                             setMemberSearchForm({
                               ...memberSearchForm,
-                              is_active: value,
-                            })
-                          }
-                        >
-                          <SelectTrigger>
-                            <SelectValue placeholder="Select Status" />
-                          </SelectTrigger>
-
-                          <SelectContent>
-                            {status.map((item: any) => (
-                              <SelectItem
-                                key={item.attributedetails_name}
-                                value={item.attributedetails_name}
-                              >
-                                {item.attributedetails_name}
-                              </SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
+                              is_active: selected?.value || "",
+                            });
+                          }}
+                          placeholder="Select Status"
+                        />
                       </div>
                     </TooltipTrigger>
 
@@ -2157,26 +2147,21 @@ const MemberManagement = () => {
                       <Tooltip>
                         <TooltipTrigger asChild>
                           <div>
-                            <Select
-                              value={formData.Gender}
-                              onValueChange={(value) =>
-                                setFormData({ ...formData, Gender: value })
+                            <ReactSingleSelect
+                              options={genderOptions}
+                              value={
+                                genderOptions.find(
+                                  (option) => option.value === formData.Gender
+                                ) || null
                               }
-                            >
-                              <SelectTrigger>
-                                <SelectValue placeholder="Select Gender" />
-                              </SelectTrigger>
-                              <SelectContent>
-                                {gender.map((gender: any) => (
-                                  <SelectItem
-                                    key={gender.attributedetails_code}
-                                    value={gender.attributedetails_code}
-                                  >
-                                    {gender.attributedetails_name}
-                                  </SelectItem>
-                                ))}
-                              </SelectContent>
-                            </Select>
+                              onChange={(selected) => {
+                                setFormData({
+                                  ...formData,
+                                  Gender: selected?.value || "",
+                                });
+                              }}
+                              placeholder="Select Gender"
+                            />
                           </div>
                         </TooltipTrigger>
 
@@ -2452,29 +2437,21 @@ const MemberManagement = () => {
                       <Tooltip>
                         <TooltipTrigger asChild>
                           <div>
-                            <Select
-                              value={formData.Emergency_contact_relation}
-                              onValueChange={(value) =>
+                            <ReactSingleSelect
+                              options={relationshipOptions}
+                              value={
+                                relationshipOptions.find(
+                                  (option) => option.value === formData.Emergency_contact_relation
+                                ) || null
+                              }
+                              onChange={(selected) => {
                                 setFormData({
                                   ...formData,
-                                  Emergency_contact_relation: value,
-                                })
-                              }
-                            >
-                              <SelectTrigger>
-                                <SelectValue placeholder="Select Relationship" />
-                              </SelectTrigger>
-                              <SelectContent>
-                                {relationship.map((relationship: any) => (
-                                  <SelectItem
-                                    key={relationship.attributedetails_name}
-                                    value={relationship.attributedetails_name}
-                                  >
-                                    {relationship.attributedetails_name}
-                                  </SelectItem>
-                                ))}
-                              </SelectContent>
-                            </Select>
+                                  Emergency_contact_relation: selected?.value || "",
+                                });
+                              }}
+                              placeholder="Select Relationship"
+                            />
                           </div>
                         </TooltipTrigger>
 
@@ -2509,13 +2486,15 @@ const MemberManagement = () => {
                           <div>
                             <ReactSingleSelect
                               options={membershipOptions}
-                              value={selectedMembership}
-                              onChange={(option) => {
-                                setSelectedMembership(option);
-
+                              value={
+                                membershipOptions.find(
+                                  (option) => option.value === formData.Membership_type
+                                ) || null
+                              }
+                              onChange={(selected) => {
                                 setFormData({
                                   ...formData,
-                                  Membership_type: option?.value || "",
+                                  Membership_type: selected?.value || "",
                                 });
                               }}
                               placeholder="Select Membership Type"
@@ -2547,13 +2526,15 @@ const MemberManagement = () => {
                           <div>
                             <ReactSingleSelect
                               options={dietPlanOptions}
-                              value={selectedDietPlan}
-                              onChange={(option) => {
-                                setSelectedDietPlan(option);
-
+                              value={
+                                dietPlanOptions.find(
+                                  (option) => option.value === formData.DietPlanID
+                                ) || null
+                              }
+                              onChange={(selected) => {
                                 setFormData({
                                   ...formData,
-                                  DietPlanID: option?.value || "",
+                                  DietPlanID: selected?.value || "",
                                 });
                               }}
                               placeholder="Select Diet Plan"

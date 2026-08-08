@@ -17,7 +17,6 @@ import {
   DialogDescription,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
 } from "@/components/ui/dialog";
 import { useNavigate } from "react-router-dom";
 import {
@@ -57,28 +56,15 @@ import { Switch } from "@/components/ui/switch";
 import { useCompany } from "../CompanyContext";
 import { hasActionPermission } from "@/utils/permission";
 import Loading from "@/components/Loading";
-interface Trainer {
-  id: string;
-  name: string;
-  email: string;
-  phone: string;
-  photo: string;
-  certifications: string[];
-  specializations: string[];
-  experience: number;
-  schedule: string;
-  bio: string;
-  assignedMembers: number;
-  Is_Active: boolean;
-}
+import ReactSingleSelect, {
+  SingleSelectOption,
+} from "@/components/ui/react-single-select";
 
 const FacultyManagement = () => {
   const navigate = useNavigate();
   const { companyCode, locationCode, userCode } = useCompany();
   // For loading
   const [loading, setLoading] = useState(false);
-
-  const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
 
   const { toast } = useToast();
 
@@ -259,6 +245,11 @@ const FacultyManagement = () => {
     }
   };
 
+  const genderOptions: SingleSelectOption[] = gender.map((item: any) => ({
+    value: item.attributedetails_code,
+    label: item.attributedetails_name,
+  }));
+
   // Status DropDown
   const fetchStatus = async () => {
     try {
@@ -283,6 +274,11 @@ const FacultyManagement = () => {
       console.error("Error fetching status:", error);
     }
   };
+
+  const statusOptions: SingleSelectOption[] = status.map((item: any) => ({
+    value: item.attributedetails_name,
+    label: item.attributedetails_name,
+  }));
 
   useEffect(() => {
     const loadData = async () => {
@@ -1089,7 +1085,6 @@ const FacultyManagement = () => {
 
                       {/* Newly Added Field */}
                       <div className="space-y-2">
-                        {/* <Label htmlFor="email">Gender*</Label> */}
                         <Label
                           htmlFor="name"
                           className={
@@ -1100,41 +1095,24 @@ const FacultyManagement = () => {
                         >
                           Gender*
                         </Label>
-                        <Select
-                          value={TrainerForm.Gender}
-                          onValueChange={(value) =>
-                            setTrainerForm({ ...TrainerForm, Gender: value })
+
+                        <ReactSingleSelect
+                          options={genderOptions}
+                          value={
+                            genderOptions.find(
+                              (option) => option.value === TrainerForm.Gender
+                            ) || null
                           }
-                        >
-                          <TooltipProvider>
-                            <Tooltip>
-                              <TooltipTrigger asChild>
-                                <SelectTrigger>
-                                  <SelectValue placeholder="Select Gender" />
-                                </SelectTrigger>
-                              </TooltipTrigger>
-
-                              <TooltipContent>
-                                <p>Select Gender</p>
-                              </TooltipContent>
-                            </Tooltip>
-                          </TooltipProvider>
-
-                          <SelectContent>
-                            {gender.map((status: any) => (
-                              <SelectItem
-                                key={status.attributedetails_code}
-                                value={status.attributedetails_code}
-                              >
-                                {status.attributedetails_name}
-                              </SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
+                          onChange={(selected) => {
+                            setTrainerForm({
+                              ...TrainerForm,
+                              Gender: selected?.value || "",
+                            });
+                          }}
+                          placeholder="Select Gender"
+                        />
                       </div>
-                      {/* </div> */}
 
-                      {/* <div className="grid grid-cols-2 gap-4"> */}
                       <div className="space-y-2">
                         <Label
                           htmlFor="name"
@@ -1690,41 +1668,21 @@ const FacultyManagement = () => {
 
               <div className="space-y-2">
                 <Label>Gender</Label>
-
-                <Select
-                  value={TrainersSearchForm.Gender}
-                  onValueChange={(value) =>
+                <ReactSingleSelect
+                  options={genderOptions}
+                  value={
+                    genderOptions.find(
+                      (option) => option.value === TrainersSearchForm.Gender
+                    ) || null
+                  }
+                  onChange={(selected) => {
                     setTrainersSearchForm({
                       ...TrainersSearchForm,
-                      Gender: value,
-                    })
-                  }
-                >
-                  <TooltipProvider>
-                    <Tooltip>
-                      <TooltipTrigger asChild>
-                        <SelectTrigger>
-                          <SelectValue placeholder="Select Gender" />
-                        </SelectTrigger>
-                      </TooltipTrigger>
-
-                      <TooltipContent>
-                        <p>Select Gender</p>
-                      </TooltipContent>
-                    </Tooltip>
-                  </TooltipProvider>
-
-                  <SelectContent>
-                    {gender.map((gender: any) => (
-                      <SelectItem
-                        key={gender.attributedetails_code}
-                        value={gender.attributedetails_code}
-                      >
-                        {gender.attributedetails_name}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
+                      Gender: selected?.value || "",
+                    });
+                  }}
+                  placeholder="Select Gender"
+                />
               </div>
 
               <div className="space-y-2">
@@ -1785,30 +1743,21 @@ const FacultyManagement = () => {
                   <Tooltip>
                     <TooltipTrigger asChild>
                       <div>
-                        <Select
-                          value={TrainersSearchForm.Is_Active}
-                          onValueChange={(value) =>
+                        <ReactSingleSelect
+                          options={statusOptions}
+                          value={
+                            statusOptions.find(
+                              (option) => option.value === TrainersSearchForm.Is_Active
+                            ) || null
+                          }
+                          onChange={(selected) => {
                             setTrainersSearchForm({
                               ...TrainersSearchForm,
-                              Is_Active: value,
-                            })
-                          }
-                        >
-                          <SelectTrigger>
-                            <SelectValue placeholder="Select Status" />
-                          </SelectTrigger>
-
-                          <SelectContent>
-                            {status.map((item: any) => (
-                              <SelectItem
-                                key={item.attributedetails_name}
-                                value={item.attributedetails_name}
-                              >
-                                {item.attributedetails_name}
-                              </SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
+                              Is_Active: selected?.value || "",
+                            });
+                          }}
+                          placeholder="Select Status"
+                        />
                       </div>
                     </TooltipTrigger>
 
@@ -1961,20 +1910,20 @@ const FacultyManagement = () => {
                         <div className="flex flex-wrap gap-2">
                           {typeof trainer.Specializations === "string"
                             ? trainer.Specializations.split(",").map(
+                              (spec: string, index: number) => (
+                                <Badge key={index} variant="outline">
+                                  {spec.trim()}
+                                </Badge>
+                              ),
+                            )
+                            : Array.isArray(trainer.Specializations)
+                              ? trainer.Specializations.map(
                                 (spec: string, index: number) => (
                                   <Badge key={index} variant="outline">
-                                    {spec.trim()}
+                                    {spec}
                                   </Badge>
                                 ),
                               )
-                            : Array.isArray(trainer.Specializations)
-                              ? trainer.Specializations.map(
-                                  (spec: string, index: number) => (
-                                    <Badge key={index} variant="outline">
-                                      {spec}
-                                    </Badge>
-                                  ),
-                                )
                               : null}
                         </div>
                       </div>
@@ -1987,28 +1936,28 @@ const FacultyManagement = () => {
                         <div className="flex flex-wrap gap-2">
                           {typeof trainer.Certifications === "string"
                             ? trainer.Certifications.split(",").map(
+                              (cert: string, index: number) => (
+                                <Badge
+                                  key={index}
+                                  variant="secondary"
+                                  className="text-xs"
+                                >
+                                  {cert.trim()}
+                                </Badge>
+                              ),
+                            )
+                            : Array.isArray(trainer.Certifications)
+                              ? trainer.Certifications.map(
                                 (cert: string, index: number) => (
                                   <Badge
                                     key={index}
                                     variant="secondary"
                                     className="text-xs"
                                   >
-                                    {cert.trim()}
+                                    {cert}
                                   </Badge>
                                 ),
                               )
-                            : Array.isArray(trainer.Certifications)
-                              ? trainer.Certifications.map(
-                                  (cert: string, index: number) => (
-                                    <Badge
-                                      key={index}
-                                      variant="secondary"
-                                      className="text-xs"
-                                    >
-                                      {cert}
-                                    </Badge>
-                                  ),
-                                )
                               : null}
                         </div>
                       </div>
