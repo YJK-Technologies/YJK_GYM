@@ -1455,6 +1455,68 @@ const PaymentManagement = () => {
     doc.save("Payment_History_Report.pdf");
   };
 
+  // Handler when selecting/changing member from the React Single Select dropdown
+  const handleMemberDropdownChange = async (selectedOption: SingleSelectOption | null) => {
+    if (!selectedOption) {
+      handleClearMember();
+      return;
+    }
+
+    const memberId = selectedOption.value;
+
+    try {
+      // Fetch individual member details using your API endpoint
+      const response = await fetch(`${BASE_URL}/getMemberDetail`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          MemberID: memberId,
+          Company_code: companyCode,
+          Location_code: locationCode,
+        }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok && data.length > 0) {
+        const memberInfo = data[0];
+
+        // Update state with detailed info
+        setSelectedMember({
+          name: memberInfo.Full_name,
+          cpr: memberInfo.MemberID,
+          email: memberInfo.Email || "N/A",
+          phone: memberInfo.Mobile || "N/A",
+          membershipStatus: memberInfo.Status || "N/A"
+        });
+
+        // Clear previous package / coupon state
+        setPackages([]);
+        setSelectedPackage(null);
+        setAppliedCoupon(null);
+
+        // Trigger fetching packages for selected member
+        if (typeof fetchMemberPackages === "function") {
+          fetchMemberPackages(memberInfo.MemberID);
+        }
+      } else {
+        console.error("Member details not found");
+      }
+    } catch (error) {
+      console.error("Error fetching member detail:", error);
+    }
+  };
+
+  // Handler to clear selected member data
+  const handleClearMember = () => {
+    setSelectedMember(null);
+    setPackages([]);
+    setSelectedPackage(null);
+    setAppliedCoupon(null);
+  };
+
   return (
     <div className="min-h-screen bg-gray-50">
       {loading && <Loading />}
@@ -1667,12 +1729,13 @@ const PaymentManagement = () => {
                     <Users className="h-5 w-5 mr-2" />
                     Select Member
                   </CardTitle>
-                  <CardDescription>Search by CPR or name</CardDescription>
+                  <CardDescription>Search by Member ID or Name</CardDescription>
                 </CardHeader>
+
                 <CardContent className="flex-1 overflow-y-auto space-y-4 px-6 custom-scrollbar">
+                  {/* Payment ID Section */}
                   <div className="space-y-2">
                     <Label htmlFor="paymentID">Payment ID</Label>
-
                     <TooltipProvider>
                       <Tooltip>
                         <TooltipTrigger asChild>
@@ -1693,17 +1756,12 @@ const PaymentManagement = () => {
                             maxLength={20}
                             onChange={(e) => {
                               if (numberGeneration === "Manual") {
-                                const value = e.target.value.replace(
-                                  /[^a-zA-Z0-9]/g,
-                                  "",
-                                );
-
+                                const value = e.target.value.replace(/[^a-zA-Z0-9]/g, "");
                                 setPaymentID(value);
                               }
                             }}
                           />
                         </TooltipTrigger>
-
                         <TooltipContent>
                           <p>
                             {numberGeneration === "Auto"
@@ -1715,35 +1773,58 @@ const PaymentManagement = () => {
                     </TooltipProvider>
                   </div>
 
-                  <TooltipProvider>
-                    <Tooltip>
-                      <TooltipTrigger asChild>
-                        <Button
-                          variant="outline"
-                          className="w-full justify-start"
-                          onClick={() => {
-                            fetchGender();
-                            fetchStatus();
-                            setMemberHelpOpen(true);
-                          }}
-                        >
-                          <Search className="h-4 w-4 mr-2" />
-                          Select Member
-                        </Button>
-                      </TooltipTrigger>
+                  {/* Member Selection Section: React Select + Search Icon Button */}
+                  <div className="space-y-2">
+                    <Label htmlFor="memberSelect">Member</Label>
+                    <div className="flex items-center space-x-2">
+                      {/* React Single Select Dropdown */}
+                      <div className="flex-1">
+                        <ReactSingleSelect
+                          options={membershipOptions}
+                          value={
+                            selectedMember
+                              ? {
+                                value: selectedMember.cpr,
+                                label: `${selectedMember.cpr} - ${selectedMember.name}`,
+                              }
+                              : null
+                          }
+                          onChange={handleMemberDropdownChange}
+                          placeholder="Search & Select Member..."
+                        />
+                      </div>
 
-                      <TooltipContent>
-                        <p>Click to search and select a member</p>
-                      </TooltipContent>
-                    </Tooltip>
-                  </TooltipProvider>
+                      {/* Search Icon Button to Open Advanced Member Help Dialog */}
+                      <TooltipProvider>
+                        <Tooltip>
+                          <TooltipTrigger asChild>
+                            <Button
+                              variant="outline"
+                              size="icon"
+                              className="shrink-0 h-10 w-10"
+                              onClick={() => {
+                                fetchGender();
+                                fetchStatus();
+                                setMemberHelpOpen(true);
+                              }}
+                            >
+                              <Search className="h-4 w-4" />
+                            </Button>
+                          </TooltipTrigger>
+                          <TooltipContent>
+                            <p>Advanced Member Search (Help)</p>
+                          </TooltipContent>
+                        </Tooltip>
+                      </TooltipProvider>
+                    </div>
+                  </div>
+
+                  {/* Selected Member Details Card */}
                   {selectedMember && (
                     <div className="p-4 bg-blue-50 rounded-lg border border-blue-200">
                       <div className="flex justify-between items-start">
                         <div>
-                          <p className="font-semibold text-lg">
-                            {selectedMember.name}
-                          </p>
+                          <p className="font-semibold text-lg">{selectedMember.name}</p>
                           <p className="text-sm text-gray-600">
                             Member ID: {selectedMember.cpr}
                           </p>
@@ -1757,21 +1838,9 @@ const PaymentManagement = () => {
                         <Button
                           variant="ghost"
                           size="sm"
-                          onClick={() => {
-                            setSelectedMember(null);
-
-                            // Clear package also
-                            setPackages([]);
-                            setSelectedPackage(null);
-                            setAppliedCoupon(null);
-
-                            fetchGender();
-                            fetchStatus();
-
-                            setMemberHelpOpen(true);
-                          }}
+                          onClick={handleClearMember}
                         >
-                          Change
+                          Clear
                         </Button>
                       </div>
                     </div>
