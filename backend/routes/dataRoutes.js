@@ -219,6 +219,7 @@ router.post("/getNewMemberRegistration", dataController.getNewMemberRegistration
 router.post("/getPaymentReceived", dataController.getPaymentReceived)
 router.post("/getWorkoutProgramAssigned", dataController.getWorkoutProgramAssigned)
 router.post("/getMemberDropDown", dataController.getMemberDropDown)
+router.post("/getMemberDetail", dataController.getMemberDetail)
 
 
 

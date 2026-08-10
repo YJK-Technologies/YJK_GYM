@@ -5990,6 +5990,31 @@ const getMemberDropDown = async (req, res) => {
 }
 //Code Ended by Pavun on 07-08-2026
 
+//Code Added by Pavun on 07-08-2026
+const getMemberDetail = async (req, res) => {
+  const { MemberID, Company_code, Location_code } = req.body;
+  try {
+    const pool = await connection.connectToDatabase();
+    const result = await pool
+      .request()
+      .input("mode", sql.NVarChar, "GMD")
+      .input("MemberID", sql.NVarChar, MemberID)
+      .input("Company_code", sql.NVarChar, Company_code)
+      .input("Location_code", sql.NVarChar, Location_code)
+      .query(`EXEC sp_Member_Hdr @mode,@MemberID,'','','','','','','','','','','','','','',NULL,'','','','','',@Company_code,@Location_code,'',0,0,'','','','','',''`);
+
+    if (result.recordset.length > 0) {
+      res.status(200).json(result.recordset);
+    } else {
+      res.status(404).json("Data not found");
+    }
+  } catch (err) {
+    console.error("Error", err);
+    res.status(500).json({ message: err.message || "Internal Server Error" });
+  }
+}
+//Code Ended by Pavun on 07-08-2026
+
 module.exports = {
   getCompanyno,
   getsearchdata,
@@ -6183,5 +6208,6 @@ module.exports = {
   getNewMemberRegistration,
   getPaymentReceived,
   getWorkoutProgramAssigned,
-  getMemberDropDown
+  getMemberDropDown,
+  getMemberDetail
 };
