@@ -8733,7 +8733,7 @@ const WorkoutProgramManagement = () => {
                             <ReactSingleSelect
                               options={genderOptions}
                               value={
-                                roleOptions.find(
+                                genderOptions.find(
                                   (option) => option.value === userForm.gender
                                 ) || null
                               }
