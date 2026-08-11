@@ -384,6 +384,16 @@ const AdminDashboard = () => {
                     <Settings className="h-4 w-4 text-gray-400 group-hover:text-purple-600 mr-3 transition-colors" />
                     <span className="font-medium">Settings</span>
                   </button>
+                  <button
+                    onClick={() => {
+                      setIsMenuOpen(false);
+                      navigate("/UserSettings");
+                    }}
+                    className="w-full text-left flex items-center px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 transition-colors group"
+                  >
+                    <Settings className="h-4 w-4 text-gray-400 group-hover:text-purple-600 mr-3 transition-colors" />
+                    <span className="font-medium">User Settings</span>
+                  </button>
 
                   <div className="border-t border-gray-100 my-1"></div>
 

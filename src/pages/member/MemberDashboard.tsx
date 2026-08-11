@@ -1,4 +1,4 @@
-
+import { useState, useRef, useEffect } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -7,7 +7,7 @@ import { useNavigate } from 'react-router-dom';
 import { Calendar, DollarSign, TrendingUp, Bell, Activity } from 'lucide-react';
 import { showConfirmToast } from "@/components/ui/show-confirm-toast";
 import { useCompany } from "../CompanyContext";
-
+import { ChevronDown, User, Settings, LogOut,} from "lucide-react";
 const MemberDashboard = () => {
   const { userName } = useCompany();
   const membershipType = sessionStorage.getItem("membershipType") ?? ""
@@ -40,6 +40,8 @@ const MemberDashboard = () => {
   const membershipDaysLeft = getMembershipDaysLeft(validUntil);
 
   const navigate = useNavigate();
+
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   const memberInfo = {
     name: userName,
@@ -132,7 +134,7 @@ const MemberDashboard = () => {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <header className="bg-white shadow-sm border-b">
+      {/* <header className="bg-white shadow-sm border-b">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center py-4">
             <div>
@@ -157,7 +159,131 @@ const MemberDashboard = () => {
             </div>
           </div>
         </div>
-      </header>
+      </header> */}
+      <header className="bg-white shadow-sm border-b">
+  <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div className="flex justify-between items-center py-4">
+
+      {/* Left Content */}
+      <div>
+        <h1 className="text-2xl font-bold text-gray-900">
+          Welcome back, {memberInfo.name}!
+        </h1>
+        <p className="text-gray-600">
+          {memberInfo.membershipType} Member • Valid until{" "}
+          {memberInfo.validUntil}
+        </p>
+      </div>
+
+      {/* Right Content */}
+      <div className="flex items-center space-x-4">
+
+        {/* Membership Badge */}
+        <Badge>{memberInfo.membershipType}</Badge>
+
+        {/* User Dropdown */}
+        <div className="relative">
+          <button
+            type="button"
+            onClick={() => setIsMenuOpen(!isMenuOpen)}
+            className="flex items-center gap-2 rounded-lg px-2 py-1.5 hover:bg-gray-50 transition-colors focus:outline-none"
+          >
+            {/* Avatar */}
+            <div className="h-9 w-9 rounded-full bg-purple-100 flex items-center justify-center">
+              <span className="text-sm font-semibold text-purple-600">
+                {memberInfo.name?.charAt(0)?.toUpperCase()}
+              </span>
+            </div>
+
+            {/* Name */}
+            <div className="hidden sm:block text-left">
+              <p className="text-sm font-semibold text-gray-800">
+                {memberInfo.name}
+              </p>
+              <p className="text-xs text-gray-500">
+                {memberInfo.membershipType} Member
+              </p>
+            </div>
+
+            {/* Arrow */}
+            <ChevronDown
+              className={`h-4 w-4 text-gray-400 transition-transform ${
+                isMenuOpen ? "rotate-180" : ""
+              }`}
+            />
+          </button>
+
+          {/* Dropdown Menu */}
+          {isMenuOpen && (
+            <div className="absolute right-0 mt-2 w-56 bg-white border border-gray-200 rounded-xl shadow-lg py-1 z-50 animate-in fade-in slide-in-from-top-1 duration-150">
+
+              {/* Mobile / Dropdown Header */}
+              <div className="px-4 py-2 border-b border-gray-100">
+                <p className="text-sm font-semibold text-gray-800">
+                  {memberInfo.name}
+                </p>
+                <p className="text-xs text-gray-500">
+                  {memberInfo.membershipType} Member
+                </p>
+              </div>
+
+              {/* Profile / Membership */}
+              {/* <button
+                onClick={() => {
+                  setIsMenuOpen(false);
+                  navigate("/Profile");
+                }}
+                className="w-full text-left flex items-center px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 transition-colors group"
+              >
+                <User
+                  className="h-4 w-4 text-gray-400 group-hover:text-purple-600 mr-3 transition-colors"
+                />
+                <span className="font-medium">Profile</span>
+              </button> */}
+
+              {/* Settings */}
+              <button
+                onClick={() => {
+                  setIsMenuOpen(false);
+                  navigate("/UserSettings");
+                }}
+                className="w-full text-left flex items-center px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 transition-colors group"
+              >
+                <Settings
+                  className="h-4 w-4 text-gray-400 group-hover:text-purple-600 mr-3 transition-colors"
+                />
+                <span className="font-medium">Settings</span>
+              </button>
+
+              <div className="border-t border-gray-100 my-1"></div>
+
+              {/* Logout */}
+              <button
+                onClick={() => {
+                  setIsMenuOpen(false);
+
+                  showConfirmToast({
+                    title: "Confirm Logout",
+                    description: "Are you sure you want to logout?",
+                    onConfirm: () => {
+                      performLogout();
+                    },
+                  });
+                }}
+                className="w-full text-left flex items-center px-4 py-2.5 text-sm text-red-600 hover:bg-red-50/50 transition-colors font-medium group"
+              >
+                <LogOut
+                  className="h-4 w-4 text-red-400 group-hover:text-red-600 mr-3 transition-colors"
+                />
+                Log out
+              </button>
+            </div>
+          )}
+        </div>
+      </div>
+    </div>
+  </div>
+</header>
 
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Member Summary */}
