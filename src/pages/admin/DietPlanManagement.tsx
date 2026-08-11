@@ -1793,6 +1793,9 @@ const DietPlanManagement = () => {
                             <p className="text-sm text-gray-500">
                               Plan ID: {plan.DietPlanID}
                             </p>
+                            <p className="text-sm font-medium text-gray-700 mb-2">
+                                Category:
+                              </p>
                             <Badge variant="outline" className="mb-2">
                               {plan.Category}
                             </Badge>

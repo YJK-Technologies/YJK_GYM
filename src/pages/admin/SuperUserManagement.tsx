@@ -7724,6 +7724,7 @@ const WorkoutProgramManagement = () => {
                           <Input
                             id="name"
                             value={locationForm.email_id}
+                            maxLength={250}
                             onChange={(e) =>
                               setLocationForm({
                                 ...locationForm,
@@ -7798,7 +7799,7 @@ const WorkoutProgramManagement = () => {
                           <Input
                             id="name"
                             value={locationForm.contact_no}
-                            maxLength={100}
+                            maxLength={50}
                             inputMode="numeric"
                             onChange={(e) =>
                               setLocationForm({
