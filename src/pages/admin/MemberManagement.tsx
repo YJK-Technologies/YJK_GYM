@@ -2722,7 +2722,7 @@ const MemberManagement = () => {
                 <Tooltip>
                   <TooltipTrigger asChild>
                     <Button onClick={handleSaveMember}>
-                      {editingMember ? "Update Member" : "Add Member"}
+                      {editingMember ? "Update Member" : "Create Member"}
                     </Button>
                   </TooltipTrigger>
 
