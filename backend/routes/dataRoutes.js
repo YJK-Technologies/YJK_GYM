@@ -220,6 +220,10 @@ router.post("/getPaymentReceived", dataController.getPaymentReceived)
 router.post("/getWorkoutProgramAssigned", dataController.getWorkoutProgramAssigned)
 router.post("/getMemberDropDown", dataController.getMemberDropDown)
 router.post("/getMemberDetail", dataController.getMemberDetail)
+router.post("/getDefaultScreens",dataController.getDefaultScreens)
+router.post("/userSettingsInsert",dataController.userSettingsInsert)
+router.post("/getUserSettings",dataController.getUserSettings)
+router.post("/getDefaultUserCompany",dataController.getDefaultUserCompany)
 
 
 

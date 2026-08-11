@@ -24,6 +24,7 @@ import NotFound from "./pages/NotFound";
 import Quotation from "./pages/Quotation";
 import CompaniesList from "./pages/admin/CompaniesList";
 import SettingScreen from "./pages/admin/Settings";
+import UserSettings from "./pages/admin/UserSettings";
 
 //Unauthorized UI
 import Unauthorized from "./pages/Unauthorized";
@@ -103,6 +104,7 @@ const App = () => (
           <Route path="/quotation" element={<Quotation />} />
           <Route path="/AdminCompanies" element={<CompaniesList />} />
           <Route path="/AdminSettings" element={<SettingScreen />} />
+          <Route path="/UserSettings" element={<UserSettings />} />
 
           <Route
             path="/AdminDashboard"
