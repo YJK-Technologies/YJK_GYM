@@ -650,7 +650,27 @@ const FacultyManagement = () => {
     }
   };
 
+  // For search form validation - Email
+  const validateSearchEmail = () => {
+    if (!TrainersSearchForm.Email) return true;
+
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+    if (!emailRegex.test(TrainersSearchForm.Email)) {
+      toast({
+        title: "Invalid Email",
+        description: "Please enter a valid email address.",
+        variant: "destructive",
+      });
+      return false;
+    }
+
+    return true;
+  };
+
   const handleTrainerSearch = async () => {
+    if (!validateSearchEmail()) return;
+
     setLoading(true);
     try {
       const response = await fetch(`${BASE_URL}/getTrainerSC`, {
@@ -1357,7 +1377,7 @@ const FacultyManagement = () => {
                       <Tooltip>
                         <TooltipTrigger asChild>
                           <Button onClick={handleSaveTrainer}>
-                            {editingTrainer ? "Update Trainer" : "Add Trainer"}
+                            {editingTrainer ? "Update Trainer" : "Create Trainer"}
                           </Button>
                         </TooltipTrigger>
 
@@ -1365,7 +1385,7 @@ const FacultyManagement = () => {
                           <p>
                             {editingTrainer
                               ? "Update a Trainer"
-                              : "Add a Trainer"}
+                              : "Create a Trainer"}
                           </p>
                         </TooltipContent>
                       </Tooltip>
