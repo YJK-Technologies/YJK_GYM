@@ -103,13 +103,14 @@ const Login = () => {
         }
 
         await UserPermission(role_id);
-        await fetchUserData(user_code);
+        // await fetchUserData(user_code);
+        await fetchUserData(user_code, loginType);
 
-        if (loginType === "member") {
-          navigate("/MemberDashboard", { replace: true });
-        } else {
-          navigate("/AdminDashboard", { replace: true });
-        }
+        // if (loginType === "member") {
+        //   navigate("/MemberDashboard", { replace: true });
+        // } else {
+        //   navigate("/AdminDashboard", { replace: true });
+        // }
 
       } else {
         setLoginError(data.message || "Invalid Email ID or Password");
@@ -154,42 +155,171 @@ const Login = () => {
     }
   };
 
-  const fetchUserData = async (userCode: string) => {
-    try {
-      const response = await fetch(`${BASE_URL}/getusercompany`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          user_code: userCode,
-        }),
-      });
+  // const fetchUserData = async (userCode: string) => {
+  //   try {
+  //     const response = await fetch(`${BASE_URL}/getusercompany`, {
+  //       method: "POST",
+  //       headers: {
+  //         "Content-Type": "application/json",
+  //       },
+  //       body: JSON.stringify({
+  //         user_code: userCode,
+  //       }),
+  //     });
 
-      if (response.ok) {
-        const data = await response.json();
+  //     if (response.ok) {
+  //       const data = await response.json();
 
-        if (data.length > 0) {
-          const company = data[0];
+  //       if (data.length > 0) {
+  //         const company = data[0];
 
-          setCompanyData({
-            companyCode: company.company_no,
-            companyName: company.company_name,
-            locationCode: company.location_no,
-            locationName: company.location_name,
-            userCode: company.user_code,
-            userName: company.user_name,
-            shortName: company.short_name,
-          });
+  //         setCompanyData({
+  //           companyCode: company.company_no,
+  //           companyName: company.company_name,
+  //           locationCode: company.location_no,
+  //           locationName: company.location_name,
+  //           userCode: company.user_code,
+  //           userName: company.user_name,
+  //           shortName: company.short_name,
+  //         });
 
-          handleSave(company);
+  //         handleSave(company);
+  //       }
+  //     }
+  //   } catch (err) {
+  //     console.error(err);
+  //   }
+  // };
+
+// const fetchUserData = async (userCode) => {
+//   try {
+//     const response = await fetch(`${BASE_URL}/getDefaultUserCompany`, {
+//       method: "POST",
+//       headers: {
+//         "Content-Type": "application/json",
+//       },
+//       body: JSON.stringify({
+//         user_code: userCode,
+//       }),
+//     });
+
+//     if (response.ok) {
+//       const data = await response.json();
+
+//       if (data.length > 0) {
+//         const company = data[0];
+
+//         // Set Company Context
+//         setCompanyData({
+//           companyCode: company.company_no,
+//           companyName: company.company_name,
+//           locationCode: company.location_no,
+//           locationName: company.location_name,
+//           userCode: company.user_code,
+//           userName: company.user_name,
+//           shortName: company.short_name,
+//         });
+
+//         // Save company details in sessionStorage
+//         handleSave(company);
+
+//         // Get Default Screen
+//         const defaultScreen = company.DefaultScreenId?.trim();
+
+//         // Navigate to Default Screen
+//         if (defaultScreen) {
+//           navigate(`/${defaultScreen}`, { replace: true });
+//         } else {
+//           navigate("/AccountInformation", { replace: true });
+//         }
+//       } else {
+//         console.log("Default company mapping not found.");
+//         navigate("/AccountInformation", { replace: true });
+//       }
+//     } else {
+//       console.log("Failed to fetch default company mapping.");
+//       navigate("/AccountInformation", { replace: true });
+//     }
+//   } catch (err) {
+//     console.error("Error fetching default user company:", err);
+//     navigate("/AccountInformation", { replace: true });
+//   }
+// };
+
+
+const fetchUserData = async (userCode, loginType) => {
+  try {
+    const response = await fetch(`${BASE_URL}/getDefaultUserCompany`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        user_code: userCode,
+      }),
+    });
+
+    if (response.ok) {
+      const data = await response.json();
+
+      if (data.length > 0) {
+        const company = data[0];
+
+        // Set Company Context
+        setCompanyData({
+          companyCode: company.company_no,
+          companyName: company.company_name,
+          locationCode: company.location_no,
+          locationName: company.location_name,
+          userCode: company.user_code,
+          userName: company.user_name,
+          shortName: company.short_name,
+        });
+
+        // Save Company Details
+        handleSave(company);
+
+        // Get Default Screen
+        const defaultScreen = company.DefaultScreenId?.trim();
+
+        if (defaultScreen) {
+          // If DefaultScreenId has value
+          navigate(`/${defaultScreen}`, { replace: true });
+        } else {
+          // If DefaultScreenId is empty
+          if (loginType === "admin") {
+            navigate("/AdminDashboard", { replace: true });
+          } else if (loginType === "member") {
+            navigate("/MemberDashboard", { replace: true });
+          }
+        }
+      } else {
+        // No company data found
+        if (loginType === "admin") {
+          navigate("/AdminDashboard", { replace: true });
+        } else if (loginType === "member") {
+          navigate("/MemberDashboard", { replace: true });
         }
       }
-    } catch (err) {
-      console.error(err);
+    } else {
+      // API failed
+      if (loginType === "admin") {
+        navigate("/AdminDashboard", { replace: true });
+      } else if (loginType === "member") {
+        navigate("/MemberDashboard", { replace: true });
+      }
     }
-  };
+  } catch (err) {
+    console.error("Error fetching default user company:", err);
 
+    // Error fallback
+    if (loginType === "admin") {
+      navigate("/AdminDashboard", { replace: true });
+    } else if (loginType === "member") {
+      navigate("/MemberDashboard", { replace: true });
+    }
+  }
+};
   const handleSave = (data: any) => {
     if (!data) return;
 
@@ -200,6 +330,7 @@ const Login = () => {
     sessionStorage.setItem("selectedShortName", data.short_name);
     sessionStorage.setItem("selectedUserName", data.user_name);
     sessionStorage.setItem("selectedUserCode", data.user_code);
+    sessionStorage.setItem("DefaultScreenId",data.DefaultScreenId || "");
   };
 
   return (
