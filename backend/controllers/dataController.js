@@ -5617,7 +5617,7 @@ const getPaymentProgramDetails = async (req, res) => {
 }
 
 const applyCouponPayment = async (req, res) => {
-  const { coupon_code, package_ID, Amount, Company_code, Location_code, } = req.body;
+  const { coupon_code, package_ID, Amount, Company_code, Location_code,MemberID } = req.body;
 
   try {
     const pool = await connection.connectToDatabase();
@@ -5630,7 +5630,8 @@ const applyCouponPayment = async (req, res) => {
       .input("Amount", sql.Decimal(18,2), Amount)
       .input("Company_code", sql.NVarChar, Company_code)
       .input("Location_code", sql.NVarChar, Location_code)
-      .query(`EXEC sp_Payment_Values_test @mode, @package_ID, @coupon_code, @Amount, @Company_Code, @Location_Code`);
+      .input("MemberID", sql.NVarChar, MemberID)
+      .query(`EXEC sp_Payment_Values @mode, @package_ID, @coupon_code, @Amount, @Company_Code, @Location_Code,@MemberID`);
 
     if (result.recordset.length > 0) {
       return res.status(200).json(result.recordset);
@@ -5787,7 +5788,7 @@ const getRecentPayments = async (req, res) => {
 
 //Code added by Dinesh Gokul on 29-07-2026
 const reportCardDataPayment = async (req, res) => {
-  const { Company_code, Location_code, } = req.body;
+  const { Company_code, Location_code,MemberID } = req.body;
 
   try {
     const pool = await connection.connectToDatabase();
@@ -5797,7 +5798,8 @@ const reportCardDataPayment = async (req, res) => {
       .input("mode", sql.NVarChar, "SD")
       .input("Company_code", sql.NVarChar, Company_code)
       .input("Location_code", sql.NVarChar, Location_code)
-      .query(`EXEC sp_Payment_Values_test @mode, '', '', 0, @Company_Code, @Location_Code`);
+      .input("MemberID", sql.NVarChar, MemberID)
+      .query(`EXEC sp_Payment_Values @mode, '', '', 0, @Company_Code, @Location_Code,@MemberID`);
 
     if (result.recordset.length > 0) {
       return res.status(200).json(result.recordset);
@@ -5819,7 +5821,7 @@ const reportCardDataPayment = async (req, res) => {
 };
 
 const reportPackageRevenue = async (req, res) => {
-  const { Company_code, Location_code } = req.body;
+  const { Company_code, Location_code,MemberID } = req.body;
 
   try {
     const pool = await connection.connectToDatabase();
@@ -5829,7 +5831,8 @@ const reportPackageRevenue = async (req, res) => {
       .input("mode", sql.NVarChar, "RP")
       .input("Company_code", sql.NVarChar, Company_code)
       .input("Location_code", sql.NVarChar, Location_code)
-      .query(`EXEC sp_Payment_Values_test @mode, '', '', 0, @Company_code, @Location_code`);
+      .input("MemberID", sql.NVarChar, MemberID)
+      .query(`EXEC sp_Payment_Values @mode, '', '', 0, @Company_code, @Location_code,@MemberID`);
 
     return res.status(200).json(result.recordset);
 
@@ -5846,7 +5849,7 @@ const reportPackageRevenue = async (req, res) => {
 };
 
 const couponUsageStatistics = async (req, res) => {
-  const { Company_code, Location_code } = req.body;
+  const { Company_code, Location_code,MemberID } = req.body;
 
   try {
     const pool = await connection.connectToDatabase();
@@ -5856,7 +5859,8 @@ const couponUsageStatistics = async (req, res) => {
       .input("mode", sql.NVarChar, "CU")
       .input("Company_code", sql.NVarChar, Company_code)
       .input("Location_code", sql.NVarChar, Location_code)
-      .query(`EXEC sp_Payment_Values_test @mode, '', '', 0, @Company_Code, @Location_Code`);
+      .input("MemberID", sql.NVarChar, MemberID)
+      .query(`EXEC sp_Payment_Values @mode, '', '', 0, @Company_Code, @Location_Code,@MemberID`);
 
     return res.status(200).json(result.recordset);
 
@@ -5873,7 +5877,7 @@ const couponUsageStatistics = async (req, res) => {
 
 //Code added by Dinesh Gokul on 30-07-2026
 const getPaymentHistory = async (req, res) => {
-  const { Company_code, Location_code } = req.body;
+  const { Company_code, Location_code,MemberID } = req.body;
 
   try {
     const pool = await connection.connectToDatabase();
@@ -5883,7 +5887,8 @@ const getPaymentHistory = async (req, res) => {
       .input("mode", sql.NVarChar, "PH")
       .input("Company_code", sql.NVarChar, Company_code)
       .input("Location_code", sql.NVarChar, Location_code)
-      .query(`EXEC sp_Payment_Values_test @mode, '', '', 0, @Company_Code, @Location_Code`);
+      .input("MemberID", sql.NVarChar, MemberID)
+      .query(`EXEC sp_Payment_Values @mode, '', '', 0, @Company_Code, @Location_Code,@MemberID`);
 
     return res.status(200).json(result.recordset);
 
@@ -5897,6 +5902,34 @@ const getPaymentHistory = async (req, res) => {
   }
 };
 //Code ended by Dinesh Gokul on 30-07-2026
+
+//Code added by Ramya on 12-08-2026
+const getMemberPaymentHistory = async (req, res) => {
+  const { Company_code, Location_code,MemberID } = req.body;
+
+  try {
+    const pool = await connection.connectToDatabase();
+
+    const result = await pool
+      .request()  
+      .input("mode", sql.NVarChar, "MPH")
+      .input("Company_code", sql.NVarChar, Company_code)
+      .input("Location_code", sql.NVarChar, Location_code)
+      .input("MemberID", sql.NVarChar, MemberID)
+      .query(`EXEC Sp_Payment_Values @mode, '', '', 0, @Company_Code, @Location_Code,@MemberID`);
+
+    return res.status(200).json(result.recordset);
+
+  } catch (err) {
+    console.error(err);
+
+    return res.status(500).json({
+      success: false,
+      message: err.originalError?.info?.message || err.message,
+    });
+  }
+};
+//Code ended by Ramya on 12-08-2026
 
 //Code added by Dinesh Gokul on 31-07-2026
 const getNewMemberRegistration = async (req, res) => {
@@ -6325,5 +6358,6 @@ module.exports = {
   getDefaultScreens,
   userSettingsInsert,
   getUserSettings,
-  getDefaultUserCompany
+  getDefaultUserCompany,
+  getMemberPaymentHistory
 };
