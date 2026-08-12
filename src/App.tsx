@@ -17,6 +17,7 @@ import CouponManagement from "./pages/admin/CouponManagement";
 import NotificationManagement from "./pages/admin/NotificationManagement";
 import MemberDashboard from "./pages/member/MemberDashboard";
 import MemberWorkouts from "./pages/member/MemberWorkouts";
+import MemberPaymentHistory from "./pages/member/MemberPaymentHistory";
 import Trainers from "./pages/member/Trainers";
 import DietPlans from "./pages/member/DietPlans";
 import WorkoutPrograms from "./pages/member/WorkoutPrograms";
@@ -206,6 +207,16 @@ const App = () => (
             }
           />
 
+          <Route
+            path="/MemberPaymentHistory"
+            element={
+              <PermissionRoute
+                screenType="MemberPaymentHisto"
+                element={<MemberPaymentHistory />}
+              />
+            }
+          />
+          
           <Route
             path="/MemberWorkouts"
             element={

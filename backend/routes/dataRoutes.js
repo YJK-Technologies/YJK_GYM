@@ -224,7 +224,7 @@ router.post("/getDefaultScreens",dataController.getDefaultScreens)
 router.post("/userSettingsInsert",dataController.userSettingsInsert)
 router.post("/getUserSettings",dataController.getUserSettings)
 router.post("/getDefaultUserCompany",dataController.getDefaultUserCompany)
-
+router.post("/getMemberPaymentHistory", dataController.getMemberPaymentHistory)
 
 
 
