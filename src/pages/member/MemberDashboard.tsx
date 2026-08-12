@@ -83,8 +83,8 @@ const MemberDashboard = () => {
     {
       title: "Payment History",
       description: "View all payments and receipts",
-      route: "/MemberPayments",
-      screenType: "MemberPayments",
+      route: "/MemberPaymentHistory",
+      screenType: "MemberPaymentHisto",
     },
     {
       title: "Daily Workouts",
