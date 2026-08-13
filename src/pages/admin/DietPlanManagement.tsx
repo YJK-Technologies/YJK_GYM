@@ -1180,14 +1180,165 @@ const DietPlanManagement = () => {
     });
   };
 
-  const deleteDietPlan = async (dietPlan: any) => {
-    setLoading(true);
-    try {
-      // ============================================
-      // 1. DELETE DIET PLAN MEALS
-      // ============================================
+  // const deleteDietPlan = async (dietPlan: any) => {
+  //   setLoading(true);
+  //   try {
+  //     // ============================================
+  //     // 1. DELETE DIET PLAN MEALS
+  //     // ============================================
 
-      const mealResponse = await fetch(`${BASE_URL}/Diet_Plans_MealsDelete`, {
+  //     const mealResponse = await fetch(`${BASE_URL}/Diet_Plans_MealsDelete`, {
+  //       method: "POST",
+  //       headers: {
+  //         "Content-Type": "application/json",
+  //       },
+  //       body: JSON.stringify({
+  //         Sno: 0,
+  //         DietPlanID: dietPlan.DietPlanID,
+  //         KeyField: dietPlan.KeyField,
+  //         Location_Code: locationCode,
+  //         company_code: companyCode,
+  //         modified_by: userCode,
+  //         updatemode: "UD",
+  //       }),
+  //     });
+
+  //     const mealResult = await mealResponse.json();
+
+  //     if (!mealResponse.ok || !mealResult.success) {
+  //       throw new Error(
+  //         mealResult.message || "Failed to delete diet plan meals.",
+  //       );
+  //     }
+
+  //     // ============================================
+  //     // 2. DELETE DIET PLAN DETAILS
+  //     // ============================================
+
+  //     const detailResponse = await fetch(
+  //       `${BASE_URL}/Diet_Plans_DetailsDelete`,
+  //       {
+  //         method: "POST",
+  //         headers: {
+  //           "Content-Type": "application/json",
+  //         },
+  //         body: JSON.stringify({
+  //           Sno: 0,
+  //           DietPlanID: dietPlan.DietPlanID,
+  //           KeyField: dietPlan.KeyField,
+  //           Location_Code: locationCode,
+  //           company_code: companyCode,
+  //           modified_by: userCode,
+  //           updatemode: "UD",
+  //         }),
+  //       },
+  //     );
+
+  //     const detailResult = await detailResponse.json();
+
+  //     if (!detailResponse.ok || !detailResult.success) {
+  //       throw new Error(
+  //         detailResult.message || "Failed to delete diet plan details.",
+  //       );
+  //     }
+
+  //     // ============================================
+  //     // 3. DELETE DIET PLAN HEADER
+  //     // ============================================
+
+  //     const headerResponse = await fetch(`${BASE_URL}/Diet_Plans_hdrDelete`, {
+  //       method: "POST",
+  //       headers: {
+  //         "Content-Type": "application/json",
+  //       },
+  //       body: JSON.stringify({
+  //         DietPlanID: dietPlan.DietPlanID,
+  //         KeyField: dietPlan.KeyField,
+  //         Location_Code: locationCode,
+  //         company_code: companyCode,
+  //         modified_by: userCode,
+  //       }),
+  //     });
+
+  //     const headerResult = await headerResponse.json();
+
+  //     if (!headerResponse.ok || !headerResult.success) {
+  //       throw new Error(headerResult.message || "Failed to delete diet plan.");
+  //     }
+
+  //     // ============================================
+  //     // REMOVE FROM UI
+  //     // ============================================
+
+  //     setDietPlans((prev) =>
+  //       prev.filter((item) => item.KeyField !== dietPlan.Keyfield),
+  //     );
+
+  //     handleDietPlanSearch(); // Refresh the list after deletion
+  //     getDietPlanCardData();
+  //     // Refresh Data
+  //     // getDietPlans();
+
+  //     toast({
+  //       title: "Diet Plan Deleted",
+  //       description: "Diet Plan deleted successfully.",
+  //       variant: "success",
+  //     });
+  //   } catch (error: any) {
+  //     console.error(error);
+
+  //     toast({
+  //       title: "Delete Failed",
+  //       description: error.message || "Something went wrong.",
+  //       variant: "destructive",
+  //     });
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // };
+
+  const deleteDietPlan = async (dietPlan: any) => {
+  setLoading(true);
+
+  try {
+    // ============================================
+    // 1. VALIDATE DIET PLAN DELETION
+    // ============================================
+
+    const validationResponse = await fetch(
+      `${BASE_URL}/Diet_Plans_hdrDelete`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          DietPlanID: dietPlan.DietPlanID,
+          KeyField: dietPlan.KeyField,
+          Location_Code: locationCode,
+          company_code: companyCode,
+          modified_by: userCode,
+          mode: "DV",
+        }),
+      }
+    );
+
+    const validationResult = await validationResponse.json();
+
+    if (!validationResponse.ok || !validationResult.success) {
+      throw new Error(
+        validationResult.message ||
+          "Diet Plan cannot be deleted."
+      );
+    }
+
+    // ============================================
+    // 2. DELETE DIET PLAN MEALS
+    // ============================================
+
+    const mealResponse = await fetch(
+      `${BASE_URL}/Diet_Plans_MealsDelete`,
+      {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -1201,52 +1352,57 @@ const DietPlanManagement = () => {
           modified_by: userCode,
           updatemode: "UD",
         }),
-      });
-
-      const mealResult = await mealResponse.json();
-
-      if (!mealResponse.ok || !mealResult.success) {
-        throw new Error(
-          mealResult.message || "Failed to delete diet plan meals.",
-        );
       }
+    );
 
-      // ============================================
-      // 2. DELETE DIET PLAN DETAILS
-      // ============================================
+    const mealResult = await mealResponse.json();
 
-      const detailResponse = await fetch(
-        `${BASE_URL}/Diet_Plans_DetailsDelete`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            Sno: 0,
-            DietPlanID: dietPlan.DietPlanID,
-            KeyField: dietPlan.KeyField,
-            Location_Code: locationCode,
-            company_code: companyCode,
-            modified_by: userCode,
-            updatemode: "UD",
-          }),
-        },
+    if (!mealResponse.ok || !mealResult.success) {
+      throw new Error(
+        mealResult.message ||
+          "Failed to delete diet plan meals."
       );
+    }
 
-      const detailResult = await detailResponse.json();
+    // ============================================
+    // 3. DELETE DIET PLAN DETAILS
+    // ============================================
 
-      if (!detailResponse.ok || !detailResult.success) {
-        throw new Error(
-          detailResult.message || "Failed to delete diet plan details.",
-        );
+    const detailResponse = await fetch(
+      `${BASE_URL}/Diet_Plans_DetailsDelete`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          Sno: 0,
+          DietPlanID: dietPlan.DietPlanID,
+          KeyField: dietPlan.KeyField,
+          Location_Code: locationCode,
+          company_code: companyCode,
+          modified_by: userCode,
+          updatemode: "UD",
+        }),
       }
+    );
 
-      // ============================================
-      // 3. DELETE DIET PLAN HEADER
-      // ============================================
+    const detailResult = await detailResponse.json();
 
-      const headerResponse = await fetch(`${BASE_URL}/Diet_Plans_hdrDelete`, {
+    if (!detailResponse.ok || !detailResult.success) {
+      throw new Error(
+        detailResult.message ||
+          "Failed to delete diet plan details."
+      );
+    }
+
+    // ============================================
+    // 4. DELETE DIET PLAN HEADER
+    // ============================================
+
+    const headerResponse = await fetch(
+      `${BASE_URL}/Diet_Plans_hdrDelete`,
+      {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -1257,44 +1413,52 @@ const DietPlanManagement = () => {
           Location_Code: locationCode,
           company_code: companyCode,
           modified_by: userCode,
+          mode: "D",
         }),
-      });
-
-      const headerResult = await headerResponse.json();
-
-      if (!headerResponse.ok || !headerResult.success) {
-        throw new Error(headerResult.message || "Failed to delete diet plan.");
       }
+    );
 
-      // ============================================
-      // REMOVE FROM UI
-      // ============================================
+    const headerResult = await headerResponse.json();
 
-      setDietPlans((prev) =>
-        prev.filter((item) => item.KeyField !== dietPlan.Keyfield),
+    if (!headerResponse.ok || !headerResult.success) {
+      throw new Error(
+        headerResult.message ||
+          "Failed to delete diet plan."
       );
-
-      handleDietPlanSearch(); // Refresh the list after deletion
-      getDietPlanCardData();
-      // Refresh Data
-      // getDietPlans();
-
-      toast({
-        title: "Diet Plan Deleted",
-        description: "Diet Plan deleted successfully.",
-        variant: "success",
-      });
-    } catch (error: any) {
-      console.error(error);
-
-      toast({
-        title: "Delete Failed",
-        description: error.message || "Something went wrong.",
-        variant: "destructive",
-      });
-    } finally {
-      setLoading(false);
     }
+
+    // ============================================
+    // 5. REMOVE FROM UI
+    // ============================================
+
+    setDietPlans((prev) =>
+      prev.filter(
+        (item) => item.KeyField !== dietPlan.KeyField
+      )
+    );
+
+    handleDietPlanSearch();
+    getDietPlanCardData();
+
+    toast({
+      title: "Diet Plan Deleted",
+      description: "Diet Plan deleted successfully.",
+      variant: "success",
+    });
+
+  } catch (error: any) {
+    console.error(error);
+
+    toast({
+      title: "Delete Failed",
+      description:
+        error.message || "Something went wrong.",
+      variant: "destructive",
+    });
+
+  } finally {
+    setLoading(false);
+  }
   };
 
   const handleDietPlanSearch = async () => {

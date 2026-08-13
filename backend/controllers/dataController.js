@@ -3483,8 +3483,39 @@ const programUpdateData = async (req, res) => {
   }
 };
 
+// const programDeleteData = async (req, res) => {
+//   const programIDsToDelete = req.body.ProgramIDs;
+
+//   if (!programIDsToDelete || !programIDsToDelete.length) {
+//     res.status(400).json("Invalid or empty programs array.");
+//     return;
+//   }
+
+//   try {
+//     const pool = await connection.connectToDatabase();
+
+//     for (const Keyfield of programIDsToDelete) {
+//       await pool
+//         .request()
+//         .input("mode", sql.NVarChar, "D")
+//         .input("Keyfield", sql.NVarChar, Keyfield)
+//         .input("ProgramID", sql.NVarChar, req.headers["programid"])
+//         .input("Company_code", sql.NVarChar, req.headers["company_code"])
+//         .input("Location_code", sql.NVarChar, req.headers["location_code"])
+//         .input("modified_by", sql.NVarChar, req.headers["modified_by"])
+//         .query(`EXEC sp_Program_Hdr @mode,@ProgramID,'','','','','','','','','','','','',0,0,'',@Company_code,@Location_code,@Keyfield,'',@modified_by`);
+//     }
+
+//     res.status(200).json("program deleted successfully");
+//   } catch (err) {
+//     console.error("Error", err);
+//     res.status(500).json({ message: err.message || "Internal Server Error" });
+//   }
+// };
+
 const programDeleteData = async (req, res) => {
   const programIDsToDelete = req.body.ProgramIDs;
+  const mode = req.body.mode || "D";
 
   if (!programIDsToDelete || !programIDsToDelete.length) {
     res.status(400).json("Invalid or empty programs array.");
@@ -3497,19 +3528,31 @@ const programDeleteData = async (req, res) => {
     for (const Keyfield of programIDsToDelete) {
       await pool
         .request()
-        .input("mode", sql.NVarChar, "D")
+        .input("mode", sql.NVarChar, mode)
         .input("Keyfield", sql.NVarChar, Keyfield)
         .input("ProgramID", sql.NVarChar, req.headers["programid"])
         .input("Company_code", sql.NVarChar, req.headers["company_code"])
         .input("Location_code", sql.NVarChar, req.headers["location_code"])
         .input("modified_by", sql.NVarChar, req.headers["modified_by"])
-        .query(`EXEC sp_Program_Hdr @mode,@ProgramID,'','','','','','','','','','','','',0,0,'',@Company_code,@Location_code,@Keyfield,'',@modified_by`);
+        .query(`EXEC sp_Program_Hdr @mode, @ProgramID, '', '', '', '', '', '', '', '', '', '', '', '', 0, 0, '', @Company_code, @Location_code, @Keyfield, '', @modified_by`);
     }
 
-    res.status(200).json("program deleted successfully");
+    if (mode === "DP") {
+      res.status(200).json({
+        message: "Program validation successful."
+      });
+    } else {
+      res.status(200).json({
+        message: "Program deleted successfully."
+      });
+    }
+
   } catch (err) {
     console.error("Error", err);
-    res.status(500).json({ message: err.message || "Internal Server Error" });
+
+    res.status(500).json({
+      message: err.message || "Internal Server Error"
+    });
   }
 };
 
@@ -4140,14 +4183,39 @@ const Diet_Plans_hdrUpdate = async (req, res) => {
   }
 };
 
+// const Diet_Plans_hdrDelete = async (req, res) => {
+//   const { DietPlanID, KeyField, Location_Code, modified_by, company_code
+//   } = req.body;
+
+//   try {
+//     const pool = await sql.connect(dbConfig);
+//     await pool.request()
+//       .input("mode", sql.NVarChar, "D")
+//       .input("DietPlanID", sql.NVarChar, DietPlanID)
+//       .input("KeyField", sql.NVarChar, KeyField)
+//       .input("Location_Code", sql.NVarChar, Location_Code)
+//       .input("company_code", sql.NVarChar, company_code)
+//       .input("modified_by", sql.NVarChar, modified_by)
+//       .query(`EXEC sp_Diet_Plans_hdr @mode, @DietPlanID, '', '', '', '', '', '', '', @KeyField, @Location_Code, @company_code, '', '', @modified_by, ''`);
+
+//     res.status(200).json({ success: true, message: "Diet_Plans_hdr deleted successfully" });
+//   } catch (err) {
+//     console.error("Error during Diet_Plans_hdr delete:", err);
+//     res.status(500).json({ message: err.message || "Internal Server Error" });
+//   }
+// };
+
 const Diet_Plans_hdrDelete = async (req, res) => {
-  const { DietPlanID, KeyField, Location_Code, modified_by, company_code
+  const { DietPlanID, KeyField, Location_Code, modified_by, company_code,
+    mode,
   } = req.body;
 
   try {
     const pool = await sql.connect(dbConfig);
-    await pool.request()
-      .input("mode", sql.NVarChar, "D")
+
+    await pool
+      .request()
+      .input("mode", sql.NVarChar, mode)
       .input("DietPlanID", sql.NVarChar, DietPlanID)
       .input("KeyField", sql.NVarChar, KeyField)
       .input("Location_Code", sql.NVarChar, Location_Code)
@@ -4155,10 +4223,25 @@ const Diet_Plans_hdrDelete = async (req, res) => {
       .input("modified_by", sql.NVarChar, modified_by)
       .query(`EXEC sp_Diet_Plans_hdr @mode, @DietPlanID, '', '', '', '', '', '', '', @KeyField, @Location_Code, @company_code, '', '', @modified_by, ''`);
 
-    res.status(200).json({ success: true, message: "Diet_Plans_hdr deleted successfully" });
+    if (mode === "DV") {
+      return res.status(200).json({
+        success: true,
+        message: "Diet Plan validation successful.",
+      });
+    }
+
+    return res.status(200).json({
+      success: true,
+      message: "Diet Plan deleted successfully.",
+    });
+
   } catch (err) {
-    console.error("Error during Diet_Plans_hdr delete:", err);
-    res.status(500).json({ message: err.message || "Internal Server Error" });
+    console.error("Error during Diet Plan delete:", err);
+
+    return res.status(500).json({
+      success: false,
+      message: err.message || "Internal Server Error",
+    });
   }
 };
 
@@ -4572,30 +4655,65 @@ const PackageUpdateData = async (req, res) => {
       });
   }
 };
+// const PackageDeleteData = async (req, res) => {
+//   const { package_ID, Company_Code, Location_Code, KeyField } = req.body;
+//   try {
+//     const pool = await connection.connectToDatabase();
+//     await pool
+//       .request()
+//       .input("Mode", sql.NVarChar, "D")
+//       .input("package_ID", sql.NVarChar, package_ID)
+//       .input("Company_Code", sql.NVarChar, Company_Code)
+//       .input("Location_Code", sql.NVarChar, Location_Code)
+//       .input("KeyField", sql.NVarChar, KeyField)
+//       .query(` EXEC sp_Package_hdr @Mode, @package_ID, '', '', 0, 0, '', 0, '', @Company_Code, @Location_Code, @KeyField, '', ''`);
+//     res.status(200).json({
+//       message: "Package data deleted successfully"
+//     });
+//   } catch (err) {
+//     console.error("Error", err.message);
+//     return res
+//       .status(500)
+//       .json({
+//         message: err.message || "Internal Server Error"
+//       });
+//   }
+// };
+
 const PackageDeleteData = async (req, res) => {
-  const { package_ID, Company_Code, Location_Code, KeyField } = req.body;
+  const { package_ID, Company_Code, Location_Code, KeyField, mode } = req.body;
+
   try {
     const pool = await connection.connectToDatabase();
+
     await pool
       .request()
-      .input("Mode", sql.NVarChar, "D")
+      .input("Mode", sql.NVarChar, mode || "D")
       .input("package_ID", sql.NVarChar, package_ID)
       .input("Company_Code", sql.NVarChar, Company_Code)
       .input("Location_Code", sql.NVarChar, Location_Code)
       .input("KeyField", sql.NVarChar, KeyField)
-      .query(` EXEC sp_Package_hdr @Mode, @package_ID, '', '', 0, 0, '', 0, '', @Company_Code, @Location_Code, @KeyField, '', ''`);
-    res.status(200).json({
-      message: "Package data deleted successfully"
-    });
+      .query(`EXEC sp_Package_hdr @Mode, @package_ID, '', '', 0, 0, '', 0, '', @Company_Code, @Location_Code, @KeyField, '', ''`);
+
+    if (mode === "DP") {
+      res.status(200).json({
+        message: "Package validation successful."
+      });
+    } else {
+      res.status(200).json({
+        message: "Package data deleted successfully"
+      });
+    }
+
   } catch (err) {
     console.error("Error", err.message);
-    return res
-      .status(500)
-      .json({
-        message: err.message || "Internal Server Error"
-      });
+
+    return res.status(500).json({
+      message: err.message || "Internal Server Error"
+    });
   }
 };
+
 const PackageSelectData = async (req, res) => {
   const { package_ID, Company_Code, Location_Code } = req.body;
   try {
@@ -4972,14 +5090,46 @@ const MemberShipTypeHdrUpdate = async (req, res) => {
   }
 };
 
+// const MemberShipTypeHdrDelete = async (req, res) => {
+//   const { MemberShipType_id, Company_code, Location_code, Keyfield, modified_by } = req.body;
+
+//   try {
+//     const pool = await sql.connect(dbConfig);
+
+//     await pool.request()
+//       .input("mode", sql.NVarChar, "D")
+//       .input("MemberShipType_id", sql.NVarChar, MemberShipType_id)
+//       .input("MemberShipType_Name", sql.NVarChar, "")
+//       .input("Status", sql.NVarChar, "")
+//       .input("Company_code", sql.NVarChar, Company_code)
+//       .input("Location_code", sql.NVarChar, Location_code)
+//       .input("Keyfield", sql.NVarChar, Keyfield)
+//       .input("created_by", sql.NVarChar, "")
+//       .input("modified_by", sql.NVarChar, modified_by)
+//       .query(` EXEC sp_MemberShipType_Hdr @mode, @MemberShipType_id, @MemberShipType_Name, @Status, @Company_code, @Location_code, @Keyfield, '', @created_by, @modified_by
+//       `);
+
+//     res.status(200).json({
+//       success: true,
+//       message: "Membership Type deleted successfully"
+//     });
+
+//   } catch (err) {
+//     console.error("Error during Membership Type delete:", err);
+//     res.status(500).json({
+//       message: err.message || "Internal Server Error"
+//     });
+//   }
+// };
+
 const MemberShipTypeHdrDelete = async (req, res) => {
-  const { MemberShipType_id, Company_code, Location_code, Keyfield, modified_by } = req.body;
+  const { MemberShipType_id, Company_code, Location_code, Keyfield, modified_by, mode } = req.body;
 
   try {
     const pool = await sql.connect(dbConfig);
 
     await pool.request()
-      .input("mode", sql.NVarChar, "D")
+      .input("mode", sql.NVarChar, mode || "D")
       .input("MemberShipType_id", sql.NVarChar, MemberShipType_id)
       .input("MemberShipType_Name", sql.NVarChar, "")
       .input("Status", sql.NVarChar, "")
@@ -4988,16 +5138,19 @@ const MemberShipTypeHdrDelete = async (req, res) => {
       .input("Keyfield", sql.NVarChar, Keyfield)
       .input("created_by", sql.NVarChar, "")
       .input("modified_by", sql.NVarChar, modified_by)
-      .query(` EXEC sp_MemberShipType_Hdr @mode, @MemberShipType_id, @MemberShipType_Name, @Status, @Company_code, @Location_code, @Keyfield, '', @created_by, @modified_by
-      `);
+      .query(`EXEC sp_MemberShipType_Hdr @mode, @MemberShipType_id, @MemberShipType_Name, @Status, @Company_code, @Location_code, @Keyfield, '', @created_by, @modified_by`);
 
     res.status(200).json({
       success: true,
-      message: "Membership Type deleted successfully"
+      message:
+        mode === "DP"
+          ? "Membership Type validation successful."
+          : "Membership Type deleted successfully"
     });
 
   } catch (err) {
     console.error("Error during Membership Type delete:", err);
+
     res.status(500).json({
       message: err.message || "Internal Server Error"
     });
