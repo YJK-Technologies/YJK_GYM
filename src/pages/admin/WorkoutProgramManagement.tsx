@@ -4696,6 +4696,7 @@ const WorkoutProgramManagement = () => {
                               });
                             }
                           }}
+                          tabIndex={0}
                         />
                       </TooltipTrigger>
 
@@ -4745,6 +4746,7 @@ const WorkoutProgramManagement = () => {
                               setProgramForm({ ...programForm, name: value });
                             }}
                             placeholder="e.g., Weight Loss Transformation"
+                            tabIndex={0}
                           />
                         </TooltipTrigger>
 
@@ -4784,6 +4786,7 @@ const WorkoutProgramManagement = () => {
                                 });
                               }}
                               placeholder="Select Category"
+                              tabIndex={0}
                             />
                           </div>
                         </TooltipTrigger>
@@ -4825,6 +4828,7 @@ const WorkoutProgramManagement = () => {
                                 });
                               }}
                               placeholder="Select Difficulty Level"
+                              tabIndex={0}
                             />
                           </div>
                         </TooltipTrigger>
@@ -4852,6 +4856,7 @@ const WorkoutProgramManagement = () => {
                               })
                             }
                             placeholder="e.g., Weight Loss, Endurance"
+                            tabIndex={0}
                           />
                         </TooltipTrigger>
 
@@ -4879,6 +4884,7 @@ const WorkoutProgramManagement = () => {
                             })
                           }
                           placeholder="Describe the program..."
+                          tabIndex={0}
                         />
                       </TooltipTrigger>
 
@@ -4923,6 +4929,7 @@ const WorkoutProgramManagement = () => {
                               });
                             }}
                             placeholder="e.g., 45 minutes"
+                            tabIndex={0}
                           />
                         </TooltipTrigger>
 
@@ -4966,6 +4973,7 @@ const WorkoutProgramManagement = () => {
                                 });
                               }
                             }}
+                            tabIndex={0}
                           />
                         </TooltipTrigger>
 
@@ -5005,6 +5013,7 @@ const WorkoutProgramManagement = () => {
                               });
                             }}
                             placeholder="e.g., 6AM-10AM, 5PM-9PM"
+                            tabIndex={0}
                           />
                         </TooltipTrigger>
 
@@ -5096,6 +5105,7 @@ const WorkoutProgramManagement = () => {
                                   updateExercise(index, "name", value);
                                 }}
                                 className="bg-white"
+                                tabIndex={0}
                               />
                             </TooltipTrigger>
 
@@ -5126,6 +5136,7 @@ const WorkoutProgramManagement = () => {
                                   );
                                 }}
                                 className="bg-white"
+                                tabIndex={0}
                               />
                             </TooltipTrigger>
 
@@ -5159,6 +5170,7 @@ const WorkoutProgramManagement = () => {
                                     );
                                   }}
                                   className="bg-white"
+                                  tabIndex={0}
                                 />
                               </TooltipTrigger>
 

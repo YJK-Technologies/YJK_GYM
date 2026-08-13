@@ -12,6 +12,8 @@ interface ReactSelectProps {
   onChange: (value: SingleSelectOption | null) => void;
   placeholder?: string;
   isDisabled?: boolean;
+  maxMenuHeight?: number;
+  tabIndex?: number;
 }
 
 const customStyles: StylesConfig<SingleSelectOption, false> = {
@@ -119,6 +121,8 @@ const ReactSingleSelect: React.FC<ReactSelectProps> = ({
   onChange,
   placeholder,
   isDisabled,
+  maxMenuHeight,
+  tabIndex = -1,
 }) => {
   return (
     <Select
@@ -129,6 +133,8 @@ const ReactSingleSelect: React.FC<ReactSelectProps> = ({
       placeholder={placeholder}
       isDisabled={isDisabled}
       isClearable
+      maxMenuHeight={maxMenuHeight}
+      tabIndex={tabIndex}
     />
   );
 };
