@@ -1723,7 +1723,7 @@ const PaymentManagement = () => {
           <TabsContent value="newPayment" className="space-y-6">
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
               {/* Member Selection */}
-              <Card className="h-[360px] flex flex-col">
+              <Card className="h-[380px] flex flex-col">
                 <CardHeader>
                   <CardTitle className="flex items-center">
                     <Users className="h-5 w-5 mr-2" />
@@ -1791,6 +1791,7 @@ const PaymentManagement = () => {
                           }
                           onChange={handleMemberDropdownChange}
                           placeholder="Search & Select Member..."
+                          maxMenuHeight={120}
                         />
                       </div>
 
@@ -1849,7 +1850,7 @@ const PaymentManagement = () => {
               </Card>
 
               {/* Package Selection */}
-              <Card className="h-[360px] flex flex-col">
+              <Card className="h-[380px] flex flex-col">
                 <CardHeader>
                   <CardTitle className="flex items-center">
                     <Package className="h-5 w-5 mr-2" />
@@ -1900,6 +1901,7 @@ const PaymentManagement = () => {
                             }}
                             placeholder="Select a Package"
                             isDisabled={!selectedMember}
+                            maxMenuHeight={200}
                           />
                         </div>
                       </TooltipTrigger>
