@@ -2001,14 +2001,126 @@ const WorkoutProgramManagement = () => {
     });
   };
 
-  const deletePackage = async (pkg: any) => {
-    setLoading(true);
-    try {
-      // ----------------------------------
-      // Delete Package Details
-      // ----------------------------------
+  // const deletePackage = async (pkg: any) => {
+  //   setLoading(true);
+  //   try {
+  //     // ----------------------------------
+  //     // Delete Package Details
+  //     // ----------------------------------
 
-      await fetch(`${BASE_URL}/PackageDetailsDeleteData`, {
+  //     await fetch(`${BASE_URL}/PackageDetailsDeleteData`, {
+  //       method: "POST",
+  //       headers: {
+  //         "Content-Type": "application/json",
+  //         company_code: companyCode,
+  //         location_code: locationCode,
+  //         modified_by: userCode,
+  //         updatemode: "D",
+  //       },
+  //       body: JSON.stringify({
+  //         KeyFieldHeaders: [pkg.KeyField],
+  //       }),
+  //     });
+
+  //     // ----------------------------------
+  //     // Delete Package Header
+  //     // ----------------------------------
+
+  //     const response = await fetch(`${BASE_URL}/PackageDeleteData`, {
+  //       method: "POST",
+  //       headers: {
+  //         "Content-Type": "application/json",
+  //       },
+  //       body: JSON.stringify({
+  //         package_ID: pkg.package_ID,
+  //         Company_Code: companyCode,
+  //         Location_Code: locationCode,
+  //         KeyField: pkg.KeyField,
+  //       }),
+  //     });
+
+  //     const result = await response.json();
+
+  //     if (!response.ok) {
+  //       throw new Error(result.message || "Delete failed");
+  //     }
+
+  //     // ----------------------------------
+  //     // Remove from UI
+  //     // ----------------------------------
+
+  //     setPackages((prev: any) =>
+  //       prev.filter((item: any) => item.KeyField !== pkg.KeyField),
+  //     );
+
+  //     // ----------------------------------
+  //     // Refresh Data
+  //     // ----------------------------------
+
+  //     handlePackageSearch();
+  //     fetchWorkoutData();
+
+  //     toast({
+  //       title: "Package Deleted",
+  //       description: "Workout Package deleted successfully.",
+  //       variant: "success",
+  //     });
+  //   } catch (error: any) {
+  //     console.error(error);
+
+  //     toast({
+  //       title: "Delete Failed",
+  //       description: error.message || "Something went wrong.",
+  //       variant: "destructive",
+  //     });
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // };
+
+  const deletePackage = async (pkg: any) => {
+  setLoading(true);
+
+  try {
+
+    // ----------------------------------
+    // STEP 1: Validate Package Deletion
+    // ----------------------------------
+
+    const validationResponse = await fetch(
+      `${BASE_URL}/PackageDeleteData`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          package_ID: pkg.package_ID,
+          Company_Code: companyCode,
+          Location_Code: locationCode,
+          KeyField: pkg.KeyField,
+          mode: "DP",
+        }),
+      }
+    );
+
+    const validationResult = await validationResponse.json();
+
+    if (!validationResponse.ok) {
+      throw new Error(
+        validationResult.message ||
+        "Package cannot be deleted."
+      );
+    }
+
+
+    // ----------------------------------
+    // STEP 2: Delete Package Details
+    // ----------------------------------
+
+    const detailsResponse = await fetch(
+      `${BASE_URL}/PackageDetailsDeleteData`,
+      {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -2020,13 +2132,26 @@ const WorkoutProgramManagement = () => {
         body: JSON.stringify({
           KeyFieldHeaders: [pkg.KeyField],
         }),
-      });
+      }
+    );
 
-      // ----------------------------------
-      // Delete Package Header
-      // ----------------------------------
+    const detailsResult = await detailsResponse.json();
 
-      const response = await fetch(`${BASE_URL}/PackageDeleteData`, {
+    if (!detailsResponse.ok) {
+      throw new Error(
+        detailsResult.message ||
+        "Failed to delete package details."
+      );
+    }
+
+
+    // ----------------------------------
+    // STEP 3: Delete Package Header
+    // ----------------------------------
+
+    const response = await fetch(
+      `${BASE_URL}/PackageDeleteData`,
+      {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -2036,47 +2161,67 @@ const WorkoutProgramManagement = () => {
           Company_Code: companyCode,
           Location_Code: locationCode,
           KeyField: pkg.KeyField,
+          mode: "D",
         }),
-      });
-
-      const result = await response.json();
-
-      if (!response.ok) {
-        throw new Error(result.message || "Delete failed");
       }
+    );
 
-      // ----------------------------------
-      // Remove from UI
-      // ----------------------------------
+    const result = await response.json();
 
-      setPackages((prev: any) =>
-        prev.filter((item: any) => item.KeyField !== pkg.KeyField),
+    if (!response.ok) {
+      throw new Error(
+        result.message ||
+        "Delete failed"
       );
-
-      // ----------------------------------
-      // Refresh Data
-      // ----------------------------------
-
-      handlePackageSearch();
-      fetchWorkoutData();
-
-      toast({
-        title: "Package Deleted",
-        description: "Workout Package deleted successfully.",
-        variant: "success",
-      });
-    } catch (error: any) {
-      console.error(error);
-
-      toast({
-        title: "Delete Failed",
-        description: error.message || "Something went wrong.",
-        variant: "destructive",
-      });
-    } finally {
-      setLoading(false);
     }
-  };
+
+
+    // ----------------------------------
+    // STEP 4: Remove from UI
+    // ----------------------------------
+
+    setPackages((prev: any) =>
+      prev.filter(
+        (item: any) =>
+          item.KeyField !== pkg.KeyField
+      )
+    );
+
+
+    // ----------------------------------
+    // STEP 5: Refresh Data
+    // ----------------------------------
+
+    handlePackageSearch();
+    fetchWorkoutData();
+
+
+    // ----------------------------------
+    // SUCCESS TOAST
+    // ----------------------------------
+
+    toast({
+      title: "Package Deleted",
+      description: "Workout Package deleted successfully.",
+      variant: "success",
+    });
+
+  } catch (error: any) {
+
+    console.error(error);
+
+    toast({
+      title: "Delete Failed",
+      description:
+        error.message ||
+        "Something went wrong.",
+      variant: "destructive",
+    });
+
+  } finally {
+    setLoading(false);
+  }
+};
 
   const addExerciseField = () => {
     setProgramForm({
@@ -2559,35 +2704,99 @@ const WorkoutProgramManagement = () => {
     });
   };
 
+  // const deleteMembership = async (membership: any) => {
+  //   setLoading(true);
+  //   try {
+  //     // ======================================
+  //     // Delete Membership Details
+  //     // ======================================
+
+  //     await fetch(`${BASE_URL}/MemberShipTypeDetailsDelete`, {
+  //       method: "POST",
+  //       headers: {
+  //         "Content-Type": "application/json",
+  //       },
+  //       body: JSON.stringify({
+  //         Sno: 1, // Not used when deleting by Keyfield_header
+  //         Company_code: companyCode,
+  //         Location_code: locationCode,
+  //         MemberShipType_id: membership.MemberShipType_id,
+  //         Keyfield_header: membership.Keyfield,
+  //         Keyfield: "",
+  //         modified_by: userCode,
+  //         UpdateMode: "D",
+  //       }),
+  //     });
+
+  //     // ======================================
+  //     // Delete Membership Header
+  //     // ======================================
+
+  //     const response = await fetch(`${BASE_URL}/MemberShipTypeHdrDelete`, {
+  //       method: "POST",
+  //       headers: {
+  //         "Content-Type": "application/json",
+  //       },
+  //       body: JSON.stringify({
+  //         MemberShipType_id: membership.MemberShipType_id,
+  //         Company_code: companyCode,
+  //         Location_code: locationCode,
+  //         Keyfield: membership.Keyfield,
+  //         modified_by: userCode,
+  //       }),
+  //     });
+
+  //     const result = await response.json();
+
+  //     if (!response.ok || !result.success) {
+  //       throw new Error(result.message || "Delete failed");
+  //     }
+
+  //     // ======================================
+  //     // Remove from UI
+  //     // ======================================
+
+  //     setMemberShips((prev: any) =>
+  //       prev.filter((item: any) => item.Keyfield !== membership.Keyfield),
+  //     );
+
+  //     // ======================================
+  //     // Refresh Data
+  //     // ======================================
+
+  //     handleMemberShipSearch();
+  //     fetchWorkoutData();
+
+  //     toast({
+  //       title: "Membership Type Deleted",
+  //       description: "Membership Type deleted successfully.",
+  //       variant: "success",
+  //     });
+  //   } catch (error: any) {
+  //     console.error("Membership Delete Error:", error);
+
+  //     toast({
+  //       title: "Delete Failed",
+  //       description: error.message || "Something went wrong.",
+  //       variant: "destructive",
+  //     });
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // };
+
   const deleteMembership = async (membership: any) => {
-    setLoading(true);
-    try {
-      // ======================================
-      // Delete Membership Details
-      // ======================================
+  setLoading(true);
 
-      await fetch(`${BASE_URL}/MemberShipTypeDetailsDelete`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          Sno: 1, // Not used when deleting by Keyfield_header
-          Company_code: companyCode,
-          Location_code: locationCode,
-          MemberShipType_id: membership.MemberShipType_id,
-          Keyfield_header: membership.Keyfield,
-          Keyfield: "",
-          modified_by: userCode,
-          UpdateMode: "D",
-        }),
-      });
+  try {
 
-      // ======================================
-      // Delete Membership Header
-      // ======================================
+    // ======================================
+    // STEP 1: Validate Membership Type
+    // ======================================
 
-      const response = await fetch(`${BASE_URL}/MemberShipTypeHdrDelete`, {
+    const validationResponse = await fetch(
+      `${BASE_URL}/MemberShipTypeHdrDelete`,
+      {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -2598,47 +2807,136 @@ const WorkoutProgramManagement = () => {
           Location_code: locationCode,
           Keyfield: membership.Keyfield,
           modified_by: userCode,
+          mode: "DP",
         }),
-      });
-
-      const result = await response.json();
-
-      if (!response.ok || !result.success) {
-        throw new Error(result.message || "Delete failed");
       }
+    );
 
-      // ======================================
-      // Remove from UI
-      // ======================================
+    const validationResult = await validationResponse.json();
 
-      setMemberShips((prev: any) =>
-        prev.filter((item: any) => item.Keyfield !== membership.Keyfield),
+    if (!validationResponse.ok || !validationResult.success) {
+      throw new Error(
+        validationResult.message ||
+        "Membership Type cannot be deleted."
       );
-
-      // ======================================
-      // Refresh Data
-      // ======================================
-
-      handleMemberShipSearch();
-      fetchWorkoutData();
-
-      toast({
-        title: "Membership Type Deleted",
-        description: "Membership Type deleted successfully.",
-        variant: "success",
-      });
-    } catch (error: any) {
-      console.error("Membership Delete Error:", error);
-
-      toast({
-        title: "Delete Failed",
-        description: error.message || "Something went wrong.",
-        variant: "destructive",
-      });
-    } finally {
-      setLoading(false);
     }
-  };
+
+
+    // ======================================
+    // STEP 2: Delete Membership Details
+    // ======================================
+
+    const detailsResponse = await fetch(
+      `${BASE_URL}/MemberShipTypeDetailsDelete`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          Sno: 1,
+          Company_code: companyCode,
+          Location_code: locationCode,
+          MemberShipType_id: membership.MemberShipType_id,
+          Keyfield_header: membership.Keyfield,
+          Keyfield: "",
+          modified_by: userCode,
+          UpdateMode: "D",
+        }),
+      }
+    );
+
+    const detailsResult = await detailsResponse.json();
+
+    if (!detailsResponse.ok) {
+      throw new Error(
+        detailsResult.message ||
+        "Failed to delete Membership Type details."
+      );
+    }
+
+
+    // ======================================
+    // STEP 3: Delete Membership Header
+    // ======================================
+
+    const response = await fetch(
+      `${BASE_URL}/MemberShipTypeHdrDelete`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          MemberShipType_id: membership.MemberShipType_id,
+          Company_code: companyCode,
+          Location_code: locationCode,
+          Keyfield: membership.Keyfield,
+          modified_by: userCode,
+          mode: "D",
+        }),
+      }
+    );
+
+    const result = await response.json();
+
+    if (!response.ok || !result.success) {
+      throw new Error(
+        result.message ||
+        "Delete failed"
+      );
+    }
+
+
+    // ======================================
+    // STEP 4: Remove from UI
+    // ======================================
+
+    setMemberShips((prev: any) =>
+      prev.filter(
+        (item: any) =>
+          item.Keyfield !== membership.Keyfield
+      )
+    );
+
+
+    // ======================================
+    // STEP 5: Refresh Data
+    // ======================================
+
+    handleMemberShipSearch();
+    fetchWorkoutData();
+
+
+    // ======================================
+    // SUCCESS TOAST
+    // ======================================
+
+    toast({
+      title: "Membership Type Deleted",
+      description: "Membership Type deleted successfully.",
+      variant: "success",
+    });
+
+  } catch (error: any) {
+
+    console.error(
+      "Membership Delete Error:",
+      error
+    );
+
+    toast({
+      title: "Delete Failed",
+      description:
+        error.message ||
+        "Something went wrong.",
+      variant: "destructive",
+    });
+
+  } finally {
+    setLoading(false);
+  }
+}; 
 
   const renderProgramSearch = () => (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-x-4 gap-y-6">
