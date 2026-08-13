@@ -4183,14 +4183,39 @@ const Diet_Plans_hdrUpdate = async (req, res) => {
   }
 };
 
+// const Diet_Plans_hdrDelete = async (req, res) => {
+//   const { DietPlanID, KeyField, Location_Code, modified_by, company_code
+//   } = req.body;
+
+//   try {
+//     const pool = await sql.connect(dbConfig);
+//     await pool.request()
+//       .input("mode", sql.NVarChar, "D")
+//       .input("DietPlanID", sql.NVarChar, DietPlanID)
+//       .input("KeyField", sql.NVarChar, KeyField)
+//       .input("Location_Code", sql.NVarChar, Location_Code)
+//       .input("company_code", sql.NVarChar, company_code)
+//       .input("modified_by", sql.NVarChar, modified_by)
+//       .query(`EXEC sp_Diet_Plans_hdr @mode, @DietPlanID, '', '', '', '', '', '', '', @KeyField, @Location_Code, @company_code, '', '', @modified_by, ''`);
+
+//     res.status(200).json({ success: true, message: "Diet_Plans_hdr deleted successfully" });
+//   } catch (err) {
+//     console.error("Error during Diet_Plans_hdr delete:", err);
+//     res.status(500).json({ message: err.message || "Internal Server Error" });
+//   }
+// };
+
 const Diet_Plans_hdrDelete = async (req, res) => {
-  const { DietPlanID, KeyField, Location_Code, modified_by, company_code
+  const { DietPlanID, KeyField, Location_Code, modified_by, company_code,
+    mode,
   } = req.body;
 
   try {
     const pool = await sql.connect(dbConfig);
-    await pool.request()
-      .input("mode", sql.NVarChar, "D")
+
+    await pool
+      .request()
+      .input("mode", sql.NVarChar, mode)
       .input("DietPlanID", sql.NVarChar, DietPlanID)
       .input("KeyField", sql.NVarChar, KeyField)
       .input("Location_Code", sql.NVarChar, Location_Code)
@@ -4198,10 +4223,25 @@ const Diet_Plans_hdrDelete = async (req, res) => {
       .input("modified_by", sql.NVarChar, modified_by)
       .query(`EXEC sp_Diet_Plans_hdr @mode, @DietPlanID, '', '', '', '', '', '', '', @KeyField, @Location_Code, @company_code, '', '', @modified_by, ''`);
 
-    res.status(200).json({ success: true, message: "Diet_Plans_hdr deleted successfully" });
+    if (mode === "DV") {
+      return res.status(200).json({
+        success: true,
+        message: "Diet Plan validation successful.",
+      });
+    }
+
+    return res.status(200).json({
+      success: true,
+      message: "Diet Plan deleted successfully.",
+    });
+
   } catch (err) {
-    console.error("Error during Diet_Plans_hdr delete:", err);
-    res.status(500).json({ message: err.message || "Internal Server Error" });
+    console.error("Error during Diet Plan delete:", err);
+
+    return res.status(500).json({
+      success: false,
+      message: err.message || "Internal Server Error",
+    });
   }
 };
 
