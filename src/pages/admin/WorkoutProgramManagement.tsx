@@ -4943,7 +4943,7 @@ const WorkoutProgramManagement = () => {
                     <Tooltip>
                       <TooltipTrigger asChild>
                         <div>
-                          <Select
+                          {/* <Select
                             value={packageForm.packageType}
                             onValueChange={(value) =>
                               setPackageForm({
@@ -4965,7 +4965,22 @@ const WorkoutProgramManagement = () => {
                                 </SelectItem>
                               ))}
                             </SelectContent>
-                          </Select>
+                          </Select> */}
+                          <ReactSingleSelect
+                            options={packageOptions}
+                            value={
+                              packageOptions.find(
+                                (option) => option.value === packageForm.packageType
+                              ) || null
+                            }
+                            onChange={(selected) => {
+                              setPackageForm({
+                                ...packageForm,
+                                packageType: selected?.value || "",
+                              });
+                            }}
+                            placeholder="Select Package Type"
+                          />
                         </div>
                       </TooltipTrigger>
 
