@@ -838,261 +838,211 @@ const MemberPaymentHistory = () => {
     // EXPORT EXCEL
     // ====================================================
 
-    const handleExportExcel = () => {
+  const handleExportExcel = () => {
+    if (!gridApiRef.current) return;
 
-        if (!gridApiRef.current) {
-            return;
-        }
+    // Get exactly what AG Grid is currently displaying
+    const rows: any[] = [];
 
+    gridApiRef.current.forEachNodeAfterFilterAndSort((node: any) => {
+      rows.push({
+        "Payment ID": node.data.payment_id,
+        "Payment Date": node.data.payment_date
+          ? new Date(node.data.payment_date).toLocaleDateString("en-GB")
+          : "",
+        Member: `${node.data.MemberID} - ${node.data.Full_name}`,
+        Package: `${node.data.package_ID} - ${node.data.package_Name}`,
+        Amount: node.data.final_amount,
+        "Discount Amount": node.data.final_amount,
+        Method: node.data.payment_method,
+        Coupon: node.data.Coupon_Code,
+        Status: node.data.status,
+      });
+    });
 
-        // ------------------------------------------------
-        // Get filtered and sorted rows
-        // ------------------------------------------------
+    const worksheet = XLSX.utils.aoa_to_sheet([
+      ["Report Name", "Payment History"],
+      ["Company Name", paymentHistoryData[0]?.company_name || ""],
+      ["User Name", userCode],
+      ["Date", new Date().toLocaleDateString("en-GB")],
 
-        const rows: any[] = [];
+      [], // Blank Row
+      [], // Blank Row
+    ]);
 
+    // Insert the payment history table starting from row 7
+    XLSX.utils.sheet_add_json(worksheet, rows, {
+      origin: "A7",
+    });
 
-        gridApiRef.current
-            .forEachNodeAfterFilterAndSort(
-                (node: any) => {
+    // Auto-size all columns based on the longest content
+    const columnWidths = Object.keys(rows[0]).map((key) => {
+      const maxLength = Math.max(
+        key.length,
+        ...rows.map((row) => String(row[key] ?? "").length),
+      );
 
-                    rows.push({
+      return {
+        wch: Math.min(Math.max(maxLength + 3, 18), 40),
+      };
+    });
 
-                        "Payment ID":
-                            node.data.payment_id,
+    worksheet["!cols"] = columnWidths;
 
-                        "Payment Date":
-                            node.data.payment_date
-                                ? new Date(
-                                    node.data.payment_date
-                                ).toLocaleDateString(
-                                    "en-GB"
-                                )
-                                : "",
+    const workbook = XLSX.utils.book_new();
 
-                        "Member ID":
-                            node.data.MemberID,
+    XLSX.utils.book_append_sheet(workbook, worksheet, "Payment History");
 
-                        "Package":
-                            `${node.data.package_ID} - ${node.data.package_Name}`,
-
-                        "Amount":
-                            node.data.final_amount,
-
-                        "Discount Amount":
-                            node.data.discount_amount,
-
-                        "Method":
-                            node.data.payment_method,
-
-                        "Coupon":
-                            node.data.Coupon_Code,
-
-                        "Status":
-                            node.data.status,
-
-                    });
-
-                }
-            );
-
-
-        // ------------------------------------------------
-        // Create worksheet
-        // ------------------------------------------------
-
-        const worksheet =
-            XLSX.utils.json_to_sheet(
-                rows
-            );
-
-
-        // ------------------------------------------------
-        // Create workbook
-        // ------------------------------------------------
-
-        const workbook =
-            XLSX.utils.book_new();
-
-
-        // ------------------------------------------------
-        // Add worksheet
-        // ------------------------------------------------
-
-        XLSX.utils.book_append_sheet(
-            workbook,
-            worksheet,
-            "Payment History"
-        );
-
-
-        // ------------------------------------------------
-        // Download Excel
-        // ------------------------------------------------
-
-        XLSX.writeFile(
-            workbook,
-            "Member_Payment_History.xlsx"
-        );
-
-    };
-
+    XLSX.writeFile(workbook, "Payment_History.xlsx");
+  };
 
     // ====================================================
     // EXPORT PDF
     // ====================================================
 
-    const handleExportPDF = () => {
-
-        if (!gridApiRef.current) {
-            return;
-        }
-
-
-        // ------------------------------------------------
-        // Create PDF
-        // ------------------------------------------------
-
-        const doc =
-            new jsPDF(
-                "landscape"
-            );
-
-
-        // ------------------------------------------------
-        // Current Date
-        // ------------------------------------------------
-
-        const currentDate =
-            new Date()
-                .toLocaleDateString(
-                    "en-GB"
-                );
-
-
-        // ------------------------------------------------
-        // PDF Title
-        // ------------------------------------------------
-
-        doc.setFontSize(16);
-
-        doc.text(
-            "Member Payment History",
-            14,
-            15
-        );
-
-
-        // ------------------------------------------------
-        // Member ID
-        // ------------------------------------------------
-
-        doc.setFontSize(10);
-
-        doc.text(
-            `Member ID: ${memberId || "-"}`,
-            14,
-            22
-        );
-
-
-        // ------------------------------------------------
-        // Date
-        // ------------------------------------------------
-
-        doc.text(
-            `Date: ${currentDate}`,
-            14,
-            28
-        );
-
-
-        // ------------------------------------------------
-        // Get Grid Rows
-        // ------------------------------------------------
-
-        const body: any[] = [];
-
-
-        gridApiRef.current
-            .forEachNodeAfterFilterAndSort(
-                (node: any) => {
-
-                    body.push([
-
-                        node.data.payment_id,
-
-                        node.data.payment_date
-                            ? new Date(
-                                node.data.payment_date
-                            ).toLocaleDateString(
-                                "en-GB"
-                            )
-                            : "",
-
-                        node.data.MemberID,
-
-                        `${node.data.package_ID} - ${node.data.package_Name}`,
-
-                        Number(
-                            node.data.final_amount || 0
-                        ).toFixed(3),
-
-                        Number(
-                            node.data.discount_amount || 0
-                        ).toFixed(3),
-
-                        node.data.payment_method,
-
-                        node.data.Coupon_Code || "-",
-
-                        node.data.status,
-
-                    ]);
-
-                }
-            );
-
-
-        // ------------------------------------------------
-        // PDF TABLE
-        // ------------------------------------------------
-
-        autoTable(doc, {
-
-            startY: 34,
-
-            head: [[
-                "Payment ID",
-                "Payment Date",
-                "Member ID",
-                "Package",
-                "Amount",
-                "Discount",
-                "Method",
-                "Coupon",
-                "Status",
-            ]],
-
-            body: body,
-
-            styles: {
-                fontSize: 8,
-                cellPadding: 3,
-            },
-
-        });
-
-
-        // ------------------------------------------------
-        // Save PDF
-        // ------------------------------------------------
-
-        doc.save(
-            "Member_Payment_History.pdf"
-        );
-
-    };
+  const handleExportPDF = () => {
+     if (!gridApiRef.current) return;
+ 
+     const doc = new jsPDF("landscape");
+ 
+     const currentDate = new Date().toLocaleDateString("en-GB");
+     const currentDateTime = new Date().toLocaleString("en-GB");
+ 
+     // Company Name
+     const companyName =
+       paymentHistoryData.length > 0 ? paymentHistoryData[0].company_name : "";
+ 
+     // -------------------------
+     // Collect AG Grid data
+     // -------------------------
+ 
+     const body: any[] = [];
+ 
+     gridApiRef.current.forEachNodeAfterFilterAndSort((node: any) => {
+       body.push([
+         node.data.payment_id,
+ 
+         node.data.payment_date
+           ? new Date(node.data.payment_date).toLocaleDateString("en-GB")
+           : "",
+ 
+         `${node.data.MemberID} - ${node.data.Full_name}`,
+ 
+         `${node.data.package_ID} - ${node.data.package_Name}`,
+ 
+         Number(node.data.final_amount).toFixed(3),
+ 
+         Number(node.data.discount_amount || 0).toFixed(3),
+ 
+         node.data.payment_method,
+ 
+         node.data.Coupon_Code || "-",
+ 
+         node.data.status,
+       ]);
+     });
+ 
+     // -------------------------
+     // Table
+     // -------------------------
+ 
+     autoTable(doc, {
+       startY: 32,
+       margin: {
+         top: 28,
+         bottom: 20,
+       },
+ 
+       head: [
+         [
+           "Payment ID",
+           "Payment Date",
+           "Member",
+           "Package",
+           "Amount",
+           "Discount",
+           "Method",
+           "Coupon",
+           "Status",
+         ],
+       ],
+ 
+       body,
+ 
+       styles: {
+         fontSize: 9,
+         cellPadding: 3,
+       },
+ 
+       headStyles: {
+         fillColor: [41, 128, 185],
+         textColor: 255,
+         fontStyle: "bold",
+       },
+ 
+       alternateRowStyles: {
+         fillColor: [245, 245, 245],
+       },
+ 
+       theme: "grid",
+       didDrawPage: (data) => {
+         const pageWidth = doc.internal.pageSize.getWidth();
+         const pageHeight = doc.internal.pageSize.getHeight();
+ 
+         // ==========================
+         // Header
+         // ==========================
+ 
+         doc.setFontSize(8);
+         doc.setFont("helvetica", "bold");
+ 
+         doc.text(`Report Name : Payment History`, 14, 12);
+ 
+         doc.text(`Company Name : ${companyName}`, pageWidth - 14, 12, {
+           align: "right",
+         });
+ 
+         // Header Line
+ 
+         doc.setLineWidth(0.3);
+ 
+         doc.line(14, 16, pageWidth - 14, 16);
+ 
+         // ==========================
+         // Footer
+         // ==========================
+ 
+         doc.setLineWidth(0.3);
+ 
+         doc.line(14, pageHeight - 14, pageWidth - 14, pageHeight - 14);
+ 
+         doc.setFontSize(8);
+ 
+         doc.setFont("helvetica", "normal");
+ 
+         doc.text(`User Name : ${userCode}`, 14, pageHeight - 8);
+ 
+         doc.text(
+           `Date & Time : ${currentDateTime}`,
+           pageWidth - 14,
+           pageHeight - 8,
+           {
+             align: "right",
+           },
+         );
+ 
+         // ==========================
+         // Page Number
+         // ==========================
+ 
+         doc.text(`Page ${data.pageNumber}`, pageWidth / 2, pageHeight - 8, {
+           align: "center",
+         });
+       },
+     });
+ 
+     doc.save("Payment_History_Report.pdf");
+   };
 
 
     // ====================================================

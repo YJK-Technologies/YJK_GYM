@@ -198,10 +198,12 @@ const MemberManagement = () => {
     }
   };
 
-  const membershipOptions: SingleSelectOption[] = membershipType.map((item: any) => ({
-    value: item.MemberShipType_id,
-    label: `${item.MemberShipType_id} - ${item.MemberShipType_Name}`,
-  }));
+  const membershipOptions: SingleSelectOption[] = membershipType.map(
+    (item: any) => ({
+      value: item.MemberShipType_id,
+      label: `${item.MemberShipType_id} - ${item.MemberShipType_Name}`,
+    }),
+  );
 
   const fetchDietPlanType = async () => {
     try {
@@ -228,10 +230,12 @@ const MemberManagement = () => {
     }
   };
 
-  const dietPlanOptions: SingleSelectOption[] = dietPlanType.map((item: any) => ({
-    value: item.DietPlanID,
-    label: `${item.DietPlanID} - ${item.Diet_Name}`,
-  }));
+  const dietPlanOptions: SingleSelectOption[] = dietPlanType.map(
+    (item: any) => ({
+      value: item.DietPlanID,
+      label: `${item.DietPlanID} - ${item.Diet_Name}`,
+    }),
+  );
 
   const fetchRelationship = async () => {
     try {
@@ -257,10 +261,12 @@ const MemberManagement = () => {
     }
   };
 
-  const relationshipOptions: SingleSelectOption[] = relationship.map((item: any) => ({
-    value: item.attributedetails_name,
-    label: item.attributedetails_name,
-  }));
+  const relationshipOptions: SingleSelectOption[] = relationship.map(
+    (item: any) => ({
+      value: item.attributedetails_name,
+      label: item.attributedetails_name,
+    }),
+  );
 
   const fetchMembersData = async () => {
     try {
@@ -585,68 +591,68 @@ const MemberManagement = () => {
     },
     ...(showActionColumn
       ? [
-        {
-          headerName: "Actions",
-          width: 170,
-          minWidth: 170,
-          maxWidth: 170,
-          sortable: false,
-          filter: false,
-          cellStyle: {
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
+          {
+            headerName: "Actions",
+            width: 170,
+            minWidth: 170,
+            maxWidth: 170,
+            sortable: false,
+            filter: false,
+            cellStyle: {
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+            },
+            cellRenderer: (params: any) => (
+              <div className="flex gap-2">
+                {hasActionPermission("AdminMembers", "view") && (
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => handleViewMember(params.data)}
+                      >
+                        <Eye className="h-4 w-4" />
+                      </Button>
+                    </TooltipTrigger>
+                    <TooltipContent>View</TooltipContent>
+                  </Tooltip>
+                )}
+
+                {hasActionPermission("AdminMembers", "edit") && (
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => handleEditMember(params.data)}
+                      >
+                        <Pencil className="h-4 w-4" />
+                      </Button>
+                    </TooltipTrigger>
+                    <TooltipContent>Edit</TooltipContent>
+                  </Tooltip>
+                )}
+
+                {hasActionPermission("AdminMembers", "delete") && (
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => handleDeleteMember(params.data.MemberID)}
+                      >
+                        <Trash2 className="h-4 w-4 text-red-500" />
+                      </Button>
+                    </TooltipTrigger>
+                    <TooltipContent>Delete</TooltipContent>
+                  </Tooltip>
+                )}
+              </div>
+            ),
           },
-          cellRenderer: (params: any) => (
-            <div className="flex gap-2">
-              {hasActionPermission("AdminMembers", "view") && (
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => handleViewMember(params.data)}
-                    >
-                      <Eye className="h-4 w-4" />
-                    </Button>
-                  </TooltipTrigger>
-                  <TooltipContent>View</TooltipContent>
-                </Tooltip>
-              )}
-
-              {hasActionPermission("AdminMembers", "edit") && (
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => handleEditMember(params.data)}
-                    >
-                      <Pencil className="h-4 w-4" />
-                    </Button>
-                  </TooltipTrigger>
-                  <TooltipContent>Edit</TooltipContent>
-                </Tooltip>
-              )}
-
-              {hasActionPermission("AdminMembers", "delete") && (
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => handleDeleteMember(params.data.MemberID)}
-                    >
-                      <Trash2 className="h-4 w-4 text-red-500" />
-                    </Button>
-                  </TooltipTrigger>
-                  <TooltipContent>Delete</TooltipContent>
-                </Tooltip>
-              )}
-            </div>
-          ),
-        },
-      ]
+        ]
       : []),
   ];
 
@@ -1605,7 +1611,8 @@ const MemberManagement = () => {
                           options={genderOptions}
                           value={
                             genderOptions.find(
-                              (option) => option.value === memberSearchForm.Gender
+                              (option) =>
+                                option.value === memberSearchForm.Gender,
                             ) || null
                           }
                           onChange={(selected) => {
@@ -1706,7 +1713,9 @@ const MemberManagement = () => {
                           options={membershipOptions}
                           value={
                             membershipOptions.find(
-                              (option) => option.value === memberSearchForm.Membership_type
+                              (option) =>
+                                option.value ===
+                                memberSearchForm.Membership_type,
                             ) || null
                           }
                           onChange={(selected) => {
@@ -1738,7 +1747,8 @@ const MemberManagement = () => {
                           options={dietPlanOptions}
                           value={
                             dietPlanOptions.find(
-                              (option) => option.value === memberSearchForm.DietPlanID
+                              (option) =>
+                                option.value === memberSearchForm.DietPlanID,
                             ) || null
                           }
                           onChange={(selected) => {
@@ -1866,7 +1876,8 @@ const MemberManagement = () => {
                           options={statusOptions}
                           value={
                             statusOptions.find(
-                              (option) => option.value === memberSearchForm.is_active
+                              (option) =>
+                                option.value === memberSearchForm.is_active,
                             ) || null
                           }
                           onChange={(selected) => {
@@ -2151,7 +2162,7 @@ const MemberManagement = () => {
                               options={genderOptions}
                               value={
                                 genderOptions.find(
-                                  (option) => option.value === formData.Gender
+                                  (option) => option.value === formData.Gender,
                                 ) || null
                               }
                               onChange={(selected) => {
@@ -2441,13 +2452,16 @@ const MemberManagement = () => {
                               options={relationshipOptions}
                               value={
                                 relationshipOptions.find(
-                                  (option) => option.value === formData.Emergency_contact_relation
+                                  (option) =>
+                                    option.value ===
+                                    formData.Emergency_contact_relation,
                                 ) || null
                               }
                               onChange={(selected) => {
                                 setFormData({
                                   ...formData,
-                                  Emergency_contact_relation: selected?.value || "",
+                                  Emergency_contact_relation:
+                                    selected?.value || "",
                                 });
                               }}
                               placeholder="Select Relationship"
@@ -2488,7 +2502,8 @@ const MemberManagement = () => {
                               options={membershipOptions}
                               value={
                                 membershipOptions.find(
-                                  (option) => option.value === formData.Membership_type
+                                  (option) =>
+                                    option.value === formData.Membership_type,
                                 ) || null
                               }
                               onChange={(selected) => {
@@ -2528,7 +2543,8 @@ const MemberManagement = () => {
                               options={dietPlanOptions}
                               value={
                                 dietPlanOptions.find(
-                                  (option) => option.value === formData.DietPlanID
+                                  (option) =>
+                                    option.value === formData.DietPlanID,
                                 ) || null
                               }
                               onChange={(selected) => {
@@ -2739,7 +2755,7 @@ const MemberManagement = () => {
         <Dialog open={isViewDialogOpen} onOpenChange={setIsViewDialogOpen}>
           <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
             <DialogHeader>
-              <DialogTitle>Member Details</DialogTitle>
+              <DialogTitle> Member Details</DialogTitle>
               <DialogDescription>
                 Member ID: {viewingMember?.MemberID}
               </DialogDescription>
@@ -2749,25 +2765,27 @@ const MemberManagement = () => {
               <div className="space-y-6 py-4">
                 <div className="flex items-center justify-between">
                   <div>
-                    <h2 className="text-2xl font-bold">
-                      {viewingMember.Full_name}
-                    </h2>
-                    <Badge
-                      variant={
-                        String(viewingMember.is_active) === "Active"
-                          ? "default"
-                          : "secondary"
-                      }
-                      className="mt-2"
-                    >
-                      {String(viewingMember.is_active)}
-                    </Badge>
+                    <div className="flex items-center gap-3">
+                      <h2 className="text-2xl font-bold">
+                        {viewingMember.Full_name}
+                      </h2>
+
+                      <Badge
+                        variant={
+                          String(viewingMember.is_active) === "Active"
+                            ? "default"
+                            : "secondary"
+                        }
+                      >
+                        {String(viewingMember.is_active)}
+                      </Badge>
+                    </div>
                     {/* <Badge variant="outline" className="ml-2">
                       {viewingMember.Membership_type}
                     </Badge> */}
                     {/* <Badge variant="outline">
-  {getDietPlanDisplay(viewingMember.DietPlanID)}
-</Badge> */}
+                    {getDietPlanDisplay(viewingMember.DietPlanID)}
+                    </Badge> */}
                   </div>
                 </div>
 
@@ -2965,7 +2983,6 @@ const MemberManagement = () => {
                   </TooltipContent>
                 </Tooltip>
               </TooltipProvider>
-
             </DialogFooter>
           </DialogContent>
         </Dialog>
