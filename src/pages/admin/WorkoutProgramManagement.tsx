@@ -1060,13 +1060,132 @@ const WorkoutProgramManagement = () => {
     });
   };
 
+  // const deleteProgram = async (program: any) => {
+  //   setLoading(true);
+  //   try {
+  //     // -----------------------------
+  //     // Delete Program Exercises
+  //     // -----------------------------
+  //     await fetch(`${BASE_URL}/programExerciseDeleteData`, {
+  //       method: "POST",
+  //       headers: {
+  //         "Content-Type": "application/json",
+  //         company_code: companyCode,
+  //         location_code: locationCode,
+  //         modified_by: userCode,
+  //         programid: program.ProgramID,
+  //       },
+  //       body: JSON.stringify({
+  //         ProgramExercises: [program.Keyfield],
+  //       }),
+  //     });
+
+  //     // -----------------------------
+  //     // Delete Program Faculty
+  //     // -----------------------------
+  //     await fetch(`${BASE_URL}/programFacultyDeleteData`, {
+  //       method: "POST",
+  //       headers: {
+  //         "Content-Type": "application/json",
+  //         company_code: companyCode,
+  //         location_code: locationCode,
+  //         modified_by: userCode,
+  //         programid: program.ProgramID,
+  //       },
+  //       body: JSON.stringify({
+  //         ProgramFacultys: [program.Keyfield],
+  //       }),
+  //     });
+
+  //     // -----------------------------
+  //     // Delete Program Header
+  //     // -----------------------------
+  //     const response = await fetch(`${BASE_URL}/programDeleteData`, {
+  //       method: "POST",
+  //       headers: {
+  //         "Content-Type": "application/json",
+  //         company_code: companyCode,
+  //         location_code: locationCode,
+  //         modified_by: userCode,
+  //         programid: program.ProgramID,
+  //       },
+  //       body: JSON.stringify({
+  //         ProgramIDs: [program.Keyfield],
+  //       }),
+  //     });
+
+  //     const result = await response.json();
+
+  //     if (!response.ok) {
+  //       throw new Error(result.message || "Delete failed");
+  //     }
+
+  //     // Remove from UI
+  //     setPrograms((prev) =>
+  //       prev.filter((item) => item.Keyfield !== program.Keyfield),
+  //     );
+
+  //     handleProgramSearch();
+  //     fetchWorkoutData();
+
+  //     toast({
+  //       title: "Program Deleted",
+  //       description: "Workout Program deleted successfully.",
+  //       variant: "success",
+  //     });
+  //   } catch (error: any) {
+  //     console.error(error);
+
+  //     toast({
+  //       title: "Delete Failed",
+  //       description: error.message || "Something went wrong.",
+  //       variant: "destructive",
+  //     });
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // };
+
   const deleteProgram = async (program: any) => {
-    setLoading(true);
-    try {
-      // -----------------------------
-      // Delete Program Exercises
-      // -----------------------------
-      await fetch(`${BASE_URL}/programExerciseDeleteData`, {
+  setLoading(true);
+
+  try {
+    // --------------------------------
+    // STEP 1: Validate Program Deletion
+    // --------------------------------
+    const validationResponse = await fetch(
+      `${BASE_URL}/programDeleteData`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          company_code: companyCode,
+          location_code: locationCode,
+          modified_by: userCode,
+          programid: program.ProgramID,
+        },
+        body: JSON.stringify({
+          ProgramIDs: [program.Keyfield],
+          mode: "DP",
+        }),
+      }
+    );
+
+    const validationResult = await validationResponse.json();
+
+    if (!validationResponse.ok) {
+      throw new Error(
+        validationResult.message ||
+          "Program cannot be deleted."
+      );
+    }
+
+    // --------------------------------
+    // STEP 2: Delete Program Exercises
+    // --------------------------------
+    const exerciseResponse = await fetch(
+      `${BASE_URL}/programExerciseDeleteData`,
+      {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -1078,12 +1197,24 @@ const WorkoutProgramManagement = () => {
         body: JSON.stringify({
           ProgramExercises: [program.Keyfield],
         }),
-      });
+      }
+    );
 
-      // -----------------------------
-      // Delete Program Faculty
-      // -----------------------------
-      await fetch(`${BASE_URL}/programFacultyDeleteData`, {
+    const exerciseResult = await exerciseResponse.json();
+
+    if (!exerciseResponse.ok) {
+      throw new Error(
+        exerciseResult.message ||
+          "Failed to delete program exercises."
+      );
+    }
+
+    // --------------------------------
+    // STEP 3: Delete Program Faculty
+    // --------------------------------
+    const facultyResponse = await fetch(
+      `${BASE_URL}/programFacultyDeleteData`,
+      {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -1095,12 +1226,24 @@ const WorkoutProgramManagement = () => {
         body: JSON.stringify({
           ProgramFacultys: [program.Keyfield],
         }),
-      });
+      }
+    );
 
-      // -----------------------------
-      // Delete Program Header
-      // -----------------------------
-      const response = await fetch(`${BASE_URL}/programDeleteData`, {
+    const facultyResult = await facultyResponse.json();
+
+    if (!facultyResponse.ok) {
+      throw new Error(
+        facultyResult.message ||
+          "Failed to delete program faculty."
+      );
+    }
+
+    // --------------------------------
+    // STEP 4: Delete Program Header
+    // --------------------------------
+    const response = await fetch(
+      `${BASE_URL}/programDeleteData`,
+      {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -1111,40 +1254,51 @@ const WorkoutProgramManagement = () => {
         },
         body: JSON.stringify({
           ProgramIDs: [program.Keyfield],
+          mode: "D",
         }),
-      });
-
-      const result = await response.json();
-
-      if (!response.ok) {
-        throw new Error(result.message || "Delete failed");
       }
+    );
 
-      // Remove from UI
-      setPrograms((prev) =>
-        prev.filter((item) => item.Keyfield !== program.Keyfield),
+    const result = await response.json();
+
+    if (!response.ok) {
+      throw new Error(
+        result.message || "Delete failed"
       );
-
-      handleProgramSearch();
-      fetchWorkoutData();
-
-      toast({
-        title: "Program Deleted",
-        description: "Workout Program deleted successfully.",
-        variant: "success",
-      });
-    } catch (error: any) {
-      console.error(error);
-
-      toast({
-        title: "Delete Failed",
-        description: error.message || "Something went wrong.",
-        variant: "destructive",
-      });
-    } finally {
-      setLoading(false);
     }
-  };
+
+    // --------------------------------
+    // Remove from UI
+    // --------------------------------
+    setPrograms((prev) =>
+      prev.filter(
+        (item) => item.Keyfield !== program.Keyfield
+      )
+    );
+
+    handleProgramSearch();
+    fetchWorkoutData();
+
+    toast({
+      title: "Program Deleted",
+      description: "Workout Program deleted successfully.",
+      variant: "success",
+    });
+
+  } catch (error: any) {
+    console.error(error);
+
+    toast({
+      title: "Delete Failed",
+      description:
+        error.message || "Something went wrong.",
+      variant: "destructive",
+    });
+
+  } finally {
+    setLoading(false);
+  }
+};
 
   const handleProgramSearch = async () => {
     setLoading(true);

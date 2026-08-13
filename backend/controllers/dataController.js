@@ -3483,8 +3483,39 @@ const programUpdateData = async (req, res) => {
   }
 };
 
+// const programDeleteData = async (req, res) => {
+//   const programIDsToDelete = req.body.ProgramIDs;
+
+//   if (!programIDsToDelete || !programIDsToDelete.length) {
+//     res.status(400).json("Invalid or empty programs array.");
+//     return;
+//   }
+
+//   try {
+//     const pool = await connection.connectToDatabase();
+
+//     for (const Keyfield of programIDsToDelete) {
+//       await pool
+//         .request()
+//         .input("mode", sql.NVarChar, "D")
+//         .input("Keyfield", sql.NVarChar, Keyfield)
+//         .input("ProgramID", sql.NVarChar, req.headers["programid"])
+//         .input("Company_code", sql.NVarChar, req.headers["company_code"])
+//         .input("Location_code", sql.NVarChar, req.headers["location_code"])
+//         .input("modified_by", sql.NVarChar, req.headers["modified_by"])
+//         .query(`EXEC sp_Program_Hdr @mode,@ProgramID,'','','','','','','','','','','','',0,0,'',@Company_code,@Location_code,@Keyfield,'',@modified_by`);
+//     }
+
+//     res.status(200).json("program deleted successfully");
+//   } catch (err) {
+//     console.error("Error", err);
+//     res.status(500).json({ message: err.message || "Internal Server Error" });
+//   }
+// };
+
 const programDeleteData = async (req, res) => {
   const programIDsToDelete = req.body.ProgramIDs;
+  const mode = req.body.mode || "D";
 
   if (!programIDsToDelete || !programIDsToDelete.length) {
     res.status(400).json("Invalid or empty programs array.");
@@ -3497,19 +3528,31 @@ const programDeleteData = async (req, res) => {
     for (const Keyfield of programIDsToDelete) {
       await pool
         .request()
-        .input("mode", sql.NVarChar, "D")
+        .input("mode", sql.NVarChar, mode)
         .input("Keyfield", sql.NVarChar, Keyfield)
         .input("ProgramID", sql.NVarChar, req.headers["programid"])
         .input("Company_code", sql.NVarChar, req.headers["company_code"])
         .input("Location_code", sql.NVarChar, req.headers["location_code"])
         .input("modified_by", sql.NVarChar, req.headers["modified_by"])
-        .query(`EXEC sp_Program_Hdr @mode,@ProgramID,'','','','','','','','','','','','',0,0,'',@Company_code,@Location_code,@Keyfield,'',@modified_by`);
+        .query(`EXEC sp_Program_Hdr @mode, @ProgramID, '', '', '', '', '', '', '', '', '', '', '', '', 0, 0, '', @Company_code, @Location_code, @Keyfield, '', @modified_by`);
     }
 
-    res.status(200).json("program deleted successfully");
+    if (mode === "DP") {
+      res.status(200).json({
+        message: "Program validation successful."
+      });
+    } else {
+      res.status(200).json({
+        message: "Program deleted successfully."
+      });
+    }
+
   } catch (err) {
     console.error("Error", err);
-    res.status(500).json({ message: err.message || "Internal Server Error" });
+
+    res.status(500).json({
+      message: err.message || "Internal Server Error"
+    });
   }
 };
 
