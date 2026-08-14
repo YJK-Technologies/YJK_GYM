@@ -1841,68 +1841,76 @@ const FacultyManagement = () => {
 
         {/* Trainers Grid */}
         <Card>
-          <CardHeader>
+          <CardHeader className="px-4 sm:px-6">
             <CardTitle>Personal Trainers</CardTitle>
             <CardDescription>
               Manage your gym's personal training staff
             </CardDescription>
           </CardHeader>
-          <CardContent>
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+
+          <CardContent className="px-3 sm:px-6">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
               {Trainers.map((trainer: any) => (
                 <Card
                   key={trainer.id}
-                  className="hover:shadow-md transition-shadow"
+                  className="hover:shadow-md transition-shadow overflow-hidden bg-white"
                 >
-                  <CardContent className="p-6 h-[480px] flex flex-col justify-between">
+                  {/* Dynamic height: auto for mobile, fixed for desktop */}
+                  <CardContent className="p-4 sm:p-6 h-auto md:h-[480px] flex flex-col justify-between">
                     {/* Scrollable Container with Custom Scrollbar */}
-                    <div className="flex-1 overflow-y-auto pr-2 custom-scrollbar space-y-4 min-h-0">
+                    <div className="flex-1 overflow-y-auto pr-1 sm:pr-2 custom-scrollbar space-y-4 min-h-0">
+
                       {/* ================= HEADER ================= */}
-                      <div className="flex items-start justify-between">
-                        <div className="flex items-center">
-                          <div className="w-16 h-16 bg-purple-100 rounded-full flex items-center justify-center mr-4 shrink-0">
-                            <GraduationCap className="h-8 w-8 text-purple-600" />
+                      <div className="flex flex-col sm:flex-row items-start justify-between gap-3 pb-2 border-b border-gray-100">
+                        <div className="flex items-start sm:items-center w-full sm:w-auto">
+                          <div className="w-12 h-12 sm:w-16 sm:h-16 bg-purple-100 rounded-full flex items-center justify-center mr-3 sm:mr-4 shrink-0">
+                            <GraduationCap className="h-6 w-6 sm:h-8 sm:w-8 text-purple-600" />
                           </div>
-                          <div>
-                            <h3 className="font-semibold text-lg">
+
+                          <div className="min-w-0 flex-1">
+                            <h3 className="font-semibold text-base sm:text-lg text-slate-900 break-words">
                               {trainer.FullName}
                             </h3>
-                            <p className="text-sm text-gray-500">
+
+                            <p className="text-xs sm:text-sm text-gray-500 font-mono">
                               {trainer.TrainerID}
                             </p>
-                            <p className="text-sm text-gray-500">
+
+                            <p className="text-xs sm:text-sm text-gray-500">
                               {trainer.Experience} years experience
                             </p>
+
                             <Badge
                               variant={
                                 trainer.Is_Active === "Active"
                                   ? "default"
                                   : "secondary"
                               }
-                              className="mt-1"
+                              className="mt-1 text-[11px] sm:text-xs"
                             >
-                              {trainer.Is_Active === "Active"
-                                ? "Active"
-                                : "Closed"}
+                              {trainer.Is_Active === "Active" ? "Active" : "Closed"}
                             </Badge>
                           </div>
                         </div>
 
-                        <div className="flex gap-2">
+                        {/* Actions Top Right on Desktop, Auto on Mobile */}
+                        <div className="flex gap-1 self-end sm:self-start bg-slate-50 p-1 rounded-lg border border-gray-100 shrink-0">
                           {hasActionPermission("AdminFaculty", "edit") && (
                             <Button
                               variant="ghost"
                               size="icon"
+                              className="h-8 w-8 text-gray-600 hover:text-violet-600 hover:bg-violet-50"
                               onClick={() => handleEditTrainer(trainer)}
                             >
                               <Edit className="h-4 w-4" />
                             </Button>
                           )}
+
                           {hasActionPermission("AdminFaculty", "delete") && (
                             <Button
                               variant="ghost"
                               size="icon"
-                              className="text-red-500 hover:text-red-700"
+                              className="h-8 w-8 text-red-500 hover:text-red-700 hover:bg-red-50"
                               onClick={() => handleDeleteTrainer(trainer)}
                             >
                               <Trash2 className="h-4 w-4" />
@@ -1912,46 +1920,58 @@ const FacultyManagement = () => {
                       </div>
 
                       {/* ================= CONTACT & SCHEDULE ================= */}
-                      <div className="space-y-3">
-                        <div className="flex items-center text-sm text-gray-600">
-                          <Mail className="h-4 w-4 mr-2 shrink-0" />
-                          <span className="truncate">{trainer.Email}</span>
+                      <div className="space-y-2.5 bg-slate-50/70 p-3 rounded-lg border border-slate-100">
+                        <div className="flex items-center text-xs sm:text-sm text-gray-600 min-w-0">
+                          <Mail className="h-4 w-4 mr-2 shrink-0 text-violet-500" />
+                          <span className="truncate break-all">{trainer.Email}</span>
                         </div>
-                        <div className="flex items-center text-sm text-gray-600">
-                          <Phone className="h-4 w-4 mr-2 shrink-0" />
-                          {trainer.Mobile}
+
+                        <div className="flex items-center text-xs sm:text-sm text-gray-600">
+                          <Phone className="h-4 w-4 mr-2 shrink-0 text-violet-500" />
+                          <span>{trainer.Mobile}</span>
                         </div>
-                        <div className="flex items-center text-sm text-gray-600">
-                          <Clock className="h-4 w-4 mr-2 shrink-0" />
-                          {trainer.WorkingSchedule}
+
+                        <div className="flex items-center text-xs sm:text-sm text-gray-600">
+                          <Clock className="h-4 w-4 mr-2 shrink-0 text-violet-500" />
+                          <span className="break-words">{trainer.WorkingSchedule}</span>
                         </div>
-                        <div className="flex items-center text-sm text-gray-600">
-                          <Users className="h-4 w-4 mr-2 shrink-0" />
-                          {trainer.AssignedMembers} members assigned
+
+                        <div className="flex items-center text-xs sm:text-sm text-gray-600">
+                          <Users className="h-4 w-4 mr-2 shrink-0 text-violet-500" />
+                          <span>{trainer.AssignedMembers} members assigned</span>
                         </div>
                       </div>
 
                       {/* ================= SPECIALIZATIONS ================= */}
                       <div>
-                        <p className="text-sm font-medium text-gray-700 mb-2">
+                        <p className="text-xs sm:text-sm font-medium text-gray-700 mb-1.5">
                           Specializations:
                         </p>
-                        <div className="flex flex-wrap gap-2">
+
+                        <div className="flex flex-wrap gap-1.5 sm:gap-2">
                           {typeof trainer.Specializations === "string"
                             ? trainer.Specializations.split(",").map(
                               (spec: string, index: number) => (
-                                <Badge key={index} variant="outline">
+                                <Badge
+                                  key={index}
+                                  variant="outline"
+                                  className="text-xs break-words"
+                                >
                                   {spec.trim()}
                                 </Badge>
-                              ),
+                              )
                             )
                             : Array.isArray(trainer.Specializations)
                               ? trainer.Specializations.map(
                                 (spec: string, index: number) => (
-                                  <Badge key={index} variant="outline">
+                                  <Badge
+                                    key={index}
+                                    variant="outline"
+                                    className="text-xs break-words"
+                                  >
                                     {spec}
                                   </Badge>
-                                ),
+                                )
                               )
                               : null}
                         </div>
@@ -1959,21 +1979,22 @@ const FacultyManagement = () => {
 
                       {/* ================= CERTIFICATIONS ================= */}
                       <div>
-                        <p className="text-sm font-medium text-gray-700 mb-2">
+                        <p className="text-xs sm:text-sm font-medium text-gray-700 mb-1.5">
                           Certifications:
                         </p>
-                        <div className="flex flex-wrap gap-2">
+
+                        <div className="flex flex-wrap gap-1.5 sm:gap-2">
                           {typeof trainer.Certifications === "string"
                             ? trainer.Certifications.split(",").map(
                               (cert: string, index: number) => (
                                 <Badge
                                   key={index}
                                   variant="secondary"
-                                  className="text-xs"
+                                  className="text-xs bg-violet-50 text-violet-700 border border-violet-100 break-words"
                                 >
                                   {cert.trim()}
                                 </Badge>
-                              ),
+                              )
                             )
                             : Array.isArray(trainer.Certifications)
                               ? trainer.Certifications.map(
@@ -1981,11 +2002,11 @@ const FacultyManagement = () => {
                                   <Badge
                                     key={index}
                                     variant="secondary"
-                                    className="text-xs"
+                                    className="text-xs bg-violet-50 text-violet-700 border border-violet-100 break-words"
                                   >
                                     {cert}
                                   </Badge>
-                                ),
+                                )
                               )
                               : null}
                         </div>
@@ -1994,14 +2015,15 @@ const FacultyManagement = () => {
                       {/* ================= BIOGRAPHY ================= */}
                       {trainer.Biography && (
                         <div>
-                          <p className="text-sm font-medium text-gray-700 mb-1">
+                          <p className="text-xs sm:text-sm font-medium text-gray-700 mb-1">
                             Biography:
                           </p>
-                          <p className="text-gray-600 text-sm leading-relaxed">
+                          <p className="text-gray-600 text-xs sm:text-sm leading-relaxed break-words">
                             {trainer.Biography}
                           </p>
                         </div>
                       )}
+
                     </div>
                   </CardContent>
                 </Card>
