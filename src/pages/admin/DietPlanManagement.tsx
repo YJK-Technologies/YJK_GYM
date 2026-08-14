@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import {
   Card,
   CardContent,
@@ -282,6 +282,150 @@ const DietPlanManagement = () => {
     });
     setDietPlans([]);
   };
+
+  // For tab button - Diet Plan 
+  const trainerIdNameRef = useRef<any>(null);
+
+  const handleTrainerIdNameKeyDown = (e: React.KeyboardEvent) => {
+  if (e.key === "Tab" && !e.shiftKey) {
+    e.preventDefault();
+
+    setTimeout(() => {
+      const firstEssentials = document.getElementById(
+        "essentials-0"
+      ) as HTMLElement | null;
+
+      firstEssentials?.focus();
+    }, 0);
+  }
+};
+
+const handleEssentialsKeyDown = (
+  e: React.KeyboardEvent,
+  index: number
+) => {
+  if (e.key === "Tab" && !e.shiftKey) {
+    e.preventDefault();
+
+    setTimeout(() => {
+      const nextField = document.getElementById(
+        `daily-calories-${index}`
+      ) as HTMLInputElement | null;
+
+      nextField?.focus();
+    }, 0);
+  }
+};
+
+  const handleDurationKeyDown = (
+  e: React.KeyboardEvent,
+  index: number,
+) => {
+  if (e.key === "Tab" && !e.shiftKey) {
+    e.preventDefault();
+
+    setTimeout(() => {
+      const addButton = document.getElementById(
+        `add-duration-${index}`
+      ) as HTMLButtonElement | null;
+
+      addButton?.focus();
+    }, 0);
+  }
+};
+
+const handleAddDurationKeyDown = (
+  e: React.KeyboardEvent,
+  index: number,
+) => {
+  if (e.key === "Tab" && !e.shiftKey) {
+    e.preventDefault();
+
+    setTimeout(() => {
+      const removeButton = document.getElementById(
+        `remove-duration-${index}`
+      ) as HTMLButtonElement | null;
+
+      removeButton?.focus();
+    }, 0);
+  }
+};
+
+const handleRemoveDurationKeyDown = (
+  e: React.KeyboardEvent,
+  index: number,
+) => {
+  if (e.key === "Tab" && !e.shiftKey) {
+    e.preventDefault();
+
+    setTimeout(() => {
+      const nextIndex = index + 1;
+
+      // Check whether another Diet Plan Details row exists
+      const nextEssentials = document.getElementById(
+        `essentials-${nextIndex}`
+      ) as HTMLElement | null;
+
+      if (nextEssentials) {
+        nextEssentials.focus();
+        return;
+      }
+
+      // No more rows -> move to Meal Type
+      const firstMealType = document.getElementById(
+        "meal-type-0"
+      ) as HTMLElement | null;
+
+      firstMealType?.focus();
+    }, 0);
+  }
+};
+
+  const handleMealTypeKeyDown = (
+  e: React.KeyboardEvent,
+  index: number,
+) => {
+  if (e.key === "Tab" && !e.shiftKey) {
+    e.preventDefault();
+
+    setTimeout(() => {
+      const nextField = document.getElementById(
+        `meal-name-${index}`
+      ) as HTMLElement | null;
+
+      nextField?.focus();
+    }, 0);
+  }
+};
+
+const handleMealNameKeyDown = (
+  e: React.KeyboardEvent,
+  index: number,
+) => {
+  if (e.key === "Tab" && !e.shiftKey) {
+    e.preventDefault();
+
+    setTimeout(() => {
+      const nextIndex = index + 1;
+
+      const nextMealType = document.getElementById(
+        `meal-type-${nextIndex}`
+      ) as HTMLElement | null;
+
+      if (nextMealType) {
+        nextMealType.focus();
+        return;
+      }
+
+      const addMealButton = document.getElementById(
+        `add-meal-${index}`
+      ) as HTMLButtonElement | null;
+
+      addMealButton?.focus();
+    }, 0);
+  }
+};
+
 
   const removeMealRow = (index: number) => {
     if (mealRows.length === 1) return;
@@ -2418,6 +2562,9 @@ const DietPlanManagement = () => {
                                 TrainerID: selected,
                               })
                             }
+                            ref={trainerIdNameRef}
+                            tabIndex={0}
+                            onKeyDown={handleTrainerIdNameKeyDown}
                           />
                         </div>
                       </TooltipTrigger>
@@ -2462,6 +2609,7 @@ const DietPlanManagement = () => {
                             <TooltipTrigger asChild>
                               <div>
                                 <ReactSingleSelect
+                                  id={`essentials-${index}`}
                                   options={essentialsOptions}
                                   value={
                                     essentialsOptions.find(
@@ -2476,6 +2624,8 @@ const DietPlanManagement = () => {
                                     )
                                   }
                                   placeholder="Select Essentials"
+                                  tabIndex={0}
+                                  onKeyDown={(e) => handleEssentialsKeyDown(e, index)}
                                 />
                               </div>
                             </TooltipTrigger>
@@ -2505,6 +2655,7 @@ const DietPlanManagement = () => {
                           <Tooltip>
                             <TooltipTrigger asChild>
                               <Input
+                                id={`daily-calories-${index}`}
                                 type="text"
                                 inputMode="numeric"
                                 placeholder="e.g. 2000"
@@ -2522,6 +2673,7 @@ const DietPlanManagement = () => {
                                     value,
                                   );
                                 }}
+                                tabIndex={0}
                               />
                             </TooltipTrigger>
 
@@ -2549,6 +2701,7 @@ const DietPlanManagement = () => {
                             <TooltipTrigger asChild>
                               <div>
                                 <ReactSingleSelect
+                                id={`duration-${index}`}
                                   options={durationOptions}
                                   value={
                                     durationOptions.find(
@@ -2563,6 +2716,8 @@ const DietPlanManagement = () => {
                                     )
                                   }
                                   placeholder="Select Duration"
+                                  tabIndex={0}
+                                  onKeyDown={(e) => handleDurationKeyDown(e, index)}
                                 />
                               </div>
                             </TooltipTrigger>
@@ -2580,10 +2735,13 @@ const DietPlanManagement = () => {
                     <div className="flex items-center justify-end sm:justify-start gap-1.5 shrink-0 pt-1 sm:pt-0">
                       {/* Add */}
                       <Button
+                        id={`add-duration-${index}`}
                         type="button"
                         variant="ghost"
                         size="icon"
+                        tabIndex={0}
                         onClick={addDietPlanDetail}
+                        onKeyDown={(e) => handleAddDurationKeyDown(e, index)}
                         className="h-9 w-9 text-blue-600 hover:bg-blue-50 border rounded-md"
                       >
                         <Plus className="h-4 w-4" />
@@ -2591,10 +2749,13 @@ const DietPlanManagement = () => {
 
                       {/* Remove */}
                       <Button
+                        id={`remove-duration-${index}`}
                         type="button"
                         variant="ghost"
                         size="icon"
+                        tabIndex={0}
                         onClick={() => removeDietPlanDetail(index)}
+                        onKeyDown={(e) => handleRemoveDurationKeyDown(e, index)}
                         className="h-9 w-9 text-red-500 hover:bg-red-50 border rounded-md"
                       >
                         <Minus className="h-4 w-4" />
@@ -2634,6 +2795,7 @@ const DietPlanManagement = () => {
                           <TooltipTrigger asChild>
                             <div>
                               <ReactSingleSelect
+                                id={`meal-type-${index}`}
                                 options={mealTypeOptions}
                                 value={
                                   mealTypeOptions.find(
@@ -2648,6 +2810,10 @@ const DietPlanManagement = () => {
                                   )
                                 }
                                 placeholder="e.g. Breakfast"
+                                // ref={mealTypeRef}
+                                tabIndex={0}
+                                // onKeyDown={handleMealTypeKeyDown}
+                                onKeyDown={(e) => handleMealTypeKeyDown(e, index)}
                               />
                             </div>
                           </TooltipTrigger>
@@ -2675,6 +2841,7 @@ const DietPlanManagement = () => {
                         <Tooltip>
                           <TooltipTrigger asChild>
                             <Input
+                              id={`meal-name-${index}`}
                               value={meal.Meal_Name}
                               placeholder="e.g. Fruits"
                               maxLength={100}
@@ -2686,6 +2853,8 @@ const DietPlanManagement = () => {
                                 )
                               }
                               className="bg-white w-full"
+                              // ref={mealNameRef}
+                              tabIndex={0}
                             />
                           </TooltipTrigger>
 

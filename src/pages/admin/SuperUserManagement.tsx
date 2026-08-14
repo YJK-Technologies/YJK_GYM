@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import {
   Card,
   CardContent,
@@ -1929,6 +1929,115 @@ const WorkoutProgramManagement = () => {
       ]
       : [])
   ];
+
+ // For tab button
+ // Company screen
+const cityRef = useRef<any>(null);
+const stateRef = useRef<any>(null);
+const pinCodeRef = useRef<HTMLInputElement>(null);
+const countryRef = useRef<any>(null);
+const emailRef = useRef<HTMLInputElement>(null);
+const statusRef = useRef<any>(null);
+const foundedDateRef = useRef<HTMLInputElement>(null);
+const locationNoRef = useRef<any>(null);
+const cancelRef = useRef<HTMLButtonElement>(null);
+
+const handleCityKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === "Tab" && !e.shiftKey) {
+      e.preventDefault();
+
+      setTimeout(() => {
+        stateRef.current?.focus();
+      }, 0);
+    }
+  };
+
+const handleStateKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === "Tab" && !e.shiftKey) {
+      e.preventDefault();
+
+      setTimeout(() => {
+        pinCodeRef.current?.focus();
+      }, 0);
+    }
+  };
+
+const handleCountryKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === "Tab" && !e.shiftKey) {
+      e.preventDefault();
+
+      setTimeout(() => {
+        emailRef.current?.focus();
+      }, 0);
+    }
+  };
+
+const handleStatusKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === "Tab" && !e.shiftKey) {
+      e.preventDefault();
+
+      setTimeout(() => {
+        foundedDateRef.current?.focus();
+      }, 0);
+    }
+  };
+
+const handleLocationNoKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === "Tab" && !e.shiftKey) {
+      e.preventDefault();
+
+      setTimeout(() => {
+        cancelRef.current?.focus();
+      }, 0);
+    }
+  };
+
+  // Company Mapping screen
+  const userCodeRef = useRef<any>(null);
+  const companyCodeRef = useRef<any>(null);
+  const locationNoCMRef = useRef<any>(null);
+  const statusCMRef = useRef<any>(null);
+  const orderNoRef = useRef<HTMLInputElement>(null);
+
+  const handleUserCodeKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === "Tab" && !e.shiftKey) {
+      e.preventDefault();
+
+      setTimeout(() => {
+        companyCodeRef.current?.focus();
+      }, 0);
+    }
+  };
+
+  const handleCompanyCodeKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === "Tab" && !e.shiftKey) {
+      e.preventDefault();
+
+      setTimeout(() => {
+        locationNoCMRef.current?.focus();
+      }, 0);
+    }
+  };
+
+  const handleLocationNoCMKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === "Tab" && !e.shiftKey) {
+      e.preventDefault();
+
+      setTimeout(() => {
+        statusCMRef.current?.focus();
+      }, 0);
+    }
+  };
+
+  const handleStatusCMKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === "Tab" && !e.shiftKey) {
+      e.preventDefault();
+
+      setTimeout(() => {
+        orderNoRef.current?.focus();
+      }, 0);
+    }
+  };
 
   //Company CRUD Functions
   const handleAddCompany = () => {
@@ -6636,6 +6745,9 @@ const WorkoutProgramManagement = () => {
                                 });
                               }}
                               placeholder="Select City" 
+                              ref={cityRef}
+                              tabIndex={0}
+                              onKeyDown={handleCityKeyDown}
                             />
                           </div>
                         </TooltipTrigger>
@@ -6677,6 +6789,9 @@ const WorkoutProgramManagement = () => {
                                 });
                               }} 
                               placeholder="Select State" 
+                              ref={stateRef}
+                              tabIndex={0}
+                              onKeyDown={handleStateKeyDown}
                             />
                           </div>
                         </TooltipTrigger>
@@ -6715,6 +6830,8 @@ const WorkoutProgramManagement = () => {
                               })
                             }
                             placeholder="Enter Pin Code (e.g., 600001)"
+                            ref={pinCodeRef}
+                            tabIndex={0}
                           />
                         </TooltipTrigger>
 
@@ -6754,7 +6871,10 @@ const WorkoutProgramManagement = () => {
                                   country: selected?.value || "",
                                 });
                               }} 
-                              placeholder="Select Country" 
+                              placeholder="Select Country"
+                              ref={countryRef}
+                            tabIndex={0} 
+                            onKeyDown={handleCountryKeyDown}
                             />  
                           </div>
                         </TooltipTrigger>
@@ -6791,6 +6911,8 @@ const WorkoutProgramManagement = () => {
                               })
                             }
                             placeholder="Enter email address (e.g., info@company.com)"
+                            ref={emailRef}
+                            tabIndex={0} 
                           />
                         </TooltipTrigger>
 
@@ -6831,6 +6953,9 @@ const WorkoutProgramManagement = () => {
                                 });
                               }} 
                               placeholder="Select Status" 
+                              ref={statusRef}
+                            tabIndex={0} 
+                            onKeyDown={handleStatusKeyDown}
                             />
                           </div> 
                         </TooltipTrigger>
@@ -6860,6 +6985,8 @@ const WorkoutProgramManagement = () => {
                             }
                             // max={new Date().toISOString().split("T")[0]}
                             placeholder="Select founded date"
+                            ref={foundedDateRef}
+                            tabIndex={0} 
                           />
                         </TooltipTrigger>
 
@@ -7012,6 +7139,9 @@ const WorkoutProgramManagement = () => {
                                 });
                               }} 
                               placeholder="Select Location" 
+                              ref={locationNoRef}
+                              tabIndex={0}
+                              onKeyDown={handleLocationNoKeyDown}
                             />
                           </div>
                         </TooltipTrigger>
@@ -7044,6 +7174,7 @@ const WorkoutProgramManagement = () => {
                         setSubmittedCompany(false);
                         setIsCompanyDialogOpen(false);
                       }}
+                      ref={cancelRef}
                     >
                       Cancel
                     </Button>
@@ -7131,6 +7262,9 @@ const WorkoutProgramManagement = () => {
                                 });
                               }}
                               placeholder="Select User Code"
+                              ref={userCodeRef}
+                              tabIndex={0}
+                              onKeyDown={handleUserCodeKeyDown}
                             />
                           </div>
                         </TooltipTrigger>
@@ -7173,6 +7307,9 @@ const WorkoutProgramManagement = () => {
                                 });
                               }}
                               placeholder="Select Company Code"
+                              ref={companyCodeRef}
+                              tabIndex={0}
+                              onKeyDown={handleCompanyCodeKeyDown}
                             />
                           </div>
                         </TooltipTrigger>
@@ -7215,6 +7352,9 @@ const WorkoutProgramManagement = () => {
                                 });
                               }}
                               placeholder="Select Location No"
+                              ref={locationNoCMRef}
+                              tabIndex={0}
+                              onKeyDown={handleLocationNoCMKeyDown}
                             />
                           </div>
                         </TooltipTrigger>
@@ -7256,6 +7396,9 @@ const WorkoutProgramManagement = () => {
                                 });
                               }}
                               placeholder="Select Status"
+                              ref={statusCMRef}
+                              tabIndex={0}
+                              onKeyDown={handleStatusCMKeyDown}
                             />
                           </div>
                         </TooltipTrigger>
@@ -7285,6 +7428,8 @@ const WorkoutProgramManagement = () => {
                               });
                             }}
                             placeholder="Enter order number (e.g., 001)"
+                            ref={orderNoRef}
+                              tabIndex={0}
                           />
                         </TooltipTrigger>
 

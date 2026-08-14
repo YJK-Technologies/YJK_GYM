@@ -15,6 +15,7 @@ interface ReactSelectProps {
   maxMenuHeight?: number;
   tabIndex?: number;
   onKeyDown?: (event: React.KeyboardEvent) => void;
+  id?: string;
 }
 
 const customStyles: StylesConfig<SingleSelectOption, false> = {
@@ -127,12 +128,14 @@ const ReactSingleSelect = forwardRef<any, ReactSelectProps>(
       maxMenuHeight,
       tabIndex = 0,
       onKeyDown,
+      id,
     },
     ref
   ) => {
     return (
       <Select
         ref={ref}
+        inputId={id}
         options={options}
         value={value}
         onChange={(selected) => onChange(selected)}
