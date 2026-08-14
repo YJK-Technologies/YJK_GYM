@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import {
   Card,
   CardContent,
@@ -213,6 +213,99 @@ const WorkoutProgramManagement = () => {
   const [GetPackages, setGetPackages] = useState<any[]>([]);
   const [numberGeneration, setNumberGeneration] = useState("Auto");
 
+  // For tab button
+  // Program screen
+  const programIdRef = useRef<HTMLInputElement>(null);
+  const programNameRef = useRef<HTMLInputElement>(null);
+
+  const categoryRef = useRef<any>(null);
+  const difficultyRef = useRef<any>(null);
+
+  const goalsRef = useRef<HTMLInputElement>(null);
+  const descriptionRef = useRef<HTMLTextAreaElement>(null);
+
+  const durationRef = useRef<HTMLInputElement>(null);
+  const sessionsRef = useRef<HTMLInputElement>(null);
+  const workingHoursRef = useRef<HTMLInputElement>(null);
+
+  const facultyRef = useRef<any>(null);
+
+  const handleCategoryKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === "Tab" && !e.shiftKey) {
+      e.preventDefault();
+
+      setTimeout(() => {
+        difficultyRef.current?.focus();
+      }, 0);
+    }
+  };
+
+  const handleDifficultyKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === "Tab" && !e.shiftKey) {
+      e.preventDefault();
+
+      setTimeout(() => {
+        goalsRef.current?.focus();
+      }, 0);
+    }
+  };
+
+  const handleFacultyKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === "Tab" && !e.shiftKey) {
+      e.preventDefault();
+
+      setTimeout(() => {
+        const exerciseInput = document.getElementById(
+          "exercise-name-0",
+        ) as HTMLInputElement | null;
+
+        exerciseInput?.focus();
+      }, 0);
+    }
+  };
+
+  // Package screen
+  const packageIdRef = useRef<HTMLInputElement>(null);
+  const packageNameRef = useRef<HTMLInputElement>(null);
+  const packageTypeRef = useRef<any>(null);
+  const priceRef = useRef<HTMLInputElement>(null);
+  const discountRef = useRef<HTMLInputElement>(null);
+  const durationDaysRef = useRef<HTMLInputElement>(null);
+  const associatedProgramRef = useRef<any>(null);
+  const featuresRef = useRef<HTMLTextAreaElement>(null);
+
+  const handlePackageTypeKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === "Tab" && !e.shiftKey) {
+      e.preventDefault();
+
+      setTimeout(() => {
+        priceRef.current?.focus();
+      }, 0);
+    }
+  };
+
+  const handleAssociatedProgramKeyDown = (
+    e: React.KeyboardEvent,
+    index: number,
+  ) => {
+    if (e.key === "Tab" && !e.shiftKey) {
+      e.preventDefault();
+
+      setTimeout(() => {
+        const nextProgramButton = document.getElementById(
+          `add-program-${index}`,
+        ) as HTMLButtonElement | null;
+
+        nextProgramButton?.focus();
+      }, 0);
+    }
+  };
+
+  // Membership screen
+  const membershipIdRef = useRef<HTMLInputElement>(null);
+  const membershipTypeNameRef = useRef<HTMLInputElement>(null);
+  const packageIdNameRef = useRef<any>(null);
+
   useEffect(() => {
     const getSettingData = async () => {
       try {
@@ -274,10 +367,12 @@ const WorkoutProgramManagement = () => {
     }
   };
 
-  const packageOptions: SingleSelectOption[] = PackageTypes.map((item: any) => ({
-    value: item.attributedetails_name,
-    label: item.attributedetails_name,
-  }));
+  const packageOptions: SingleSelectOption[] = PackageTypes.map(
+    (item: any) => ({
+      value: item.attributedetails_name,
+      label: item.attributedetails_name,
+    }),
+  );
 
   const fetchPrograms = async () => {
     try {
@@ -363,10 +458,12 @@ const WorkoutProgramManagement = () => {
     }
   };
 
-  const difficultyLevelOptions: SingleSelectOption[] = difficultyLevel.map((item: any) => ({
-    value: item.attributedetails_name,
-    label: item.attributedetails_name,
-  }));
+  const difficultyLevelOptions: SingleSelectOption[] = difficultyLevel.map(
+    (item: any) => ({
+      value: item.attributedetails_name,
+      label: item.attributedetails_name,
+    }),
+  );
 
   const fetchTrainers = async () => {
     try {
@@ -393,10 +490,12 @@ const WorkoutProgramManagement = () => {
     }
   };
 
-  const trainerSearchOptions: SingleSelectOption[] = trainers.map((item: any) => ({
-    value: item.TrainerID,
-    label: `${item.TrainerID} - ${item.FullName}`,
-  }));
+  const trainerSearchOptions: SingleSelectOption[] = trainers.map(
+    (item: any) => ({
+      value: item.TrainerID,
+      label: `${item.TrainerID} - ${item.FullName}`,
+    }),
+  );
 
   const trainerOptions: MultiSelectOption[] = trainers.map((trainer: any) => ({
     value: trainer.TrainerID,
@@ -487,10 +586,12 @@ const WorkoutProgramManagement = () => {
     }
   };
 
-  const packagesOptions: SingleSelectOption[] = GetPackages.map((item: any) => ({
-    value: item.package_ID,
-    label: `${item.package_ID} - ${item.package_Name}`,
-  }));
+  const packagesOptions: SingleSelectOption[] = GetPackages.map(
+    (item: any) => ({
+      value: item.package_ID,
+      label: `${item.package_ID} - ${item.package_Name}`,
+    }),
+  );
 
   useEffect(() => {
     const loadData = async () => {
@@ -677,10 +778,10 @@ const WorkoutProgramManagement = () => {
     const selectedExercises =
       program.Exercises.length > 0
         ? program.Exercises.map((exercise: any) => ({
-          name: exercise.Exercises_Name,
-          sets: exercise.Exercises_Count,
-          reps: exercise.Exercises_Repetitions,
-        }))
+            name: exercise.Exercises_Name,
+            sets: exercise.Exercises_Count,
+            reps: exercise.Exercises_Repetitions,
+          }))
         : [{ name: "", sets: 3, reps: "" }];
 
     setProgramForm({
@@ -1147,15 +1248,13 @@ const WorkoutProgramManagement = () => {
   // };
 
   const deleteProgram = async (program: any) => {
-  setLoading(true);
+    setLoading(true);
 
-  try {
-    // --------------------------------
-    // STEP 1: Validate Program Deletion
-    // --------------------------------
-    const validationResponse = await fetch(
-      `${BASE_URL}/programDeleteData`,
-      {
+    try {
+      // --------------------------------
+      // STEP 1: Validate Program Deletion
+      // --------------------------------
+      const validationResponse = await fetch(`${BASE_URL}/programDeleteData`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -1168,82 +1267,76 @@ const WorkoutProgramManagement = () => {
           ProgramIDs: [program.Keyfield],
           mode: "DP",
         }),
+      });
+
+      const validationResult = await validationResponse.json();
+
+      if (!validationResponse.ok) {
+        throw new Error(
+          validationResult.message || "Program cannot be deleted.",
+        );
       }
-    );
 
-    const validationResult = await validationResponse.json();
-
-    if (!validationResponse.ok) {
-      throw new Error(
-        validationResult.message ||
-          "Program cannot be deleted."
-      );
-    }
-
-    // --------------------------------
-    // STEP 2: Delete Program Exercises
-    // --------------------------------
-    const exerciseResponse = await fetch(
-      `${BASE_URL}/programExerciseDeleteData`,
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          company_code: companyCode,
-          location_code: locationCode,
-          modified_by: userCode,
-          programid: program.ProgramID,
+      // --------------------------------
+      // STEP 2: Delete Program Exercises
+      // --------------------------------
+      const exerciseResponse = await fetch(
+        `${BASE_URL}/programExerciseDeleteData`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            company_code: companyCode,
+            location_code: locationCode,
+            modified_by: userCode,
+            programid: program.ProgramID,
+          },
+          body: JSON.stringify({
+            ProgramExercises: [program.Keyfield],
+          }),
         },
-        body: JSON.stringify({
-          ProgramExercises: [program.Keyfield],
-        }),
-      }
-    );
-
-    const exerciseResult = await exerciseResponse.json();
-
-    if (!exerciseResponse.ok) {
-      throw new Error(
-        exerciseResult.message ||
-          "Failed to delete program exercises."
       );
-    }
 
-    // --------------------------------
-    // STEP 3: Delete Program Faculty
-    // --------------------------------
-    const facultyResponse = await fetch(
-      `${BASE_URL}/programFacultyDeleteData`,
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          company_code: companyCode,
-          location_code: locationCode,
-          modified_by: userCode,
-          programid: program.ProgramID,
+      const exerciseResult = await exerciseResponse.json();
+
+      if (!exerciseResponse.ok) {
+        throw new Error(
+          exerciseResult.message || "Failed to delete program exercises.",
+        );
+      }
+
+      // --------------------------------
+      // STEP 3: Delete Program Faculty
+      // --------------------------------
+      const facultyResponse = await fetch(
+        `${BASE_URL}/programFacultyDeleteData`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            company_code: companyCode,
+            location_code: locationCode,
+            modified_by: userCode,
+            programid: program.ProgramID,
+          },
+          body: JSON.stringify({
+            ProgramFacultys: [program.Keyfield],
+          }),
         },
-        body: JSON.stringify({
-          ProgramFacultys: [program.Keyfield],
-        }),
-      }
-    );
-
-    const facultyResult = await facultyResponse.json();
-
-    if (!facultyResponse.ok) {
-      throw new Error(
-        facultyResult.message ||
-          "Failed to delete program faculty."
       );
-    }
 
-    // --------------------------------
-    // STEP 4: Delete Program Header
-    // --------------------------------
-    const response = await fetch(
-      `${BASE_URL}/programDeleteData`,
-      {
+      const facultyResult = await facultyResponse.json();
+
+      if (!facultyResponse.ok) {
+        throw new Error(
+          facultyResult.message || "Failed to delete program faculty.",
+        );
+      }
+
+      // --------------------------------
+      // STEP 4: Delete Program Header
+      // --------------------------------
+      const response = await fetch(`${BASE_URL}/programDeleteData`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -1256,49 +1349,41 @@ const WorkoutProgramManagement = () => {
           ProgramIDs: [program.Keyfield],
           mode: "D",
         }),
+      });
+
+      const result = await response.json();
+
+      if (!response.ok) {
+        throw new Error(result.message || "Delete failed");
       }
-    );
 
-    const result = await response.json();
-
-    if (!response.ok) {
-      throw new Error(
-        result.message || "Delete failed"
+      // --------------------------------
+      // Remove from UI
+      // --------------------------------
+      setPrograms((prev) =>
+        prev.filter((item) => item.Keyfield !== program.Keyfield),
       );
+
+      handleProgramSearch();
+      fetchWorkoutData();
+
+      toast({
+        title: "Program Deleted",
+        description: "Workout Program deleted successfully.",
+        variant: "success",
+      });
+    } catch (error: any) {
+      console.error(error);
+
+      toast({
+        title: "Delete Failed",
+        description: error.message || "Something went wrong.",
+        variant: "destructive",
+      });
+    } finally {
+      setLoading(false);
     }
-
-    // --------------------------------
-    // Remove from UI
-    // --------------------------------
-    setPrograms((prev) =>
-      prev.filter(
-        (item) => item.Keyfield !== program.Keyfield
-      )
-    );
-
-    handleProgramSearch();
-    fetchWorkoutData();
-
-    toast({
-      title: "Program Deleted",
-      description: "Workout Program deleted successfully.",
-      variant: "success",
-    });
-
-  } catch (error: any) {
-    console.error(error);
-
-    toast({
-      title: "Delete Failed",
-      description:
-        error.message || "Something went wrong.",
-      variant: "destructive",
-    });
-
-  } finally {
-    setLoading(false);
-  }
-};
+  };
 
   const handleProgramSearch = async () => {
     setLoading(true);
@@ -1478,13 +1563,13 @@ const WorkoutProgramManagement = () => {
     const associatedPrograms =
       pkg.Programs && pkg.Programs.length > 0
         ? pkg.Programs.map((id: string) => ({
-          programId: id.trim(),
-        }))
+            programId: id.trim(),
+          }))
         : [
-          {
-            programId: "",
-          },
-        ];
+            {
+              programId: "",
+            },
+          ];
 
     setPackageForm({
       id: pkg.package_ID,
@@ -2079,17 +2164,14 @@ const WorkoutProgramManagement = () => {
   // };
 
   const deletePackage = async (pkg: any) => {
-  setLoading(true);
+    setLoading(true);
 
-  try {
+    try {
+      // ----------------------------------
+      // STEP 1: Validate Package Deletion
+      // ----------------------------------
 
-    // ----------------------------------
-    // STEP 1: Validate Package Deletion
-    // ----------------------------------
-
-    const validationResponse = await fetch(
-      `${BASE_URL}/PackageDeleteData`,
-      {
+      const validationResponse = await fetch(`${BASE_URL}/PackageDeleteData`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -2101,57 +2183,50 @@ const WorkoutProgramManagement = () => {
           KeyField: pkg.KeyField,
           mode: "DP",
         }),
+      });
+
+      const validationResult = await validationResponse.json();
+
+      if (!validationResponse.ok) {
+        throw new Error(
+          validationResult.message || "Package cannot be deleted.",
+        );
       }
-    );
 
-    const validationResult = await validationResponse.json();
+      // ----------------------------------
+      // STEP 2: Delete Package Details
+      // ----------------------------------
 
-    if (!validationResponse.ok) {
-      throw new Error(
-        validationResult.message ||
-        "Package cannot be deleted."
-      );
-    }
-
-
-    // ----------------------------------
-    // STEP 2: Delete Package Details
-    // ----------------------------------
-
-    const detailsResponse = await fetch(
-      `${BASE_URL}/PackageDetailsDeleteData`,
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          company_code: companyCode,
-          location_code: locationCode,
-          modified_by: userCode,
-          updatemode: "D",
+      const detailsResponse = await fetch(
+        `${BASE_URL}/PackageDetailsDeleteData`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            company_code: companyCode,
+            location_code: locationCode,
+            modified_by: userCode,
+            updatemode: "D",
+          },
+          body: JSON.stringify({
+            KeyFieldHeaders: [pkg.KeyField],
+          }),
         },
-        body: JSON.stringify({
-          KeyFieldHeaders: [pkg.KeyField],
-        }),
-      }
-    );
-
-    const detailsResult = await detailsResponse.json();
-
-    if (!detailsResponse.ok) {
-      throw new Error(
-        detailsResult.message ||
-        "Failed to delete package details."
       );
-    }
 
+      const detailsResult = await detailsResponse.json();
 
-    // ----------------------------------
-    // STEP 3: Delete Package Header
-    // ----------------------------------
+      if (!detailsResponse.ok) {
+        throw new Error(
+          detailsResult.message || "Failed to delete package details.",
+        );
+      }
 
-    const response = await fetch(
-      `${BASE_URL}/PackageDeleteData`,
-      {
+      // ----------------------------------
+      // STEP 3: Delete Package Header
+      // ----------------------------------
+
+      const response = await fetch(`${BASE_URL}/PackageDeleteData`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -2163,65 +2238,50 @@ const WorkoutProgramManagement = () => {
           KeyField: pkg.KeyField,
           mode: "D",
         }),
+      });
+
+      const result = await response.json();
+
+      if (!response.ok) {
+        throw new Error(result.message || "Delete failed");
       }
-    );
 
-    const result = await response.json();
+      // ----------------------------------
+      // STEP 4: Remove from UI
+      // ----------------------------------
 
-    if (!response.ok) {
-      throw new Error(
-        result.message ||
-        "Delete failed"
+      setPackages((prev: any) =>
+        prev.filter((item: any) => item.KeyField !== pkg.KeyField),
       );
+
+      // ----------------------------------
+      // STEP 5: Refresh Data
+      // ----------------------------------
+
+      handlePackageSearch();
+      fetchWorkoutData();
+
+      // ----------------------------------
+      // SUCCESS TOAST
+      // ----------------------------------
+
+      toast({
+        title: "Package Deleted",
+        description: "Workout Package deleted successfully.",
+        variant: "success",
+      });
+    } catch (error: any) {
+      console.error(error);
+
+      toast({
+        title: "Delete Failed",
+        description: error.message || "Something went wrong.",
+        variant: "destructive",
+      });
+    } finally {
+      setLoading(false);
     }
-
-
-    // ----------------------------------
-    // STEP 4: Remove from UI
-    // ----------------------------------
-
-    setPackages((prev: any) =>
-      prev.filter(
-        (item: any) =>
-          item.KeyField !== pkg.KeyField
-      )
-    );
-
-
-    // ----------------------------------
-    // STEP 5: Refresh Data
-    // ----------------------------------
-
-    handlePackageSearch();
-    fetchWorkoutData();
-
-
-    // ----------------------------------
-    // SUCCESS TOAST
-    // ----------------------------------
-
-    toast({
-      title: "Package Deleted",
-      description: "Workout Package deleted successfully.",
-      variant: "success",
-    });
-
-  } catch (error: any) {
-
-    console.error(error);
-
-    toast({
-      title: "Delete Failed",
-      description:
-        error.message ||
-        "Something went wrong.",
-      variant: "destructive",
-    });
-
-  } finally {
-    setLoading(false);
-  }
-};
+  };
 
   const addExerciseField = () => {
     setProgramForm({
@@ -2786,83 +2846,76 @@ const WorkoutProgramManagement = () => {
   // };
 
   const deleteMembership = async (membership: any) => {
-  setLoading(true);
+    setLoading(true);
 
-  try {
+    try {
+      // ======================================
+      // STEP 1: Validate Membership Type
+      // ======================================
 
-    // ======================================
-    // STEP 1: Validate Membership Type
-    // ======================================
-
-    const validationResponse = await fetch(
-      `${BASE_URL}/MemberShipTypeHdrDelete`,
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
+      const validationResponse = await fetch(
+        `${BASE_URL}/MemberShipTypeHdrDelete`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            MemberShipType_id: membership.MemberShipType_id,
+            Company_code: companyCode,
+            Location_code: locationCode,
+            Keyfield: membership.Keyfield,
+            modified_by: userCode,
+            mode: "DP",
+          }),
         },
-        body: JSON.stringify({
-          MemberShipType_id: membership.MemberShipType_id,
-          Company_code: companyCode,
-          Location_code: locationCode,
-          Keyfield: membership.Keyfield,
-          modified_by: userCode,
-          mode: "DP",
-        }),
-      }
-    );
-
-    const validationResult = await validationResponse.json();
-
-    if (!validationResponse.ok || !validationResult.success) {
-      throw new Error(
-        validationResult.message ||
-        "Membership Type cannot be deleted."
       );
-    }
 
+      const validationResult = await validationResponse.json();
 
-    // ======================================
-    // STEP 2: Delete Membership Details
-    // ======================================
+      if (!validationResponse.ok || !validationResult.success) {
+        throw new Error(
+          validationResult.message || "Membership Type cannot be deleted.",
+        );
+      }
 
-    const detailsResponse = await fetch(
-      `${BASE_URL}/MemberShipTypeDetailsDelete`,
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
+      // ======================================
+      // STEP 2: Delete Membership Details
+      // ======================================
+
+      const detailsResponse = await fetch(
+        `${BASE_URL}/MemberShipTypeDetailsDelete`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            Sno: 1,
+            Company_code: companyCode,
+            Location_code: locationCode,
+            MemberShipType_id: membership.MemberShipType_id,
+            Keyfield_header: membership.Keyfield,
+            Keyfield: "",
+            modified_by: userCode,
+            UpdateMode: "D",
+          }),
         },
-        body: JSON.stringify({
-          Sno: 1,
-          Company_code: companyCode,
-          Location_code: locationCode,
-          MemberShipType_id: membership.MemberShipType_id,
-          Keyfield_header: membership.Keyfield,
-          Keyfield: "",
-          modified_by: userCode,
-          UpdateMode: "D",
-        }),
-      }
-    );
-
-    const detailsResult = await detailsResponse.json();
-
-    if (!detailsResponse.ok) {
-      throw new Error(
-        detailsResult.message ||
-        "Failed to delete Membership Type details."
       );
-    }
 
+      const detailsResult = await detailsResponse.json();
 
-    // ======================================
-    // STEP 3: Delete Membership Header
-    // ======================================
+      if (!detailsResponse.ok) {
+        throw new Error(
+          detailsResult.message || "Failed to delete Membership Type details.",
+        );
+      }
 
-    const response = await fetch(
-      `${BASE_URL}/MemberShipTypeHdrDelete`,
-      {
+      // ======================================
+      // STEP 3: Delete Membership Header
+      // ======================================
+
+      const response = await fetch(`${BASE_URL}/MemberShipTypeHdrDelete`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -2875,68 +2928,50 @@ const WorkoutProgramManagement = () => {
           modified_by: userCode,
           mode: "D",
         }),
+      });
+
+      const result = await response.json();
+
+      if (!response.ok || !result.success) {
+        throw new Error(result.message || "Delete failed");
       }
-    );
 
-    const result = await response.json();
+      // ======================================
+      // STEP 4: Remove from UI
+      // ======================================
 
-    if (!response.ok || !result.success) {
-      throw new Error(
-        result.message ||
-        "Delete failed"
+      setMemberShips((prev: any) =>
+        prev.filter((item: any) => item.Keyfield !== membership.Keyfield),
       );
+
+      // ======================================
+      // STEP 5: Refresh Data
+      // ======================================
+
+      handleMemberShipSearch();
+      fetchWorkoutData();
+
+      // ======================================
+      // SUCCESS TOAST
+      // ======================================
+
+      toast({
+        title: "Membership Type Deleted",
+        description: "Membership Type deleted successfully.",
+        variant: "success",
+      });
+    } catch (error: any) {
+      console.error("Membership Delete Error:", error);
+
+      toast({
+        title: "Delete Failed",
+        description: error.message || "Something went wrong.",
+        variant: "destructive",
+      });
+    } finally {
+      setLoading(false);
     }
-
-
-    // ======================================
-    // STEP 4: Remove from UI
-    // ======================================
-
-    setMemberShips((prev: any) =>
-      prev.filter(
-        (item: any) =>
-          item.Keyfield !== membership.Keyfield
-      )
-    );
-
-
-    // ======================================
-    // STEP 5: Refresh Data
-    // ======================================
-
-    handleMemberShipSearch();
-    fetchWorkoutData();
-
-
-    // ======================================
-    // SUCCESS TOAST
-    // ======================================
-
-    toast({
-      title: "Membership Type Deleted",
-      description: "Membership Type deleted successfully.",
-      variant: "success",
-    });
-
-  } catch (error: any) {
-
-    console.error(
-      "Membership Delete Error:",
-      error
-    );
-
-    toast({
-      title: "Delete Failed",
-      description:
-        error.message ||
-        "Something went wrong.",
-      variant: "destructive",
-    });
-
-  } finally {
-    setLoading(false);
-  }
-}; 
+  };
 
   const renderProgramSearch = () => (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-x-4 gap-y-6">
@@ -2998,7 +3033,7 @@ const WorkoutProgramManagement = () => {
                   options={categoryOptions}
                   value={
                     categoryOptions.find(
-                      (option) => option.value === programSearchForm.category
+                      (option) => option.value === programSearchForm.category,
                     ) || null
                   }
                   onChange={(selected) => {
@@ -3029,7 +3064,8 @@ const WorkoutProgramManagement = () => {
                   options={difficultyLevelOptions}
                   value={
                     difficultyLevelOptions.find(
-                      (option) => option.value === programSearchForm.difficultyLevel
+                      (option) =>
+                        option.value === programSearchForm.difficultyLevel,
                     ) || null
                   }
                   onChange={(selected) => {
@@ -3111,7 +3147,8 @@ const WorkoutProgramManagement = () => {
                   options={trainerSearchOptions}
                   value={
                     trainerSearchOptions.find(
-                      (option) => option.value === programSearchForm.assignedFaculty
+                      (option) =>
+                        option.value === programSearchForm.assignedFaculty,
                     ) || null
                   }
                   onChange={(selected) => {
@@ -3143,7 +3180,7 @@ const WorkoutProgramManagement = () => {
                   options={statusOptions}
                   value={
                     statusOptions.find(
-                      (option) => option.value === programSearchForm.isActive
+                      (option) => option.value === programSearchForm.isActive,
                     ) || null
                   }
                   onChange={(selected) => {
@@ -3413,7 +3450,8 @@ const WorkoutProgramManagement = () => {
                   options={packageOptions}
                   value={
                     packageOptions.find(
-                      (option) => option.value === packageSearchForm.packageType
+                      (option) =>
+                        option.value === packageSearchForm.packageType,
                     ) || null
                   }
                   onChange={(selected) => {
@@ -3561,7 +3599,7 @@ const WorkoutProgramManagement = () => {
                   options={statusOptions}
                   value={
                     statusOptions.find(
-                      (option) => option.value === packageSearchForm.isActive
+                      (option) => option.value === packageSearchForm.isActive,
                     ) || null
                   }
                   onChange={(selected) => {
@@ -3652,7 +3690,8 @@ const WorkoutProgramManagement = () => {
                   options={packagesOptions}
                   value={
                     packagesOptions.find(
-                      (option) => option.value === MemberShipSearchForm.package_ID
+                      (option) =>
+                        option.value === MemberShipSearchForm.package_ID,
                     ) || null
                   }
                   onChange={(selected) => {
@@ -3685,7 +3724,7 @@ const WorkoutProgramManagement = () => {
                   options={statusOptions}
                   value={
                     statusOptions.find(
-                      (option) => option.value === MemberShipSearchForm.Status
+                      (option) => option.value === MemberShipSearchForm.Status,
                     ) || null
                   }
                   onChange={(selected) => {
@@ -4003,17 +4042,17 @@ const WorkoutProgramManagement = () => {
                                         "Programs",
                                         "edit",
                                       ) && (
-                                          <Button
-                                            variant="ghost"
-                                            size="icon"
-                                            className="h-8 w-8 text-gray-600 hover:text-violet-600 hover:bg-violet-50"
-                                            onClick={() =>
-                                              handleEditProgram(program)
-                                            }
-                                          >
-                                            <Edit className="h-4 w-4" />
-                                          </Button>
-                                        )}
+                                        <Button
+                                          variant="ghost"
+                                          size="icon"
+                                          className="h-8 w-8 text-gray-600 hover:text-violet-600 hover:bg-violet-50"
+                                          onClick={() =>
+                                            handleEditProgram(program)
+                                          }
+                                        >
+                                          <Edit className="h-4 w-4" />
+                                        </Button>
+                                      )}
                                     </TooltipTrigger>
                                     <TooltipContent>
                                       <p>Edit</p>
@@ -4028,17 +4067,17 @@ const WorkoutProgramManagement = () => {
                                         "Programs",
                                         "delete",
                                       ) && (
-                                          <Button
-                                            variant="ghost"
-                                            size="icon"
-                                            className="h-8 w-8 text-red-500 hover:text-red-700 hover:bg-red-50"
-                                            onClick={() =>
-                                              handleDeleteProgram(program)
-                                            }
-                                          >
-                                            <Trash2 className="h-4 w-4" />
-                                          </Button>
-                                        )}
+                                        <Button
+                                          variant="ghost"
+                                          size="icon"
+                                          className="h-8 w-8 text-red-500 hover:text-red-700 hover:bg-red-50"
+                                          onClick={() =>
+                                            handleDeleteProgram(program)
+                                          }
+                                        >
+                                          <Trash2 className="h-4 w-4" />
+                                        </Button>
+                                      )}
                                     </TooltipTrigger>
                                     <TooltipContent>
                                       <p>Delete</p>
@@ -4065,8 +4104,9 @@ const WorkoutProgramManagement = () => {
                                 className={`font-medium text-xs ${statusBadgeColor}`}
                               >
                                 <span
-                                  className={`w-1.5 h-1.5 rounded-full mr-1.5 ${isActive ? "bg-green-500" : "bg-gray-400"
-                                    }`}
+                                  className={`w-1.5 h-1.5 rounded-full mr-1.5 ${
+                                    isActive ? "bg-green-500" : "bg-gray-400"
+                                  }`}
                                 ></span>
                                 {program.is_active || "Close"}
                               </Badge>
@@ -4148,7 +4188,7 @@ const WorkoutProgramManagement = () => {
                               </p>
                               <div className="flex flex-wrap gap-1.5">
                                 {program.Faculty &&
-                                  program.Faculty.length > 0 ? (
+                                program.Faculty.length > 0 ? (
                                   program.Faculty.map(
                                     (faculty: string, idx: number) => {
                                       const trainer = trainers.find(
@@ -4291,15 +4331,15 @@ const WorkoutProgramManagement = () => {
                                         "Packages",
                                         "edit",
                                       ) && (
-                                          <Button
-                                            variant="ghost"
-                                            size="icon"
-                                            className="h-8 w-8 text-gray-600 hover:text-violet-600 hover:bg-violet-50"
-                                            onClick={() => handleEditPackage(pkg)}
-                                          >
-                                            <Edit className="h-4 w-4" />
-                                          </Button>
-                                        )}
+                                        <Button
+                                          variant="ghost"
+                                          size="icon"
+                                          className="h-8 w-8 text-gray-600 hover:text-violet-600 hover:bg-violet-50"
+                                          onClick={() => handleEditPackage(pkg)}
+                                        >
+                                          <Edit className="h-4 w-4" />
+                                        </Button>
+                                      )}
                                     </TooltipTrigger>
 
                                     <TooltipContent>
@@ -4315,17 +4355,17 @@ const WorkoutProgramManagement = () => {
                                         "Packages",
                                         "delete",
                                       ) && (
-                                          <Button
-                                            variant="ghost"
-                                            size="icon"
-                                            className="h-8 w-8 text-red-500 hover:text-red-700 hover:bg-red-50"
-                                            onClick={() =>
-                                              handleDeletePackage(pkg)
-                                            }
-                                          >
-                                            <Trash2 className="h-4 w-4" />
-                                          </Button>
-                                        )}
+                                        <Button
+                                          variant="ghost"
+                                          size="icon"
+                                          className="h-8 w-8 text-red-500 hover:text-red-700 hover:bg-red-50"
+                                          onClick={() =>
+                                            handleDeletePackage(pkg)
+                                          }
+                                        >
+                                          <Trash2 className="h-4 w-4" />
+                                        </Button>
+                                      )}
                                     </TooltipTrigger>
 
                                     <TooltipContent>
@@ -4353,8 +4393,9 @@ const WorkoutProgramManagement = () => {
                                 className={`font-medium text-xs ${statusBadgeColor}`}
                               >
                                 <span
-                                  className={`w-1.5 h-1.5 rounded-full mr-1.5 ${isActive ? "bg-green-500" : "bg-gray-400"
-                                    }`}
+                                  className={`w-1.5 h-1.5 rounded-full mr-1.5 ${
+                                    isActive ? "bg-green-500" : "bg-gray-400"
+                                  }`}
                                 ></span>
                                 {pkg.is_active || "Close"}
                               </Badge>
@@ -4520,17 +4561,17 @@ const WorkoutProgramManagement = () => {
                                         "Memberships",
                                         "edit",
                                       ) && (
-                                          <Button
-                                            variant="ghost"
-                                            size="icon"
-                                            className="h-8 w-8 text-gray-600 hover:text-violet-600 hover:bg-violet-50"
-                                            onClick={() =>
-                                              handleEditMemberShip(membership)
-                                            }
-                                          >
-                                            <Edit className="h-4 w-4" />
-                                          </Button>
-                                        )}
+                                        <Button
+                                          variant="ghost"
+                                          size="icon"
+                                          className="h-8 w-8 text-gray-600 hover:text-violet-600 hover:bg-violet-50"
+                                          onClick={() =>
+                                            handleEditMemberShip(membership)
+                                          }
+                                        >
+                                          <Edit className="h-4 w-4" />
+                                        </Button>
+                                      )}
                                     </TooltipTrigger>
                                     <TooltipContent>
                                       <p>Edit</p>
@@ -4545,17 +4586,17 @@ const WorkoutProgramManagement = () => {
                                         "Memberships",
                                         "delete",
                                       ) && (
-                                          <Button
-                                            variant="ghost"
-                                            size="icon"
-                                            className="h-8 w-8 text-red-500 hover:text-red-700 hover:bg-red-50"
-                                            onClick={() =>
-                                              handleDeleteMembership(membership)
-                                            }
-                                          >
-                                            <Trash2 className="h-4 w-4" />
-                                          </Button>
-                                        )}
+                                        <Button
+                                          variant="ghost"
+                                          size="icon"
+                                          className="h-8 w-8 text-red-500 hover:text-red-700 hover:bg-red-50"
+                                          onClick={() =>
+                                            handleDeleteMembership(membership)
+                                          }
+                                        >
+                                          <Trash2 className="h-4 w-4" />
+                                        </Button>
+                                      )}
                                     </TooltipTrigger>
                                     <TooltipContent>
                                       <p>Delete</p>
@@ -4575,8 +4616,9 @@ const WorkoutProgramManagement = () => {
                                 className={`font-medium text-xs ${statusBadgeColor}`}
                               >
                                 <span
-                                  className={`w-1.5 h-1.5 rounded-full mr-1.5 ${isActive ? "bg-green-500" : "bg-gray-400"
-                                    }`}
+                                  className={`w-1.5 h-1.5 rounded-full mr-1.5 ${
+                                    isActive ? "bg-green-500" : "bg-gray-400"
+                                  }`}
                                 ></span>
                                 {membership.Status || "Inactive"}
                               </Badge>
@@ -4591,7 +4633,7 @@ const WorkoutProgramManagement = () => {
 
                               <div className="flex flex-wrap gap-2">
                                 {membership.Packages &&
-                                  membership.Packages.length > 0 ? (
+                                membership.Packages.length > 0 ? (
                                   membership.Packages.map(
                                     (pkg: any, index: number) => (
                                       <TooltipProvider
@@ -4664,6 +4706,7 @@ const WorkoutProgramManagement = () => {
                     <Tooltip>
                       <TooltipTrigger asChild>
                         <Input
+                          ref={programIdRef}
                           id="programId"
                           value={programForm.id}
                           readOnly={
@@ -4735,6 +4778,7 @@ const WorkoutProgramManagement = () => {
                       <Tooltip>
                         <TooltipTrigger asChild>
                           <Input
+                            ref={programNameRef}
                             id="name"
                             value={programForm.name}
                             maxLength={100}
@@ -4773,10 +4817,12 @@ const WorkoutProgramManagement = () => {
                         <TooltipTrigger asChild>
                           <div>
                             <ReactSingleSelect
+                              ref={categoryRef}
                               options={categoryOptions}
                               value={
                                 categoryOptions.find(
-                                  (option) => option.value === programForm.category
+                                  (option) =>
+                                    option.value === programForm.category,
                                 ) || null
                               }
                               onChange={(selected) => {
@@ -4787,6 +4833,7 @@ const WorkoutProgramManagement = () => {
                               }}
                               placeholder="Select Category"
                               tabIndex={0}
+                              onKeyDown={handleCategoryKeyDown}
                             />
                           </div>
                         </TooltipTrigger>
@@ -4815,10 +4862,13 @@ const WorkoutProgramManagement = () => {
                         <TooltipTrigger asChild>
                           <div>
                             <ReactSingleSelect
+                              ref={difficultyRef}
                               options={difficultyLevelOptions}
                               value={
                                 difficultyLevelOptions.find(
-                                  (option) => option.value === programForm.difficultyLevel
+                                  (option) =>
+                                    option.value ===
+                                    programForm.difficultyLevel,
                                 ) || null
                               }
                               onChange={(selected) => {
@@ -4829,6 +4879,7 @@ const WorkoutProgramManagement = () => {
                               }}
                               placeholder="Select Difficulty Level"
                               tabIndex={0}
+                              onKeyDown={handleDifficultyKeyDown}
                             />
                           </div>
                         </TooltipTrigger>
@@ -4846,6 +4897,7 @@ const WorkoutProgramManagement = () => {
                       <Tooltip>
                         <TooltipTrigger asChild>
                           <Input
+                            ref={goalsRef}
                             id="goals"
                             value={programForm.goals}
                             maxLength={250}
@@ -4874,6 +4926,7 @@ const WorkoutProgramManagement = () => {
                     <Tooltip>
                       <TooltipTrigger asChild>
                         <Textarea
+                          ref={descriptionRef}
                           id="description"
                           value={programForm.description}
                           maxLength={250}
@@ -4915,6 +4968,7 @@ const WorkoutProgramManagement = () => {
                       <Tooltip>
                         <TooltipTrigger asChild>
                           <Input
+                            ref={durationRef}
                             id="duration"
                             maxLength={20}
                             value={programForm.durationPerSession}
@@ -4955,6 +5009,7 @@ const WorkoutProgramManagement = () => {
                       <Tooltip>
                         <TooltipTrigger asChild>
                           <Input
+                            ref={sessionsRef}
                             id="sessions"
                             type="text"
                             inputMode="numeric"
@@ -4999,6 +5054,7 @@ const WorkoutProgramManagement = () => {
                       <Tooltip>
                         <TooltipTrigger asChild>
                           <Input
+                            ref={workingHoursRef}
                             id="workingHours"
                             maxLength={50}
                             value={programForm.workingHours}
@@ -5037,7 +5093,7 @@ const WorkoutProgramManagement = () => {
                     htmlFor="faculty"
                     className={
                       submittedPrograms &&
-                        programForm.assignedFaculty.length === 0
+                      programForm.assignedFaculty.length === 0
                         ? "text-red-500"
                         : ""
                     }
@@ -5049,6 +5105,7 @@ const WorkoutProgramManagement = () => {
                       <TooltipTrigger asChild>
                         <div>
                           <ReactMultiSelect
+                            ref={facultyRef}
                             options={trainerOptions}
                             value={programForm.assignedFaculty}
                             placeholder="Select assigned faculty"
@@ -5058,6 +5115,8 @@ const WorkoutProgramManagement = () => {
                                 assignedFaculty: selected,
                               })
                             }
+                            tabIndex={0}
+                            onKeyDown={handleFacultyKeyDown}
                           />
                         </div>
                       </TooltipTrigger>
@@ -5074,13 +5133,14 @@ const WorkoutProgramManagement = () => {
               <div className="space-y-4">
                 <div className="flex justify-between items-center">
                   <h4
-                    className={`font-medium text-sm text-gray-700 ${submittedPrograms &&
+                    className={`font-medium text-sm text-gray-700 ${
+                      submittedPrograms &&
                       programForm.exercises.some(
                         (e) => !e.name.trim() || !e.sets || !e.reps,
                       )
-                      ? "text-red-500"
-                      : "text-gray-700"
-                      }`}
+                        ? "text-red-500"
+                        : "text-gray-700"
+                    }`}
                   >
                     Exercises*
                   </h4>
@@ -5094,6 +5154,7 @@ const WorkoutProgramManagement = () => {
                           <Tooltip>
                             <TooltipTrigger asChild>
                               <Input
+                                id={`exercise-name-${index}`}
                                 placeholder="Exercise name"
                                 value={exercise.name}
                                 maxLength={100}
@@ -5310,6 +5371,7 @@ const WorkoutProgramManagement = () => {
                     <Tooltip>
                       <TooltipTrigger asChild>
                         <Input
+                          ref={packageIdRef}
                           id="packageId"
                           value={packageForm.id}
                           readOnly={
@@ -5372,6 +5434,7 @@ const WorkoutProgramManagement = () => {
                   <Tooltip>
                     <TooltipTrigger asChild>
                       <Input
+                        ref={packageNameRef}
                         id="pkgName"
                         value={packageForm.name}
                         onChange={(e) =>
@@ -5431,10 +5494,12 @@ const WorkoutProgramManagement = () => {
                             </SelectContent>
                           </Select> */}
                           <ReactSingleSelect
+                            ref={packageTypeRef}
                             options={packageOptions}
                             value={
                               packageOptions.find(
-                                (option) => option.value === packageForm.packageType
+                                (option) =>
+                                  option.value === packageForm.packageType,
                               ) || null
                             }
                             onChange={(selected) => {
@@ -5444,6 +5509,8 @@ const WorkoutProgramManagement = () => {
                               });
                             }}
                             placeholder="Select Package Type"
+                            tabIndex={0}
+                            onKeyDown={handlePackageTypeKeyDown}
                           />
                         </div>
                       </TooltipTrigger>
@@ -5470,6 +5537,7 @@ const WorkoutProgramManagement = () => {
                     <Tooltip>
                       <TooltipTrigger asChild>
                         <Input
+                          ref={priceRef}
                           id="price"
                           type="number"
                           min={0}
@@ -5498,6 +5566,7 @@ const WorkoutProgramManagement = () => {
                     <Tooltip>
                       <TooltipTrigger asChild>
                         <Input
+                          ref={discountRef}
                           id="discount"
                           min={0}
                           max={100}
@@ -5533,6 +5602,7 @@ const WorkoutProgramManagement = () => {
                     <Tooltip>
                       <TooltipTrigger asChild>
                         <Input
+                          ref={durationDaysRef}
                           id="pkgDays"
                           min={0}
                           max={100}
@@ -5559,7 +5629,7 @@ const WorkoutProgramManagement = () => {
                 <Label
                   className={
                     submittedPackage &&
-                      packageForm.associatedPrograms.some((p) => !p.programId)
+                    packageForm.associatedPrograms.some((p) => !p.programId)
                       ? "text-red-500"
                       : ""
                   }
@@ -5575,16 +5645,24 @@ const WorkoutProgramManagement = () => {
                           <TooltipTrigger asChild>
                             <div>
                               <ReactSingleSelect
+                                ref={
+                                  index === 0 ? associatedProgramRef : undefined
+                                }
                                 options={programOptions}
                                 value={
                                   programOptions.find(
-                                    (option) => option.value === program.programId
+                                    (option) =>
+                                      option.value === program.programId,
                                   ) || null
                                 }
                                 onChange={(selected) =>
                                   updatePrograms(index, selected?.value || "")
                                 }
                                 placeholder="Select Associated Program"
+                                tabIndex={0}
+                                onKeyDown={(e) =>
+                                  handleAssociatedProgramKeyDown(e, index)
+                                }
                               />
                             </div>
                           </TooltipTrigger>
@@ -5597,6 +5675,7 @@ const WorkoutProgramManagement = () => {
                     </div>
 
                     <Button
+                      id={`add-program-${index}`}
                       type="button"
                       variant="ghost"
                       size="icon"
@@ -5607,6 +5686,7 @@ const WorkoutProgramManagement = () => {
                     </Button>
 
                     <Button
+                      id={`remove-program-${index}`}
                       type="button"
                       variant="ghost"
                       size="icon"
@@ -5625,6 +5705,7 @@ const WorkoutProgramManagement = () => {
                   <Tooltip>
                     <TooltipTrigger asChild>
                       <Textarea
+                        ref={featuresRef}
                         id="features"
                         value={packageForm.features}
                         onChange={(e) =>
@@ -5742,6 +5823,7 @@ const WorkoutProgramManagement = () => {
                     <Tooltip>
                       <TooltipTrigger asChild>
                         <Input
+                          ref={membershipIdRef}
                           id="membershipId"
                           value={MemberShipForm.MemberShipType_id}
                           readOnly={
@@ -5807,6 +5889,7 @@ const WorkoutProgramManagement = () => {
                   <Tooltip>
                     <TooltipTrigger asChild>
                       <Input
+                        ref={membershipTypeNameRef}
                         id="pkgName"
                         value={MemberShipForm.MemberShipType_Name}
                         maxLength={100}
@@ -5831,7 +5914,7 @@ const WorkoutProgramManagement = () => {
                 <Label
                   className={
                     submittedMemberShips &&
-                      MemberShipForm.PackageIDName.some((p) => !p.package_ID)
+                    MemberShipForm.PackageIDName.some((p) => !p.package_ID)
                       ? "text-red-500"
                       : ""
                   }
@@ -5847,10 +5930,12 @@ const WorkoutProgramManagement = () => {
                           <TooltipTrigger asChild>
                             <div>
                               <ReactSingleSelect
+                                ref={index === 0 ? packageIdNameRef : undefined}
                                 options={packagesOptions}
                                 value={
                                   packagesOptions.find(
-                                    (option) => option.value === program.package_ID
+                                    (option) =>
+                                      option.value === program.package_ID,
                                   ) || null
                                 }
                                 onChange={(selected) =>

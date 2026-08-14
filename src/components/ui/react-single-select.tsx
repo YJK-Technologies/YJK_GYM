@@ -1,4 +1,4 @@
-import React from "react";
+import React, { forwardRef } from "react";
 import Select, { StylesConfig } from "react-select";
 
 export interface SingleSelectOption {
@@ -14,6 +14,7 @@ interface ReactSelectProps {
   isDisabled?: boolean;
   maxMenuHeight?: number;
   tabIndex?: number;
+  onKeyDown?: (event: React.KeyboardEvent) => void;
 }
 
 const customStyles: StylesConfig<SingleSelectOption, false> = {
@@ -115,29 +116,39 @@ const customStyles: StylesConfig<SingleSelectOption, false> = {
   }),
 };
 
-const ReactSingleSelect: React.FC<ReactSelectProps> = ({
-  options,
-  value,
-  onChange,
-  placeholder,
-  isDisabled,
-  maxMenuHeight,
-  tabIndex = -1,
-}) => {
-  return (
-    <Select
-      options={options}
-      value={value}
-      onChange={(selected) => onChange(selected)}
-      styles={customStyles}
-      placeholder={placeholder}
-      isDisabled={isDisabled}
-      isClearable
-      maxMenuHeight={maxMenuHeight}
-      tabIndex={tabIndex}
-    />
-  );
-};
+const ReactSingleSelect = forwardRef<any, ReactSelectProps>(
+  (
+    {
+      options,
+      value,
+      onChange,
+      placeholder,
+      isDisabled,
+      maxMenuHeight,
+      tabIndex = 0,
+      onKeyDown,
+    },
+    ref
+  ) => {
+    return (
+      <Select
+        ref={ref}
+        options={options}
+        value={value}
+        onChange={(selected) => onChange(selected)}
+        styles={customStyles}
+        placeholder={placeholder}
+        isDisabled={isDisabled}
+        isClearable
+        maxMenuHeight={maxMenuHeight}
+        tabIndex={tabIndex}
+        onKeyDown={onKeyDown}
+      />
+    );
+  }
+);
+
+ReactSingleSelect.displayName = "ReactSingleSelect";
 
 export default ReactSingleSelect;
 
