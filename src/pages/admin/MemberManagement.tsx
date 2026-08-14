@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import {
   Card,
   CardContent,
@@ -143,6 +143,65 @@ const MemberManagement = () => {
 
   const maxDOB = new Date();
   maxDOB.setFullYear(maxDOB.getFullYear() - 18);
+
+  // For tab button - Member
+  const memberIdRef = useRef<HTMLInputElement>(null);
+  const identityNoRef = useRef<HTMLInputElement>(null);
+  const fullNameRef = useRef<HTMLInputElement>(null);
+  const dateOfBirthRef = useRef<HTMLInputElement>(null);
+  const genderRef = useRef<any>(null);
+  const mobileRef = useRef<HTMLInputElement>(null);
+  const whatsAppNumberRef = useRef<HTMLInputElement>(null);
+  const emailAddressRef = useRef<HTMLInputElement>(null);
+  const passwordRef = useRef<HTMLInputElement>(null);
+  const fullAddressRef = useRef<HTMLTextAreaElement>(null);
+  const contactNameRef = useRef<HTMLInputElement>(null);
+  const contactPhoneRef = useRef<HTMLInputElement>(null);
+  const relationshipRef = useRef<any>(null);
+  const membershipTypeRef = useRef<any>(null);
+  const dietPlanRef = useRef<any>(null);
+  const joinedDateRef = useRef<HTMLInputElement>(null);
+  const planExpiryDateRef = useRef<HTMLInputElement>(null);
+  const imageRef = useRef<HTMLInputElement>(null);
+
+  const handleGenderKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === "Tab" && !e.shiftKey) {
+      e.preventDefault();
+
+      setTimeout(() => {
+        mobileRef.current?.focus();
+      }, 0);
+    }
+  };
+
+  const handleRelationshipKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === "Tab" && !e.shiftKey) {
+      e.preventDefault();
+
+      setTimeout(() => {
+        membershipTypeRef.current?.focus();
+      }, 0);
+    }
+  };
+  
+  const handleMembershipTypeKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === "Tab" && !e.shiftKey) {
+      e.preventDefault();
+
+      setTimeout(() => {
+        dietPlanRef.current?.focus();
+      }, 0);
+    }
+  };
+  const handleDietPlanKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === "Tab" && !e.shiftKey) {
+      e.preventDefault();
+
+      setTimeout(() => {
+        joinedDateRef.current?.focus();
+      }, 0);
+    }
+  };
 
   const fetchGender = async () => {
     try {
@@ -1979,6 +2038,7 @@ const MemberManagement = () => {
                   <Tooltip>
                     <TooltipTrigger asChild>
                       <Input
+                        ref={memberIdRef}
                         id="memberId"
                         value={formData.MemberID}
                         readOnly={
@@ -2008,6 +2068,7 @@ const MemberManagement = () => {
                             }));
                           }
                         }}
+                        tabIndex={0}
                       />
                     </TooltipTrigger>
 
@@ -2046,6 +2107,7 @@ const MemberManagement = () => {
                       <Tooltip>
                         <TooltipTrigger asChild>
                           <Input
+                            ref={identityNoRef}
                             id="cpr"
                             placeholder="Enter identity number"
                             value={formData.Identity_No}
@@ -2057,6 +2119,7 @@ const MemberManagement = () => {
                             }
                             maxLength={20}
                             disabled={!!editingMember}
+                            tabIndex={0}
                           />
                         </TooltipTrigger>
 
@@ -2082,6 +2145,7 @@ const MemberManagement = () => {
                       <Tooltip>
                         <TooltipTrigger asChild>
                           <Input
+                            ref={fullNameRef}
                             id="fullName"
                             placeholder="Enter full name"
                             value={formData.Full_name}
@@ -2092,6 +2156,7 @@ const MemberManagement = () => {
                                 Full_name: e.target.value,
                               })
                             }
+                            tabIndex={0}
                           />
                         </TooltipTrigger>
 
@@ -2114,6 +2179,7 @@ const MemberManagement = () => {
                       <Tooltip>
                         <TooltipTrigger asChild>
                           <Input
+                            ref={dateOfBirthRef}
                             id="DOB"
                             type="date"
                             value={formData.DOB}
@@ -2122,6 +2188,7 @@ const MemberManagement = () => {
                               setFormData({ ...formData, DOB: e.target.value })
                             }
                             placeholder="e.g., Date of Birth"
+                            tabIndex={0}
                           />
                         </TooltipTrigger>
 
@@ -2148,6 +2215,7 @@ const MemberManagement = () => {
                         <TooltipTrigger asChild>
                           <div>
                             <ReactSingleSelect
+                              ref={genderRef}
                               options={genderOptions}
                               value={
                                 genderOptions.find(
@@ -2161,6 +2229,8 @@ const MemberManagement = () => {
                                 });
                               }}
                               placeholder="Select Gender"
+                              tabIndex={0}
+                              onKeyDown={handleGenderKeyDown}
                             />
                           </div>
                         </TooltipTrigger>
@@ -2194,6 +2264,7 @@ const MemberManagement = () => {
                       <Tooltip>
                         <TooltipTrigger asChild>
                           <Input
+                            ref={mobileRef}
                             id="bahrainMobile"
                             placeholder="Enter mobile number"
                             value={formData.Mobile}
@@ -2202,6 +2273,7 @@ const MemberManagement = () => {
                             onChange={(e) =>
                               handlePhoneNumberChange(e, "Mobile")
                             }
+                            tabIndex={0}
                           />
                         </TooltipTrigger>
 
@@ -2218,6 +2290,7 @@ const MemberManagement = () => {
                       <Tooltip>
                         <TooltipTrigger asChild>
                           <Input
+                            ref={whatsAppNumberRef}
                             id="whatsappNumber"
                             placeholder="Enter whatsapp number"
                             value={formData.WhatsApp_Number}
@@ -2226,6 +2299,7 @@ const MemberManagement = () => {
                             onChange={(e) =>
                               handlePhoneNumberChange(e, "WhatsApp_Number")
                             }
+                            tabIndex={0}
                           />
                         </TooltipTrigger>
 
@@ -2249,6 +2323,7 @@ const MemberManagement = () => {
                       <Tooltip>
                         <TooltipTrigger asChild>
                           <Input
+                            ref={emailAddressRef}
                             id="email"
                             type="email"
                             placeholder="Enter email address (e.g., branch@example.com)"
@@ -2260,6 +2335,7 @@ const MemberManagement = () => {
                                 Email: e.target.value,
                               })
                             }
+                            tabIndex={0}
                           />
                         </TooltipTrigger>
 
@@ -2286,6 +2362,7 @@ const MemberManagement = () => {
                         <TooltipTrigger asChild>
                           <div className="relative">
                             <Input
+                              ref={passwordRef}
                               id="password"
                               type={showPassword ? "text" : "password"}
                               placeholder="Enter password"
@@ -2298,6 +2375,7 @@ const MemberManagement = () => {
                               }
                               className="pr-10"
                               maxLength={50}
+                              tabIndex={0}
                             />
                             <button
                               type="button"
@@ -2326,6 +2404,7 @@ const MemberManagement = () => {
                       <Tooltip>
                         <TooltipTrigger asChild>
                           <Textarea
+                            ref={fullAddressRef}
                             id="address"
                             placeholder="Flat/Villa, Building, Road, Block, Area"
                             value={formData.Address}
@@ -2335,6 +2414,7 @@ const MemberManagement = () => {
                                 Address: e.target.value,
                               })
                             }
+                            tabIndex={0}
                           />
                         </TooltipTrigger>
 
@@ -2367,6 +2447,7 @@ const MemberManagement = () => {
                       <Tooltip>
                         <TooltipTrigger asChild>
                           <Input
+                            ref={contactNameRef}
                             id="emergencyContactName"
                             placeholder="Enter emergency contact name"
                             value={formData.Emergency_contact_name}
@@ -2376,6 +2457,7 @@ const MemberManagement = () => {
                                 Emergency_contact_name: e.target.value,
                               })
                             }
+                            tabIndex={0}
                           />
                         </TooltipTrigger>
 
@@ -2401,6 +2483,7 @@ const MemberManagement = () => {
                       <Tooltip>
                         <TooltipTrigger asChild>
                           <Input
+                            ref={contactPhoneRef}
                             id="emergencyContactPhone"
                             placeholder="Enter emergency contact phone number"
                             value={formData.Emergency_contact_phone}
@@ -2412,6 +2495,7 @@ const MemberManagement = () => {
                                 "Emergency_contact_phone",
                               )
                             }
+                            tabIndex={0}
                           />
                         </TooltipTrigger>
 
@@ -2438,6 +2522,7 @@ const MemberManagement = () => {
                         <TooltipTrigger asChild>
                           <div>
                             <ReactSingleSelect
+                              ref={relationshipRef}
                               options={relationshipOptions}
                               value={
                                 relationshipOptions.find(
@@ -2451,6 +2536,8 @@ const MemberManagement = () => {
                                 });
                               }}
                               placeholder="Select Relationship"
+                              tabIndex={0}
+                              onKeyDown={handleRelationshipKeyDown}
                             />
                           </div>
                         </TooltipTrigger>
@@ -2485,6 +2572,7 @@ const MemberManagement = () => {
                         <TooltipTrigger asChild>
                           <div>
                             <ReactSingleSelect
+                              ref={membershipTypeRef}
                               options={membershipOptions}
                               value={
                                 membershipOptions.find(
@@ -2498,6 +2586,8 @@ const MemberManagement = () => {
                                 });
                               }}
                               placeholder="Select Membership Type"
+                              tabIndex={0}
+                              onKeyDown={handleMembershipTypeKeyDown}
                             />
                           </div>
                         </TooltipTrigger>
@@ -2525,6 +2615,7 @@ const MemberManagement = () => {
                         <TooltipTrigger asChild>
                           <div>
                             <ReactSingleSelect
+                              ref={dietPlanRef}
                               options={dietPlanOptions}
                               value={
                                 dietPlanOptions.find(
@@ -2538,6 +2629,8 @@ const MemberManagement = () => {
                                 });
                               }}
                               placeholder="Select Diet Plan"
+                              tabIndex={0}
+                              onKeyDown={handleDietPlanKeyDown}
                             />
                           </div>
                         </TooltipTrigger>
@@ -2563,6 +2656,7 @@ const MemberManagement = () => {
                       <Tooltip>
                         <TooltipTrigger asChild>
                           <Input
+                            ref={joinedDateRef}
                             id="DOB"
                             type="date"
                             value={formData.Joined_date}
@@ -2574,6 +2668,7 @@ const MemberManagement = () => {
                               })
                             }
                             placeholder="Select joined date"
+                            tabIndex={0}
                           />
                         </TooltipTrigger>
 
@@ -2598,6 +2693,7 @@ const MemberManagement = () => {
                       <Tooltip>
                         <TooltipTrigger asChild>
                           <Input
+                            ref={planExpiryDateRef}
                             id="DOB"
                             type="date"
                             value={formData.Plan_expiry_date}
@@ -2609,6 +2705,7 @@ const MemberManagement = () => {
                               })
                             }
                             placeholder="Select plan expiry date"
+                            tabIndex={0}
                           />
                         </TooltipTrigger>
 

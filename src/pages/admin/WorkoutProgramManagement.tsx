@@ -306,6 +306,23 @@ const WorkoutProgramManagement = () => {
   const membershipTypeNameRef = useRef<HTMLInputElement>(null);
   const packageIdNameRef = useRef<any>(null);
 
+  const handlePackageIDNameKeyDown = (
+    e: React.KeyboardEvent,
+    index: number,
+  ) => {
+    if (e.key === "Tab" && !e.shiftKey) {
+      e.preventDefault();
+
+      setTimeout(() => {
+        const nextPackageButton = document.getElementById(
+          `add-package-${index}`,
+        ) as HTMLButtonElement | null;
+
+        nextPackageButton?.focus();
+      }, 0);
+    }
+  };
+
   useEffect(() => {
     const getSettingData = async () => {
       try {
@@ -5856,6 +5873,7 @@ const WorkoutProgramManagement = () => {
                               });
                             }
                           }}
+                          tabIndex={0}
                         />
                       </TooltipTrigger>
 
@@ -5900,6 +5918,7 @@ const WorkoutProgramManagement = () => {
                           })
                         }
                         placeholder="e.g., Weight Loss - Monthly"
+                        tabIndex={0}
                       />
                     </TooltipTrigger>
 
@@ -5942,6 +5961,10 @@ const WorkoutProgramManagement = () => {
                                   updatePackages(index, selected?.value || "")
                                 }
                                 placeholder="Select Package ID - Name"
+                                tabIndex={0}
+                                onKeyDown={(e) =>
+                                  handlePackageIDNameKeyDown(e, index)
+                                }
                               />
                             </div>
                           </TooltipTrigger>
@@ -5954,6 +5977,7 @@ const WorkoutProgramManagement = () => {
                     </div>
 
                     <Button
+                      id={`add-package-${index}`}
                       type="button"
                       variant="ghost"
                       size="icon"
@@ -5964,6 +5988,7 @@ const WorkoutProgramManagement = () => {
                     </Button>
 
                     <Button
+                      id={`remove-package-${index}`}
                       type="button"
                       variant="ghost"
                       size="icon"

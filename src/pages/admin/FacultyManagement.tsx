@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import {
   Card,
   CardContent,
@@ -103,6 +103,25 @@ const FacultyManagement = () => {
   });
 
   const [numberGeneration, setNumberGeneration] = useState("Auto");
+
+  // For tab button - Trainer
+  const trainerIdRef = useRef<HTMLInputElement>(null);
+  const fullNameRef = useRef<HTMLInputElement>(null);
+  const emailRef = useRef<HTMLInputElement>(null);
+  const passwordRef = useRef<HTMLInputElement>(null);
+  const dobRef = useRef<HTMLInputElement>(null);
+  const genderRef = useRef<any>(null);
+  const mobileRef = useRef<HTMLInputElement>(null);
+
+  const handleGenderKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === "Tab" && !e.shiftKey) {
+      e.preventDefault();
+
+      setTimeout(() => {
+        mobileRef.current?.focus();
+      }, 0);
+    }
+  };
 
   useEffect(() => {
     const getSettingData = async () => {
@@ -923,6 +942,8 @@ const FacultyManagement = () => {
                                   });
                                 }
                               }}
+                              ref={trainerIdRef}
+                              tabIndex={0}
                             />
                           </TooltipTrigger>
 
@@ -967,6 +988,8 @@ const FacultyManagement = () => {
                                   })
                                 }
                                 placeholder="e.g., Full Name"
+                                ref={fullNameRef}
+                                tabIndex={0}
                               />
                             </TooltipTrigger>
 
@@ -1002,6 +1025,8 @@ const FacultyManagement = () => {
                                   })
                                 }
                                 placeholder="e.g., trainer@ruw.edu.bh"
+                                ref={emailRef}
+                                tabIndex={0}
                               />
                             </TooltipTrigger>
 
@@ -1041,6 +1066,8 @@ const FacultyManagement = () => {
                                   }
                                   placeholder="e.g., Password"
                                   className="pr-10"
+                                  ref={passwordRef}
+                                  tabIndex={0}
                                 />
 
                                 <button
@@ -1093,6 +1120,8 @@ const FacultyManagement = () => {
                                   })
                                 }
                                 placeholder="e.g., DOB"
+                                ref={dobRef}
+                                tabIndex={0}
                               />
                             </TooltipTrigger>
 
@@ -1130,6 +1159,9 @@ const FacultyManagement = () => {
                             });
                           }}
                           placeholder="Select Gender"
+                          ref={genderRef}
+                          tabIndex={0}
+                          onKeyDown={handleGenderKeyDown}
                         />
                       </div>
 
@@ -1156,6 +1188,8 @@ const FacultyManagement = () => {
                                 inputMode="numeric"
                                 maxLength={15}
                                 placeholder="e.g., +973 XXXX XXXX"
+                                ref={mobileRef}
+                                tabIndex={0}
                               />
                             </TooltipTrigger>
 
