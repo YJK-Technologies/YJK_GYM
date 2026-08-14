@@ -1442,167 +1442,167 @@ const handleMealNameKeyDown = (
   // };
 
   const deleteDietPlan = async (dietPlan: any) => {
-  setLoading(true);
+    setLoading(true);
 
-  try {
-    // ============================================
-    // 1. VALIDATE DIET PLAN DELETION
-    // ============================================
+    try {
+      // ============================================
+      // 1. VALIDATE DIET PLAN DELETION
+      // ============================================
 
-    const validationResponse = await fetch(
-      `${BASE_URL}/Diet_Plans_hdrDelete`,
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          DietPlanID: dietPlan.DietPlanID,
-          KeyField: dietPlan.KeyField,
-          Location_Code: locationCode,
-          company_code: companyCode,
-          modified_by: userCode,
-          mode: "DV",
-        }),
-      }
-    );
+      const validationResponse = await fetch(
+        `${BASE_URL}/Diet_Plans_hdrDelete`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            DietPlanID: dietPlan.DietPlanID,
+            KeyField: dietPlan.KeyField,
+            Location_Code: locationCode,
+            company_code: companyCode,
+            modified_by: userCode,
+            mode: "DV",
+          }),
+        }
+      );
 
-    const validationResult = await validationResponse.json();
+      const validationResult = await validationResponse.json();
 
-    if (!validationResponse.ok || !validationResult.success) {
-      throw new Error(
-        validationResult.message ||
+      if (!validationResponse.ok || !validationResult.success) {
+        throw new Error(
+          validationResult.message ||
           "Diet Plan cannot be deleted."
-      );
-    }
-
-    // ============================================
-    // 2. DELETE DIET PLAN MEALS
-    // ============================================
-
-    const mealResponse = await fetch(
-      `${BASE_URL}/Diet_Plans_MealsDelete`,
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          Sno: 0,
-          DietPlanID: dietPlan.DietPlanID,
-          KeyField: dietPlan.KeyField,
-          Location_Code: locationCode,
-          company_code: companyCode,
-          modified_by: userCode,
-          updatemode: "UD",
-        }),
+        );
       }
-    );
 
-    const mealResult = await mealResponse.json();
+      // ============================================
+      // 2. DELETE DIET PLAN MEALS
+      // ============================================
 
-    if (!mealResponse.ok || !mealResult.success) {
-      throw new Error(
-        mealResult.message ||
+      const mealResponse = await fetch(
+        `${BASE_URL}/Diet_Plans_MealsDelete`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            Sno: 0,
+            DietPlanID: dietPlan.DietPlanID,
+            KeyField: dietPlan.KeyField,
+            Location_Code: locationCode,
+            company_code: companyCode,
+            modified_by: userCode,
+            updatemode: "UD",
+          }),
+        }
+      );
+
+      const mealResult = await mealResponse.json();
+
+      if (!mealResponse.ok || !mealResult.success) {
+        throw new Error(
+          mealResult.message ||
           "Failed to delete diet plan meals."
-      );
-    }
-
-    // ============================================
-    // 3. DELETE DIET PLAN DETAILS
-    // ============================================
-
-    const detailResponse = await fetch(
-      `${BASE_URL}/Diet_Plans_DetailsDelete`,
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          Sno: 0,
-          DietPlanID: dietPlan.DietPlanID,
-          KeyField: dietPlan.KeyField,
-          Location_Code: locationCode,
-          company_code: companyCode,
-          modified_by: userCode,
-          updatemode: "UD",
-        }),
+        );
       }
-    );
 
-    const detailResult = await detailResponse.json();
+      // ============================================
+      // 3. DELETE DIET PLAN DETAILS
+      // ============================================
 
-    if (!detailResponse.ok || !detailResult.success) {
-      throw new Error(
-        detailResult.message ||
+      const detailResponse = await fetch(
+        `${BASE_URL}/Diet_Plans_DetailsDelete`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            Sno: 0,
+            DietPlanID: dietPlan.DietPlanID,
+            KeyField: dietPlan.KeyField,
+            Location_Code: locationCode,
+            company_code: companyCode,
+            modified_by: userCode,
+            updatemode: "UD",
+          }),
+        }
+      );
+
+      const detailResult = await detailResponse.json();
+
+      if (!detailResponse.ok || !detailResult.success) {
+        throw new Error(
+          detailResult.message ||
           "Failed to delete diet plan details."
-      );
-    }
-
-    // ============================================
-    // 4. DELETE DIET PLAN HEADER
-    // ============================================
-
-    const headerResponse = await fetch(
-      `${BASE_URL}/Diet_Plans_hdrDelete`,
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          DietPlanID: dietPlan.DietPlanID,
-          KeyField: dietPlan.KeyField,
-          Location_Code: locationCode,
-          company_code: companyCode,
-          modified_by: userCode,
-          mode: "D",
-        }),
+        );
       }
-    );
 
-    const headerResult = await headerResponse.json();
+      // ============================================
+      // 4. DELETE DIET PLAN HEADER
+      // ============================================
 
-    if (!headerResponse.ok || !headerResult.success) {
-      throw new Error(
-        headerResult.message ||
-          "Failed to delete diet plan."
+      const headerResponse = await fetch(
+        `${BASE_URL}/Diet_Plans_hdrDelete`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            DietPlanID: dietPlan.DietPlanID,
+            KeyField: dietPlan.KeyField,
+            Location_Code: locationCode,
+            company_code: companyCode,
+            modified_by: userCode,
+            mode: "D",
+          }),
+        }
       );
+
+      const headerResult = await headerResponse.json();
+
+      if (!headerResponse.ok || !headerResult.success) {
+        throw new Error(
+          headerResult.message ||
+          "Failed to delete diet plan."
+        );
+      }
+
+      // ============================================
+      // 5. REMOVE FROM UI
+      // ============================================
+
+      setDietPlans((prev) =>
+        prev.filter(
+          (item) => item.KeyField !== dietPlan.KeyField
+        )
+      );
+
+      handleDietPlanSearch();
+      getDietPlanCardData();
+
+      toast({
+        title: "Diet Plan Deleted",
+        description: "Diet Plan deleted successfully.",
+        variant: "success",
+      });
+
+    } catch (error: any) {
+      console.error(error);
+
+      toast({
+        title: "Delete Failed",
+        description:
+          error.message || "Something went wrong.",
+        variant: "destructive",
+      });
+
+    } finally {
+      setLoading(false);
     }
-
-    // ============================================
-    // 5. REMOVE FROM UI
-    // ============================================
-
-    setDietPlans((prev) =>
-      prev.filter(
-        (item) => item.KeyField !== dietPlan.KeyField
-      )
-    );
-
-    handleDietPlanSearch();
-    getDietPlanCardData();
-
-    toast({
-      title: "Diet Plan Deleted",
-      description: "Diet Plan deleted successfully.",
-      variant: "success",
-    });
-
-  } catch (error: any) {
-    console.error(error);
-
-    toast({
-      title: "Delete Failed",
-      description:
-        error.message || "Something went wrong.",
-      variant: "destructive",
-    });
-
-  } finally {
-    setLoading(false);
-  }
   };
 
   const handleDietPlanSearch = async () => {
@@ -2071,83 +2071,65 @@ const handleMealNameKeyDown = (
               Create and manage nutrition programs for members
             </CardDescription>
           </CardHeader>
-          <CardContent>
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-              {dietPlans.map((plan) => {
+          <CardContent className="px-3 sm:px-6">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
+              {dietPlans.map((plan: any) => {
                 return (
                   <Card
                     key={plan.DietPlanID}
-                    className="hover:shadow-md transition-shadow"
+                    className="hover:shadow-md transition-shadow bg-white overflow-hidden"
                   >
-                    <CardContent className="p-6 h-[550px] flex flex-col justify-between">
-                      {/* Scrollable Content Wrapper with Custom Scrollbar */}
-                      <div className="flex-1 overflow-y-auto pr-2 custom-scrollbar">
-                        <div className="flex items-start justify-between mb-4">
-                          <div>
-                            <div className="flex items-center gap-2 mb-1">
-                              <h3 className="font-semibold text-lg">
+                    {/* Dynamic height: auto for mobile, fixed for desktop */}
+                    <CardContent className="p-4 sm:p-6 h-auto md:h-[550px] flex flex-col justify-between">
+                      {/* Scrollable Content Wrapper */}
+                      <div className="flex-1 overflow-y-auto pr-1 sm:pr-2 custom-scrollbar min-h-0 space-y-4">
+
+                        {/* ================= HEADER & ACTIONS ================= */}
+                        <div className="flex flex-col sm:flex-row items-start justify-between gap-3 pb-2 border-b border-gray-100">
+                          <div className="space-y-1.5 flex-1 min-w-0">
+                            <div className="flex flex-wrap items-center gap-2">
+                              <h3 className="font-semibold text-base sm:text-lg text-slate-900 break-words">
                                 {plan.Diet_Name}
                               </h3>
                               <Badge
                                 variant={
-                                  plan.Is_Active === "Active"
-                                    ? "default"
-                                    : "secondary"
+                                  plan.Is_Active === "Active" ? "default" : "secondary"
                                 }
+                                className="text-[11px] sm:text-xs"
                               >
                                 {plan.Is_Active}
                               </Badge>
                             </div>
-                            <p className="text-sm text-gray-500">
+
+                            <p className="text-xs sm:text-sm text-gray-500 font-mono">
                               Plan ID: {plan.DietPlanID}
                             </p>
-                            <p className="text-sm font-medium text-gray-700 mb-2">
+
+                            <div className="pt-1">
+                              <p className="text-xs font-medium text-gray-700 mb-1">
                                 Category:
                               </p>
-                            <Badge variant="outline" className="mb-2">
-                              {plan.Category}
-                            </Badge>
-                            <div className="mb-3">
-                              <p className="text-sm font-medium text-gray-700 mb-2">
-                                Training By:
-                              </p>
-                              <div className="flex flex-wrap gap-2">
-                                {plan.TrainerID?.split(",").map(
-                                  (goal, index) => {
-                                    const trainer = trainers.find(
-                                      (item: any) =>
-                                        item.TrainerID === goal.trim(),
-                                    );
-
-                                    return (
-                                      <Badge key={index} variant="outline">
-                                        {trainer
-                                          ? `${trainer.TrainerID} - ${trainer.FullName}`
-                                          : goal.trim()}
-                                      </Badge>
-                                    );
-                                  },
-                                )}
-                              </div>
+                              <Badge variant="outline" className="text-xs">
+                                {plan.Category}
+                              </Badge>
                             </div>
                           </div>
 
-                          <div className="flex gap-2">
+                          {/* Edit & Delete Action Buttons */}
+                          <div className="flex gap-1 self-end sm:self-start bg-slate-50 p-1 rounded-lg border border-gray-100 shrink-0">
                             <TooltipProvider>
                               <Tooltip>
                                 <TooltipTrigger asChild>
-                                  {hasActionPermission(
-                                    "AdminDietPlans",
-                                    "edit",
-                                  ) && (
-                                      <Button
-                                        variant="ghost"
-                                        size="icon"
-                                        onClick={() => handleEditDietPlan(plan)}
-                                      >
-                                        <Edit className="h-4 w-4" />
-                                      </Button>
-                                    )}
+                                  {hasActionPermission("AdminDietPlans", "edit") && (
+                                    <Button
+                                      variant="ghost"
+                                      size="icon"
+                                      className="h-8 w-8 text-gray-600 hover:text-violet-600 hover:bg-violet-50"
+                                      onClick={() => handleEditDietPlan(plan)}
+                                    >
+                                      <Edit className="h-4 w-4" />
+                                    </Button>
+                                  )}
                                 </TooltipTrigger>
                                 <TooltipContent>
                                   <p>Edit</p>
@@ -2158,19 +2140,16 @@ const handleMealNameKeyDown = (
                             <TooltipProvider>
                               <Tooltip>
                                 <TooltipTrigger asChild>
-                                  {hasActionPermission(
-                                    "AdminDietPlans",
-                                    "edit",
-                                  ) && (
-                                      <Button
-                                        variant="ghost"
-                                        size="icon"
-                                        onClick={() => handleDeleteDietPlan(plan)}
-                                        className="text-red-500 hover:text-red-700"
-                                      >
-                                        <Trash2 className="h-4 w-4" />
-                                      </Button>
-                                    )}
+                                  {hasActionPermission("AdminDietPlans", "edit") && (
+                                    <Button
+                                      variant="ghost"
+                                      size="icon"
+                                      onClick={() => handleDeleteDietPlan(plan)}
+                                      className="h-8 w-8 text-red-500 hover:text-red-700 hover:bg-red-50"
+                                    >
+                                      <Trash2 className="h-4 w-4" />
+                                    </Button>
+                                  )}
                                 </TooltipTrigger>
                                 <TooltipContent>
                                   <p>Delete</p>
@@ -2180,87 +2159,126 @@ const handleMealNameKeyDown = (
                           </div>
                         </div>
 
-                        <p className="text-gray-600 text-sm mb-4 line-clamp-2">
+                        {/* ================= TRAINERS ================= */}
+                        <div>
+                          <p className="text-xs sm:text-sm font-medium text-gray-700 mb-1.5">
+                            Training By:
+                          </p>
+                          <div className="flex flex-wrap gap-1.5">
+                            {plan.TrainerID?.split(",").map(
+                              (goal: string, index: number) => {
+                                const trainer = trainers.find(
+                                  (item: any) => item.TrainerID === goal.trim()
+                                );
+
+                                return (
+                                  <Badge
+                                    key={index}
+                                    variant="outline"
+                                    className="text-xs break-words"
+                                  >
+                                    {trainer
+                                      ? `${trainer.TrainerID} - ${trainer.FullName}`
+                                      : goal.trim()}
+                                  </Badge>
+                                );
+                              }
+                            )}
+                          </div>
+                        </div>
+
+                        {/* ================= DESCRIPTION ================= */}
+                        <p className="text-gray-600 text-xs sm:text-sm leading-relaxed break-words line-clamp-3">
                           {plan.Description}
                         </p>
 
-                        <div className="grid grid-cols-4 gap-3 mb-4 p-3 bg-gray-50 rounded-lg">
-                          <div className="text-center">
-                            <p className="text-xs text-gray-500">Calories</p>
-                            <p className="font-bold text-orange-600">
+                        {/* ================= MACROS GRID (Responsive 2x2 to 4x1) ================= */}
+                        <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 p-3 bg-slate-50 rounded-lg border border-slate-100">
+                          <div className="text-center p-1 bg-white sm:bg-transparent rounded sm:rounded-none">
+                            <p className="text-[11px] sm:text-xs text-gray-500">Calories</p>
+                            <p className="font-bold text-sm sm:text-base text-orange-600">
                               {plan.Calories}
                             </p>
                           </div>
-                          <div className="text-center">
-                            <p className="text-xs text-gray-500">Protein</p>
-                            <p className="font-bold text-red-600">
+
+                          <div className="text-center p-1 bg-white sm:bg-transparent rounded sm:rounded-none">
+                            <p className="text-[11px] sm:text-xs text-gray-500">Protein</p>
+                            <p className="font-bold text-sm sm:text-base text-red-600">
                               {plan.Protein}g
                             </p>
                           </div>
-                          <div className="text-center">
-                            <p className="text-xs text-gray-500">Carbs</p>
-                            <p className="font-bold text-blue-600">
+
+                          <div className="text-center p-1 bg-white sm:bg-transparent rounded sm:rounded-none">
+                            <p className="text-[11px] sm:text-xs text-gray-500">Carbs</p>
+                            <p className="font-bold text-sm sm:text-base text-blue-600">
                               {plan.Carbs}g
                             </p>
                           </div>
-                          <div className="text-center">
-                            <p className="text-xs text-gray-500">Fats</p>
-                            <p className="font-bold text-yellow-600">
+
+                          <div className="text-center p-1 bg-white sm:bg-transparent rounded sm:rounded-none">
+                            <p className="text-[11px] sm:text-xs text-gray-500">Fats</p>
+                            <p className="font-bold text-sm sm:text-base text-yellow-600">
                               {plan.Fats}g
                             </p>
                           </div>
                         </div>
 
-                        <div className="flex items-center gap-4 text-sm text-gray-600 mb-4">
+                        {/* ================= DURATION & MEMBERS ================= */}
+                        <div className="flex flex-wrap items-center gap-4 text-xs sm:text-sm text-gray-600 py-1">
                           <div className="flex items-center">
-                            <Clock className="h-4 w-4 mr-1" />
-                            {plan.TotalDuration} Weeks
+                            <Clock className="h-4 w-4 mr-1.5 text-violet-500 shrink-0" />
+                            <span>{plan.TotalDuration} Weeks</span>
                           </div>
                           <div className="flex items-center">
-                            <Users className="h-4 w-4 mr-1" />
-                            {plan.AssignedMembers} Members
+                            <Users className="h-4 w-4 mr-1.5 text-violet-500 shrink-0" />
+                            <span>{plan.AssignedMembers} Members</span>
                           </div>
                         </div>
 
-                        <div className="mb-3">
-                          <p className="text-sm font-medium text-gray-700 mb-2">
-                            Goals:
-                          </p>
-                          <div className="flex flex-wrap gap-2">
-                            {plan.Goals?.split(",").map((goal, index) => (
-                              <Badge key={index} variant="outline">
-                                {goal.trim()}
-                              </Badge>
-                            ))}
-                          </div>
-                        </div>
-
-                        <div>
-                          <p className="text-sm font-medium text-gray-700 mb-2">
-                            Dietary Tags:
-                          </p>
-
-                          <div className="flex flex-wrap gap-2">
-                            {plan.Restrictions?.split(",").map(
-                              (restriction: string, index: number) => (
-                                <Badge
-                                  key={index}
-                                  variant="secondary"
-                                  className="text-xs"
-                                >
-                                  {restriction.trim()}
+                        {/* ================= GOALS ================= */}
+                        {plan.Goals && (
+                          <div>
+                            <p className="text-xs sm:text-sm font-medium text-gray-700 mb-1.5">
+                              Goals:
+                            </p>
+                            <div className="flex flex-wrap gap-1.5">
+                              {plan.Goals.split(",").map((goal: string, index: number) => (
+                                <Badge key={index} variant="outline" className="text-xs">
+                                  {goal.trim()}
                                 </Badge>
-                              ),
-                            )}
+                              ))}
+                            </div>
                           </div>
-                        </div>
+                        )}
+
+                        {/* ================= DIETARY TAGS ================= */}
+                        {plan.Restrictions && (
+                          <div>
+                            <p className="text-xs sm:text-sm font-medium text-gray-700 mb-1.5">
+                              Dietary Tags:
+                            </p>
+                            <div className="flex flex-wrap gap-1.5">
+                              {plan.Restrictions.split(",").map(
+                                (restriction: string, index: number) => (
+                                  <Badge
+                                    key={index}
+                                    variant="secondary"
+                                    className="text-xs bg-violet-50 text-violet-700 border border-violet-100"
+                                  >
+                                    {restriction.trim()}
+                                  </Badge>
+                                )
+                              )}
+                            </div>
+                          </div>
+                        )}
                       </div>
 
-                      {/* Fixed Bottom Button */}
-                      <div className="pt-4 mt-2 border-t">
+                      {/* ================= FIXED BOTTOM BUTTON ================= */}
+                      <div className="pt-3 mt-3 border-t border-gray-100 shrink-0">
                         <Button
                           variant="outline"
-                          className="w-full"
+                          className="w-full text-xs sm:text-sm h-9 sm:h-10 hover:bg-violet-50 hover:text-violet-600 hover:border-violet-200 transition-colors"
                           onClick={() => handleViewDietPlan(plan)}
                         >
                           View Full Plan
@@ -2358,13 +2376,14 @@ const handleMealNameKeyDown = (
                 <div className="space-y-2">
                   <Label
                     htmlFor="name"
+                    required
                     className={
                       submittedDietPlans && !DietPlanForm.Diet_Name
                         ? "text-red-500"
                         : ""
                     }
                   >
-                    Plan Name*
+                    Plan Name
                   </Label>
                   <TooltipProvider>
                     <Tooltip>
@@ -2393,13 +2412,14 @@ const handleMealNameKeyDown = (
                 <div className="space-y-2">
                   <Label
                     htmlFor="name"
+                    required
                     className={
                       submittedDietPlans && !DietPlanForm.Category
                         ? "text-red-500"
                         : ""
                     }
                   >
-                    Category*
+                    Category
                   </Label>
                   <TooltipProvider>
                     <Tooltip>
@@ -2456,13 +2476,14 @@ const handleMealNameKeyDown = (
               <div className="space-y-2">
                 <Label
                   htmlFor="name"
+                  required
                   className={
                     submittedDietPlans && !DietPlanForm.Goals
                       ? "text-red-500"
                       : ""
                   }
                 >
-                  Goals* (comma-separated)
+                  Goals (comma-separated)
                 </Label>
                 <TooltipProvider>
                   <Tooltip>
@@ -2518,13 +2539,14 @@ const handleMealNameKeyDown = (
                 <div className="space-y-2">
                   <Label
                     htmlFor="name"
+                    required
                     className={
                       submittedDietPlans && DietPlanForm.TrainerID.length === 0
                         ? "text-red-500"
                         : ""
                     }
                   >
-                    Trainer ID - Name*
+                    Trainer ID - Name
                   </Label>
                   <TooltipProvider>
                     <Tooltip>
@@ -2573,13 +2595,14 @@ const handleMealNameKeyDown = (
                       {/* Essentials Dropdown */}
                       <div className="space-y-2">
                         <Label
+                          required
                           className={
                             submittedDietPlans && !PlanDetails.Essentials
                               ? "text-red-500"
                               : ""
                           }
                         >
-                          Essentials*
+                          Essentials
                         </Label>
                         <TooltipProvider>
                           <Tooltip>
@@ -2617,6 +2640,7 @@ const handleMealNameKeyDown = (
                       {/* Daily Calories Target Input */}
                       <div className="space-y-2">
                         <Label
+                          required
                           className={
                             submittedDietPlans &&
                               !PlanDetails.Daily_Calories_Target
@@ -2624,7 +2648,7 @@ const handleMealNameKeyDown = (
                               : ""
                           }
                         >
-                          Daily Calories Target*
+                          Daily Calories Target
                         </Label>
 
                         <TooltipProvider>
@@ -2663,13 +2687,14 @@ const handleMealNameKeyDown = (
                       {/* Duration Dropdown */}
                       <div className="space-y-2">
                         <Label
+                          required
                           className={
                             submittedDietPlans && !PlanDetails.Duration
                               ? "text-red-500"
                               : ""
                           }
                         >
-                          Duration (Week)*
+                          Duration (Week)
                         </Label>
                         <TooltipProvider>
                           <Tooltip>
@@ -2755,13 +2780,14 @@ const handleMealNameKeyDown = (
                     {/* Meal Type */}
                     <div className="space-y-2">
                       <Label
+                        required
                         className={
                           submittedDietPlans && !meal.Meal_Type
                             ? "text-red-500"
                             : ""
                         }
                       >
-                        Meal Type*
+                        Meal Type
                       </Label>
 
                       <TooltipProvider>
@@ -2802,13 +2828,14 @@ const handleMealNameKeyDown = (
                     {/* Meal Name */}
                     <div className="space-y-2">
                       <Label
+                        required
                         className={
                           submittedDietPlans && !meal.Meal_Name
                             ? "text-red-500"
                             : ""
                         }
                       >
-                        Meal Name*
+                        Meal Name
                       </Label>
                       <TooltipProvider>
                         <Tooltip>
@@ -2841,13 +2868,14 @@ const handleMealNameKeyDown = (
                     {/* Quantity */}
                     <div className="space-y-2">
                       <Label
+                        required
                         className={
                           submittedDietPlans && !meal.Quantity
                             ? "text-red-500"
                             : ""
                         }
                       >
-                        Quantity*
+                        Quantity
                       </Label>
                       <TooltipProvider>
                         <Tooltip>
@@ -2877,13 +2905,14 @@ const handleMealNameKeyDown = (
                     {/* Calories */}
                     <div className="space-y-2">
                       <Label
+                        required
                         className={
                           submittedDietPlans && !meal.Calories
                             ? "text-red-500"
                             : ""
                         }
                       >
-                        Calories*
+                        Calories
                       </Label>
                       <TooltipProvider>
                         <Tooltip>
@@ -2913,13 +2942,14 @@ const handleMealNameKeyDown = (
                     {/* Protein */}
                     <div className="space-y-2">
                       <Label
+                        required
                         className={
                           submittedDietPlans && !meal.Protein
                             ? "text-red-500"
                             : ""
                         }
                       >
-                        Protein*
+                        Protein
                       </Label>
                       <TooltipProvider>
                         <Tooltip>
@@ -2949,13 +2979,14 @@ const handleMealNameKeyDown = (
                     {/* Carbs */}
                     <div className="space-y-2">
                       <Label
+                        required
                         className={
                           submittedDietPlans && !meal.Carbs
                             ? "text-red-500"
                             : ""
                         }
                       >
-                        Carbs*
+                        Carbs
                       </Label>
                       <TooltipProvider>
                         <Tooltip>
@@ -2985,11 +3016,12 @@ const handleMealNameKeyDown = (
                     {/* Fats */}
                     <div className="space-y-2">
                       <Label
+                        required
                         className={
                           submittedDietPlans && !meal.Fats ? "text-red-500" : ""
                         }
                       >
-                        Fats*
+                        Fats
                       </Label>
                       <TooltipProvider>
                         <Tooltip>
@@ -3019,13 +3051,14 @@ const handleMealNameKeyDown = (
                     {/* Time Slot */}
                     <div className="space-y-2">
                       <Label
+                        required
                         className={
                           submittedDietPlans && !meal.Time_Slot
                             ? "text-red-500"
                             : ""
                         }
                       >
-                        Time Slot*
+                        Time Slot
                       </Label>
                       <TooltipProvider>
                         <Tooltip>

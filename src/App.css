@@ -85,3 +85,18 @@
   border: none;
 }
   
+/* AgGrid Cell-il overflow enable panna */
+.ag-theme-quartz .ag-cell {
+  overflow: visible !important;
+}
+
+/* Base row level */
+.ag-theme-quartz .ag-row {
+  z-index: 1;
+}
+
+/* Mouse hover pannum row top-la varadhukku */
+.ag-theme-quartz .ag-row:hover,
+.ag-theme-quartz .ag-row-hover {
+  z-index: 999 !important;
+}

@@ -1247,13 +1247,14 @@ const NotificationManagement = () => {
                   </div>
                   <div className="space-y-2">
                     <Label
+                      required
                       className={
                         EmailsubmittedSettings && !emailSettings.smtpPort
                           ? "text-red-500"
                           : ""
                       }
                     >
-                      SMTP Port *
+                      SMTP Port
                     </Label>
 
                     <TooltipProvider>
@@ -1311,13 +1312,14 @@ const NotificationManagement = () => {
                   </div>
                   <div className="space-y-2">
                     <Label
+                      required
                       className={
                         EmailsubmittedSettings && !emailSettings.smtpPassword
                           ? "text-red-500"
                           : ""
                       }
                     >
-                      SMTP Password *
+                      SMTP Password
                     </Label>
 
                     <TooltipProvider>
@@ -1366,13 +1368,14 @@ const NotificationManagement = () => {
                 <div className="grid grid-cols-2 gap-4">
                   <div className="space-y-2">
                     <Label
+                      required
                       className={
                         EmailsubmittedSettings && !emailSettings.fromEmail
                           ? "text-red-500"
                           : ""
                       }
                     >
-                      From Email *
+                      From Email
                     </Label>
 
                     <TooltipProvider>
@@ -1398,13 +1401,14 @@ const NotificationManagement = () => {
                   </div>
                   <div className="space-y-2">
                     <Label
+                      required
                       className={
                         EmailsubmittedSettings && !emailSettings.fromName
                           ? "text-red-500"
                           : ""
                       }
                     >
-                      From Display Name *
+                      From Display Name
                     </Label>
 
                     <TooltipProvider>
@@ -1432,13 +1436,14 @@ const NotificationManagement = () => {
                 <div className="grid grid-cols-2 gap-4">
                   <div className="space-y-2">
                     <Label
+                      required
                       className={
                         EmailsubmittedSettings && !emailSettings.useSsl
                           ? "text-red-500"
                           : ""
                       }
                     >
-                      Use SSL / TLS *
+                      Use SSL / TLS
                     </Label>
 
                     <TooltipProvider>
@@ -1583,13 +1588,14 @@ const NotificationManagement = () => {
                 <div className="grid grid-cols-2 gap-4">
                   <div className="space-y-2">
                     <Label
+                      required
                       className={
                         SmssubmittedSettings && !smsSettings.provider
                           ? "text-red-500"
                           : ""
                       }
                     >
-                      SMS Provider *
+                      SMS Provider
                     </Label>
 
                     <TooltipProvider>
@@ -1622,13 +1628,14 @@ const NotificationManagement = () => {
                   </div>
                   <div className="space-y-2">
                     <Label
+                      required
                       className={
                         SmssubmittedSettings && !smsSettings.countryCode
                           ? "text-red-500"
                           : ""
                       }
                     >
-                      Default Country Code *
+                      Default Country Code
                     </Label>
 
                     <TooltipProvider>
@@ -1663,13 +1670,14 @@ const NotificationManagement = () => {
                 <div className="grid grid-cols-2 gap-4">
                   <div className="space-y-2">
                     <Label
+                      required
                       className={
                         SmssubmittedSettings && !smsSettings.apiKey
                           ? "text-red-500"
                           : ""
                       }
                     >
-                      API Key *
+                      API Key
                     </Label>
 
                     <TooltipProvider>
@@ -1714,13 +1722,14 @@ const NotificationManagement = () => {
                   </div>
                   <div className="space-y-2">
                     <Label
+                      required
                       className={
                         SmssubmittedSettings && !smsSettings.apiSecret
                           ? "text-red-500"
                           : ""
                       }
                     >
-                      API Secret *
+                      API Secret
                     </Label>
 
                     <TooltipProvider>
@@ -1768,13 +1777,14 @@ const NotificationManagement = () => {
                 </div>
                 <div className="space-y-2">
                   <Label
+                    required
                     className={
                       SmssubmittedSettings && !smsSettings.senderId
                         ? "text-red-500"
                         : ""
                     }
                   >
-                    Sender ID / Number *
+                    Sender ID / Number
                   </Label>
 
                   <TooltipProvider>
@@ -1905,13 +1915,14 @@ const NotificationManagement = () => {
                 <div className="grid grid-cols-2 gap-4">
                   <div className="space-y-2">
                     <Label
+                      required
                       className={
                         WhatsAppsubmittedSettings && !whatsAppSettings.provider
                           ? "text-red-500"
                           : ""
                       }
                     >
-                      WhatsApp Provider *
+                      WhatsApp Provider
                     </Label>
 
                     <TooltipProvider>
@@ -1944,6 +1955,7 @@ const NotificationManagement = () => {
                   </div>
                   <div className="space-y-2">
                     <Label
+                      required
                       className={
                         WhatsAppsubmittedSettings &&
                           !whatsAppSettings.phoneNumberId
@@ -1951,7 +1963,7 @@ const NotificationManagement = () => {
                           : ""
                       }
                     >
-                      Phone Number ID *
+                      Phone Number ID
                     </Label>
 
                     <TooltipProvider>
@@ -1979,6 +1991,7 @@ const NotificationManagement = () => {
                 <div className="grid grid-cols-2 gap-4">
                   <div className="space-y-2">
                     <Label
+                      required
                       className={
                         WhatsAppsubmittedSettings &&
                           !whatsAppSettings.accessToken
@@ -1986,7 +1999,7 @@ const NotificationManagement = () => {
                           : ""
                       }
                     >
-                      Access Token *
+                      Access Token
                     </Label>
 
                     <TooltipProvider>
@@ -2033,6 +2046,7 @@ const NotificationManagement = () => {
                   </div>
                   <div className="space-y-2">
                     <Label
+                      required
                       className={
                         WhatsAppsubmittedSettings &&
                           !whatsAppSettings.businessAccountId
@@ -2040,7 +2054,7 @@ const NotificationManagement = () => {
                           : ""
                       }
                     >
-                      Business Account ID *
+                      Business Account ID
                     </Label>
 
                     <TooltipProvider>
