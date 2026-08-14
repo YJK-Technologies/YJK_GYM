@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import {
   Card,
   CardContent,
@@ -21,13 +21,6 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import { useNavigate } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
 import {
@@ -47,6 +40,7 @@ import {
   CheckCircle,
   IndianRupee,
   BadgePercent,
+  IdCard
 } from "lucide-react";
 import { BASE_URL } from "../ApiConfig";
 import ReactMultiSelect, {
@@ -148,7 +142,7 @@ const WorkoutProgramManagement = () => {
       value: "memberships",
       label: "Memberships",
       screenType: "Memberships",
-      icon: Package,
+      icon: IdCard,
     },
   ];
 
@@ -213,6 +207,116 @@ const WorkoutProgramManagement = () => {
   const [GetPackages, setGetPackages] = useState<any[]>([]);
   const [numberGeneration, setNumberGeneration] = useState("Auto");
 
+  // For tab button
+  // Program screen
+  const programIdRef = useRef<HTMLInputElement>(null);
+  const programNameRef = useRef<HTMLInputElement>(null);
+
+  const categoryRef = useRef<any>(null);
+  const difficultyRef = useRef<any>(null);
+
+  const goalsRef = useRef<HTMLInputElement>(null);
+  const descriptionRef = useRef<HTMLTextAreaElement>(null);
+
+  const durationRef = useRef<HTMLInputElement>(null);
+  const sessionsRef = useRef<HTMLInputElement>(null);
+  const workingHoursRef = useRef<HTMLInputElement>(null);
+
+  const facultyRef = useRef<any>(null);
+
+  const handleCategoryKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === "Tab" && !e.shiftKey) {
+      e.preventDefault();
+
+      setTimeout(() => {
+        difficultyRef.current?.focus();
+      }, 0);
+    }
+  };
+
+  const handleDifficultyKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === "Tab" && !e.shiftKey) {
+      e.preventDefault();
+
+      setTimeout(() => {
+        goalsRef.current?.focus();
+      }, 0);
+    }
+  };
+
+  const handleFacultyKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === "Tab" && !e.shiftKey) {
+      e.preventDefault();
+
+      setTimeout(() => {
+        const exerciseInput = document.getElementById(
+          "exercise-name-0",
+        ) as HTMLInputElement | null;
+
+        exerciseInput?.focus();
+      }, 0);
+    }
+  };
+
+  // Package screen
+  const packageIdRef = useRef<HTMLInputElement>(null);
+  const packageNameRef = useRef<HTMLInputElement>(null);
+  const packageTypeRef = useRef<any>(null);
+  const priceRef = useRef<HTMLInputElement>(null);
+  const discountRef = useRef<HTMLInputElement>(null);
+  const durationDaysRef = useRef<HTMLInputElement>(null);
+  const associatedProgramRef = useRef<any>(null);
+  const featuresRef = useRef<HTMLTextAreaElement>(null);
+
+  const handlePackageTypeKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === "Tab" && !e.shiftKey) {
+      e.preventDefault();
+
+      setTimeout(() => {
+        priceRef.current?.focus();
+      }, 0);
+    }
+  };
+
+  const handleAssociatedProgramKeyDown = (
+    e: React.KeyboardEvent,
+    index: number,
+  ) => {
+    if (e.key === "Tab" && !e.shiftKey) {
+      e.preventDefault();
+
+      setTimeout(() => {
+        const nextProgramButton = document.getElementById(
+          `add-program-${index}`,
+        ) as HTMLButtonElement | null;
+
+        nextProgramButton?.focus();
+      }, 0);
+    }
+  };
+
+  // Membership screen
+  const membershipIdRef = useRef<HTMLInputElement>(null);
+  const membershipTypeNameRef = useRef<HTMLInputElement>(null);
+  const packageIdNameRef = useRef<any>(null);
+
+  const handlePackageIDNameKeyDown = (
+    e: React.KeyboardEvent,
+    index: number,
+  ) => {
+    if (e.key === "Tab" && !e.shiftKey) {
+      e.preventDefault();
+
+      setTimeout(() => {
+        const nextPackageButton = document.getElementById(
+          `add-package-${index}`,
+        ) as HTMLButtonElement | null;
+
+        nextPackageButton?.focus();
+      }, 0);
+    }
+  };
+
   useEffect(() => {
     const getSettingData = async () => {
       try {
@@ -274,10 +378,12 @@ const WorkoutProgramManagement = () => {
     }
   };
 
-  const packageOptions: SingleSelectOption[] = PackageTypes.map((item: any) => ({
-    value: item.attributedetails_name,
-    label: item.attributedetails_name,
-  }));
+  const packageOptions: SingleSelectOption[] = PackageTypes.map(
+    (item: any) => ({
+      value: item.attributedetails_name,
+      label: item.attributedetails_name,
+    }),
+  );
 
   const fetchPrograms = async () => {
     try {
@@ -363,10 +469,12 @@ const WorkoutProgramManagement = () => {
     }
   };
 
-  const difficultyLevelOptions: SingleSelectOption[] = difficultyLevel.map((item: any) => ({
-    value: item.attributedetails_name,
-    label: item.attributedetails_name,
-  }));
+  const difficultyLevelOptions: SingleSelectOption[] = difficultyLevel.map(
+    (item: any) => ({
+      value: item.attributedetails_name,
+      label: item.attributedetails_name,
+    }),
+  );
 
   const fetchTrainers = async () => {
     try {
@@ -393,10 +501,12 @@ const WorkoutProgramManagement = () => {
     }
   };
 
-  const trainerSearchOptions: SingleSelectOption[] = trainers.map((item: any) => ({
-    value: item.TrainerID,
-    label: `${item.TrainerID} - ${item.FullName}`,
-  }));
+  const trainerSearchOptions: SingleSelectOption[] = trainers.map(
+    (item: any) => ({
+      value: item.TrainerID,
+      label: `${item.TrainerID} - ${item.FullName}`,
+    }),
+  );
 
   const trainerOptions: MultiSelectOption[] = trainers.map((trainer: any) => ({
     value: trainer.TrainerID,
@@ -487,10 +597,12 @@ const WorkoutProgramManagement = () => {
     }
   };
 
-  const packagesOptions: SingleSelectOption[] = GetPackages.map((item: any) => ({
-    value: item.package_ID,
-    label: `${item.package_ID} - ${item.package_Name}`,
-  }));
+  const packagesOptions: SingleSelectOption[] = GetPackages.map(
+    (item: any) => ({
+      value: item.package_ID,
+      label: `${item.package_ID} - ${item.package_Name}`,
+    }),
+  );
 
   useEffect(() => {
     const loadData = async () => {
@@ -1147,15 +1259,13 @@ const WorkoutProgramManagement = () => {
   // };
 
   const deleteProgram = async (program: any) => {
-  setLoading(true);
+    setLoading(true);
 
-  try {
-    // --------------------------------
-    // STEP 1: Validate Program Deletion
-    // --------------------------------
-    const validationResponse = await fetch(
-      `${BASE_URL}/programDeleteData`,
-      {
+    try {
+      // --------------------------------
+      // STEP 1: Validate Program Deletion
+      // --------------------------------
+      const validationResponse = await fetch(`${BASE_URL}/programDeleteData`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -1168,82 +1278,76 @@ const WorkoutProgramManagement = () => {
           ProgramIDs: [program.Keyfield],
           mode: "DP",
         }),
+      });
+
+      const validationResult = await validationResponse.json();
+
+      if (!validationResponse.ok) {
+        throw new Error(
+          validationResult.message || "Program cannot be deleted.",
+        );
       }
-    );
 
-    const validationResult = await validationResponse.json();
-
-    if (!validationResponse.ok) {
-      throw new Error(
-        validationResult.message ||
-          "Program cannot be deleted."
-      );
-    }
-
-    // --------------------------------
-    // STEP 2: Delete Program Exercises
-    // --------------------------------
-    const exerciseResponse = await fetch(
-      `${BASE_URL}/programExerciseDeleteData`,
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          company_code: companyCode,
-          location_code: locationCode,
-          modified_by: userCode,
-          programid: program.ProgramID,
+      // --------------------------------
+      // STEP 2: Delete Program Exercises
+      // --------------------------------
+      const exerciseResponse = await fetch(
+        `${BASE_URL}/programExerciseDeleteData`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            company_code: companyCode,
+            location_code: locationCode,
+            modified_by: userCode,
+            programid: program.ProgramID,
+          },
+          body: JSON.stringify({
+            ProgramExercises: [program.Keyfield],
+          }),
         },
-        body: JSON.stringify({
-          ProgramExercises: [program.Keyfield],
-        }),
-      }
-    );
-
-    const exerciseResult = await exerciseResponse.json();
-
-    if (!exerciseResponse.ok) {
-      throw new Error(
-        exerciseResult.message ||
-          "Failed to delete program exercises."
       );
-    }
 
-    // --------------------------------
-    // STEP 3: Delete Program Faculty
-    // --------------------------------
-    const facultyResponse = await fetch(
-      `${BASE_URL}/programFacultyDeleteData`,
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          company_code: companyCode,
-          location_code: locationCode,
-          modified_by: userCode,
-          programid: program.ProgramID,
+      const exerciseResult = await exerciseResponse.json();
+
+      if (!exerciseResponse.ok) {
+        throw new Error(
+          exerciseResult.message || "Failed to delete program exercises.",
+        );
+      }
+
+      // --------------------------------
+      // STEP 3: Delete Program Faculty
+      // --------------------------------
+      const facultyResponse = await fetch(
+        `${BASE_URL}/programFacultyDeleteData`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            company_code: companyCode,
+            location_code: locationCode,
+            modified_by: userCode,
+            programid: program.ProgramID,
+          },
+          body: JSON.stringify({
+            ProgramFacultys: [program.Keyfield],
+          }),
         },
-        body: JSON.stringify({
-          ProgramFacultys: [program.Keyfield],
-        }),
-      }
-    );
-
-    const facultyResult = await facultyResponse.json();
-
-    if (!facultyResponse.ok) {
-      throw new Error(
-        facultyResult.message ||
-          "Failed to delete program faculty."
       );
-    }
 
-    // --------------------------------
-    // STEP 4: Delete Program Header
-    // --------------------------------
-    const response = await fetch(
-      `${BASE_URL}/programDeleteData`,
-      {
+      const facultyResult = await facultyResponse.json();
+
+      if (!facultyResponse.ok) {
+        throw new Error(
+          facultyResult.message || "Failed to delete program faculty.",
+        );
+      }
+
+      // --------------------------------
+      // STEP 4: Delete Program Header
+      // --------------------------------
+      const response = await fetch(`${BASE_URL}/programDeleteData`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -1256,49 +1360,41 @@ const WorkoutProgramManagement = () => {
           ProgramIDs: [program.Keyfield],
           mode: "D",
         }),
+      });
+
+      const result = await response.json();
+
+      if (!response.ok) {
+        throw new Error(result.message || "Delete failed");
       }
-    );
 
-    const result = await response.json();
-
-    if (!response.ok) {
-      throw new Error(
-        result.message || "Delete failed"
+      // --------------------------------
+      // Remove from UI
+      // --------------------------------
+      setPrograms((prev) =>
+        prev.filter((item) => item.Keyfield !== program.Keyfield),
       );
+
+      handleProgramSearch();
+      fetchWorkoutData();
+
+      toast({
+        title: "Program Deleted",
+        description: "Workout Program deleted successfully.",
+        variant: "success",
+      });
+    } catch (error: any) {
+      console.error(error);
+
+      toast({
+        title: "Delete Failed",
+        description: error.message || "Something went wrong.",
+        variant: "destructive",
+      });
+    } finally {
+      setLoading(false);
     }
-
-    // --------------------------------
-    // Remove from UI
-    // --------------------------------
-    setPrograms((prev) =>
-      prev.filter(
-        (item) => item.Keyfield !== program.Keyfield
-      )
-    );
-
-    handleProgramSearch();
-    fetchWorkoutData();
-
-    toast({
-      title: "Program Deleted",
-      description: "Workout Program deleted successfully.",
-      variant: "success",
-    });
-
-  } catch (error: any) {
-    console.error(error);
-
-    toast({
-      title: "Delete Failed",
-      description:
-        error.message || "Something went wrong.",
-      variant: "destructive",
-    });
-
-  } finally {
-    setLoading(false);
-  }
-};
+  };
 
   const handleProgramSearch = async () => {
     setLoading(true);
@@ -2079,17 +2175,14 @@ const WorkoutProgramManagement = () => {
   // };
 
   const deletePackage = async (pkg: any) => {
-  setLoading(true);
+    setLoading(true);
 
-  try {
+    try {
+      // ----------------------------------
+      // STEP 1: Validate Package Deletion
+      // ----------------------------------
 
-    // ----------------------------------
-    // STEP 1: Validate Package Deletion
-    // ----------------------------------
-
-    const validationResponse = await fetch(
-      `${BASE_URL}/PackageDeleteData`,
-      {
+      const validationResponse = await fetch(`${BASE_URL}/PackageDeleteData`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -2101,57 +2194,50 @@ const WorkoutProgramManagement = () => {
           KeyField: pkg.KeyField,
           mode: "DP",
         }),
+      });
+
+      const validationResult = await validationResponse.json();
+
+      if (!validationResponse.ok) {
+        throw new Error(
+          validationResult.message || "Package cannot be deleted.",
+        );
       }
-    );
 
-    const validationResult = await validationResponse.json();
+      // ----------------------------------
+      // STEP 2: Delete Package Details
+      // ----------------------------------
 
-    if (!validationResponse.ok) {
-      throw new Error(
-        validationResult.message ||
-        "Package cannot be deleted."
-      );
-    }
-
-
-    // ----------------------------------
-    // STEP 2: Delete Package Details
-    // ----------------------------------
-
-    const detailsResponse = await fetch(
-      `${BASE_URL}/PackageDetailsDeleteData`,
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          company_code: companyCode,
-          location_code: locationCode,
-          modified_by: userCode,
-          updatemode: "D",
+      const detailsResponse = await fetch(
+        `${BASE_URL}/PackageDetailsDeleteData`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            company_code: companyCode,
+            location_code: locationCode,
+            modified_by: userCode,
+            updatemode: "D",
+          },
+          body: JSON.stringify({
+            KeyFieldHeaders: [pkg.KeyField],
+          }),
         },
-        body: JSON.stringify({
-          KeyFieldHeaders: [pkg.KeyField],
-        }),
-      }
-    );
-
-    const detailsResult = await detailsResponse.json();
-
-    if (!detailsResponse.ok) {
-      throw new Error(
-        detailsResult.message ||
-        "Failed to delete package details."
       );
-    }
 
+      const detailsResult = await detailsResponse.json();
 
-    // ----------------------------------
-    // STEP 3: Delete Package Header
-    // ----------------------------------
+      if (!detailsResponse.ok) {
+        throw new Error(
+          detailsResult.message || "Failed to delete package details.",
+        );
+      }
 
-    const response = await fetch(
-      `${BASE_URL}/PackageDeleteData`,
-      {
+      // ----------------------------------
+      // STEP 3: Delete Package Header
+      // ----------------------------------
+
+      const response = await fetch(`${BASE_URL}/PackageDeleteData`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -2163,65 +2249,50 @@ const WorkoutProgramManagement = () => {
           KeyField: pkg.KeyField,
           mode: "D",
         }),
+      });
+
+      const result = await response.json();
+
+      if (!response.ok) {
+        throw new Error(result.message || "Delete failed");
       }
-    );
 
-    const result = await response.json();
+      // ----------------------------------
+      // STEP 4: Remove from UI
+      // ----------------------------------
 
-    if (!response.ok) {
-      throw new Error(
-        result.message ||
-        "Delete failed"
+      setPackages((prev: any) =>
+        prev.filter((item: any) => item.KeyField !== pkg.KeyField),
       );
+
+      // ----------------------------------
+      // STEP 5: Refresh Data
+      // ----------------------------------
+
+      handlePackageSearch();
+      fetchWorkoutData();
+
+      // ----------------------------------
+      // SUCCESS TOAST
+      // ----------------------------------
+
+      toast({
+        title: "Package Deleted",
+        description: "Workout Package deleted successfully.",
+        variant: "success",
+      });
+    } catch (error: any) {
+      console.error(error);
+
+      toast({
+        title: "Delete Failed",
+        description: error.message || "Something went wrong.",
+        variant: "destructive",
+      });
+    } finally {
+      setLoading(false);
     }
-
-
-    // ----------------------------------
-    // STEP 4: Remove from UI
-    // ----------------------------------
-
-    setPackages((prev: any) =>
-      prev.filter(
-        (item: any) =>
-          item.KeyField !== pkg.KeyField
-      )
-    );
-
-
-    // ----------------------------------
-    // STEP 5: Refresh Data
-    // ----------------------------------
-
-    handlePackageSearch();
-    fetchWorkoutData();
-
-
-    // ----------------------------------
-    // SUCCESS TOAST
-    // ----------------------------------
-
-    toast({
-      title: "Package Deleted",
-      description: "Workout Package deleted successfully.",
-      variant: "success",
-    });
-
-  } catch (error: any) {
-
-    console.error(error);
-
-    toast({
-      title: "Delete Failed",
-      description:
-        error.message ||
-        "Something went wrong.",
-      variant: "destructive",
-    });
-
-  } finally {
-    setLoading(false);
-  }
-};
+  };
 
   const addExerciseField = () => {
     setProgramForm({
@@ -2786,83 +2857,76 @@ const WorkoutProgramManagement = () => {
   // };
 
   const deleteMembership = async (membership: any) => {
-  setLoading(true);
+    setLoading(true);
 
-  try {
+    try {
+      // ======================================
+      // STEP 1: Validate Membership Type
+      // ======================================
 
-    // ======================================
-    // STEP 1: Validate Membership Type
-    // ======================================
-
-    const validationResponse = await fetch(
-      `${BASE_URL}/MemberShipTypeHdrDelete`,
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
+      const validationResponse = await fetch(
+        `${BASE_URL}/MemberShipTypeHdrDelete`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            MemberShipType_id: membership.MemberShipType_id,
+            Company_code: companyCode,
+            Location_code: locationCode,
+            Keyfield: membership.Keyfield,
+            modified_by: userCode,
+            mode: "DP",
+          }),
         },
-        body: JSON.stringify({
-          MemberShipType_id: membership.MemberShipType_id,
-          Company_code: companyCode,
-          Location_code: locationCode,
-          Keyfield: membership.Keyfield,
-          modified_by: userCode,
-          mode: "DP",
-        }),
-      }
-    );
-
-    const validationResult = await validationResponse.json();
-
-    if (!validationResponse.ok || !validationResult.success) {
-      throw new Error(
-        validationResult.message ||
-        "Membership Type cannot be deleted."
       );
-    }
 
+      const validationResult = await validationResponse.json();
 
-    // ======================================
-    // STEP 2: Delete Membership Details
-    // ======================================
+      if (!validationResponse.ok || !validationResult.success) {
+        throw new Error(
+          validationResult.message || "Membership Type cannot be deleted.",
+        );
+      }
 
-    const detailsResponse = await fetch(
-      `${BASE_URL}/MemberShipTypeDetailsDelete`,
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
+      // ======================================
+      // STEP 2: Delete Membership Details
+      // ======================================
+
+      const detailsResponse = await fetch(
+        `${BASE_URL}/MemberShipTypeDetailsDelete`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            Sno: 1,
+            Company_code: companyCode,
+            Location_code: locationCode,
+            MemberShipType_id: membership.MemberShipType_id,
+            Keyfield_header: membership.Keyfield,
+            Keyfield: "",
+            modified_by: userCode,
+            UpdateMode: "D",
+          }),
         },
-        body: JSON.stringify({
-          Sno: 1,
-          Company_code: companyCode,
-          Location_code: locationCode,
-          MemberShipType_id: membership.MemberShipType_id,
-          Keyfield_header: membership.Keyfield,
-          Keyfield: "",
-          modified_by: userCode,
-          UpdateMode: "D",
-        }),
-      }
-    );
-
-    const detailsResult = await detailsResponse.json();
-
-    if (!detailsResponse.ok) {
-      throw new Error(
-        detailsResult.message ||
-        "Failed to delete Membership Type details."
       );
-    }
 
+      const detailsResult = await detailsResponse.json();
 
-    // ======================================
-    // STEP 3: Delete Membership Header
-    // ======================================
+      if (!detailsResponse.ok) {
+        throw new Error(
+          detailsResult.message || "Failed to delete Membership Type details.",
+        );
+      }
 
-    const response = await fetch(
-      `${BASE_URL}/MemberShipTypeHdrDelete`,
-      {
+      // ======================================
+      // STEP 3: Delete Membership Header
+      // ======================================
+
+      const response = await fetch(`${BASE_URL}/MemberShipTypeHdrDelete`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -2875,68 +2939,50 @@ const WorkoutProgramManagement = () => {
           modified_by: userCode,
           mode: "D",
         }),
+      });
+
+      const result = await response.json();
+
+      if (!response.ok || !result.success) {
+        throw new Error(result.message || "Delete failed");
       }
-    );
 
-    const result = await response.json();
+      // ======================================
+      // STEP 4: Remove from UI
+      // ======================================
 
-    if (!response.ok || !result.success) {
-      throw new Error(
-        result.message ||
-        "Delete failed"
+      setMemberShips((prev: any) =>
+        prev.filter((item: any) => item.Keyfield !== membership.Keyfield),
       );
+
+      // ======================================
+      // STEP 5: Refresh Data
+      // ======================================
+
+      handleMemberShipSearch();
+      fetchWorkoutData();
+
+      // ======================================
+      // SUCCESS TOAST
+      // ======================================
+
+      toast({
+        title: "Membership Type Deleted",
+        description: "Membership Type deleted successfully.",
+        variant: "success",
+      });
+    } catch (error: any) {
+      console.error("Membership Delete Error:", error);
+
+      toast({
+        title: "Delete Failed",
+        description: error.message || "Something went wrong.",
+        variant: "destructive",
+      });
+    } finally {
+      setLoading(false);
     }
-
-
-    // ======================================
-    // STEP 4: Remove from UI
-    // ======================================
-
-    setMemberShips((prev: any) =>
-      prev.filter(
-        (item: any) =>
-          item.Keyfield !== membership.Keyfield
-      )
-    );
-
-
-    // ======================================
-    // STEP 5: Refresh Data
-    // ======================================
-
-    handleMemberShipSearch();
-    fetchWorkoutData();
-
-
-    // ======================================
-    // SUCCESS TOAST
-    // ======================================
-
-    toast({
-      title: "Membership Type Deleted",
-      description: "Membership Type deleted successfully.",
-      variant: "success",
-    });
-
-  } catch (error: any) {
-
-    console.error(
-      "Membership Delete Error:",
-      error
-    );
-
-    toast({
-      title: "Delete Failed",
-      description:
-        error.message ||
-        "Something went wrong.",
-      variant: "destructive",
-    });
-
-  } finally {
-    setLoading(false);
-  }
-}; 
+  };
 
   const renderProgramSearch = () => (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-x-4 gap-y-6">
@@ -2998,7 +3044,7 @@ const WorkoutProgramManagement = () => {
                   options={categoryOptions}
                   value={
                     categoryOptions.find(
-                      (option) => option.value === programSearchForm.category
+                      (option) => option.value === programSearchForm.category,
                     ) || null
                   }
                   onChange={(selected) => {
@@ -3029,7 +3075,8 @@ const WorkoutProgramManagement = () => {
                   options={difficultyLevelOptions}
                   value={
                     difficultyLevelOptions.find(
-                      (option) => option.value === programSearchForm.difficultyLevel
+                      (option) =>
+                        option.value === programSearchForm.difficultyLevel,
                     ) || null
                   }
                   onChange={(selected) => {
@@ -3111,7 +3158,8 @@ const WorkoutProgramManagement = () => {
                   options={trainerSearchOptions}
                   value={
                     trainerSearchOptions.find(
-                      (option) => option.value === programSearchForm.assignedFaculty
+                      (option) =>
+                        option.value === programSearchForm.assignedFaculty,
                     ) || null
                   }
                   onChange={(selected) => {
@@ -3143,7 +3191,7 @@ const WorkoutProgramManagement = () => {
                   options={statusOptions}
                   value={
                     statusOptions.find(
-                      (option) => option.value === programSearchForm.isActive
+                      (option) => option.value === programSearchForm.isActive,
                     ) || null
                   }
                   onChange={(selected) => {
@@ -3413,7 +3461,8 @@ const WorkoutProgramManagement = () => {
                   options={packageOptions}
                   value={
                     packageOptions.find(
-                      (option) => option.value === packageSearchForm.packageType
+                      (option) =>
+                        option.value === packageSearchForm.packageType,
                     ) || null
                   }
                   onChange={(selected) => {
@@ -3561,7 +3610,7 @@ const WorkoutProgramManagement = () => {
                   options={statusOptions}
                   value={
                     statusOptions.find(
-                      (option) => option.value === packageSearchForm.isActive
+                      (option) => option.value === packageSearchForm.isActive,
                     ) || null
                   }
                   onChange={(selected) => {
@@ -3652,7 +3701,8 @@ const WorkoutProgramManagement = () => {
                   options={packagesOptions}
                   value={
                     packagesOptions.find(
-                      (option) => option.value === MemberShipSearchForm.package_ID
+                      (option) =>
+                        option.value === MemberShipSearchForm.package_ID,
                     ) || null
                   }
                   onChange={(selected) => {
@@ -3685,7 +3735,7 @@ const WorkoutProgramManagement = () => {
                   options={statusOptions}
                   value={
                     statusOptions.find(
-                      (option) => option.value === MemberShipSearchForm.Status
+                      (option) => option.value === MemberShipSearchForm.Status,
                     ) || null
                   }
                   onChange={(selected) => {
@@ -3958,15 +4008,15 @@ const WorkoutProgramManagement = () => {
           {/* Programs Tab */}
           <TabsContent value="programs">
             <Card>
-              <CardHeader>
+              <CardHeader className="px-4 sm:px-6">
                 <CardTitle>Workout Programs</CardTitle>
                 <CardDescription>
                   Manage all workout programs and their details
                 </CardDescription>
               </CardHeader>
 
-              <CardContent>
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              <CardContent className="px-3 sm:px-6">
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
                   {programs.map((program: any) => {
                     const isActive = program.is_active === "Active";
                     const statusBadgeColor = isActive
@@ -3978,13 +4028,15 @@ const WorkoutProgramManagement = () => {
                         key={program.Keyfield}
                         className="overflow-hidden border-t-4 border-t-violet-600 hover:shadow-xl transition-all duration-300 bg-white"
                       >
-                        <CardContent className="p-6 h-[680px] flex flex-col justify-between">
+                        {/* Height adjusted for mobile adaptability */}
+                        <CardContent className="p-4 sm:p-6 h-auto md:h-[680px] flex flex-col justify-between">
                           {/* Scrollable Container with Custom Scrollbar */}
-                          <div className="flex-1 overflow-y-auto pr-2 custom-scrollbar space-y-5 min-h-0">
+                          <div className="flex-1 overflow-y-auto pr-1 sm:pr-2 custom-scrollbar space-y-4 sm:space-y-5 min-h-0">
+
                             {/* ================= HEADER ================= */}
-                            <div className="flex justify-between items-start pb-3 border-b border-gray-100">
-                              <div className="space-y-1">
-                                <h3 className="text-xl font-bold text-slate-900 tracking-tight">
+                            <div className="flex flex-col sm:flex-row justify-between items-start gap-3 pb-3 border-b border-gray-100">
+                              <div className="space-y-1 w-full sm:w-auto">
+                                <h3 className="text-lg sm:text-xl font-bold text-slate-900 tracking-tight break-words">
                                   {program.ProgramName}
                                 </h3>
                                 <p className="text-xs font-mono text-gray-500 flex items-center gap-1">
@@ -3995,25 +4047,20 @@ const WorkoutProgramManagement = () => {
                                 </p>
                               </div>
 
-                              <div className="flex gap-1 bg-slate-50 p-1 rounded-lg border border-gray-100">
+                              <div className="flex gap-1 bg-slate-50 p-1 rounded-lg border border-gray-100 self-end sm:self-start">
                                 <TooltipProvider>
                                   <Tooltip>
                                     <TooltipTrigger asChild>
-                                      {hasActionPermission(
-                                        "Programs",
-                                        "edit",
-                                      ) && (
-                                          <Button
-                                            variant="ghost"
-                                            size="icon"
-                                            className="h-8 w-8 text-gray-600 hover:text-violet-600 hover:bg-violet-50"
-                                            onClick={() =>
-                                              handleEditProgram(program)
-                                            }
-                                          >
-                                            <Edit className="h-4 w-4" />
-                                          </Button>
-                                        )}
+                                      {hasActionPermission("Programs", "edit") && (
+                                        <Button
+                                          variant="ghost"
+                                          size="icon"
+                                          className="h-8 w-8 text-gray-600 hover:text-violet-600 hover:bg-violet-50"
+                                          onClick={() => handleEditProgram(program)}
+                                        >
+                                          <Edit className="h-4 w-4" />
+                                        </Button>
+                                      )}
                                     </TooltipTrigger>
                                     <TooltipContent>
                                       <p>Edit</p>
@@ -4024,21 +4071,16 @@ const WorkoutProgramManagement = () => {
                                 <TooltipProvider>
                                   <Tooltip>
                                     <TooltipTrigger asChild>
-                                      {hasActionPermission(
-                                        "Programs",
-                                        "delete",
-                                      ) && (
-                                          <Button
-                                            variant="ghost"
-                                            size="icon"
-                                            className="h-8 w-8 text-red-500 hover:text-red-700 hover:bg-red-50"
-                                            onClick={() =>
-                                              handleDeleteProgram(program)
-                                            }
-                                          >
-                                            <Trash2 className="h-4 w-4" />
-                                          </Button>
-                                        )}
+                                      {hasActionPermission("Programs", "delete") && (
+                                        <Button
+                                          variant="ghost"
+                                          size="icon"
+                                          className="h-8 w-8 text-red-500 hover:text-red-700 hover:bg-red-50"
+                                          onClick={() => handleDeleteProgram(program)}
+                                        >
+                                          <Trash2 className="h-4 w-4" />
+                                        </Button>
+                                      )}
                                     </TooltipTrigger>
                                     <TooltipContent>
                                       <p>Delete</p>
@@ -4049,20 +4091,20 @@ const WorkoutProgramManagement = () => {
                             </div>
 
                             {/* ================= GOALS & STATUS ================= */}
-                            <div className="flex items-center justify-between bg-violet-50/40 px-4 py-2.5 rounded-lg border border-violet-50">
-                              <div className="flex items-center space-x-2">
-                                <TrendingUp className="w-4 h-4 text-violet-600" />
+                            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 bg-violet-50/40 px-3.5 py-2.5 rounded-lg border border-violet-50">
+                              <div className="flex items-start sm:items-center space-x-2">
+                                <TrendingUp className="w-4 h-4 text-violet-600 mt-0.5 sm:mt-0 flex-shrink-0" />
                                 <span className="text-xs text-gray-500 font-medium">
                                   Goal:
                                 </span>
-                                <span className="text-sm font-semibold text-slate-800">
+                                <span className="text-xs sm:text-sm font-semibold text-slate-800 break-words">
                                   {program.Goals}
                                 </span>
                               </div>
 
                               <Badge
                                 variant="outline"
-                                className={`font-medium text-xs ${statusBadgeColor}`}
+                                className={`font-medium text-xs self-start sm:self-auto flex-shrink-0 ${statusBadgeColor}`}
                               >
                                 <span
                                   className={`w-1.5 h-1.5 rounded-full mr-1.5 ${isActive ? "bg-green-500" : "bg-gray-400"
@@ -4073,8 +4115,8 @@ const WorkoutProgramManagement = () => {
                             </div>
 
                             {/* ================= PROGRAM SPECS ================= */}
-                            <div className="grid grid-cols-3 gap-2 bg-slate-50 p-3 rounded-xl border border-slate-100 text-center sm:text-left">
-                              <div className="space-y-0.5 border-r border-gray-200 last:border-none px-2">
+                            <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5 sm:gap-2 bg-slate-50 p-3 rounded-xl border border-slate-100 text-left">
+                              <div className="space-y-0.5 sm:border-r border-gray-200 px-1 sm:px-2 pb-2 sm:pb-0 border-b sm:border-b-0">
                                 <p className="text-[11px] text-gray-400 uppercase tracking-wider font-semibold">
                                   Category
                                 </p>
@@ -4086,20 +4128,18 @@ const WorkoutProgramManagement = () => {
                                 </p>
                               </div>
 
-                              <div className="space-y-0.5 border-r border-gray-200 last:border-none px-2">
-                                <p className="text-[11px] text-gray-400 uppercase tracking-wider font-semibold flex items-center justify-center sm:justify-start gap-1">
-                                  <Dumbbell className="w-3 h-3 text-slate-400" />{" "}
-                                  Difficulty
+                              <div className="space-y-0.5 sm:border-r border-gray-200 px-1 sm:px-2 pb-2 sm:pb-0 border-b sm:border-b-0">
+                                <p className="text-[11px] text-gray-400 uppercase tracking-wider font-semibold flex items-center gap-1">
+                                  <Dumbbell className="w-3 h-3 text-slate-400" /> Difficulty
                                 </p>
                                 <p className="text-xs font-bold text-violet-600">
                                   {program.Difficulty_level}
                                 </p>
                               </div>
 
-                              <div className="space-y-0.5 px-2">
-                                <p className="text-[11px] text-gray-400 uppercase tracking-wider font-semibold flex items-center justify-center sm:justify-start gap-1">
-                                  <Calendar className="w-3 h-3 text-slate-400" />{" "}
-                                  Session / Wk
+                              <div className="space-y-0.5 px-1 sm:px-2">
+                                <p className="text-[11px] text-gray-400 uppercase tracking-wider font-semibold flex items-center gap-1">
+                                  <Calendar className="w-3 h-3 text-slate-400" /> Session / Wk
                                 </p>
                                 <p className="text-xs font-bold text-slate-800">
                                   {program.Sessions_per_week} Sessions
@@ -4108,12 +4148,11 @@ const WorkoutProgramManagement = () => {
                             </div>
 
                             {/* ================= WORKING HOURS ================= */}
-                            <div className="space-y-1 px-2">
-                              <p className="text-[11px] text-gray-400 uppercase tracking-wider font-semibold flex items-center justify-center sm:justify-start gap-1">
-                                <Clock className="w-3 h-3 text-slate-400" />{" "}
-                                Working Hours
+                            <div className="space-y-1.5 px-1">
+                              <p className="text-[11px] text-gray-400 uppercase tracking-wider font-semibold flex items-center gap-1">
+                                <Clock className="w-3 h-3 text-slate-400" /> Working Hours
                               </p>
-                              <div className="flex flex-wrap justify-center sm:justify-start gap-1">
+                              <div className="flex flex-wrap gap-1.5">
                                 {program.Working_hours ? (
                                   (typeof program.Working_hours === "string"
                                     ? program.Working_hours.split(",")
@@ -4126,11 +4165,11 @@ const WorkoutProgramManagement = () => {
                                         <Badge
                                           key={idx}
                                           variant="secondary"
-                                          className="bg-purple-50 text-purple-700 border border-purple-100 px-1.5 py-0 text-[10px] font-medium rounded shadow-sm"
+                                          className="bg-purple-50 text-purple-700 border border-purple-100 px-2 py-0.5 text-[11px] font-medium rounded shadow-sm"
                                         >
                                           {timeSlot.trim()}
                                         </Badge>
-                                      ),
+                                      )
                                   )
                                 ) : (
                                   <span className="text-[11px] text-gray-400 italic">
@@ -4141,34 +4180,30 @@ const WorkoutProgramManagement = () => {
                             </div>
 
                             {/* ================= FACULTY DETAILS ================= */}
-                            <div className="space-y-1.5">
+                            <div className="space-y-1.5 px-1">
                               <p className="text-xs font-bold text-gray-400 uppercase tracking-wider flex items-center">
                                 <Users className="w-3.5 h-3.5 mr-1.5 text-slate-500" />{" "}
                                 Faculty Details
                               </p>
                               <div className="flex flex-wrap gap-1.5">
-                                {program.Faculty &&
-                                  program.Faculty.length > 0 ? (
-                                  program.Faculty.map(
-                                    (faculty: string, idx: number) => {
-                                      const trainer = trainers.find(
-                                        (item: any) =>
-                                          item.TrainerID === faculty,
-                                      );
+                                {program.Faculty && program.Faculty.length > 0 ? (
+                                  program.Faculty.map((faculty: string, idx: number) => {
+                                    const trainer = trainers.find(
+                                      (item: any) => item.TrainerID === faculty
+                                    );
 
-                                      return (
-                                        <Badge
-                                          key={idx}
-                                          variant="secondary"
-                                          className="bg-slate-100 text-slate-700 border border-slate-200 px-2.5 py-0.5 text-xs rounded-md"
-                                        >
-                                          {trainer
-                                            ? `${trainer.TrainerID} - ${trainer.FullName}`
-                                            : faculty}
-                                        </Badge>
-                                      );
-                                    },
-                                  )
+                                    return (
+                                      <Badge
+                                        key={idx}
+                                        variant="secondary"
+                                        className="bg-slate-100 text-slate-700 border border-slate-200 px-2.5 py-1 text-xs rounded-md break-all"
+                                      >
+                                        {trainer
+                                          ? `${trainer.TrainerID} - ${trainer.FullName}`
+                                          : faculty}
+                                      </Badge>
+                                    );
+                                  })
                                 ) : (
                                   <span className="text-xs text-gray-400 italic">
                                     No faculty assigned
@@ -4178,55 +4213,49 @@ const WorkoutProgramManagement = () => {
                             </div>
 
                             {/* ================= EXERCISES DETAILS ================= */}
-                            <div className="space-y-2">
+                            <div className="space-y-2 px-1">
                               <p className="text-xs font-bold text-slate-400 uppercase tracking-wider flex items-center border-b border-slate-100 pb-1.5">
                                 <CheckCircle className="w-3.5 h-3.5 mr-1.5 text-emerald-500" />{" "}
                                 Exercises Details
                               </p>
 
-                              <div className="grid grid-cols-12 gap-2 px-3 py-1 bg-slate-100 rounded text-[11px] font-bold text-gray-500 uppercase tracking-wider">
+                              <div className="grid grid-cols-12 gap-1 sm:gap-2 px-2 sm:px-3 py-1.5 bg-slate-100 rounded text-[10px] sm:text-[11px] font-bold text-gray-500 uppercase tracking-wider">
                                 <div className="col-span-6">Name</div>
-                                <div className="col-span-3 text-center">
-                                  Count / Sets
-                                </div>
-                                <div className="col-span-3 text-center">
-                                  Reps
-                                </div>
+                                <div className="col-span-3 text-center">Count / Sets</div>
+                                <div className="col-span-3 text-center">Reps</div>
                               </div>
 
-                              <div className="space-y-1 max-h-[140px] overflow-y-auto pr-1 custom-scrollbar">
+                              <div className="space-y-1 max-h-[160px] overflow-y-auto pr-1 custom-scrollbar">
                                 {program.Exercises &&
-                                  program.Exercises.map(
-                                    (exercise: any, idx: number) => (
-                                      <div
-                                        key={idx}
-                                        className="grid grid-cols-12 gap-2 px-3 py-2 bg-white border border-gray-100 rounded-lg shadow-sm items-center hover:bg-slate-50 transition-colors"
-                                      >
-                                        <div className="col-span-6 text-xs font-medium text-slate-700 truncate">
-                                          {exercise.Exercises_Name}
-                                        </div>
-                                        <div className="col-span-3 text-center text-xs text-slate-600 bg-slate-50 py-0.5 rounded border border-slate-100">
-                                          <b className="text-slate-900">
-                                            {exercise.Exercises_Count}
-                                          </b>
-                                        </div>
-                                        <div className="col-span-3 text-center text-xs text-slate-600 bg-slate-50 py-0.5 rounded border border-slate-100">
-                                          <b className="text-slate-900">
-                                            {exercise.Exercises_Repetitions}
-                                          </b>
-                                        </div>
+                                  program.Exercises.map((exercise: any, idx: number) => (
+                                    <div
+                                      key={idx}
+                                      className="grid grid-cols-12 gap-1 sm:gap-2 px-2 sm:px-3 py-2 bg-white border border-gray-100 rounded-lg shadow-sm items-center hover:bg-slate-50 transition-colors"
+                                    >
+                                      <div className="col-span-6 text-xs font-medium text-slate-700 truncate">
+                                        {exercise.Exercises_Name}
                                       </div>
-                                    ),
-                                  )}
+                                      <div className="col-span-3 text-center text-xs text-slate-600 bg-slate-50 py-0.5 rounded border border-slate-100">
+                                        <b className="text-slate-900">
+                                          {exercise.Exercises_Count}
+                                        </b>
+                                      </div>
+                                      <div className="col-span-3 text-center text-xs text-slate-600 bg-slate-50 py-0.5 rounded border border-slate-100">
+                                        <b className="text-slate-900">
+                                          {exercise.Exercises_Repetitions}
+                                        </b>
+                                      </div>
+                                    </div>
+                                  ))}
                               </div>
                             </div>
 
                             {/* ================= DESCRIPTION ================= */}
-                            <div className="pt-3 border-t border-gray-100 space-y-1">
+                            <div className="pt-3 border-t border-gray-100 space-y-1 px-1">
                               <p className="text-xs font-bold text-gray-400 uppercase tracking-wider">
                                 Description
                               </p>
-                              <p className="text-sm text-gray-600 leading-relaxed bg-slate-50/60 p-2.5 rounded-lg border border-slate-100/50">
+                              <p className="text-xs sm:text-sm text-gray-600 leading-relaxed bg-slate-50/60 p-2.5 rounded-lg border border-slate-100/50 break-words">
                                 {program.Description ||
                                   "No custom description available for this workout program."}
                               </p>
@@ -4244,15 +4273,15 @@ const WorkoutProgramManagement = () => {
           {/* Packages Tab */}
           <TabsContent value="packages">
             <Card>
-              <CardHeader>
+              <CardHeader className="px-4 sm:px-6">
                 <CardTitle>Workout Packages</CardTitle>
                 <CardDescription>
                   Manage all workout packages and their details
                 </CardDescription>
               </CardHeader>
 
-              <CardContent>
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              <CardContent className="px-3 sm:px-6">
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
                   {packages.map((pkg: any) => {
                     const isActive = pkg.is_active === "Active";
 
@@ -4265,13 +4294,15 @@ const WorkoutProgramManagement = () => {
                         key={pkg.KeyField}
                         className="overflow-hidden border-t-4 border-t-violet-600 hover:shadow-xl transition-all duration-300 bg-white"
                       >
-                        <CardContent className="p-6 h-[400px] flex flex-col justify-between">
+                        {/* Adaptive height: auto on mobile, fixed on desktop */}
+                        <CardContent className="p-4 sm:p-6 h-auto md:h-[420px] flex flex-col justify-between">
                           {/* Scrollable Container with Custom Scrollbar */}
-                          <div className="flex-1 overflow-y-auto pr-2 custom-scrollbar space-y-5 min-h-0">
+                          <div className="flex-1 overflow-y-auto pr-1 sm:pr-2 custom-scrollbar space-y-4 sm:space-y-5 min-h-0">
+
                             {/* ================= HEADER ================= */}
-                            <div className="flex justify-between items-start pb-3 border-b border-gray-100">
-                              <div className="space-y-1">
-                                <h3 className="text-xl font-bold text-slate-900 tracking-tight">
+                            <div className="flex flex-col sm:flex-row justify-between items-start gap-3 pb-3 border-b border-gray-100">
+                              <div className="space-y-1 w-full sm:w-auto">
+                                <h3 className="text-lg sm:text-xl font-bold text-slate-900 tracking-tight break-words">
                                   {pkg.package_Name}
                                 </h3>
 
@@ -4283,23 +4314,20 @@ const WorkoutProgramManagement = () => {
                                 </p>
                               </div>
 
-                              <div className="flex gap-1 bg-slate-50 p-1 rounded-lg border border-gray-100">
+                              <div className="flex gap-1 bg-slate-50 p-1 rounded-lg border border-gray-100 self-end sm:self-start">
                                 <TooltipProvider>
                                   <Tooltip>
                                     <TooltipTrigger asChild>
-                                      {hasActionPermission(
-                                        "Packages",
-                                        "edit",
-                                      ) && (
-                                          <Button
-                                            variant="ghost"
-                                            size="icon"
-                                            className="h-8 w-8 text-gray-600 hover:text-violet-600 hover:bg-violet-50"
-                                            onClick={() => handleEditPackage(pkg)}
-                                          >
-                                            <Edit className="h-4 w-4" />
-                                          </Button>
-                                        )}
+                                      {hasActionPermission("Packages", "edit") && (
+                                        <Button
+                                          variant="ghost"
+                                          size="icon"
+                                          className="h-8 w-8 text-gray-600 hover:text-violet-600 hover:bg-violet-50"
+                                          onClick={() => handleEditPackage(pkg)}
+                                        >
+                                          <Edit className="h-4 w-4" />
+                                        </Button>
+                                      )}
                                     </TooltipTrigger>
 
                                     <TooltipContent>
@@ -4311,21 +4339,16 @@ const WorkoutProgramManagement = () => {
                                 <TooltipProvider>
                                   <Tooltip>
                                     <TooltipTrigger asChild>
-                                      {hasActionPermission(
-                                        "Packages",
-                                        "delete",
-                                      ) && (
-                                          <Button
-                                            variant="ghost"
-                                            size="icon"
-                                            className="h-8 w-8 text-red-500 hover:text-red-700 hover:bg-red-50"
-                                            onClick={() =>
-                                              handleDeletePackage(pkg)
-                                            }
-                                          >
-                                            <Trash2 className="h-4 w-4" />
-                                          </Button>
-                                        )}
+                                      {hasActionPermission("Packages", "delete") && (
+                                        <Button
+                                          variant="ghost"
+                                          size="icon"
+                                          className="h-8 w-8 text-red-500 hover:text-red-700 hover:bg-red-50"
+                                          onClick={() => handleDeletePackage(pkg)}
+                                        >
+                                          <Trash2 className="h-4 w-4" />
+                                        </Button>
+                                      )}
                                     </TooltipTrigger>
 
                                     <TooltipContent>
@@ -4337,9 +4360,9 @@ const WorkoutProgramManagement = () => {
                             </div>
 
                             {/* ================= PRICE + STATUS ================= */}
-                            <div className="flex items-center justify-between bg-violet-50/40 px-4 py-2.5 rounded-lg border border-violet-50">
+                            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 bg-violet-50/40 px-3.5 py-2.5 rounded-lg border border-violet-50">
                               <div className="flex items-center gap-2">
-                                <IndianRupee className="w-4 h-4 text-violet-600" />
+                                <IndianRupee className="w-4 h-4 text-violet-600 flex-shrink-0" />
                                 <span className="text-xs text-gray-500 font-medium">
                                   Price :
                                 </span>
@@ -4350,7 +4373,7 @@ const WorkoutProgramManagement = () => {
 
                               <Badge
                                 variant="outline"
-                                className={`font-medium text-xs ${statusBadgeColor}`}
+                                className={`font-medium text-xs self-start sm:self-auto flex-shrink-0 ${statusBadgeColor}`}
                               >
                                 <span
                                   className={`w-1.5 h-1.5 rounded-full mr-1.5 ${isActive ? "bg-green-500" : "bg-gray-400"
@@ -4361,9 +4384,9 @@ const WorkoutProgramManagement = () => {
                             </div>
 
                             {/* ================= PACKAGE INFORMATION ================= */}
-                            <div className="grid grid-cols-3 gap-2 bg-slate-50 p-3 rounded-xl border border-slate-100 text-center sm:text-left">
+                            <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5 sm:gap-2 bg-slate-50 p-3 rounded-xl border border-slate-100 text-left">
                               {/* Package Type */}
-                              <div className="space-y-0.5 border-r border-gray-200 last:border-none px-2">
+                              <div className="space-y-0.5 sm:border-r border-gray-200 px-1 sm:px-2 pb-2 sm:pb-0 border-b sm:border-b-0">
                                 <p className="text-[11px] text-gray-400 uppercase tracking-wider font-semibold">
                                   Package Type
                                 </p>
@@ -4376,8 +4399,8 @@ const WorkoutProgramManagement = () => {
                               </div>
 
                               {/* Duration */}
-                              <div className="space-y-0.5 border-r border-gray-200 last:border-none px-2">
-                                <p className="text-[11px] text-gray-400 uppercase tracking-wider font-semibold flex items-center justify-center sm:justify-start gap-1">
+                              <div className="space-y-0.5 sm:border-r border-gray-200 px-1 sm:px-2 pb-2 sm:pb-0 border-b sm:border-b-0">
+                                <p className="text-[11px] text-gray-400 uppercase tracking-wider font-semibold flex items-center gap-1">
                                   <Calendar className="w-3 h-3 text-slate-400" />
                                   Duration
                                 </p>
@@ -4387,8 +4410,8 @@ const WorkoutProgramManagement = () => {
                               </div>
 
                               {/* Discount */}
-                              <div className="space-y-0.5 px-2">
-                                <p className="text-[11px] text-gray-400 uppercase tracking-wider font-semibold flex items-center justify-center sm:justify-start gap-1">
+                              <div className="space-y-0.5 px-1 sm:px-2">
+                                <p className="text-[11px] text-gray-400 uppercase tracking-wider font-semibold flex items-center gap-1">
                                   <BadgePercent className="w-3 h-3 text-slate-400" />
                                   Discount
                                 </p>
@@ -4399,7 +4422,7 @@ const WorkoutProgramManagement = () => {
                             </div>
 
                             {/* ================= ASSOCIATED PROGRAMS ================= */}
-                            <div className="space-y-2">
+                            <div className="space-y-2 px-1">
                               <p className="text-xs font-bold text-gray-400 uppercase tracking-wider flex items-center">
                                 <Dumbbell className="w-3.5 h-3.5 mr-1.5 text-violet-600" />
                                 Associated Programs
@@ -4410,22 +4433,21 @@ const WorkoutProgramManagement = () => {
                                   pkg.Programs.map(
                                     (program: string, index: number) => {
                                       const programDetails = ProgramsID.find(
-                                        (item: any) =>
-                                          item.ProgramID === program,
+                                        (item: any) => item.ProgramID === program
                                       );
 
                                       return (
                                         <Badge
                                           key={index}
                                           variant="secondary"
-                                          className="bg-violet-50 text-violet-700 border border-violet-100 px-2.5 py-0.5 text-xs rounded-md"
+                                          className="bg-violet-50 text-violet-700 border border-violet-100 px-2.5 py-0.5 text-xs rounded-md break-all"
                                         >
                                           {programDetails
                                             ? `${programDetails.ProgramID} - ${programDetails.ProgramName}`
                                             : program}
                                         </Badge>
                                       );
-                                    },
+                                    }
                                   )
                                 ) : (
                                   <span className="text-xs text-gray-400 italic">
@@ -4436,13 +4458,13 @@ const WorkoutProgramManagement = () => {
                             </div>
 
                             {/* ================= FEATURES ================= */}
-                            <div className="space-y-2">
+                            <div className="space-y-2 px-1">
                               <p className="text-xs font-bold text-slate-400 uppercase tracking-wider flex items-center border-b border-slate-100 pb-1.5">
                                 <CheckCircle className="w-3.5 h-3.5 mr-1.5 text-emerald-500" />
                                 Package Features
                               </p>
 
-                              <div className="flex flex-wrap gap-2">
+                              <div className="flex flex-wrap gap-1.5 sm:gap-2">
                                 {pkg.features ? (
                                   pkg.features
                                     .split(",")
@@ -4450,7 +4472,7 @@ const WorkoutProgramManagement = () => {
                                       <Badge
                                         key={index}
                                         variant="secondary"
-                                        className="bg-emerald-50 text-emerald-700 border border-emerald-100 px-2.5 py-1 rounded-md shadow-sm"
+                                        className="bg-emerald-50 text-emerald-700 border border-emerald-100 px-2.5 py-1 text-xs rounded-md shadow-sm break-words"
                                       >
                                         {feature.trim()}
                                       </Badge>
@@ -4462,6 +4484,7 @@ const WorkoutProgramManagement = () => {
                                 )}
                               </div>
                             </div>
+
                           </div>
                         </CardContent>
                       </Card>
@@ -4474,15 +4497,15 @@ const WorkoutProgramManagement = () => {
 
           <TabsContent value="memberships">
             <Card>
-              <CardHeader>
+              <CardHeader className="px-4 sm:px-6">
                 <CardTitle>Workout Memberships</CardTitle>
                 <CardDescription>
                   Manage all workout Memberships and their details
                 </CardDescription>
               </CardHeader>
 
-              <CardContent>
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              <CardContent className="px-3 sm:px-6">
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
                   {groupedMemberShips.map((membership: any) => {
                     const isActive = membership.Status === "Active";
 
@@ -4495,15 +4518,18 @@ const WorkoutProgramManagement = () => {
                         key={membership.Keyfield}
                         className="overflow-hidden border-t-4 border-t-violet-600 hover:shadow-xl transition-all duration-300 bg-white"
                       >
-                        <CardContent className="p-6 h-[260px] flex flex-col justify-between">
+                        {/* Auto height on small screens, fixed height on tablet/desktop */}
+                        <CardContent className="p-4 sm:p-6 h-auto sm:h-[280px] flex flex-col justify-between">
                           {/* Scrollable Container with Custom Scrollbar */}
-                          <div className="flex-1 overflow-y-auto pr-2 custom-scrollbar space-y-5 min-h-0">
+                          <div className="flex-1 overflow-y-auto pr-1 sm:pr-2 custom-scrollbar space-y-4 sm:space-y-5 min-h-0">
+
                             {/* ================= HEADER ================= */}
-                            <div className="flex justify-between items-start pb-3 border-b border-gray-100">
-                              <div className="space-y-1">
-                                <h3 className="text-xl font-bold text-slate-900 tracking-tight">
+                            <div className="flex flex-col sm:flex-row justify-between items-start gap-3 pb-3 border-b border-gray-100">
+                              <div className="space-y-1 w-full sm:w-auto">
+                                <h3 className="text-lg sm:text-xl font-bold text-slate-900 tracking-tight break-words">
                                   {membership.MemberShipType_Name}
                                 </h3>
+
                                 <p className="text-xs font-mono text-gray-500 flex items-center gap-1">
                                   <span className="font-semibold text-slate-700">
                                     Membership ID:
@@ -4512,25 +4538,22 @@ const WorkoutProgramManagement = () => {
                                 </p>
                               </div>
 
-                              <div className="flex gap-1 bg-slate-50 p-1 rounded-lg border border-gray-100">
+                              <div className="flex gap-1 bg-slate-50 p-1 rounded-lg border border-gray-100 self-end sm:self-start">
                                 <TooltipProvider>
                                   <Tooltip>
                                     <TooltipTrigger asChild>
-                                      {hasActionPermission(
-                                        "Memberships",
-                                        "edit",
-                                      ) && (
-                                          <Button
-                                            variant="ghost"
-                                            size="icon"
-                                            className="h-8 w-8 text-gray-600 hover:text-violet-600 hover:bg-violet-50"
-                                            onClick={() =>
-                                              handleEditMemberShip(membership)
-                                            }
-                                          >
-                                            <Edit className="h-4 w-4" />
-                                          </Button>
-                                        )}
+                                      {hasActionPermission("Memberships", "edit") && (
+                                        <Button
+                                          variant="ghost"
+                                          size="icon"
+                                          className="h-8 w-8 text-gray-600 hover:text-violet-600 hover:bg-violet-50"
+                                          onClick={() =>
+                                            handleEditMemberShip(membership)
+                                          }
+                                        >
+                                          <Edit className="h-4 w-4" />
+                                        </Button>
+                                      )}
                                     </TooltipTrigger>
                                     <TooltipContent>
                                       <p>Edit</p>
@@ -4541,21 +4564,18 @@ const WorkoutProgramManagement = () => {
                                 <TooltipProvider>
                                   <Tooltip>
                                     <TooltipTrigger asChild>
-                                      {hasActionPermission(
-                                        "Memberships",
-                                        "delete",
-                                      ) && (
-                                          <Button
-                                            variant="ghost"
-                                            size="icon"
-                                            className="h-8 w-8 text-red-500 hover:text-red-700 hover:bg-red-50"
-                                            onClick={() =>
-                                              handleDeleteMembership(membership)
-                                            }
-                                          >
-                                            <Trash2 className="h-4 w-4" />
-                                          </Button>
-                                        )}
+                                      {hasActionPermission("Memberships", "delete") && (
+                                        <Button
+                                          variant="ghost"
+                                          size="icon"
+                                          className="h-8 w-8 text-red-500 hover:text-red-700 hover:bg-red-50"
+                                          onClick={() =>
+                                            handleDeleteMembership(membership)
+                                          }
+                                        >
+                                          <Trash2 className="h-4 w-4" />
+                                        </Button>
+                                      )}
                                     </TooltipTrigger>
                                     <TooltipContent>
                                       <p>Delete</p>
@@ -4566,13 +4586,14 @@ const WorkoutProgramManagement = () => {
                             </div>
 
                             {/* ================= STATUS BAR ================= */}
-                            <div className="flex items-center justify-between bg-violet-50/40 px-4 py-2.5 rounded-lg border border-violet-50">
+                            <div className="flex items-center justify-between bg-violet-50/40 px-3.5 py-2.5 rounded-lg border border-violet-50">
                               <span className="text-xs text-slate-600 font-semibold uppercase tracking-wider">
                                 Membership Status
                               </span>
+
                               <Badge
                                 variant="outline"
-                                className={`font-medium text-xs ${statusBadgeColor}`}
+                                className={`font-medium text-xs flex-shrink-0 ${statusBadgeColor}`}
                               >
                                 <span
                                   className={`w-1.5 h-1.5 rounded-full mr-1.5 ${isActive ? "bg-green-500" : "bg-gray-400"
@@ -4583,13 +4604,13 @@ const WorkoutProgramManagement = () => {
                             </div>
 
                             {/* ================= ASSOCIATED PACKAGES ================= */}
-                            <div className="space-y-2">
+                            <div className="space-y-2 px-0.5">
                               <p className="text-xs font-bold text-gray-400 uppercase tracking-wider flex items-center border-b border-slate-100 pb-1.5">
-                                <Dumbbell className="w-3.5 h-3.5 mr-1.5 text-violet-600" />
+                                <Dumbbell className="w-3.5 h-3.5 mr-1.5 text-violet-600 flex-shrink-0" />
                                 Linked Packages
                               </p>
 
-                              <div className="flex flex-wrap gap-2">
+                              <div className="flex flex-wrap gap-1.5 sm:gap-2">
                                 {membership.Packages &&
                                   membership.Packages.length > 0 ? (
                                   membership.Packages.map(
@@ -4601,7 +4622,7 @@ const WorkoutProgramManagement = () => {
                                           <TooltipTrigger asChild>
                                             <Badge
                                               variant="secondary"
-                                              className="bg-violet-50 text-violet-700 border border-violet-100 px-2.5 py-1 text-xs rounded-md font-medium shadow-sm cursor-help transition-colors hover:bg-violet-100"
+                                              className="bg-violet-50 text-violet-700 border border-violet-100 px-2.5 py-1 text-xs rounded-md font-medium shadow-sm cursor-help transition-colors hover:bg-violet-100 break-words"
                                             >
                                               {pkg.package_Name}
                                             </Badge>
@@ -4613,7 +4634,7 @@ const WorkoutProgramManagement = () => {
                                           </TooltipContent>
                                         </Tooltip>
                                       </TooltipProvider>
-                                    ),
+                                    )
                                   )
                                 ) : (
                                   <span className="text-xs text-gray-400 italic">
@@ -4622,6 +4643,7 @@ const WorkoutProgramManagement = () => {
                                 )}
                               </div>
                             </div>
+
                           </div>
                         </CardContent>
                       </Card>
@@ -4664,6 +4686,7 @@ const WorkoutProgramManagement = () => {
                     <Tooltip>
                       <TooltipTrigger asChild>
                         <Input
+                          ref={programIdRef}
                           id="programId"
                           value={programForm.id}
                           readOnly={
@@ -4723,18 +4746,20 @@ const WorkoutProgramManagement = () => {
                   <div className="space-y-2">
                     <Label
                       htmlFor="name"
+                      required
                       className={
                         submittedPrograms && !programForm.name
                           ? "text-red-500"
                           : ""
                       }
                     >
-                      Program Name*
+                      Program Name
                     </Label>
                     <TooltipProvider>
                       <Tooltip>
                         <TooltipTrigger asChild>
                           <Input
+                            ref={programNameRef}
                             id="name"
                             value={programForm.name}
                             maxLength={100}
@@ -4760,23 +4785,26 @@ const WorkoutProgramManagement = () => {
                   <div className="space-y-2">
                     <Label
                       htmlFor="category"
+                      required
                       className={
                         submittedPrograms && !programForm.category
                           ? "text-red-500"
                           : ""
                       }
                     >
-                      Category*
+                      Category
                     </Label>
                     <TooltipProvider>
                       <Tooltip>
                         <TooltipTrigger asChild>
                           <div>
                             <ReactSingleSelect
+                              ref={categoryRef}
                               options={categoryOptions}
                               value={
                                 categoryOptions.find(
-                                  (option) => option.value === programForm.category
+                                  (option) =>
+                                    option.value === programForm.category,
                                 ) || null
                               }
                               onChange={(selected) => {
@@ -4787,6 +4815,7 @@ const WorkoutProgramManagement = () => {
                               }}
                               placeholder="Select Category"
                               tabIndex={0}
+                              onKeyDown={handleCategoryKeyDown}
                             />
                           </div>
                         </TooltipTrigger>
@@ -4802,23 +4831,27 @@ const WorkoutProgramManagement = () => {
                   <div className="space-y-2">
                     <Label
                       htmlFor="difficulty"
+                      required
                       className={
                         submittedPrograms && !programForm.difficultyLevel
                           ? "text-red-500"
                           : ""
                       }
                     >
-                      Difficulty Level*
+                      Difficulty Level
                     </Label>
                     <TooltipProvider>
                       <Tooltip>
                         <TooltipTrigger asChild>
                           <div>
                             <ReactSingleSelect
+                              ref={difficultyRef}
                               options={difficultyLevelOptions}
                               value={
                                 difficultyLevelOptions.find(
-                                  (option) => option.value === programForm.difficultyLevel
+                                  (option) =>
+                                    option.value ===
+                                    programForm.difficultyLevel,
                                 ) || null
                               }
                               onChange={(selected) => {
@@ -4829,6 +4862,7 @@ const WorkoutProgramManagement = () => {
                               }}
                               placeholder="Select Difficulty Level"
                               tabIndex={0}
+                              onKeyDown={handleDifficultyKeyDown}
                             />
                           </div>
                         </TooltipTrigger>
@@ -4846,6 +4880,7 @@ const WorkoutProgramManagement = () => {
                       <Tooltip>
                         <TooltipTrigger asChild>
                           <Input
+                            ref={goalsRef}
                             id="goals"
                             value={programForm.goals}
                             maxLength={250}
@@ -4874,6 +4909,7 @@ const WorkoutProgramManagement = () => {
                     <Tooltip>
                       <TooltipTrigger asChild>
                         <Textarea
+                          ref={descriptionRef}
                           id="description"
                           value={programForm.description}
                           maxLength={250}
@@ -4903,18 +4939,20 @@ const WorkoutProgramManagement = () => {
                   <div className="space-y-2">
                     <Label
                       htmlFor="duration"
+                      required
                       className={
                         submittedPrograms && !programForm.durationPerSession
                           ? "text-red-500"
                           : ""
                       }
                     >
-                      Duration Per Session*
+                      Duration Per Session
                     </Label>
                     <TooltipProvider>
                       <Tooltip>
                         <TooltipTrigger asChild>
                           <Input
+                            ref={durationRef}
                             id="duration"
                             maxLength={20}
                             value={programForm.durationPerSession}
@@ -4943,18 +4981,20 @@ const WorkoutProgramManagement = () => {
                   <div className="space-y-2">
                     <Label
                       htmlFor="sessions"
+                      required
                       className={
                         submittedPrograms && !programForm.sessionsPerWeek
                           ? "text-red-500"
                           : ""
                       }
                     >
-                      Sessions Per Week*
+                      Sessions Per Week
                     </Label>
                     <TooltipProvider>
                       <Tooltip>
                         <TooltipTrigger asChild>
                           <Input
+                            ref={sessionsRef}
                             id="sessions"
                             type="text"
                             inputMode="numeric"
@@ -4987,18 +5027,20 @@ const WorkoutProgramManagement = () => {
                   <div className="space-y-2">
                     <Label
                       htmlFor="workingHours"
+                      required
                       className={
                         submittedPrograms && !programForm.workingHours
                           ? "text-red-500"
                           : ""
                       }
                     >
-                      Working Hours*
+                      Working Hours
                     </Label>
                     <TooltipProvider>
                       <Tooltip>
                         <TooltipTrigger asChild>
                           <Input
+                            ref={workingHoursRef}
                             id="workingHours"
                             maxLength={50}
                             value={programForm.workingHours}
@@ -5035,6 +5077,7 @@ const WorkoutProgramManagement = () => {
                 <div className="space-y-2">
                   <Label
                     htmlFor="faculty"
+                    required
                     className={
                       submittedPrograms &&
                         programForm.assignedFaculty.length === 0
@@ -5042,13 +5085,14 @@ const WorkoutProgramManagement = () => {
                         : ""
                     }
                   >
-                    Assigned Faculty*
+                    Assigned Faculty
                   </Label>
                   <TooltipProvider>
                     <Tooltip>
                       <TooltipTrigger asChild>
                         <div>
                           <ReactMultiSelect
+                            ref={facultyRef}
                             options={trainerOptions}
                             value={programForm.assignedFaculty}
                             placeholder="Select assigned faculty"
@@ -5058,6 +5102,8 @@ const WorkoutProgramManagement = () => {
                                 assignedFaculty: selected,
                               })
                             }
+                            tabIndex={0}
+                            onKeyDown={handleFacultyKeyDown}
                           />
                         </div>
                       </TooltipTrigger>
@@ -5082,7 +5128,7 @@ const WorkoutProgramManagement = () => {
                       : "text-gray-700"
                       }`}
                   >
-                    Exercises*
+                    Exercises<span className="text-red-500">*</span>
                   </h4>
                 </div>
 
@@ -5094,6 +5140,7 @@ const WorkoutProgramManagement = () => {
                           <Tooltip>
                             <TooltipTrigger asChild>
                               <Input
+                                id={`exercise-name-${index}`}
                                 placeholder="Exercise name"
                                 value={exercise.name}
                                 maxLength={100}
@@ -5310,6 +5357,7 @@ const WorkoutProgramManagement = () => {
                     <Tooltip>
                       <TooltipTrigger asChild>
                         <Input
+                          ref={packageIdRef}
                           id="packageId"
                           value={packageForm.id}
                           readOnly={
@@ -5362,16 +5410,18 @@ const WorkoutProgramManagement = () => {
               <div className="space-y-2">
                 <Label
                   htmlFor="pkgName"
+                  required
                   className={
                     submittedPackage && !packageForm.name ? "text-red-500" : ""
                   }
                 >
-                  Package Name*
+                  Package Name
                 </Label>
                 <TooltipProvider>
                   <Tooltip>
                     <TooltipTrigger asChild>
                       <Input
+                        ref={packageNameRef}
                         id="pkgName"
                         value={packageForm.name}
                         onChange={(e) =>
@@ -5395,13 +5445,14 @@ const WorkoutProgramManagement = () => {
                 <div className="space-y-2">
                   <Label
                     htmlFor="pkgType"
+                    required
                     className={
                       submittedPackage && !packageForm.packageType
                         ? "text-red-500"
                         : ""
                     }
                   >
-                    Package Type*
+                    Package Type
                   </Label>
                   <TooltipProvider>
                     <Tooltip>
@@ -5431,10 +5482,12 @@ const WorkoutProgramManagement = () => {
                             </SelectContent>
                           </Select> */}
                           <ReactSingleSelect
+                            ref={packageTypeRef}
                             options={packageOptions}
                             value={
                               packageOptions.find(
-                                (option) => option.value === packageForm.packageType
+                                (option) =>
+                                  option.value === packageForm.packageType,
                               ) || null
                             }
                             onChange={(selected) => {
@@ -5444,6 +5497,8 @@ const WorkoutProgramManagement = () => {
                               });
                             }}
                             placeholder="Select Package Type"
+                            tabIndex={0}
+                            onKeyDown={handlePackageTypeKeyDown}
                           />
                         </div>
                       </TooltipTrigger>
@@ -5458,18 +5513,20 @@ const WorkoutProgramManagement = () => {
                 <div className="space-y-2">
                   <Label
                     htmlFor="price"
+                    required
                     className={
                       submittedPackage && !packageForm.price
                         ? "text-red-500"
                         : ""
                     }
                   >
-                    Price*
+                    Price
                   </Label>
                   <TooltipProvider>
                     <Tooltip>
                       <TooltipTrigger asChild>
                         <Input
+                          ref={priceRef}
                           id="price"
                           type="number"
                           min={0}
@@ -5498,6 +5555,7 @@ const WorkoutProgramManagement = () => {
                     <Tooltip>
                       <TooltipTrigger asChild>
                         <Input
+                          ref={discountRef}
                           id="discount"
                           min={0}
                           max={100}
@@ -5521,18 +5579,20 @@ const WorkoutProgramManagement = () => {
                 <div className="space-y-2">
                   <Label
                     htmlFor="pkgdays"
+                    required
                     className={
                       submittedPackage && !packageForm.duration_days
                         ? "text-red-500"
                         : ""
                     }
                   >
-                    Duration Days*
+                    Duration Days
                   </Label>
                   <TooltipProvider>
                     <Tooltip>
                       <TooltipTrigger asChild>
                         <Input
+                          ref={durationDaysRef}
                           id="pkgDays"
                           min={0}
                           max={100}
@@ -5557,6 +5617,7 @@ const WorkoutProgramManagement = () => {
 
               <div className="space-y-4">
                 <Label
+                  required
                   className={
                     submittedPackage &&
                       packageForm.associatedPrograms.some((p) => !p.programId)
@@ -5564,7 +5625,7 @@ const WorkoutProgramManagement = () => {
                       : ""
                   }
                 >
-                  Associated Program*
+                  Associated Program
                 </Label>
 
                 {packageForm.associatedPrograms.map((program, index) => (
@@ -5575,16 +5636,24 @@ const WorkoutProgramManagement = () => {
                           <TooltipTrigger asChild>
                             <div>
                               <ReactSingleSelect
+                                ref={
+                                  index === 0 ? associatedProgramRef : undefined
+                                }
                                 options={programOptions}
                                 value={
                                   programOptions.find(
-                                    (option) => option.value === program.programId
+                                    (option) =>
+                                      option.value === program.programId,
                                   ) || null
                                 }
                                 onChange={(selected) =>
                                   updatePrograms(index, selected?.value || "")
                                 }
                                 placeholder="Select Associated Program"
+                                tabIndex={0}
+                                onKeyDown={(e) =>
+                                  handleAssociatedProgramKeyDown(e, index)
+                                }
                               />
                             </div>
                           </TooltipTrigger>
@@ -5597,6 +5666,7 @@ const WorkoutProgramManagement = () => {
                     </div>
 
                     <Button
+                      id={`add-program-${index}`}
                       type="button"
                       variant="ghost"
                       size="icon"
@@ -5607,6 +5677,7 @@ const WorkoutProgramManagement = () => {
                     </Button>
 
                     <Button
+                      id={`remove-program-${index}`}
                       type="button"
                       variant="ghost"
                       size="icon"
@@ -5625,6 +5696,7 @@ const WorkoutProgramManagement = () => {
                   <Tooltip>
                     <TooltipTrigger asChild>
                       <Textarea
+                        ref={featuresRef}
                         id="features"
                         value={packageForm.features}
                         onChange={(e) =>
@@ -5742,6 +5814,7 @@ const WorkoutProgramManagement = () => {
                     <Tooltip>
                       <TooltipTrigger asChild>
                         <Input
+                          ref={membershipIdRef}
                           id="membershipId"
                           value={MemberShipForm.MemberShipType_id}
                           readOnly={
@@ -5774,6 +5847,7 @@ const WorkoutProgramManagement = () => {
                               });
                             }
                           }}
+                          tabIndex={0}
                         />
                       </TooltipTrigger>
 
@@ -5795,18 +5869,20 @@ const WorkoutProgramManagement = () => {
               <div className="space-y-2">
                 <Label
                   htmlFor="name"
+                  required
                   className={
                     submittedMemberShips && !MemberShipForm.MemberShipType_Name
                       ? "text-red-500"
                       : ""
                   }
                 >
-                  Membership Type Name*
+                  Membership Type Name
                 </Label>
                 <TooltipProvider>
                   <Tooltip>
                     <TooltipTrigger asChild>
                       <Input
+                        ref={membershipTypeNameRef}
                         id="pkgName"
                         value={MemberShipForm.MemberShipType_Name}
                         maxLength={100}
@@ -5817,6 +5893,7 @@ const WorkoutProgramManagement = () => {
                           })
                         }
                         placeholder="e.g., Weight Loss - Monthly"
+                        tabIndex={0}
                       />
                     </TooltipTrigger>
 
@@ -5829,6 +5906,7 @@ const WorkoutProgramManagement = () => {
 
               <div className="space-y-4">
                 <Label
+                  required
                   className={
                     submittedMemberShips &&
                       MemberShipForm.PackageIDName.some((p) => !p.package_ID)
@@ -5836,7 +5914,7 @@ const WorkoutProgramManagement = () => {
                       : ""
                   }
                 >
-                  Package ID - Name*
+                  Package ID - Name
                 </Label>
 
                 {MemberShipForm.PackageIDName.map((program, index) => (
@@ -5847,16 +5925,22 @@ const WorkoutProgramManagement = () => {
                           <TooltipTrigger asChild>
                             <div>
                               <ReactSingleSelect
+                                ref={index === 0 ? packageIdNameRef : undefined}
                                 options={packagesOptions}
                                 value={
                                   packagesOptions.find(
-                                    (option) => option.value === program.package_ID
+                                    (option) =>
+                                      option.value === program.package_ID,
                                   ) || null
                                 }
                                 onChange={(selected) =>
                                   updatePackages(index, selected?.value || "")
                                 }
                                 placeholder="Select Package ID - Name"
+                                tabIndex={0}
+                                onKeyDown={(e) =>
+                                  handlePackageIDNameKeyDown(e, index)
+                                }
                               />
                             </div>
                           </TooltipTrigger>
@@ -5869,6 +5953,7 @@ const WorkoutProgramManagement = () => {
                     </div>
 
                     <Button
+                      id={`add-package-${index}`}
                       type="button"
                       variant="ghost"
                       size="icon"
@@ -5879,6 +5964,7 @@ const WorkoutProgramManagement = () => {
                     </Button>
 
                     <Button
+                      id={`remove-package-${index}`}
                       type="button"
                       variant="ghost"
                       size="icon"

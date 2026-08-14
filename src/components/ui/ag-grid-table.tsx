@@ -15,14 +15,6 @@ import '../../App.css';
 
 ModuleRegistry.registerModules([AllCommunityModule]);
 
-// interface AgGridTableProps {
-//   rowData: any[];
-//   columnDefs: ColDef[];
-//   loading?: boolean;
-//   height?: string;
-//   gridOptions?: GridOptions;
-//   onGridReady?: (params: GridReadyEvent) => void;
-// }
 interface AgGridTableProps {
   rowData: any[];
   columnDefs: ColDef[];
@@ -35,14 +27,6 @@ interface AgGridTableProps {
   paginationPageSizeSelector?: boolean;
 }
 
-// export default function AgGridTable({
-//   rowData,
-//   columnDefs,
-//   loading = false,
-//   height = "450px",
-//   gridOptions,
-//   onGridReady,
-// }: AgGridTableProps) {
 export default function AgGridTable({
   rowData,
   columnDefs,
