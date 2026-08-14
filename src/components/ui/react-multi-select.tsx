@@ -1,4 +1,4 @@
-import React from "react";
+import React, { forwardRef } from "react";
 import Select, { StylesConfig } from "react-select";
 
 export interface MultiSelectOption {
@@ -12,6 +12,8 @@ interface ReactMultiSelectProps {
   onChange: (value: MultiSelectOption[]) => void;
   placeholder?: string;
   isDisabled?: boolean;
+  tabIndex?: number;
+  onKeyDown?: (event: React.KeyboardEvent) => void;
 }
 
 // Shadcn design ku match aagura mathiri react-select custom styles
@@ -129,26 +131,40 @@ const customStyles: StylesConfig<MultiSelectOption, true> = {
   }),
 };
 
-const ReactMultiSelect: React.FC<ReactMultiSelectProps> = ({
-  options,
-  value,
-  onChange,
-  placeholder,
-  isDisabled,
-}) => {
-  return (
-    <Select
-      isMulti
-      options={options}
-      value={value}
-      onChange={(selected) => onChange(selected as MultiSelectOption[])}
-      styles={customStyles}
-      placeholder={placeholder}
-      isDisabled={isDisabled}
-      closeMenuOnSelect={false}
-      hideSelectedOptions={false}
-    />
-  );
-};
+const ReactMultiSelect = forwardRef<any, ReactMultiSelectProps>(
+  (
+    {
+      options,
+      value,
+      onChange,
+      placeholder,
+      isDisabled,
+      tabIndex = 0,
+      onKeyDown,
+    },
+    ref
+  ) => {
+    return (
+      <Select
+        ref={ref}
+        isMulti
+        options={options}
+        value={value}
+        onChange={(selected) =>
+          onChange(selected as MultiSelectOption[])
+        }
+        styles={customStyles}
+        placeholder={placeholder}
+        isDisabled={isDisabled}
+        closeMenuOnSelect={false}
+        hideSelectedOptions={false}
+        tabIndex={tabIndex}
+        onKeyDown={onKeyDown}
+      />
+    );
+  }
+);
+
+ReactMultiSelect.displayName = "ReactMultiSelect";
 
 export default ReactMultiSelect;
