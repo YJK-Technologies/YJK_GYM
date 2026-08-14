@@ -2214,13 +2214,14 @@ const DietPlanManagement = () => {
                 <div className="space-y-2">
                   <Label
                     htmlFor="name"
+                    required
                     className={
                       submittedDietPlans && !DietPlanForm.Diet_Name
                         ? "text-red-500"
                         : ""
                     }
                   >
-                    Plan Name*
+                    Plan Name
                   </Label>
                   <TooltipProvider>
                     <Tooltip>
@@ -2249,13 +2250,14 @@ const DietPlanManagement = () => {
                 <div className="space-y-2">
                   <Label
                     htmlFor="name"
+                    required
                     className={
                       submittedDietPlans && !DietPlanForm.Category
                         ? "text-red-500"
                         : ""
                     }
                   >
-                    Category*
+                    Category
                   </Label>
                   <TooltipProvider>
                     <Tooltip>
@@ -2312,13 +2314,14 @@ const DietPlanManagement = () => {
               <div className="space-y-2">
                 <Label
                   htmlFor="name"
+                  required
                   className={
                     submittedDietPlans && !DietPlanForm.Goals
                       ? "text-red-500"
                       : ""
                   }
                 >
-                  Goals* (comma-separated)
+                  Goals (comma-separated)
                 </Label>
                 <TooltipProvider>
                   <Tooltip>
@@ -2374,13 +2377,14 @@ const DietPlanManagement = () => {
                 <div className="space-y-2">
                   <Label
                     htmlFor="name"
+                    required
                     className={
                       submittedDietPlans && DietPlanForm.TrainerID.length === 0
                         ? "text-red-500"
                         : ""
                     }
                   >
-                    Trainer ID - Name*
+                    Trainer ID - Name
                   </Label>
                   <TooltipProvider>
                     <Tooltip>
@@ -2426,13 +2430,14 @@ const DietPlanManagement = () => {
                       {/* Essentials Dropdown */}
                       <div className="space-y-2">
                         <Label
+                          required
                           className={
                             submittedDietPlans && !PlanDetails.Essentials
                               ? "text-red-500"
                               : ""
                           }
                         >
-                          Essentials*
+                          Essentials
                         </Label>
                         <TooltipProvider>
                           <Tooltip>
@@ -2467,6 +2472,7 @@ const DietPlanManagement = () => {
                       {/* Daily Calories Target Input */}
                       <div className="space-y-2">
                         <Label
+                          required
                           className={
                             submittedDietPlans &&
                               !PlanDetails.Daily_Calories_Target
@@ -2474,7 +2480,7 @@ const DietPlanManagement = () => {
                               : ""
                           }
                         >
-                          Daily Calories Target*
+                          Daily Calories Target
                         </Label>
 
                         <TooltipProvider>
@@ -2511,13 +2517,14 @@ const DietPlanManagement = () => {
                       {/* Duration Dropdown */}
                       <div className="space-y-2">
                         <Label
+                          required
                           className={
                             submittedDietPlans && !PlanDetails.Duration
                               ? "text-red-500"
                               : ""
                           }
                         >
-                          Duration (Week)*
+                          Duration (Week)
                         </Label>
                         <TooltipProvider>
                           <Tooltip>
@@ -2594,13 +2601,14 @@ const DietPlanManagement = () => {
                     {/* Meal Type */}
                     <div className="space-y-2">
                       <Label
+                        required
                         className={
                           submittedDietPlans && !meal.Meal_Type
                             ? "text-red-500"
                             : ""
                         }
                       >
-                        Meal Type*
+                        Meal Type
                       </Label>
 
                       <TooltipProvider>
@@ -2636,13 +2644,14 @@ const DietPlanManagement = () => {
                     {/* Meal Name */}
                     <div className="space-y-2">
                       <Label
+                        required
                         className={
                           submittedDietPlans && !meal.Meal_Name
                             ? "text-red-500"
                             : ""
                         }
                       >
-                        Meal Name*
+                        Meal Name
                       </Label>
                       <TooltipProvider>
                         <Tooltip>
@@ -2672,13 +2681,14 @@ const DietPlanManagement = () => {
                     {/* Quantity */}
                     <div className="space-y-2">
                       <Label
+                        required
                         className={
                           submittedDietPlans && !meal.Quantity
                             ? "text-red-500"
                             : ""
                         }
                       >
-                        Quantity*
+                        Quantity
                       </Label>
                       <TooltipProvider>
                         <Tooltip>
@@ -2708,13 +2718,14 @@ const DietPlanManagement = () => {
                     {/* Calories */}
                     <div className="space-y-2">
                       <Label
+                        required
                         className={
                           submittedDietPlans && !meal.Calories
                             ? "text-red-500"
                             : ""
                         }
                       >
-                        Calories*
+                        Calories
                       </Label>
                       <TooltipProvider>
                         <Tooltip>
@@ -2744,13 +2755,14 @@ const DietPlanManagement = () => {
                     {/* Protein */}
                     <div className="space-y-2">
                       <Label
+                        required
                         className={
                           submittedDietPlans && !meal.Protein
                             ? "text-red-500"
                             : ""
                         }
                       >
-                        Protein*
+                        Protein
                       </Label>
                       <TooltipProvider>
                         <Tooltip>
@@ -2780,13 +2792,14 @@ const DietPlanManagement = () => {
                     {/* Carbs */}
                     <div className="space-y-2">
                       <Label
+                        required
                         className={
                           submittedDietPlans && !meal.Carbs
                             ? "text-red-500"
                             : ""
                         }
                       >
-                        Carbs*
+                        Carbs
                       </Label>
                       <TooltipProvider>
                         <Tooltip>
@@ -2816,11 +2829,12 @@ const DietPlanManagement = () => {
                     {/* Fats */}
                     <div className="space-y-2">
                       <Label
+                        required
                         className={
                           submittedDietPlans && !meal.Fats ? "text-red-500" : ""
                         }
                       >
-                        Fats*
+                        Fats
                       </Label>
                       <TooltipProvider>
                         <Tooltip>
@@ -2850,13 +2864,14 @@ const DietPlanManagement = () => {
                     {/* Time Slot */}
                     <div className="space-y-2">
                       <Label
+                        required
                         className={
                           submittedDietPlans && !meal.Time_Slot
                             ? "text-red-500"
                             : ""
                         }
                       >
-                        Time Slot*
+                        Time Slot
                       </Label>
                       <TooltipProvider>
                         <Tooltip>

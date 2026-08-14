@@ -1364,11 +1364,12 @@ const CouponManagement = () => {
               <div className="space-y-2">
                 <Label
                   htmlFor="code"
+                  required
                   className={
                     submittedCoupon && !formData.code ? "text-red-500" : ""
                   }
                 >
-                  Coupon Code*
+                  Coupon Code
                 </Label>
                 <TooltipProvider>
                   <Tooltip>
@@ -1406,13 +1407,14 @@ const CouponManagement = () => {
               <div className="space-y-2">
                 <Label
                   htmlFor="discountType"
+                  required
                   className={
                     submittedCoupon && !formData.discountType
                       ? "text-red-500"
                       : ""
                   }
                 >
-                  Discount Type*
+                  Discount Type
                 </Label>
                 <TooltipProvider>
                   <Tooltip>
@@ -1473,13 +1475,14 @@ const CouponManagement = () => {
               <div className="space-y-2">
                 <Label
                   htmlFor="discountValue"
+                  required
                   className={
                     submittedCoupon && !formData.discountValue
                       ? "text-red-500"
                       : ""
                   }
                 >
-                  Discount Value*{" "}
+                  Discount Value
                   {/*({formData.discountType === 'percentage' ? '%' : 'BHD'})*/}
                 </Label>
                 <TooltipProvider>
@@ -1542,11 +1545,12 @@ const CouponManagement = () => {
               <div className="space-y-2">
                 <Label
                   htmlFor="validFrom"
+                  required
                   className={
                     submittedCoupon && !formData.validFrom ? "text-red-500" : ""
                   }
                 >
-                  Valid From*
+                  Valid From
                 </Label>
                 <TooltipProvider>
                   <Tooltip>
@@ -1573,13 +1577,14 @@ const CouponManagement = () => {
               <div className="space-y-2">
                 <Label
                   htmlFor="validUntil"
+                  required
                   className={
                     submittedCoupon && !formData.validUntil
                       ? "text-red-500"
                       : ""
                   }
                 >
-                  Valid Until*
+                  Valid Until
                 </Label>
                 <TooltipProvider>
                   <Tooltip>
@@ -1609,11 +1614,12 @@ const CouponManagement = () => {
               <div className="space-y-2">
                 <Label
                   htmlFor="maxUses"
+                  required
                   className={
                     submittedCoupon && !formData.maxUses ? "text-red-500" : ""
                   }
                 >
-                  Maximum Uses*
+                  Maximum Uses
                 </Label>
                 <TooltipProvider>
                   <Tooltip>
@@ -1644,13 +1650,14 @@ const CouponManagement = () => {
               <div className="space-y-2">
                 <Label
                   htmlFor="packages"
+                  required
                   className={
                     submittedCoupon && formData.applicablePackages.length === 0
                       ? "text-red-500"
                       : ""
                   }
                 >
-                  Applicable Packages*
+                  Applicable Packages
                 </Label>
 
                 <TooltipProvider>

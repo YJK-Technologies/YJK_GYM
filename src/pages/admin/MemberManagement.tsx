@@ -2034,13 +2034,14 @@ const MemberManagement = () => {
                   <div className="space-y-2">
                     <Label
                       htmlFor="cpr"
+                      required
                       className={
                         submittedMember && !formData.Identity_No
                           ? "text-red-500"
                           : ""
                       }
                     >
-                      Identity No*
+                      Identity No
                     </Label>
                     <TooltipProvider>
                       <Tooltip>
@@ -2070,13 +2071,14 @@ const MemberManagement = () => {
                   <div className="space-y-2">
                     <Label
                       htmlFor="fullName"
+                      required
                       className={
                         submittedMember && !formData.Full_name
                           ? "text-red-500"
                           : ""
                       }
                     >
-                      Full Name*
+                      Full Name
                     </Label>
                     <TooltipProvider>
                       <Tooltip>
@@ -2104,11 +2106,12 @@ const MemberManagement = () => {
 
                   <div className="space-y-2">
                     <Label
+                      required
                       className={
                         submittedMember && !formData.DOB ? "text-red-500" : ""
                       }
                     >
-                      Date of Birth*
+                      Date of Birth
                     </Label>
                     <TooltipProvider>
                       <Tooltip>
@@ -2135,13 +2138,14 @@ const MemberManagement = () => {
                   <div className="space-y-2">
                     <Label
                       htmlFor="gender"
+                      required
                       className={
                         submittedMember && !formData.Gender
                           ? "text-red-500"
                           : ""
                       }
                     >
-                      Gender*
+                      Gender
                     </Label>
                     <TooltipProvider>
                       <Tooltip>
@@ -2182,13 +2186,14 @@ const MemberManagement = () => {
                   <div className="space-y-2">
                     <Label
                       htmlFor="bahrainMobile"
+                      required
                       className={
                         submittedMember && !formData.Mobile
                           ? "text-red-500"
                           : ""
                       }
                     >
-                      Mobile*
+                      Mobile
                     </Label>
                     <TooltipProvider>
                       <Tooltip>
@@ -2239,11 +2244,12 @@ const MemberManagement = () => {
                   <div className="space-y-2 md:col-span-2">
                     <Label
                       htmlFor="email"
+                      required
                       className={
                         submittedMember && !formData.Email ? "text-red-500" : ""
                       }
                     >
-                      Email Address*
+                      Email Address
                     </Label>
                     <TooltipProvider>
                       <Tooltip>
@@ -2273,13 +2279,14 @@ const MemberManagement = () => {
                   <div className="space-y-2">
                     <Label
                       htmlFor="password"
+                      required
                       className={
                         submittedMember && !formData.Password
                           ? "text-red-500"
                           : ""
                       }
                     >
-                      Password*
+                      Password
                     </Label>
                     <TooltipProvider>
                       <Tooltip>
@@ -2305,9 +2312,9 @@ const MemberManagement = () => {
                               className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700"
                             >
                               {showPassword ? (
-                                <EyeOff className="h-4 w-4" />
+                                <EyeOff className="h-4 w-4 text-black" />
                               ) : (
-                                <Eye className="h-4 w-4" />
+                                <Eye className="h-4 w-4 text-black" />
                               )}
                             </button>
                           </div>
@@ -2355,13 +2362,14 @@ const MemberManagement = () => {
                   <div className="space-y-2">
                     <Label
                       htmlFor="emergencyContactName"
+                      required
                       className={
                         submittedMember && !formData.Emergency_contact_name
                           ? "text-red-500"
                           : ""
                       }
                     >
-                      Contact Name*
+                      Contact Name
                     </Label>
                     <TooltipProvider>
                       <Tooltip>
@@ -2389,13 +2397,14 @@ const MemberManagement = () => {
                   <div className="space-y-2">
                     <Label
                       htmlFor="emergencyContactPhone"
+                      required
                       className={
                         submittedMember && !formData.Emergency_contact_phone
                           ? "text-red-500"
                           : ""
                       }
                     >
-                      Contact Phone*
+                      Contact Phone
                     </Label>
                     <TooltipProvider>
                       <Tooltip>
@@ -2425,13 +2434,14 @@ const MemberManagement = () => {
                   <div className="space-y-2">
                     <Label
                       htmlFor="emergencyContactRelation"
+                      required
                       className={
                         submittedMember && !formData.Emergency_contact_relation
                           ? "text-red-500"
                           : ""
                       }
                     >
-                      Relationship*
+                      Relationship
                     </Label>
                     <TooltipProvider>
                       <Tooltip>
@@ -2472,13 +2482,14 @@ const MemberManagement = () => {
                   <div className="space-y-2">
                     <Label
                       htmlFor="membershipType"
+                      required
                       className={
                         submittedMember && !formData.Membership_type
                           ? "text-red-500"
                           : ""
                       }
                     >
-                      Membership Type*
+                      Membership Type
                     </Label>
                     <TooltipProvider>
                       <Tooltip>
@@ -2551,13 +2562,14 @@ const MemberManagement = () => {
 
                   <div className="space-y-2">
                     <Label
+                      required
                       className={
                         submittedMember && !formData.Joined_date
                           ? "text-red-500"
                           : ""
                       }
                     >
-                      Joined Date*
+                      Joined Date
                     </Label>
                     <TooltipProvider>
                       <Tooltip>
@@ -2586,13 +2598,14 @@ const MemberManagement = () => {
 
                   <div className="space-y-2">
                     <Label
+                      required
                       className={
                         submittedMember && !formData.Plan_expiry_date
                           ? "text-red-500"
                           : ""
                       }
                     >
-                      Plan Expiry Date*
+                      Plan Expiry Date
                     </Label>
                     <TooltipProvider>
                       <Tooltip>
@@ -2975,3 +2988,4 @@ const MemberManagement = () => {
 };
 
 export default MemberManagement;
+    

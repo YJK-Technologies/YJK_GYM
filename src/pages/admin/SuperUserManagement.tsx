@@ -6413,13 +6413,14 @@ const WorkoutProgramManagement = () => {
                   <div className="space-y-2">
                     <Label
                       htmlFor="name"
+                      required
                       className={
                         submittedCompany && !companyForm.company_no
                           ? "text-red-500"
                           : ""
                       }
                     >
-                      Company No*
+                      Company No
                     </Label>
                     <TooltipProvider>
                       <Tooltip>
@@ -6453,13 +6454,14 @@ const WorkoutProgramManagement = () => {
                   <div className="space-y-2">
                     <Label
                       htmlFor="name"
+                      required
                       className={
                         submittedCompany && !companyForm.company_name
                           ? "text-red-500"
                           : ""
                       }
                     >
-                      Company Name*
+                      Company Name
                     </Label>
                     <TooltipProvider>
                       <Tooltip>
@@ -6512,13 +6514,14 @@ const WorkoutProgramManagement = () => {
                   <div className="space-y-2">
                     <Label
                       htmlFor="name"
+                      required
                       className={
                         submittedCompany && !companyForm.address1
                           ? "text-red-500"
                           : ""
                       }
                     >
-                      Address 1*
+                      Address 1
                     </Label>
                     <TooltipProvider>
                       <Tooltip>
@@ -6546,13 +6549,14 @@ const WorkoutProgramManagement = () => {
                   <div className="space-y-2">
                     <Label
                       htmlFor="name"
+                      required
                       className={
                         submittedCompany && !companyForm.address2
                           ? "text-red-500"
                           : ""
                       }
                     >
-                      Address 2*
+                      Address 2
                     </Label>
                     <TooltipProvider>
                       <Tooltip>
@@ -6605,13 +6609,14 @@ const WorkoutProgramManagement = () => {
                   <div className="space-y-2">
                     <Label
                       htmlFor="city"
+                      required
                       className={
                         submittedCompany && !companyForm.city
                           ? "text-red-500"
                           : ""
                       }
                     >
-                      City*
+                      City
                     </Label>
                     <TooltipProvider>
                       <Tooltip>
@@ -6645,13 +6650,14 @@ const WorkoutProgramManagement = () => {
                   <div className="space-y-2">
                     <Label
                       htmlFor="state"
+                      required
                       className={
                         submittedCompany && !companyForm.state
                           ? "text-red-500"
                           : ""
                       }
                     >
-                      State*
+                      State
                     </Label>
                     <TooltipProvider>
                       <Tooltip>
@@ -6685,13 +6691,14 @@ const WorkoutProgramManagement = () => {
                   <div className="space-y-2">
                     <Label
                       htmlFor="name"
+                      required
                       className={
                         submittedCompany && !companyForm.pincode
                           ? "text-red-500"
                           : ""
                       }
                     >
-                      Pin Code*
+                      Pin Code
                     </Label>
                     <TooltipProvider>
                       <Tooltip>
@@ -6721,13 +6728,14 @@ const WorkoutProgramManagement = () => {
                   <div className="space-y-2">
                     <Label
                       htmlFor="country"
+                      required
                       className={
                         submittedCompany && !companyForm.country
                           ? "text-red-500"
                           : ""
                       }
                     >
-                      Country*
+                      Country
                     </Label>
                     <TooltipProvider>
                       <Tooltip>
@@ -6761,13 +6769,14 @@ const WorkoutProgramManagement = () => {
                   <div className="space-y-2">
                     <Label
                       htmlFor="name"
+                      required
                       className={
                         submittedCompany && !companyForm.email_id
                           ? "text-red-500"
                           : ""
                       }
                     >
-                      Email*
+                      Email
                     </Label>
                     <TooltipProvider>
                       <Tooltip>
@@ -6795,13 +6804,14 @@ const WorkoutProgramManagement = () => {
                   <div className="space-y-2">
                     <Label
                       htmlFor="status"
+                      required
                       className={
                         submittedCompany && !companyForm.status
                           ? "text-red-500"
                           : ""
                       }
                     >
-                      Status*
+                      Status
                     </Label>
                     <TooltipProvider>
                       <Tooltip>
@@ -6888,13 +6898,14 @@ const WorkoutProgramManagement = () => {
                   <div className="space-y-2">
                     <Label
                       htmlFor="name"
+                      required
                       className={
                         submittedCompany && !companyForm.contact_no
                           ? "text-red-500"
                           : ""
                       }
                     >
-                      Contact No*
+                      Contact No
                     </Label>
                     <TooltipProvider>
                       <Tooltip>
@@ -6974,13 +6985,14 @@ const WorkoutProgramManagement = () => {
                   <div className="space-y-2">
                     <Label
                       htmlFor="name"
+                      required
                       className={
                         submittedCompany && !companyForm.location_no
                           ? "text-red-500"
                           : ""
                       }
                     >
-                      Location No*
+                      Location No
                     </Label>
                     <TooltipProvider>
                       <Tooltip>
@@ -7092,13 +7104,14 @@ const WorkoutProgramManagement = () => {
                   <div className="space-y-2">
                     <Label
                       htmlFor="user"
+                      required
                       className={
                         submittedCompanyMapping && !companyMappingForm.user_code
                           ? "text-red-500"
                           : ""
                       }
                     >
-                      User Code*
+                      User Code
                     </Label>
                     <TooltipProvider>
                       <Tooltip>
@@ -7132,6 +7145,7 @@ const WorkoutProgramManagement = () => {
                   <div className="space-y-2">
                     <Label
                       htmlFor="company"
+                      required
                       className={
                         submittedCompanyMapping &&
                           !companyMappingForm.company_no
@@ -7139,7 +7153,7 @@ const WorkoutProgramManagement = () => {
                           : ""
                       }
                     >
-                      Company Code*
+                      Company Code
                     </Label>
                     <TooltipProvider>
                       <Tooltip>
@@ -7173,6 +7187,7 @@ const WorkoutProgramManagement = () => {
                   <div className="space-y-2">
                     <Label
                       htmlFor="location"
+                      required
                       className={
                         submittedCompanyMapping &&
                           !companyMappingForm.location_no
@@ -7180,7 +7195,7 @@ const WorkoutProgramManagement = () => {
                           : ""
                       }
                     >
-                      Location No*
+                      Location No
                     </Label>
                     <TooltipProvider>
                       <Tooltip>
@@ -7214,13 +7229,14 @@ const WorkoutProgramManagement = () => {
                   <div className="space-y-2">
                     <Label
                       htmlFor="status"
+                      required
                       className={
                         submittedCompanyMapping && !companyMappingForm.status
                           ? "text-red-500"
                           : ""
                       }
                     >
-                      Status*
+                      Status
                     </Label>
                     <TooltipProvider>
                       <Tooltip>
@@ -7354,13 +7370,14 @@ const WorkoutProgramManagement = () => {
                   <div className="space-y-2">
                     <Label
                       htmlFor="name"
+                      required
                       className={
                         submittedLocation && !locationForm.location_no
                           ? "text-red-500"
                           : ""
                       }
                     >
-                      Location No*
+                      Location No
                     </Label>
                     <TooltipProvider>
                       <Tooltip>
@@ -7394,13 +7411,14 @@ const WorkoutProgramManagement = () => {
                   <div className="space-y-2">
                     <Label
                       htmlFor="name"
+                      required
                       className={
                         submittedLocation && !locationForm.location_name
                           ? "text-red-500"
                           : ""
                       }
                     >
-                      Location Name*
+                      Location Name
                     </Label>
                     <TooltipProvider>
                       <Tooltip>
@@ -7428,13 +7446,14 @@ const WorkoutProgramManagement = () => {
                   <div className="space-y-2">
                     <Label
                       htmlFor="name"
+                      required
                       className={
                         submittedLocation && !locationForm.short_name
                           ? "text-red-500"
                           : ""
                       }
                     >
-                      Short Name*
+                      Short Name
                     </Label>
                     <TooltipProvider>
                       <Tooltip>
@@ -7462,13 +7481,14 @@ const WorkoutProgramManagement = () => {
                   <div className="space-y-2">
                     <Label
                       htmlFor="name"
+                      required
                       className={
                         submittedLocation && !locationForm.address1
                           ? "text-red-500"
                           : ""
                       }
                     >
-                      Address 1*
+                      Address 1
                     </Label>
                     <TooltipProvider>
                       <Tooltip>
@@ -7496,13 +7516,14 @@ const WorkoutProgramManagement = () => {
                   <div className="space-y-2">
                     <Label
                       htmlFor="name"
+                      required
                       className={
                         submittedLocation && !locationForm.address2
                           ? "text-red-500"
                           : ""
                       }
                     >
-                      Address 2*
+                      Address 2
                     </Label>
                     <TooltipProvider>
                       <Tooltip>
@@ -7554,13 +7575,14 @@ const WorkoutProgramManagement = () => {
                   <div className="space-y-2">
                     <Label
                       htmlFor="city"
+                      required
                       className={
                         submittedLocation && !locationForm.city
                           ? "text-red-500"
                           : ""
                       }
                     >
-                      City*
+                      City
                     </Label>
                     <TooltipProvider>
                       <Tooltip>
@@ -7594,13 +7616,14 @@ const WorkoutProgramManagement = () => {
                   <div className="space-y-2">
                     <Label
                       htmlFor="state"
+                      required
                       className={
                         submittedLocation && !locationForm.state
                           ? "text-red-500"
                           : ""
                       }
                     >
-                      State*
+                      State
                     </Label>
                     <TooltipProvider>
                       <Tooltip>
@@ -7634,13 +7657,14 @@ const WorkoutProgramManagement = () => {
                   <div className="space-y-2">
                     <Label
                       htmlFor="name"
+                      required
                       className={
                         submittedLocation && !locationForm.pincode
                           ? "text-red-500"
                           : ""
                       }
                     >
-                      Pin Code*
+                      Pin Code
                     </Label>
                     <TooltipProvider>
                       <Tooltip>
@@ -7670,13 +7694,14 @@ const WorkoutProgramManagement = () => {
                   <div className="space-y-2">
                     <Label
                       htmlFor="country"
+                      required
                       className={
                         submittedLocation && !locationForm.country
                           ? "text-red-500"
                           : ""
                       }
                     >
-                      Country*
+                      Country
                     </Label>
                     <TooltipProvider>
                       <Tooltip>
@@ -7710,13 +7735,14 @@ const WorkoutProgramManagement = () => {
                   <div className="space-y-2">
                     <Label
                       htmlFor="name"
+                      required
                       className={
                         submittedLocation && !locationForm.email_id
                           ? "text-red-500"
                           : ""
                       }
                     >
-                      Email*
+                      Email
                     </Label>
                     <TooltipProvider>
                       <Tooltip>
@@ -7745,13 +7771,14 @@ const WorkoutProgramManagement = () => {
                   <div className="space-y-2">
                     <Label
                       htmlFor="status"
+                      required
                       className={
                         submittedLocation && !locationForm.status
                           ? "text-red-500"
                           : ""
                       }
                     >
-                      Status*
+                      Status
                     </Label>
                     <TooltipProvider>
                       <Tooltip>
@@ -7785,13 +7812,14 @@ const WorkoutProgramManagement = () => {
                   <div className="space-y-2">
                     <Label
                       htmlFor="name"
+                      required
                       className={
                         submittedLocation && !locationForm.contact_no
                           ? "text-red-500"
                           : ""
                       }
                     >
-                      Contact No*
+                      Contact No
                     </Label>
                     <TooltipProvider>
                       <Tooltip>
@@ -7890,11 +7918,12 @@ const WorkoutProgramManagement = () => {
                   <div className="space-y-2">
                     <Label
                       htmlFor="name"
+                      required
                       className={
                         submittedRole && !roleForm.role_id ? "text-red-500" : ""
                       }
                     >
-                      Role ID*
+                      Role ID
                     </Label>
                     <TooltipProvider>
                       <Tooltip>
@@ -7926,13 +7955,14 @@ const WorkoutProgramManagement = () => {
                   <div className="space-y-2">
                     <Label
                       htmlFor="name"
+                      required
                       className={
                         submittedRole && !roleForm.role_name
                           ? "text-red-500"
                           : ""
                       }
                     >
-                      Role Name*
+                      Role Name
                     </Label>
                     <TooltipProvider>
                       <Tooltip>
@@ -8060,13 +8090,14 @@ const WorkoutProgramManagement = () => {
                   <div className="space-y-2">
                     <Label
                       htmlFor="user"
+                      required
                       className={
                         submittedRoleMapping && !roleMappingForm.user_code
                           ? "text-red-500"
                           : ""
                       }
                     >
-                      User Code*
+                      User Code
                     </Label>
                     <TooltipProvider>
                       <Tooltip>
@@ -8100,13 +8131,14 @@ const WorkoutProgramManagement = () => {
                   <div className="space-y-2">
                     <Label
                       htmlFor="role"
+                      required
                       className={
                         submittedRoleMapping && !roleMappingForm.role_id
                           ? "text-red-500"
                           : ""
                       }
                     >
-                      Role ID*
+                      Role ID
                     </Label>
                     <TooltipProvider>
                       <Tooltip>
@@ -8211,13 +8243,14 @@ const WorkoutProgramManagement = () => {
                   <div className="space-y-2">
                     <Label
                       htmlFor="role"
+                      required
                       className={
                         submittedRoleRights && !roleRightsForm.role_id
                           ? "text-red-500"
                           : ""
                       }
                     >
-                      Role ID*
+                      Role ID
                     </Label>
                     <TooltipProvider>
                       <Tooltip>
@@ -8251,13 +8284,14 @@ const WorkoutProgramManagement = () => {
                   <div className="space-y-2">
                     <Label
                       htmlFor="screen"
+                      required
                       className={
                         submittedRoleRights && !roleRightsForm.screen_type
                           ? "text-red-500"
                           : ""
                       }
                     >
-                      Screen Type*
+                      Screen Type
                     </Label>
                     <TooltipProvider>
                       <Tooltip>
@@ -8291,13 +8325,14 @@ const WorkoutProgramManagement = () => {
                   <div className="space-y-2">
                     <Label
                       htmlFor="permission"
+                      required
                       className={
                         submittedRoleRights && !roleRightsForm.permission_type
                           ? "text-red-500"
                           : ""
                       }
                     >
-                      Permission Type*
+                      Permission Type
                     </Label>
                     <TooltipProvider>
                       <Tooltip>
@@ -8392,13 +8427,14 @@ const WorkoutProgramManagement = () => {
                   <div className="space-y-2">
                     <Label
                       htmlFor="name"
+                      required
                       className={
                         submittedUser && !userForm.user_code
                           ? "text-red-500"
                           : ""
                       }
                     >
-                      User Code*
+                      User Code
                     </Label>
                     <TooltipProvider>
                       <Tooltip>
@@ -8428,13 +8464,14 @@ const WorkoutProgramManagement = () => {
                     {/* <Label htmlFor="name">User Name*</Label> */}
                     <Label
                       htmlFor="name"
+                      required
                       className={
                         submittedUser && !userForm.user_name
                           ? "text-red-500"
                           : ""
                       }
                     >
-                      User Name*
+                      User Name
                     </Label>
                     <TooltipProvider>
                       <Tooltip>
@@ -8463,13 +8500,14 @@ const WorkoutProgramManagement = () => {
                     {/* <Label htmlFor="FirstName">First Name*</Label> */}
                     <Label
                       htmlFor="name"
+                      required
                       className={
                         submittedUser && !userForm.first_name
                           ? "text-red-500"
                           : ""
                       }
                     >
-                      First Name*
+                      First Name
                     </Label>
                     <TooltipProvider>
                       <Tooltip>
@@ -8498,13 +8536,14 @@ const WorkoutProgramManagement = () => {
                     {/* <Label htmlFor="LastName">Last Name*</Label> */}
                     <Label
                       htmlFor="name"
+                      required
                       className={
                         submittedUser && !userForm.last_name
                           ? "text-red-500"
                           : ""
                       }
                     >
-                      Last Name*
+                      Last Name
                     </Label>
                     <TooltipProvider>
                       <Tooltip>
@@ -8533,13 +8572,14 @@ const WorkoutProgramManagement = () => {
                     {/* <Label htmlFor="name">Password*</Label> */}
                     <Label
                       htmlFor="name"
+                      required
                       className={
                         submittedUser && !userForm.user_password
                           ? "text-red-500"
                           : ""
                       }
                     >
-                      Password*
+                      Password
                     </Label>
                     <TooltipProvider>
                       <Tooltip>
@@ -8584,13 +8624,14 @@ const WorkoutProgramManagement = () => {
                     {/* <Label htmlFor="UserCode">Status*</Label> */}
                     <Label
                       htmlFor="name"
+                      required
                       className={
                         submittedUser && !userForm.user_status
                           ? "text-red-500"
                           : ""
                       }
                     >
-                      Status*
+                      Status
                     </Label>
                     <TooltipProvider>
                       <Tooltip>
@@ -8624,11 +8665,12 @@ const WorkoutProgramManagement = () => {
                   <div className="space-y-2">
                     <Label
                       htmlFor="name"
+                      required
                       className={
                         submittedUser && !userForm.role_id ? "text-red-500" : ""
                       }
                     >
-                      Role ID*
+                      Role ID
                     </Label>
                     <TooltipProvider>
                       <Tooltip>
@@ -8663,13 +8705,14 @@ const WorkoutProgramManagement = () => {
                     {/* <Label htmlFor="Email">Email*</Label> */}
                     <Label
                       htmlFor="name"
+                      required
                       className={
                         submittedUser && !userForm.email_id
                           ? "text-red-500"
                           : ""
                       }
                     >
-                      Email*
+                      Email
                     </Label>
                     <TooltipProvider>
                       <Tooltip>
@@ -8697,11 +8740,12 @@ const WorkoutProgramManagement = () => {
                   <div className="space-y-2">
                     <Label
                       htmlFor="name"
+                      required
                       className={
                         submittedUser && !userForm.dob ? "text-red-500" : ""
                       }
                     >
-                      DOB*
+                      DOB
                     </Label>
                     <TooltipProvider>
                       <Tooltip>
@@ -8849,6 +8893,7 @@ const WorkoutProgramManagement = () => {
                   <div className="space-y-2">
                     <Label
                       htmlFor="attributeheader_code"
+                      required
                       className={
                         submittedAttributeDet &&
                           !attributeForm.attributeheader_code
@@ -8856,7 +8901,7 @@ const WorkoutProgramManagement = () => {
                           : ""
                       }
                     >
-                      Code*
+                      Code
                     </Label>
                     <div className="flex gap-2">
                       <TooltipProvider>
@@ -8917,6 +8962,7 @@ const WorkoutProgramManagement = () => {
                   <div className="space-y-2">
                     <Label
                       htmlFor="SubCode"
+                      required
                       className={
                         submittedAttributeDet &&
                           !attributeForm.attributedetails_code
@@ -8924,7 +8970,7 @@ const WorkoutProgramManagement = () => {
                           : ""
                       }
                     >
-                      Sub Code*
+                      Sub Code
                     </Label>
                     <TooltipProvider>
                       <Tooltip>
@@ -8953,6 +8999,7 @@ const WorkoutProgramManagement = () => {
                   <div className="space-y-2">
                     <Label
                       htmlFor="DetailsName"
+                      required
                       className={
                         submittedAttributeDet &&
                           !attributeForm.attributedetails_name
@@ -8960,7 +9007,7 @@ const WorkoutProgramManagement = () => {
                           : ""
                       }
                     >
-                      Details Name*
+                      Details Name
                     </Label>
                     <TooltipProvider>
                       <Tooltip>
@@ -9076,6 +9123,7 @@ const WorkoutProgramManagement = () => {
               <div className="space-y-2">
                 <Label
                   htmlFor="code"
+                  required
                   className={
                     submittedAttributeHdr &&
                       !attributeHdrForm.attributeheader_code
@@ -9083,7 +9131,7 @@ const WorkoutProgramManagement = () => {
                       : ""
                   }
                 >
-                  Code*
+                  Code
                 </Label>
                 <TooltipProvider>
                   <Tooltip>
@@ -9111,6 +9159,7 @@ const WorkoutProgramManagement = () => {
               <div className="space-y-2">
                 <Label
                   htmlFor="code"
+                  required
                   className={
                     submittedAttributeHdr &&
                       !attributeHdrForm.attributeheader_name
@@ -9118,7 +9167,7 @@ const WorkoutProgramManagement = () => {
                       : ""
                   }
                 >
-                  Name*
+                  Name
                 </Label>
                 <TooltipProvider>
                   <Tooltip>
@@ -9146,13 +9195,14 @@ const WorkoutProgramManagement = () => {
               <div className="space-y-2">
                 <Label
                   htmlFor="code"
+                  required
                   className={
                     submittedAttributeHdr && !attributeHdrForm.status
                       ? "text-red-500"
                       : ""
                   }
                 >
-                  Status*
+                  Status
                 </Label>
                 <TooltipProvider>
                   <Tooltip>
@@ -9254,13 +9304,14 @@ const WorkoutProgramManagement = () => {
                   <div className="space-y-2">
                     <Label
                       htmlFor="ScreenType"
+                      required
                       className={
                         submittedNumberSeries && !numberSeriesForm.Screen_Type
                           ? "text-red-500"
                           : ""
                       }
                     >
-                      Screen Type*
+                      Screen Type
                     </Label>
                     <TooltipProvider>
                       <Tooltip>
@@ -9295,13 +9346,14 @@ const WorkoutProgramManagement = () => {
                   <div className="space-y-2">
                     <Label
                       htmlFor="StartYear"
+                      required
                       className={
                         submittedNumberSeries && !numberSeriesForm.Start_Year
                           ? "text-red-500"
                           : ""
                       }
                     >
-                      Start Year*
+                      Start Year
                     </Label>
                     <TooltipProvider>
                       <Tooltip>
@@ -9332,13 +9384,14 @@ const WorkoutProgramManagement = () => {
                   <div className="space-y-2">
                     <Label
                       htmlFor="EndYear"
+                      required
                       className={
                         submittedNumberSeries && !numberSeriesForm.End_Year
                           ? "text-red-500"
                           : ""
                       }
                     >
-                      End Year*
+                      End Year
                     </Label>
                     <TooltipProvider>
                       <Tooltip>
@@ -9369,13 +9422,14 @@ const WorkoutProgramManagement = () => {
                   <div className="space-y-2">
                     <Label
                       htmlFor="Start No"
+                      required
                       className={
                         submittedNumberSeries && !numberSeriesForm.Start_No
                           ? "text-red-500"
                           : ""
                       }
                     >
-                      Start No*
+                      Start No
                     </Label>
                     <TooltipProvider>
                       <Tooltip>
@@ -9404,13 +9458,14 @@ const WorkoutProgramManagement = () => {
                   <div className="space-y-2">
                     <Label
                       htmlFor="Running No"
+                      required
                       className={
                         submittedNumberSeries && !numberSeriesForm.Running_No
                           ? "text-red-500"
                           : ""
                       }
                     >
-                      Running No*
+                      Running No
                     </Label>
                     <TooltipProvider>
                       <Tooltip>
@@ -9442,13 +9497,14 @@ const WorkoutProgramManagement = () => {
                   <div className="space-y-2">
                     <Label
                       htmlFor="End No"
+                      required
                       className={
                         submittedNumberSeries && !numberSeriesForm.End_No
                           ? "text-red-500"
                           : ""
                       }
                     >
-                      End No*
+                      End No
                     </Label>
                     <TooltipProvider>
                       <Tooltip>
@@ -9477,13 +9533,14 @@ const WorkoutProgramManagement = () => {
                   <div className="space-y-2">
                     <Label
                       htmlFor="Text"
+                      required
                       className={
                         submittedNumberSeries && !numberSeriesForm.text
                           ? "text-red-500"
                           : ""
                       }
                     >
-                      Text*
+                      Text
                     </Label>
                     <TooltipProvider>
                       <Tooltip>
@@ -9511,13 +9568,14 @@ const WorkoutProgramManagement = () => {
                   <div className="space-y-2">
                     <Label
                       htmlFor="Number Prefix"
+                      required
                       className={
                         submittedNumberSeries && !numberSeriesForm.number_prefix
                           ? "text-red-500"
                           : ""
                       }
                     >
-                      Number Prefix*
+                      Number Prefix
                     </Label>
                     <TooltipProvider>
                       <Tooltip>
@@ -9551,13 +9609,14 @@ const WorkoutProgramManagement = () => {
                   <div className="space-y-2">
                     <Label
                       htmlFor="Bill Format"
+                      required
                       className={
                         submittedNumberSeries && !numberSeriesForm.bill_format
                           ? "text-red-500"
                           : ""
                       }
                     >
-                      Bill Format*
+                      Bill Format
                     </Label>
                     <TooltipProvider>
                       <Tooltip>
@@ -9591,13 +9650,14 @@ const WorkoutProgramManagement = () => {
                   <div className="space-y-2">
                     <Label
                       htmlFor="Status"
+                      required
                       className={
                         submittedNumberSeries && !numberSeriesForm.Status
                           ? "text-red-500"
                           : ""
                       }
                     >
-                      Status*
+                      Status
                     </Label>
                     <TooltipProvider>
                       <Tooltip>

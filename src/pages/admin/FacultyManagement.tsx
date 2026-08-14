@@ -945,13 +945,14 @@ const FacultyManagement = () => {
                       <div className="space-y-2">
                         <Label
                           htmlFor="name"
+                          required
                           className={
                             submittedTrainer && !TrainerForm.FullName
                               ? "text-red-500"
                               : ""
                           }
                         >
-                          Full Name*
+                          Full Name
                         </Label>
                         <TooltipProvider>
                           <Tooltip>
@@ -980,13 +981,14 @@ const FacultyManagement = () => {
                       <div className="space-y-2">
                         <Label
                           htmlFor="name"
+                          required
                           className={
                             submittedTrainer && !TrainerForm.Email
                               ? "text-red-500"
                               : ""
                           }
                         >
-                          Email*
+                          Email
                         </Label>
                         <TooltipProvider>
                           <Tooltip>
@@ -1016,13 +1018,14 @@ const FacultyManagement = () => {
                       <div className="space-y-2">
                         <Label
                           htmlFor="name"
+                          required
                           className={
                             submittedTrainer && !TrainerForm.Password
                               ? "text-red-500"
                               : ""
                           }
                         >
-                          Password*
+                          Password
                         </Label>
                         <TooltipProvider>
                           <Tooltip>
@@ -1070,13 +1073,14 @@ const FacultyManagement = () => {
                         <Input id="email" type="date" placeholder="trainer@ruw.edu.bh" /> */}
                         <Label
                           htmlFor="name"
+                          required
                           className={
                             submittedTrainer && !TrainerForm.DOB
                               ? "text-red-500"
                               : ""
                           }
                         >
-                          DOB*
+                          DOB
                         </Label>
                         <TooltipProvider>
                           <Tooltip>
@@ -1107,13 +1111,14 @@ const FacultyManagement = () => {
                       <div className="space-y-2">
                         <Label
                           htmlFor="name"
+                          required
                           className={
                             submittedTrainer && !TrainerForm.Gender
                               ? "text-red-500"
                               : ""
                           }
                         >
-                          Gender*
+                          Gender
                         </Label>
 
                         <ReactSingleSelect
@@ -1136,13 +1141,14 @@ const FacultyManagement = () => {
                       <div className="space-y-2">
                         <Label
                           htmlFor="name"
+                          required
                           className={
                             submittedTrainer && !TrainerForm.Mobile
                               ? "text-red-500"
                               : ""
                           }
                         >
-                          Phone*
+                          Phone
                         </Label>
                         <TooltipProvider>
                           <Tooltip>
@@ -1168,13 +1174,14 @@ const FacultyManagement = () => {
                       <div className="space-y-2">
                         <Label
                           htmlFor="name"
+                          required
                           className={
                             submittedTrainer && !TrainerForm.Experience
                               ? "text-red-500"
                               : ""
                           }
                         >
-                          Years of Experience*
+                          Years of Experience
                         </Label>
                         <TooltipProvider>
                           <Tooltip>
@@ -1254,13 +1261,14 @@ const FacultyManagement = () => {
                     <div className="space-y-2">
                       <Label
                         htmlFor="name"
+                        required
                         className={
                           submittedTrainer && !TrainerForm.Specializations
                             ? "text-red-500"
                             : ""
                         }
                       >
-                        Specializations* (comma-separated)
+                        Specializations (comma-separated)
                       </Label>
                       <TooltipProvider>
                         <Tooltip>
@@ -1288,13 +1296,14 @@ const FacultyManagement = () => {
                     <div className="space-y-2">
                       <Label
                         htmlFor="name"
+                        required
                         className={
                           submittedTrainer && !TrainerForm.WorkingSchedule
                             ? "text-red-500"
                             : ""
                         }
                       >
-                        Working Schedule*
+                        Working Schedule
                       </Label>
                       <TooltipProvider>
                         <Tooltip>

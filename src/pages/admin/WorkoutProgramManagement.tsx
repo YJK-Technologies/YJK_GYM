@@ -4723,13 +4723,14 @@ const WorkoutProgramManagement = () => {
                   <div className="space-y-2">
                     <Label
                       htmlFor="name"
+                      required
                       className={
                         submittedPrograms && !programForm.name
                           ? "text-red-500"
                           : ""
                       }
                     >
-                      Program Name*
+                      Program Name
                     </Label>
                     <TooltipProvider>
                       <Tooltip>
@@ -4760,13 +4761,14 @@ const WorkoutProgramManagement = () => {
                   <div className="space-y-2">
                     <Label
                       htmlFor="category"
+                      required
                       className={
                         submittedPrograms && !programForm.category
                           ? "text-red-500"
                           : ""
                       }
                     >
-                      Category*
+                      Category
                     </Label>
                     <TooltipProvider>
                       <Tooltip>
@@ -4802,13 +4804,14 @@ const WorkoutProgramManagement = () => {
                   <div className="space-y-2">
                     <Label
                       htmlFor="difficulty"
+                      required
                       className={
                         submittedPrograms && !programForm.difficultyLevel
                           ? "text-red-500"
                           : ""
                       }
                     >
-                      Difficulty Level*
+                      Difficulty Level
                     </Label>
                     <TooltipProvider>
                       <Tooltip>
@@ -4903,13 +4906,14 @@ const WorkoutProgramManagement = () => {
                   <div className="space-y-2">
                     <Label
                       htmlFor="duration"
+                      required
                       className={
                         submittedPrograms && !programForm.durationPerSession
                           ? "text-red-500"
                           : ""
                       }
                     >
-                      Duration Per Session*
+                      Duration Per Session
                     </Label>
                     <TooltipProvider>
                       <Tooltip>
@@ -4943,13 +4947,14 @@ const WorkoutProgramManagement = () => {
                   <div className="space-y-2">
                     <Label
                       htmlFor="sessions"
+                      required
                       className={
                         submittedPrograms && !programForm.sessionsPerWeek
                           ? "text-red-500"
                           : ""
                       }
                     >
-                      Sessions Per Week*
+                      Sessions Per Week
                     </Label>
                     <TooltipProvider>
                       <Tooltip>
@@ -4987,13 +4992,14 @@ const WorkoutProgramManagement = () => {
                   <div className="space-y-2">
                     <Label
                       htmlFor="workingHours"
+                      required
                       className={
                         submittedPrograms && !programForm.workingHours
                           ? "text-red-500"
                           : ""
                       }
                     >
-                      Working Hours*
+                      Working Hours
                     </Label>
                     <TooltipProvider>
                       <Tooltip>
@@ -5035,6 +5041,7 @@ const WorkoutProgramManagement = () => {
                 <div className="space-y-2">
                   <Label
                     htmlFor="faculty"
+                    required
                     className={
                       submittedPrograms &&
                         programForm.assignedFaculty.length === 0
@@ -5042,7 +5049,7 @@ const WorkoutProgramManagement = () => {
                         : ""
                     }
                   >
-                    Assigned Faculty*
+                    Assigned Faculty
                   </Label>
                   <TooltipProvider>
                     <Tooltip>
@@ -5082,7 +5089,7 @@ const WorkoutProgramManagement = () => {
                       : "text-gray-700"
                       }`}
                   >
-                    Exercises*
+                    Exercises<span className="text-red-500">*</span>
                   </h4>
                 </div>
 
@@ -5362,11 +5369,12 @@ const WorkoutProgramManagement = () => {
               <div className="space-y-2">
                 <Label
                   htmlFor="pkgName"
+                  required
                   className={
                     submittedPackage && !packageForm.name ? "text-red-500" : ""
                   }
                 >
-                  Package Name*
+                  Package Name
                 </Label>
                 <TooltipProvider>
                   <Tooltip>
@@ -5395,13 +5403,14 @@ const WorkoutProgramManagement = () => {
                 <div className="space-y-2">
                   <Label
                     htmlFor="pkgType"
+                    required
                     className={
                       submittedPackage && !packageForm.packageType
                         ? "text-red-500"
                         : ""
                     }
                   >
-                    Package Type*
+                    Package Type
                   </Label>
                   <TooltipProvider>
                     <Tooltip>
@@ -5458,13 +5467,14 @@ const WorkoutProgramManagement = () => {
                 <div className="space-y-2">
                   <Label
                     htmlFor="price"
+                    required
                     className={
                       submittedPackage && !packageForm.price
                         ? "text-red-500"
                         : ""
                     }
                   >
-                    Price*
+                    Price
                   </Label>
                   <TooltipProvider>
                     <Tooltip>
@@ -5521,13 +5531,14 @@ const WorkoutProgramManagement = () => {
                 <div className="space-y-2">
                   <Label
                     htmlFor="pkgdays"
+                    required
                     className={
                       submittedPackage && !packageForm.duration_days
                         ? "text-red-500"
                         : ""
                     }
                   >
-                    Duration Days*
+                    Duration Days
                   </Label>
                   <TooltipProvider>
                     <Tooltip>
@@ -5557,6 +5568,7 @@ const WorkoutProgramManagement = () => {
 
               <div className="space-y-4">
                 <Label
+                  required
                   className={
                     submittedPackage &&
                       packageForm.associatedPrograms.some((p) => !p.programId)
@@ -5564,7 +5576,7 @@ const WorkoutProgramManagement = () => {
                       : ""
                   }
                 >
-                  Associated Program*
+                  Associated Program
                 </Label>
 
                 {packageForm.associatedPrograms.map((program, index) => (
@@ -5795,13 +5807,14 @@ const WorkoutProgramManagement = () => {
               <div className="space-y-2">
                 <Label
                   htmlFor="name"
+                  required
                   className={
                     submittedMemberShips && !MemberShipForm.MemberShipType_Name
                       ? "text-red-500"
                       : ""
                   }
                 >
-                  Membership Type Name*
+                  Membership Type Name
                 </Label>
                 <TooltipProvider>
                   <Tooltip>
@@ -5829,6 +5842,7 @@ const WorkoutProgramManagement = () => {
 
               <div className="space-y-4">
                 <Label
+                  required
                   className={
                     submittedMemberShips &&
                       MemberShipForm.PackageIDName.some((p) => !p.package_ID)
@@ -5836,7 +5850,7 @@ const WorkoutProgramManagement = () => {
                       : ""
                   }
                 >
-                  Package ID - Name*
+                  Package ID - Name
                 </Label>
 
                 {MemberShipForm.PackageIDName.map((program, index) => (
