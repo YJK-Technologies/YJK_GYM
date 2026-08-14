@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import {
   Card,
   CardContent,
@@ -272,6 +272,44 @@ const CouponManagement = () => {
     Valid_From: "",
     Valid_Until: "",
   });
+
+  // For tab button - Coupon
+  const couponIdRef = useRef<HTMLInputElement>(null);
+  const couponCodeRef = useRef<HTMLInputElement>(null);
+  
+  const discountTypeRef = useRef<any>(null);
+
+  const descriptionRef = useRef<HTMLTextAreaElement>(null);
+
+  const discountValueRef = useRef<HTMLInputElement>(null);
+  const minimumPurchaseRef = useRef<HTMLInputElement>(null);
+  const validFromRef = useRef<HTMLInputElement>(null);
+  const validUntilRef = useRef<HTMLInputElement>(null);
+  const maximumUsesRef = useRef<HTMLInputElement>(null);
+
+  const applicablePackagesRef = useRef<any>(null);
+
+  const statusRef = useRef<HTMLButtonElement>(null);
+
+  const handleDiscountTypeKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === "Tab" && !e.shiftKey) {
+      e.preventDefault();
+
+      setTimeout(() => {
+        descriptionRef.current?.focus();
+      }, 0);
+    }
+  };
+
+  const handleApplicablePackagesKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === "Tab" && !e.shiftKey) {
+      e.preventDefault();
+
+      setTimeout(() => {
+        statusRef.current?.focus();
+      }, 0);
+    }
+  };
 
   const generateCouponCode = () => {
     const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
@@ -1343,6 +1381,8 @@ const CouponManagement = () => {
                           });
                         }
                       }}
+                      ref={couponIdRef}
+                      tabIndex={0}
                     />
                   </TooltipTrigger>
 
@@ -1385,6 +1425,8 @@ const CouponManagement = () => {
                           }
                           placeholder="SAVE20"
                           className="font-mono"
+                          ref={couponCodeRef}
+                          tabIndex={0}
                         />
                         <Button
                           variant="outline"
@@ -1432,6 +1474,9 @@ const CouponManagement = () => {
                             });
                           }}
                           placeholder="Select Discount Type"
+                          ref={discountTypeRef}
+                          tabIndex={0}
+                          onKeyDown={handleDiscountTypeKeyDown}
                         />
                       </div>
                     </TooltipTrigger>
@@ -1459,6 +1504,8 @@ const CouponManagement = () => {
                         })
                       }
                       placeholder="Enter coupon description..."
+                      ref={descriptionRef}
+                      tabIndex={0}
                     />
                   </TooltipTrigger>
 
@@ -1501,6 +1548,8 @@ const CouponManagement = () => {
                             ? 100
                             : undefined
                         }
+                        ref={discountValueRef}
+                      tabIndex={0}
                       />
                     </TooltipTrigger>
 
@@ -1527,6 +1576,8 @@ const CouponManagement = () => {
                         }
                         min={0}
                         step={0.001}
+                        ref={minimumPurchaseRef}
+                        tabIndex={0}
                       />
                     </TooltipTrigger>
 
@@ -1561,6 +1612,8 @@ const CouponManagement = () => {
                             validFrom: e.target.value,
                           })
                         }
+                        ref={validFromRef}
+                        tabIndex={0}
                       />
                     </TooltipTrigger>
 
@@ -1594,6 +1647,8 @@ const CouponManagement = () => {
                             validUntil: e.target.value,
                           })
                         }
+                        ref={validUntilRef}
+                        tabIndex={0}
                       />
                     </TooltipTrigger>
 
@@ -1631,6 +1686,8 @@ const CouponManagement = () => {
                           })
                         }
                         min={1}
+                        ref={maximumUsesRef}
+                        tabIndex={0}
                       />
                     </TooltipTrigger>
 
@@ -1667,6 +1724,9 @@ const CouponManagement = () => {
                               applicablePackages: selected,
                             })
                           }
+                          ref={applicablePackagesRef}
+                          tabIndex={0}
+                          onKeyDown={handleApplicablePackagesKeyDown}
                         />
                       </div>
                     </TooltipTrigger>
@@ -1685,6 +1745,8 @@ const CouponManagement = () => {
                 onCheckedChange={(checked) =>
                   setFormData({ ...formData, isActive: checked })
                 }
+                ref={statusRef}
+                tabIndex={0}
               />
               <Label htmlFor="isActive">Active</Label>
             </div>
