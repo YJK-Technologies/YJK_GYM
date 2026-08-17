@@ -334,10 +334,12 @@ const WorkoutProgramManagement = () => {
     }
   };
 
-  const permissionOptions: SingleSelectOption[] = permission.map((item: any) => ({
-    value: item.attributedetails_name,
-    label: item.attributedetails_name,
-  }));
+  const permissionOptions: SingleSelectOption[] = permission.map(
+    (item: any) => ({
+      value: item.attributedetails_name,
+      label: item.attributedetails_name,
+    }),
+  );
 
   const fetchRoleRight = async () => {
     try {
@@ -452,10 +454,12 @@ const WorkoutProgramManagement = () => {
     }
   };
 
-  const attributehdrOptions: SingleSelectOption[] = attributehdr.map((item: any) => ({
-    value: item.attributeheader_code,
-    label: `${item.attributeheader_code} - ${item.attributeheader_name}`,
-  }));
+  const attributehdrOptions: SingleSelectOption[] = attributehdr.map(
+    (item: any) => ({
+      value: item.attributeheader_code,
+      label: `${item.attributeheader_code} - ${item.attributeheader_name}`,
+    }),
+  );
 
   //Number series Detail Screen
   const fetchScreenType = async () => {
@@ -482,10 +486,12 @@ const WorkoutProgramManagement = () => {
     }
   };
 
-  const screenTypeOptions: SingleSelectOption[] = ScreenType.map((item: any) => ({
-    value: item.attributedetails_name,
-    label: item.attributedetails_name,
-  }));
+  const screenTypeOptions: SingleSelectOption[] = ScreenType.map(
+    (item: any) => ({
+      value: item.attributedetails_name,
+      label: item.attributedetails_name,
+    }),
+  );
 
   const fetchNumberPrefix = async () => {
     try {
@@ -511,10 +517,12 @@ const WorkoutProgramManagement = () => {
     }
   };
 
-  const numberPrefixOptions: SingleSelectOption[] = NumberPrefix.map((item: any) => ({
-    value: item.attributedetails_name,
-    label: item.attributedetails_name,
-  }));
+  const numberPrefixOptions: SingleSelectOption[] = NumberPrefix.map(
+    (item: any) => ({
+      value: item.attributedetails_name,
+      label: item.attributedetails_name,
+    }),
+  );
 
   const fetchBillFormat = async () => {
     try {
@@ -540,10 +548,12 @@ const WorkoutProgramManagement = () => {
     }
   };
 
-  const billFormatOptions: SingleSelectOption[] = BillFormat.map((item: any) => ({
-    value: item.attributedetails_name,
-    label: item.attributedetails_name,
-  }));
+  const billFormatOptions: SingleSelectOption[] = BillFormat.map(
+    (item: any) => ({
+      value: item.attributedetails_name,
+      label: item.attributedetails_name,
+    }),
+  );
 
   useEffect(() => {
     const loadData = async () => {
@@ -593,7 +603,7 @@ const WorkoutProgramManagement = () => {
       value: "role",
       label: "Role",
       screenType: "Role",
-      icon: Shield
+      icon: Shield,
     },
     {
       value: "roleMapping",
@@ -611,7 +621,7 @@ const WorkoutProgramManagement = () => {
       value: "user",
       label: "User",
       screenType: "User",
-      icon: User
+      icon: User,
     },
     {
       value: "attribute",
@@ -831,54 +841,56 @@ const WorkoutProgramManagement = () => {
     },
     ...(showCompanyActionColumn
       ? [
-        {
-          headerName: "Actions",
-          width: 120,
-          minWidth: 120,
-          maxWidth: 120,
-          sortable: false,
-          filter: false,
-          cellStyle: {
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
-          },
-          cellRenderer: (params: any) => (
-            <div className="flex gap-2">
-              {hasActionPermission("Company", "edit") && (
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => handleEditCompany(params.data)}
-                    >
-                      <Edit className="h-4 w-4" />
-                    </Button>
-                  </TooltipTrigger>
-                  <TooltipContent>Edit</TooltipContent>
-                </Tooltip>
-              )}
+          {
+            headerName: "Actions",
+            width: 120,
+            minWidth: 120,
+            maxWidth: 120,
+            sortable: false,
+            filter: false,
+            cellStyle: {
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+            },
+            cellRenderer: (params: any) => (
+              <div className="flex gap-2">
+                {hasActionPermission("Company", "edit") && (
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => handleEditCompany(params.data)}
+                      >
+                        <Edit className="h-4 w-4" />
+                      </Button>
+                    </TooltipTrigger>
+                    <TooltipContent>Edit</TooltipContent>
+                  </Tooltip>
+                )}
 
-              {hasActionPermission("Company", "delete") && (
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => handleDeleteCompany(params.data.company_no)}
-                    >
-                      <Trash2 className="h-4 w-4 text-red-500" />
-                    </Button>
-                  </TooltipTrigger>
-                  <TooltipContent>Delete</TooltipContent>
-                </Tooltip>
-              )}
-            </div>
-          ),
-        },
-      ]
-      : [])
+                {hasActionPermission("Company", "delete") && (
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() =>
+                          handleDeleteCompany(params.data.company_no)
+                        }
+                      >
+                        <Trash2 className="h-4 w-4 text-red-500" />
+                      </Button>
+                    </TooltipTrigger>
+                    <TooltipContent>Delete</TooltipContent>
+                  </Tooltip>
+                )}
+              </div>
+            ),
+          },
+        ]
+      : []),
   ];
 
   // Preview images for ImageUpload component
@@ -917,7 +929,8 @@ const WorkoutProgramManagement = () => {
   const [submittedCompanyMapping, setSubmittedCompanyMapping] = useState(false);
   const [companyMappings, setCompanyMappings] = useState([]);
   const [editingCompanyMapping, setEditingCompanyMapping] = useState<any>(null);
-  const [isCompanyMappingDialogOpen, setIsCompanyMappingDialogOpen] = useState(false);
+  const [isCompanyMappingDialogOpen, setIsCompanyMappingDialogOpen] =
+    useState(false);
   const [companyMappingForm, setCompanyMappingForm] = useState({
     company_code: "",
     user_code: "",
@@ -981,54 +994,56 @@ const WorkoutProgramManagement = () => {
     },
     ...(showCompanyMappingActionColumn
       ? [
-        {
-          headerName: "Actions",
-          width: 120,
-          minWidth: 120,
-          maxWidth: 120,
-          sortable: false,
-          filter: false,
-          cellStyle: {
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
-          },
-          cellRenderer: (params: any) => (
-            <div className="flex gap-2">
-              {hasActionPermission("CompanyMapping", "edit") && (
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => handleEditCompanyMapping(params.data)}
-                    >
-                      <Edit className="h-4 w-4" />
-                    </Button>
-                  </TooltipTrigger>
-                  <TooltipContent>Edit</TooltipContent>
-                </Tooltip>
-              )}
+          {
+            headerName: "Actions",
+            width: 120,
+            minWidth: 120,
+            maxWidth: 120,
+            sortable: false,
+            filter: false,
+            cellStyle: {
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+            },
+            cellRenderer: (params: any) => (
+              <div className="flex gap-2">
+                {hasActionPermission("CompanyMapping", "edit") && (
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => handleEditCompanyMapping(params.data)}
+                      >
+                        <Edit className="h-4 w-4" />
+                      </Button>
+                    </TooltipTrigger>
+                    <TooltipContent>Edit</TooltipContent>
+                  </Tooltip>
+                )}
 
-              {hasActionPermission("CompanyMapping", "delete") && (
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => handleDeleteCompanyMapping(params.data.keyfiels)}
-                    >
-                      <Trash2 className="h-4 w-4 text-red-500" />
-                    </Button>
-                  </TooltipTrigger>
-                  <TooltipContent>Delete</TooltipContent>
-                </Tooltip>
-              )}
-            </div>
-          ),
-        },
-      ]
-      : [])
+                {hasActionPermission("CompanyMapping", "delete") && (
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() =>
+                          handleDeleteCompanyMapping(params.data.keyfiels)
+                        }
+                      >
+                        <Trash2 className="h-4 w-4 text-red-500" />
+                      </Button>
+                    </TooltipTrigger>
+                    <TooltipContent>Delete</TooltipContent>
+                  </Tooltip>
+                )}
+              </div>
+            ),
+          },
+        ]
+      : []),
   ];
 
   //Location Dialog States  const [loadingLocation, setLoadingLocation] = useState(false);
@@ -1148,54 +1163,56 @@ const WorkoutProgramManagement = () => {
     },
     ...(showLocationActionColumn
       ? [
-        {
-          headerName: "Actions",
-          width: 120,
-          minWidth: 120,
-          maxWidth: 120,
-          sortable: false,
-          filter: false,
-          cellStyle: {
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
-          },
-          cellRenderer: (params: any) => (
-            <div className="flex gap-2">
-              {hasActionPermission("Location", "edit") && (
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => handleEditLocation(params.data)}
-                    >
-                      <Edit className="h-4 w-4" />
-                    </Button>
-                  </TooltipTrigger>
-                  <TooltipContent>Edit</TooltipContent>
-                </Tooltip>
-              )}
+          {
+            headerName: "Actions",
+            width: 120,
+            minWidth: 120,
+            maxWidth: 120,
+            sortable: false,
+            filter: false,
+            cellStyle: {
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+            },
+            cellRenderer: (params: any) => (
+              <div className="flex gap-2">
+                {hasActionPermission("Location", "edit") && (
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => handleEditLocation(params.data)}
+                      >
+                        <Edit className="h-4 w-4" />
+                      </Button>
+                    </TooltipTrigger>
+                    <TooltipContent>Edit</TooltipContent>
+                  </Tooltip>
+                )}
 
-              {hasActionPermission("Location", "delete") && (
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => handleDeleteLocation(params.data.location_no)}
-                    >
-                      <Trash2 className="h-4 w-4 text-red-500" />
-                    </Button>
-                  </TooltipTrigger>
-                  <TooltipContent>Delete</TooltipContent>
-                </Tooltip>
-              )}
-            </div>
-          ),
-        },
-      ]
-      : [])
+                {hasActionPermission("Location", "delete") && (
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() =>
+                          handleDeleteLocation(params.data.location_no)
+                        }
+                      >
+                        <Trash2 className="h-4 w-4 text-red-500" />
+                      </Button>
+                    </TooltipTrigger>
+                    <TooltipContent>Delete</TooltipContent>
+                  </Tooltip>
+                )}
+              </div>
+            ),
+          },
+        ]
+      : []),
   ];
 
   //Role Dialog States
@@ -1239,50 +1256,50 @@ const WorkoutProgramManagement = () => {
     },
     ...(showRoleActionColumn
       ? [
-        {
-          headerName: "Actions",
-          maxWidth: 150,
-          cellStyle: {
-            display: "flex",
-            justifyContent: "flex-end",
-            alignItems: "center",
-          },
-          cellRenderer: (params: any) => (
-            <div className="flex gap-2">
-              {hasActionPermission("Role", "edit") && (
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => handleEditRole(params.data)}
-                    >
-                      <Edit className="h-4 w-4" />
-                    </Button>
-                  </TooltipTrigger>
-                  <TooltipContent>Edit</TooltipContent>
-                </Tooltip>
-              )}
+          {
+            headerName: "Actions",
+            maxWidth: 150,
+            cellStyle: {
+              display: "flex",
+              justifyContent: "flex-end",
+              alignItems: "center",
+            },
+            cellRenderer: (params: any) => (
+              <div className="flex gap-2">
+                {hasActionPermission("Role", "edit") && (
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => handleEditRole(params.data)}
+                      >
+                        <Edit className="h-4 w-4" />
+                      </Button>
+                    </TooltipTrigger>
+                    <TooltipContent>Edit</TooltipContent>
+                  </Tooltip>
+                )}
 
-              {hasActionPermission("Role", "delete") && (
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => handleDeleteRole(params.data.role_id)}
-                    >
-                      <Trash2 className="h-4 w-4 text-red-500" />
-                    </Button>
-                  </TooltipTrigger>
-                  <TooltipContent>Delete</TooltipContent>
-                </Tooltip>
-              )}
-            </div>
-          ),
-        },
-      ]
-      : [])
+                {hasActionPermission("Role", "delete") && (
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => handleDeleteRole(params.data.role_id)}
+                      >
+                        <Trash2 className="h-4 w-4 text-red-500" />
+                      </Button>
+                    </TooltipTrigger>
+                    <TooltipContent>Delete</TooltipContent>
+                  </Tooltip>
+                )}
+              </div>
+            ),
+          },
+        ]
+      : []),
   ];
 
   //Role Mapping Dialog States
@@ -1336,54 +1353,56 @@ const WorkoutProgramManagement = () => {
     },
     ...(showRoleMappingActionColumn
       ? [
-        {
-          headerName: "Actions",
-          width: 120,
-          minWidth: 120,
-          maxWidth: 120,
-          sortable: false,
-          filter: false,
-          cellStyle: {
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
-          },
-          cellRenderer: (params: any) => (
-            <div className="flex gap-2">
-              {hasActionPermission("RoleMapping", "edit") && (
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => handleEditRoleMapping(params.data)}
-                    >
-                      <Edit className="h-4 w-4" />
-                    </Button>
-                  </TooltipTrigger>
-                  <TooltipContent>Edit</TooltipContent>
-                </Tooltip>
-              )}
+          {
+            headerName: "Actions",
+            width: 120,
+            minWidth: 120,
+            maxWidth: 120,
+            sortable: false,
+            filter: false,
+            cellStyle: {
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+            },
+            cellRenderer: (params: any) => (
+              <div className="flex gap-2">
+                {hasActionPermission("RoleMapping", "edit") && (
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => handleEditRoleMapping(params.data)}
+                      >
+                        <Edit className="h-4 w-4" />
+                      </Button>
+                    </TooltipTrigger>
+                    <TooltipContent>Edit</TooltipContent>
+                  </Tooltip>
+                )}
 
-              {hasActionPermission("RoleMapping", "delete") && (
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => handleDeleteRoleMapping(params.data.keyfield)}
-                    >
-                      <Trash2 className="h-4 w-4 text-red-500" />
-                    </Button>
-                  </TooltipTrigger>
-                  <TooltipContent>Delete</TooltipContent>
-                </Tooltip>
-              )}
-            </div>
-          ),
-        },
-      ]
-      : [])
+                {hasActionPermission("RoleMapping", "delete") && (
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() =>
+                          handleDeleteRoleMapping(params.data.keyfield)
+                        }
+                      >
+                        <Trash2 className="h-4 w-4 text-red-500" />
+                      </Button>
+                    </TooltipTrigger>
+                    <TooltipContent>Delete</TooltipContent>
+                  </Tooltip>
+                )}
+              </div>
+            ),
+          },
+        ]
+      : []),
   ];
 
   //Role Rights Dialog States
@@ -1432,54 +1451,56 @@ const WorkoutProgramManagement = () => {
     },
     ...(showRoleRightsActionColumn
       ? [
-        {
-          headerName: "Actions",
-          width: 120,
-          minWidth: 120,
-          maxWidth: 120,
-          sortable: false,
-          filter: false,
-          cellStyle: {
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
-          },
-          cellRenderer: (params: any) => (
-            <div className="flex gap-2">
-              {hasActionPermission("RoleRights", "edit") && (
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => handleEditRoleRight(params.data)}
-                    >
-                      <Edit className="h-4 w-4" />
-                    </Button>
-                  </TooltipTrigger>
-                  <TooltipContent>Edit</TooltipContent>
-                </Tooltip>
-              )}
+          {
+            headerName: "Actions",
+            width: 120,
+            minWidth: 120,
+            maxWidth: 120,
+            sortable: false,
+            filter: false,
+            cellStyle: {
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+            },
+            cellRenderer: (params: any) => (
+              <div className="flex gap-2">
+                {hasActionPermission("RoleRights", "edit") && (
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => handleEditRoleRight(params.data)}
+                      >
+                        <Edit className="h-4 w-4" />
+                      </Button>
+                    </TooltipTrigger>
+                    <TooltipContent>Edit</TooltipContent>
+                  </Tooltip>
+                )}
 
-              {hasActionPermission("RoleRights", "delete") && (
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => handleDeleteRoleRight(params.data.keyfield)}
-                    >
-                      <Trash2 className="h-4 w-4 text-red-500" />
-                    </Button>
-                  </TooltipTrigger>
-                  <TooltipContent>Delete</TooltipContent>
-                </Tooltip>
-              )}
-            </div>
-          ),
-        },
-      ]
-      : [])
+                {hasActionPermission("RoleRights", "delete") && (
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() =>
+                          handleDeleteRoleRight(params.data.keyfield)
+                        }
+                      >
+                        <Trash2 className="h-4 w-4 text-red-500" />
+                      </Button>
+                    </TooltipTrigger>
+                    <TooltipContent>Delete</TooltipContent>
+                  </Tooltip>
+                )}
+              </div>
+            ),
+          },
+        ]
+      : []),
   ];
 
   //User Dialog States
@@ -1605,54 +1626,54 @@ const WorkoutProgramManagement = () => {
     },
     ...(showUserActionColumn
       ? [
-        {
-          headerName: "Actions",
-          width: 120,
-          minWidth: 120,
-          maxWidth: 120,
-          sortable: false,
-          filter: false,
-          cellStyle: {
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
-          },
-          cellRenderer: (params: any) => (
-            <div className="flex gap-2">
-              {hasActionPermission("User", "edit") && (
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => handleEditUser(params.data)}
-                    >
-                      <Edit className="h-4 w-4" />
-                    </Button>
-                  </TooltipTrigger>
-                  <TooltipContent>Edit</TooltipContent>
-                </Tooltip>
-              )}
+          {
+            headerName: "Actions",
+            width: 120,
+            minWidth: 120,
+            maxWidth: 120,
+            sortable: false,
+            filter: false,
+            cellStyle: {
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+            },
+            cellRenderer: (params: any) => (
+              <div className="flex gap-2">
+                {hasActionPermission("User", "edit") && (
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => handleEditUser(params.data)}
+                      >
+                        <Edit className="h-4 w-4" />
+                      </Button>
+                    </TooltipTrigger>
+                    <TooltipContent>Edit</TooltipContent>
+                  </Tooltip>
+                )}
 
-              {hasActionPermission("User", "delete") && (
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => handleDeleteUser(params.data.user_code)}
-                    >
-                      <Trash2 className="h-4 w-4 text-red-500" />
-                    </Button>
-                  </TooltipTrigger>
-                  <TooltipContent>Delete</TooltipContent>
-                </Tooltip>
-              )}
-            </div>
-          ),
-        },
-      ]
-      : [])
+                {hasActionPermission("User", "delete") && (
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => handleDeleteUser(params.data.user_code)}
+                      >
+                        <Trash2 className="h-4 w-4 text-red-500" />
+                      </Button>
+                    </TooltipTrigger>
+                    <TooltipContent>Delete</TooltipContent>
+                  </Tooltip>
+                )}
+              </div>
+            ),
+          },
+        ]
+      : []),
   ];
 
   //Attribute Detail Dialog States
@@ -1707,64 +1728,65 @@ const WorkoutProgramManagement = () => {
     },
     ...(showAttributeActionColumn
       ? [
-        {
-          headerName: "Actions",
-          width: 120,
-          minWidth: 120,
-          maxWidth: 120,
-          sortable: false,
-          filter: false,
-          cellStyle: {
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
-          },
-          cellRenderer: (params: any) => (
-            <div className="flex gap-2">
-              {hasActionPermission("Attribute", "edit") && (
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => handleEditAttribute(params.data)}
-                    >
-                      <Edit className="h-4 w-4" />
-                    </Button>
-                  </TooltipTrigger>
-                  <TooltipContent>Edit</TooltipContent>
-                </Tooltip>
-              )}
+          {
+            headerName: "Actions",
+            width: 120,
+            minWidth: 120,
+            maxWidth: 120,
+            sortable: false,
+            filter: false,
+            cellStyle: {
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+            },
+            cellRenderer: (params: any) => (
+              <div className="flex gap-2">
+                {hasActionPermission("Attribute", "edit") && (
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => handleEditAttribute(params.data)}
+                      >
+                        <Edit className="h-4 w-4" />
+                      </Button>
+                    </TooltipTrigger>
+                    <TooltipContent>Edit</TooltipContent>
+                  </Tooltip>
+                )}
 
-              {hasActionPermission("Attribute", "delete") && (
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={() =>
-                        handleDeleteAttribute(
-                          params.data.attributeheader_code,
-                          params.data.attributedetails_code,
-                        )
-                      }
-                    >
-                      <Trash2 className="h-4 w-4 text-red-500" />
-                    </Button>
-                  </TooltipTrigger>
-                  <TooltipContent>Delete</TooltipContent>
-                </Tooltip>
-              )}
-            </div>
-          ),
-        },
-      ]
-      : [])
+                {hasActionPermission("Attribute", "delete") && (
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() =>
+                          handleDeleteAttribute(
+                            params.data.attributeheader_code,
+                            params.data.attributedetails_code,
+                          )
+                        }
+                      >
+                        <Trash2 className="h-4 w-4 text-red-500" />
+                      </Button>
+                    </TooltipTrigger>
+                    <TooltipContent>Delete</TooltipContent>
+                  </Tooltip>
+                )}
+              </div>
+            ),
+          },
+        ]
+      : []),
   ];
 
   //Attribute Header Dialog States
   const [submittedAttributeHdr, setSubmittedAttributeHdr] = useState(false);
-  const [isAttributeHdrDialogOpen, setIsAttributeHdrDialogOpen] = useState(false);
+  const [isAttributeHdrDialogOpen, setIsAttributeHdrDialogOpen] =
+    useState(false);
   const [attributeHdrForm, setAttributeHdrForm] = useState({
     company_code: "",
     attributeheader_code: "",
@@ -1776,7 +1798,8 @@ const WorkoutProgramManagement = () => {
 
   //Number Series
   const [submittedNumberSeries, setSubmittedNumberSeries] = useState(false);
-  const [isNumberSeriesDialogOpen, setIsNumberSeriesDialogOpen] = useState(false);
+  const [isNumberSeriesDialogOpen, setIsNumberSeriesDialogOpen] =
+    useState(false);
   const [editingNumberSeries, setEditingNumberSeries] = useState<any>(null);
   const [numberSeries, setNumberSeries] = useState([]);
   const [numberSeriesForm, setNumberSeriesForm] = useState({
@@ -1880,69 +1903,69 @@ const WorkoutProgramManagement = () => {
     },
     ...(showNumberSeriesActionColumn
       ? [
-        {
-          headerName: "Actions",
-          width: 120,
-          minWidth: 120,
-          maxWidth: 120,
-          sortable: false,
-          filter: false,
-          cellStyle: {
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
-          },
-          cellRenderer: (params: any) => (
-            <div className="flex gap-2">
-              {hasActionPermission("NumberSeries", "edit") && (
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => handleEditNumberSeries(params.data)}
-                    >
-                      <Edit className="h-4 w-4" />
-                    </Button>
-                  </TooltipTrigger>
-                  <TooltipContent>Edit</TooltipContent>
-                </Tooltip>
-              )}
+          {
+            headerName: "Actions",
+            width: 120,
+            minWidth: 120,
+            maxWidth: 120,
+            sortable: false,
+            filter: false,
+            cellStyle: {
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+            },
+            cellRenderer: (params: any) => (
+              <div className="flex gap-2">
+                {hasActionPermission("NumberSeries", "edit") && (
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => handleEditNumberSeries(params.data)}
+                      >
+                        <Edit className="h-4 w-4" />
+                      </Button>
+                    </TooltipTrigger>
+                    <TooltipContent>Edit</TooltipContent>
+                  </Tooltip>
+                )}
 
-              {hasActionPermission("NumberSeries", "delete") && (
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => handleDeleteNumberSeries(params.data)}
-                    >
-                      <Trash2 className="h-4 w-4 text-red-500" />
-                    </Button>
-                  </TooltipTrigger>
-                  <TooltipContent>Delete</TooltipContent>
-                </Tooltip>
-              )}
-            </div>
-          ),
-        },
-      ]
-      : [])
+                {hasActionPermission("NumberSeries", "delete") && (
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => handleDeleteNumberSeries(params.data)}
+                      >
+                        <Trash2 className="h-4 w-4 text-red-500" />
+                      </Button>
+                    </TooltipTrigger>
+                    <TooltipContent>Delete</TooltipContent>
+                  </Tooltip>
+                )}
+              </div>
+            ),
+          },
+        ]
+      : []),
   ];
 
- // For tab button
- // Company screen
-const cityRef = useRef<any>(null);
-const stateRef = useRef<any>(null);
-const pinCodeRef = useRef<HTMLInputElement>(null);
-const countryRef = useRef<any>(null);
-const emailRef = useRef<HTMLInputElement>(null);
-const statusRef = useRef<any>(null);
-const foundedDateRef = useRef<HTMLInputElement>(null);
-const locationNoRef = useRef<any>(null);
-const cancelRef = useRef<HTMLButtonElement>(null);
+  // For tab button
+  // Company screen
+  const cityRef = useRef<any>(null);
+  const stateRef = useRef<any>(null);
+  const pinCodeRef = useRef<HTMLInputElement>(null);
+  const countryRef = useRef<any>(null);
+  const emailRef = useRef<HTMLInputElement>(null);
+  const statusRef = useRef<any>(null);
+  const foundedDateRef = useRef<HTMLInputElement>(null);
+  const locationNoRef = useRef<any>(null);
+  const cancelRef = useRef<HTMLButtonElement>(null);
 
-const handleCityKeyDown = (e: React.KeyboardEvent) => {
+  const handleCityKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === "Tab" && !e.shiftKey) {
       e.preventDefault();
 
@@ -1952,7 +1975,7 @@ const handleCityKeyDown = (e: React.KeyboardEvent) => {
     }
   };
 
-const handleStateKeyDown = (e: React.KeyboardEvent) => {
+  const handleStateKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === "Tab" && !e.shiftKey) {
       e.preventDefault();
 
@@ -1962,7 +1985,7 @@ const handleStateKeyDown = (e: React.KeyboardEvent) => {
     }
   };
 
-const handleCountryKeyDown = (e: React.KeyboardEvent) => {
+  const handleCountryKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === "Tab" && !e.shiftKey) {
       e.preventDefault();
 
@@ -1972,7 +1995,7 @@ const handleCountryKeyDown = (e: React.KeyboardEvent) => {
     }
   };
 
-const handleStatusKeyDown = (e: React.KeyboardEvent) => {
+  const handleStatusKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === "Tab" && !e.shiftKey) {
       e.preventDefault();
 
@@ -1982,7 +2005,7 @@ const handleStatusKeyDown = (e: React.KeyboardEvent) => {
     }
   };
 
-const handleLocationNoKeyDown = (e: React.KeyboardEvent) => {
+  const handleLocationNoKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === "Tab" && !e.shiftKey) {
       e.preventDefault();
 
@@ -2039,14 +2062,237 @@ const handleLocationNoKeyDown = (e: React.KeyboardEvent) => {
     }
   };
 
+  // Location screen
+  const citylLocRef = useRef<any>(null);
+  const stateLocRef = useRef<any>(null);
+  const pinCodeLocRef = useRef<HTMLInputElement>(null);
+  const countryLocRef = useRef<any>(null);
+  const emailLocRef = useRef<HTMLInputElement>(null);
+  const statusLocRef = useRef<any>(null);
+  const contactNoLocRef = useRef<HTMLInputElement>(null);
+
+  const handleCityLocKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === "Tab" && !e.shiftKey) {
+      e.preventDefault();
+
+      setTimeout(() => {
+        stateLocRef.current?.focus();
+      }, 0);
+    }
+  };
+
+  const handleStateLocKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === "Tab" && !e.shiftKey) {
+      e.preventDefault();
+
+      setTimeout(() => {
+        pinCodeLocRef.current?.focus();
+      }, 0);
+    }
+  };
+
+  const handleCountryLocKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === "Tab" && !e.shiftKey) {
+      e.preventDefault();
+
+      setTimeout(() => {
+        emailLocRef.current?.focus();
+      }, 0);
+    }
+  };
+
+  const handleStatusLocKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === "Tab" && !e.shiftKey) {
+      e.preventDefault();
+
+      setTimeout(() => {
+        contactNoLocRef.current?.focus();
+      }, 0);
+    }
+  };
+
+  // Role Mapping screen
+  const userCodeRMRef = useRef<any>(null);
+  const roleIdRMRef = useRef<any>(null);
+  const cancelRMRef = useRef<HTMLButtonElement>(null);
+
+  const handleUserCodeRMKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === "Tab" && !e.shiftKey) {
+      e.preventDefault();
+
+      setTimeout(() => {
+        roleIdRMRef.current?.focus();
+      }, 0);
+    }
+  };
+
+  const handleRoleIdRMKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === "Tab" && !e.shiftKey) {
+      e.preventDefault();
+
+      setTimeout(() => {
+        cancelRMRef.current?.focus();
+      }, 0);
+    }
+  };
+
+  // Role Rights screen
+  const roleIdRRRef = useRef<any>(null);
+  const screenTypeRRRef = useRef<any>(null);
+  const userCodeRRRef = useRef<any>(null);
+  const cancelRRRef = useRef<HTMLButtonElement>(null);
+
+  const handleRoleIdRRKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === "Tab" && !e.shiftKey) {
+      e.preventDefault();
+
+      setTimeout(() => {
+        screenTypeRRRef.current?.focus();
+      }, 0);
+    }
+  };
+
+  const handleScreenTypeRRKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === "Tab" && !e.shiftKey) {
+      e.preventDefault();
+
+      setTimeout(() => {
+        userCodeRRRef.current?.focus();
+      }, 0);
+    }
+  };
+
+  const handleUserCodeRRKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === "Tab" && !e.shiftKey) {
+      e.preventDefault();
+
+      setTimeout(() => {
+        cancelRRRef.current?.focus();
+      }, 0);
+    }
+  };
+
+  // User screen
+  const StatusUserRef = useRef<any>(null);
+  const RoleIdUserRef = useRef<any>(null);
+  const EmailUserRef = useRef<HTMLInputElement>(null);
+  const GenderUserRef = useRef<any>(null);
+  const DOBUserRef = useRef<HTMLInputElement>(null);
+
+  const handleStatusUserKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === "Tab" && !e.shiftKey) {
+      e.preventDefault();
+
+      setTimeout(() => {
+        RoleIdUserRef.current?.focus();
+      }, 0);
+    }
+  };
+
+  const handleRoleIdUserKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === "Tab" && !e.shiftKey) {
+      e.preventDefault();
+
+      setTimeout(() => {
+        EmailUserRef.current?.focus();
+      }, 0);
+    }
+  };
+
+  const handleGenderUserKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === "Tab" && !e.shiftKey) {
+      e.preventDefault();
+
+      setTimeout(() => {
+        DOBUserRef.current?.focus();
+      }, 0);
+    }
+  };
+
+  // Attribute screen
+  const codeRef = useRef<any>(null);
+  const plusRef = useRef<HTMLButtonElement>(null);
+
+  const handleCodeKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === "Tab" && !e.shiftKey) {
+      e.preventDefault();
+
+      setTimeout(() => {
+        plusRef.current?.focus();
+      }, 0);
+    }
+  };
+
+  // Attribute Header screen
+  const statusAHRef = useRef<any>(null);
+  const cancelAHRef = useRef<HTMLButtonElement>(null);
+
+  const handleStatusAHKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === "Tab" && !e.shiftKey) {
+      e.preventDefault();
+
+      setTimeout(() => {
+        cancelAHRef.current?.focus();
+      }, 0);
+    }
+  };
+
+  // Number Series screen
+  const screenTypeNSRef = useRef<any>(null);
+  const startYearNSRef = useRef<HTMLInputElement>(null);
+  const numberPrefixNSRef = useRef<any>(null);
+  const billFormatNSRef = useRef<any>(null);
+  const statusNSRef = useRef<any>(null);
+  const cancelNSRef = useRef<HTMLButtonElement>(null);
+
+  const handleScreenTypeNSKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === "Tab" && !e.shiftKey) {
+      e.preventDefault();
+
+      setTimeout(() => {
+        startYearNSRef.current?.focus();
+      }, 0);
+    }
+  };
+
+  const handleNumberPrefixNSKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === "Tab" && !e.shiftKey) {
+      e.preventDefault();
+
+      setTimeout(() => {
+        billFormatNSRef.current?.focus();
+      }, 0);
+    }
+  };
+
+  const handleBillFormatNSKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === "Tab" && !e.shiftKey) {
+      e.preventDefault();
+
+      setTimeout(() => {
+        statusNSRef.current?.focus();
+      }, 0);
+    }
+  };
+
+  const handleStatusNSKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === "Tab" && !e.shiftKey) {
+      e.preventDefault();
+
+      setTimeout(() => {
+        cancelNSRef.current?.focus();
+      }, 0);
+    }
+  };
+
   //Company CRUD Functions
   const handleAddCompany = () => {
-    fetchCities(),
+    (fetchCities(),
       fetchStates(),
       fetchCountries(),
       fetchStatus(),
       fetchLocation(),
-      setEditingCompany(null);
+      setEditingCompany(null));
     setCompanyForm({
       company_no: "",
       company_name: "",
@@ -2200,7 +2446,7 @@ const handleLocationNoKeyDown = (e: React.KeyboardEvent) => {
 
     if (!validateCompany()) return;
 
-    setLoading(true)
+    setLoading(true);
 
     try {
       const formData = new FormData();
@@ -2379,7 +2625,7 @@ const handleLocationNoKeyDown = (e: React.KeyboardEvent) => {
 
     const signature =
       company.authorisedSignatur?.data &&
-        Array.isArray(company.authorisedSignatur.data)
+      Array.isArray(company.authorisedSignatur.data)
         ? bufferToBase64(company.authorisedSignatur.data)
         : null;
 
@@ -2448,11 +2694,11 @@ const handleLocationNoKeyDown = (e: React.KeyboardEvent) => {
 
   //Company Mapping CRUD Functions
   const handleAddCompanyMapping = () => {
-    fetchStatus(),
+    (fetchStatus(),
       fetchLocation(),
       fetchUsers(),
       fetchCompanies(),
-      setEditingCompanyMapping(null);
+      setEditingCompanyMapping(null));
     setCompanyMappingForm({
       company_code: companyCode,
       user_code: "",
@@ -2638,7 +2884,6 @@ const handleLocationNoKeyDown = (e: React.KeyboardEvent) => {
         description: err.message || "Something went wrong.",
         variant: "destructive",
       });
-
     } finally {
       setLoading(false);
     }
@@ -2728,11 +2973,11 @@ const handleLocationNoKeyDown = (e: React.KeyboardEvent) => {
 
   // Location CRUD Functions
   const handleAddLocation = () => {
-    fetchCities(),
+    (fetchCities(),
       fetchStates(),
       fetchCountries(),
       fetchStatus(),
-      setEditingLocation(null);
+      setEditingLocation(null));
     setLocationForm({
       location_no: "",
       location_name: "",
@@ -3308,9 +3553,7 @@ const handleLocationNoKeyDown = (e: React.KeyboardEvent) => {
 
   //Role Mapping CRUD Functions
   const handleAddRoleMapping = () => {
-    fetchUsers(),
-      fetchRole(),
-      setEditingRoleMapping(null);
+    (fetchUsers(), fetchRole(), setEditingRoleMapping(null));
     setRoleMappingForm({
       company_code: companyCode,
       user_code: "",
@@ -3574,10 +3817,10 @@ const handleLocationNoKeyDown = (e: React.KeyboardEvent) => {
 
   //Role Rights CRUD Functions
   const handleAddRoleRights = () => {
-    fetchRole(),
+    (fetchRole(),
       fetchPermission(),
       fetchScreenType(),
-      setEditingRoleRight(null);
+      setEditingRoleRight(null));
     setRoleRightsForm({
       company_code: companyCode,
       role_id: "",
@@ -3774,7 +4017,7 @@ const handleLocationNoKeyDown = (e: React.KeyboardEvent) => {
   };
 
   const handleRoleRightsSearch = async () => {
-    setLoading(true)
+    setLoading(true);
 
     try {
       const response = await fetch(`${BASE_URL}/userscreensearchdata`, {
@@ -3846,10 +4089,7 @@ const handleLocationNoKeyDown = (e: React.KeyboardEvent) => {
 
   //User CRUD Functions
   const handleAddUser = () => {
-    fetchStatus(),
-      fetchGender(),
-      fetchRole(),
-      setEditingUser(null);
+    (fetchStatus(), fetchGender(), fetchRole(), setEditingUser(null));
     setUserForm({
       company_code: companyCode,
       user_code: "",
@@ -3913,7 +4153,7 @@ const handleLocationNoKeyDown = (e: React.KeyboardEvent) => {
 
     if (!validateUser()) return;
 
-    setLoading(true)
+    setLoading(true);
 
     try {
       const formData = new FormData();
@@ -4092,7 +4332,7 @@ const handleLocationNoKeyDown = (e: React.KeyboardEvent) => {
   };
 
   const deleteUser = async (user_code: string) => {
-    setLoading(true)
+    setLoading(true);
 
     try {
       const response = await fetch(`${BASE_URL}/userdelete`, {
@@ -4146,7 +4386,7 @@ const handleLocationNoKeyDown = (e: React.KeyboardEvent) => {
   };
 
   const handleUserSearch = async () => {
-    setLoading(true)
+    setLoading(true);
 
     try {
       const response = await fetch(`${BASE_URL}/usersearchcriteria`, {
@@ -4240,8 +4480,7 @@ const handleLocationNoKeyDown = (e: React.KeyboardEvent) => {
 
   //Attribute Detail CRUD Functions
   const handleAddAttribute = () => {
-    fetchAttributeHdr(),
-      setEditingAttribute(null);
+    (fetchAttributeHdr(), setEditingAttribute(null));
     setAttributeForm({
       company_code: companyCode,
       attributeheader_code: "",
@@ -4276,7 +4515,7 @@ const handleLocationNoKeyDown = (e: React.KeyboardEvent) => {
 
     if (!validateAttributeDet()) return;
 
-    setLoading(true)
+    setLoading(true);
 
     try {
       const response = await fetch(`${BASE_URL}/addattridetData`, {
@@ -4333,7 +4572,7 @@ const handleLocationNoKeyDown = (e: React.KeyboardEvent) => {
 
     if (!validateAttributeDet()) return;
 
-    setLoading(true)
+    setLoading(true);
 
     try {
       const response = await fetch(`${BASE_URL}/AttributeUpdate`, {
@@ -4394,7 +4633,7 @@ const handleLocationNoKeyDown = (e: React.KeyboardEvent) => {
     attributeheader_code: string,
     attributedetails_code: string,
   ) => {
-    setLoading(true)
+    setLoading(true);
     try {
       const response = await fetch(`${BASE_URL}/delattridetData`, {
         method: "POST",
@@ -4450,7 +4689,7 @@ const handleLocationNoKeyDown = (e: React.KeyboardEvent) => {
   };
 
   const handleAttributeSearch = async () => {
-    setLoading(true)
+    setLoading(true);
     try {
       const response = await fetch(`${BASE_URL}/attributeSearchdata`, {
         method: "POST",
@@ -4522,7 +4761,7 @@ const handleLocationNoKeyDown = (e: React.KeyboardEvent) => {
 
   //add Attribute CRUD Functions
   const handleAddAttributeHdr = () => {
-    fetchStatus(),
+    (fetchStatus(),
       setAttributeHdrForm({
         company_code: companyCode,
         attributeheader_code: "",
@@ -4530,7 +4769,7 @@ const handleLocationNoKeyDown = (e: React.KeyboardEvent) => {
         status: "Active",
         created_by: userCode,
         modified_by: userCode,
-      });
+      }));
     setIsAttributeHdrDialogOpen(true);
   };
 
@@ -4556,7 +4795,7 @@ const handleLocationNoKeyDown = (e: React.KeyboardEvent) => {
 
     if (!validateAttributeHdr()) return;
 
-    setLoading(true)
+    setLoading(true);
 
     try {
       const response = await fetch(`${BASE_URL}/addattriData`, {
@@ -4599,10 +4838,7 @@ const handleLocationNoKeyDown = (e: React.KeyboardEvent) => {
 
   // NumberSeries CRUD Functions
   const handleAddNumberSeries = () => {
-    fetchStatus(),
-      fetchScreenType(),
-      fetchNumberPrefix(),
-      fetchBillFormat()
+    (fetchStatus(), fetchScreenType(), fetchNumberPrefix(), fetchBillFormat());
     setEditingNumberSeries(null);
     setNumberSeriesForm({
       company_code: companyCode,
@@ -4652,7 +4888,7 @@ const handleLocationNoKeyDown = (e: React.KeyboardEvent) => {
 
     if (!validateNumberSeries()) return;
 
-    setLoading(true)
+    setLoading(true);
 
     try {
       const response = await fetch(`${BASE_URL}/addNumberseries`, {
@@ -4708,7 +4944,7 @@ const handleLocationNoKeyDown = (e: React.KeyboardEvent) => {
 
     if (!validateNumberSeries()) return;
 
-    setLoading(true)
+    setLoading(true);
 
     try {
       const response = await fetch(`${BASE_URL}/NumberSeriesUpdate`, {
@@ -4761,7 +4997,7 @@ const handleLocationNoKeyDown = (e: React.KeyboardEvent) => {
   };
 
   const deleteNumberSeries = async (row: any) => {
-    setLoading(true)
+    setLoading(true);
 
     try {
       const response = await fetch(`${BASE_URL}/NumberSeriesdeleteData`, {
@@ -4842,7 +5078,7 @@ const handleLocationNoKeyDown = (e: React.KeyboardEvent) => {
   };
 
   const handleSearchNumberSeries = async () => {
-    setLoading(true)
+    setLoading(true);
 
     try {
       const response = await fetch(`${BASE_URL}/numberseriessearchdata`, {
@@ -5139,7 +5375,7 @@ const handleLocationNoKeyDown = (e: React.KeyboardEvent) => {
                   options={statusOptions}
                   value={
                     statusOptions.find(
-                      (option) => option.value === companySearchForm.status
+                      (option) => option.value === companySearchForm.status,
                     ) || null
                   }
                   onChange={(selected) => {
@@ -5246,7 +5482,8 @@ const handleLocationNoKeyDown = (e: React.KeyboardEvent) => {
                   options={statusOptions}
                   value={
                     statusOptions.find(
-                      (option) => option.value === companyMappingSearchForm.status
+                      (option) =>
+                        option.value === companyMappingSearchForm.status,
                     ) || null
                   }
                   onChange={(selected) => {
@@ -5425,7 +5662,7 @@ const handleLocationNoKeyDown = (e: React.KeyboardEvent) => {
                   options={statusOptions}
                   value={
                     statusOptions.find(
-                      (option) => option.value === locationSearchForm.status
+                      (option) => option.value === locationSearchForm.status,
                     ) || null
                   }
                   onChange={(selected) => {
@@ -5780,23 +6017,24 @@ const handleLocationNoKeyDown = (e: React.KeyboardEvent) => {
         <Label>User Status</Label>
         <TooltipProvider>
           <Tooltip>
-            <TooltipTrigger asChild><div>
-              <ReactSingleSelect
-                options={statusOptions}
-                value={
-                  statusOptions.find(
-                    (option) => option.value === usersSearchForm.user_status
-                  ) || null
-                }
-                onChange={(selected) => {
-                  setusersSearchForm({
-                    ...usersSearchForm,
-                    user_status: selected?.value || "",
-                  });
-                }}
-                placeholder="Select User Status"
-              />
-            </div>
+            <TooltipTrigger asChild>
+              <div>
+                <ReactSingleSelect
+                  options={statusOptions}
+                  value={
+                    statusOptions.find(
+                      (option) => option.value === usersSearchForm.user_status,
+                    ) || null
+                  }
+                  onChange={(selected) => {
+                    setusersSearchForm({
+                      ...usersSearchForm,
+                      user_status: selected?.value || "",
+                    });
+                  }}
+                  placeholder="Select User Status"
+                />
+              </div>
             </TooltipTrigger>
 
             <TooltipContent>
@@ -5841,7 +6079,7 @@ const handleLocationNoKeyDown = (e: React.KeyboardEvent) => {
                   options={genderOptions}
                   value={
                     genderOptions.find(
-                      (option) => option.value === usersSearchForm.gender
+                      (option) => option.value === usersSearchForm.gender,
                     ) || null
                   }
                   onChange={(selected) => {
@@ -5985,7 +6223,8 @@ const handleLocationNoKeyDown = (e: React.KeyboardEvent) => {
                   options={screenTypeOptions}
                   value={
                     screenTypeOptions.find(
-                      (option) => option.value === numberSeriesSearchForm.Screen_Type
+                      (option) =>
+                        option.value === numberSeriesSearchForm.Screen_Type,
                     ) || null
                   }
                   onChange={(selected) => {
@@ -6173,7 +6412,9 @@ const handleLocationNoKeyDown = (e: React.KeyboardEvent) => {
                 Super User Management
               </h1>
             </div>
-            <Badge variant="secondary" className="shrink-0">Admin</Badge>
+            <Badge variant="secondary" className="shrink-0">
+              Admin
+            </Badge>
           </div>
         </div>
       </header>
@@ -6274,9 +6515,7 @@ const handleLocationNoKeyDown = (e: React.KeyboardEvent) => {
                       </Button>
                     </TooltipTrigger>
 
-                    <TooltipContent>
-                      Add {addLabels[activeTab]}
-                    </TooltipContent>
+                    <TooltipContent>Add {addLabels[activeTab]}</TooltipContent>
                   </Tooltip>
                 </TooltipProvider>
               )}
@@ -6735,7 +6974,7 @@ const handleLocationNoKeyDown = (e: React.KeyboardEvent) => {
                               options={citiesOptions}
                               value={
                                 citiesOptions.find(
-                                  (option) => option.value === companyForm.city
+                                  (option) => option.value === companyForm.city,
                                 ) || null
                               }
                               onChange={(selected) => {
@@ -6744,7 +6983,7 @@ const handleLocationNoKeyDown = (e: React.KeyboardEvent) => {
                                   city: selected?.value || "",
                                 });
                               }}
-                              placeholder="Select City" 
+                              placeholder="Select City"
                               ref={cityRef}
                               tabIndex={0}
                               onKeyDown={handleCityKeyDown}
@@ -6779,7 +7018,8 @@ const handleLocationNoKeyDown = (e: React.KeyboardEvent) => {
                               options={statesOptions}
                               value={
                                 statesOptions.find(
-                                  (option) => option.value === companyForm.state
+                                  (option) =>
+                                    option.value === companyForm.state,
                                 ) || null
                               }
                               onChange={(selected) => {
@@ -6787,8 +7027,8 @@ const handleLocationNoKeyDown = (e: React.KeyboardEvent) => {
                                   ...companyForm,
                                   state: selected?.value || "",
                                 });
-                              }} 
-                              placeholder="Select State" 
+                              }}
+                              placeholder="Select State"
                               ref={stateRef}
                               tabIndex={0}
                               onKeyDown={handleStateKeyDown}
@@ -6862,7 +7102,8 @@ const handleLocationNoKeyDown = (e: React.KeyboardEvent) => {
                               options={countriesOptions}
                               value={
                                 countriesOptions.find(
-                                  (option) => option.value === companyForm.country
+                                  (option) =>
+                                    option.value === companyForm.country,
                                 ) || null
                               }
                               onChange={(selected) => {
@@ -6870,12 +7111,12 @@ const handleLocationNoKeyDown = (e: React.KeyboardEvent) => {
                                   ...companyForm,
                                   country: selected?.value || "",
                                 });
-                              }} 
+                              }}
                               placeholder="Select Country"
                               ref={countryRef}
-                            tabIndex={0} 
-                            onKeyDown={handleCountryKeyDown}
-                            />  
+                              tabIndex={0}
+                              onKeyDown={handleCountryKeyDown}
+                            />
                           </div>
                         </TooltipTrigger>
 
@@ -6912,7 +7153,7 @@ const handleLocationNoKeyDown = (e: React.KeyboardEvent) => {
                             }
                             placeholder="Enter email address (e.g., info@company.com)"
                             ref={emailRef}
-                            tabIndex={0} 
+                            tabIndex={0}
                           />
                         </TooltipTrigger>
 
@@ -6943,7 +7184,8 @@ const handleLocationNoKeyDown = (e: React.KeyboardEvent) => {
                               options={statusOptions}
                               value={
                                 statusOptions.find(
-                                  (option) => option.value === companyForm.status
+                                  (option) =>
+                                    option.value === companyForm.status,
                                 ) || null
                               }
                               onChange={(selected) => {
@@ -6951,13 +7193,13 @@ const handleLocationNoKeyDown = (e: React.KeyboardEvent) => {
                                   ...companyForm,
                                   status: selected?.value || "",
                                 });
-                              }} 
-                              placeholder="Select Status" 
+                              }}
+                              placeholder="Select Status"
                               ref={statusRef}
-                            tabIndex={0} 
-                            onKeyDown={handleStatusKeyDown}
+                              tabIndex={0}
+                              onKeyDown={handleStatusKeyDown}
                             />
-                          </div> 
+                          </div>
                         </TooltipTrigger>
 
                         <TooltipContent>
@@ -6986,7 +7228,7 @@ const handleLocationNoKeyDown = (e: React.KeyboardEvent) => {
                             // max={new Date().toISOString().split("T")[0]}
                             placeholder="Select founded date"
                             ref={foundedDateRef}
-                            tabIndex={0} 
+                            tabIndex={0}
                           />
                         </TooltipTrigger>
 
@@ -7129,7 +7371,8 @@ const handleLocationNoKeyDown = (e: React.KeyboardEvent) => {
                               options={locationOptions}
                               value={
                                 locationOptions.find(
-                                  (option) => option.value === companyForm.location_no
+                                  (option) =>
+                                    option.value === companyForm.location_no,
                                 ) || null
                               }
                               onChange={(selected) => {
@@ -7137,8 +7380,8 @@ const handleLocationNoKeyDown = (e: React.KeyboardEvent) => {
                                   ...companyForm,
                                   location_no: selected?.value || "",
                                 });
-                              }} 
-                              placeholder="Select Location" 
+                              }}
+                              placeholder="Select Location"
                               ref={locationNoRef}
                               tabIndex={0}
                               onKeyDown={handleLocationNoKeyDown}
@@ -7252,7 +7495,9 @@ const handleLocationNoKeyDown = (e: React.KeyboardEvent) => {
                               options={userOptions}
                               value={
                                 userOptions.find(
-                                  (option) => option.value === companyMappingForm.user_code
+                                  (option) =>
+                                    option.value ===
+                                    companyMappingForm.user_code,
                                 ) || null
                               }
                               onChange={(selected) => {
@@ -7282,7 +7527,7 @@ const handleLocationNoKeyDown = (e: React.KeyboardEvent) => {
                       required
                       className={
                         submittedCompanyMapping &&
-                          !companyMappingForm.company_no
+                        !companyMappingForm.company_no
                           ? "text-red-500"
                           : ""
                       }
@@ -7297,7 +7542,9 @@ const handleLocationNoKeyDown = (e: React.KeyboardEvent) => {
                               options={companyOptions}
                               value={
                                 companyOptions.find(
-                                  (option) => option.value === companyMappingForm.company_no
+                                  (option) =>
+                                    option.value ===
+                                    companyMappingForm.company_no,
                                 ) || null
                               }
                               onChange={(selected) => {
@@ -7327,7 +7574,7 @@ const handleLocationNoKeyDown = (e: React.KeyboardEvent) => {
                       required
                       className={
                         submittedCompanyMapping &&
-                          !companyMappingForm.location_no
+                        !companyMappingForm.location_no
                           ? "text-red-500"
                           : ""
                       }
@@ -7342,7 +7589,9 @@ const handleLocationNoKeyDown = (e: React.KeyboardEvent) => {
                               options={locationOptions}
                               value={
                                 locationOptions.find(
-                                  (option) => option.value === companyMappingForm.location_no
+                                  (option) =>
+                                    option.value ===
+                                    companyMappingForm.location_no,
                                 ) || null
                               }
                               onChange={(selected) => {
@@ -7386,7 +7635,8 @@ const handleLocationNoKeyDown = (e: React.KeyboardEvent) => {
                               options={statusOptions}
                               value={
                                 statusOptions.find(
-                                  (option) => option.value === companyMappingForm.status
+                                  (option) =>
+                                    option.value === companyMappingForm.status,
                                 ) || null
                               }
                               onChange={(selected) => {
@@ -7429,7 +7679,7 @@ const handleLocationNoKeyDown = (e: React.KeyboardEvent) => {
                             }}
                             placeholder="Enter order number (e.g., 001)"
                             ref={orderNoRef}
-                              tabIndex={0}
+                            tabIndex={0}
                           />
                         </TooltipTrigger>
 
@@ -7737,7 +7987,8 @@ const handleLocationNoKeyDown = (e: React.KeyboardEvent) => {
                               options={citiesOptions}
                               value={
                                 citiesOptions.find(
-                                  (option) => option.value === locationForm.city
+                                  (option) =>
+                                    option.value === locationForm.city,
                                 ) || null
                               }
                               onChange={(selected) => {
@@ -7747,6 +7998,9 @@ const handleLocationNoKeyDown = (e: React.KeyboardEvent) => {
                                 });
                               }}
                               placeholder="Select City"
+                              ref={citylLocRef}
+                              tabIndex={0}
+                              onKeyDown={handleCityLocKeyDown}
                             />
                           </div>
                         </TooltipTrigger>
@@ -7778,7 +8032,8 @@ const handleLocationNoKeyDown = (e: React.KeyboardEvent) => {
                               options={statesOptions}
                               value={
                                 statesOptions.find(
-                                  (option) => option.value === locationForm.state
+                                  (option) =>
+                                    option.value === locationForm.state,
                                 ) || null
                               }
                               onChange={(selected) => {
@@ -7788,6 +8043,9 @@ const handleLocationNoKeyDown = (e: React.KeyboardEvent) => {
                                 });
                               }}
                               placeholder="Select State"
+                              ref={stateLocRef}
+                              tabIndex={0}
+                              onKeyDown={handleStateLocKeyDown}
                             />
                           </div>
                         </TooltipTrigger>
@@ -7826,6 +8084,8 @@ const handleLocationNoKeyDown = (e: React.KeyboardEvent) => {
                               })
                             }
                             placeholder="Enter Pin code (e.g., 600001)"
+                            ref={pinCodeLocRef}
+                            tabIndex={0}
                           />
                         </TooltipTrigger>
 
@@ -7856,7 +8116,8 @@ const handleLocationNoKeyDown = (e: React.KeyboardEvent) => {
                               options={countriesOptions}
                               value={
                                 countriesOptions.find(
-                                  (option) => option.value === locationForm.country
+                                  (option) =>
+                                    option.value === locationForm.country,
                                 ) || null
                               }
                               onChange={(selected) => {
@@ -7866,6 +8127,9 @@ const handleLocationNoKeyDown = (e: React.KeyboardEvent) => {
                                 });
                               }}
                               placeholder="Select Country"
+                              ref={countryLocRef}
+                              tabIndex={0}
+                              onKeyDown={handleCountryLocKeyDown}
                             />
                           </div>
                         </TooltipTrigger>
@@ -7903,6 +8167,8 @@ const handleLocationNoKeyDown = (e: React.KeyboardEvent) => {
                               })
                             }
                             placeholder="Enter email address (e.g., branch@example.com)"
+                            ref={emailLocRef}
+                            tabIndex={0}
                           />
                         </TooltipTrigger>
 
@@ -7933,7 +8199,8 @@ const handleLocationNoKeyDown = (e: React.KeyboardEvent) => {
                               options={statusOptions}
                               value={
                                 statusOptions.find(
-                                  (option) => option.value === locationForm.status
+                                  (option) =>
+                                    option.value === locationForm.status,
                                 ) || null
                               }
                               onChange={(selected) => {
@@ -7943,6 +8210,9 @@ const handleLocationNoKeyDown = (e: React.KeyboardEvent) => {
                                 });
                               }}
                               placeholder="Select Status"
+                              ref={statusLocRef}
+                              tabIndex={0}
+                              onKeyDown={handleStatusLocKeyDown}
                             />
                           </div>
                         </TooltipTrigger>
@@ -7981,6 +8251,8 @@ const handleLocationNoKeyDown = (e: React.KeyboardEvent) => {
                               })
                             }
                             placeholder="Enter contact number (e.g., +91 9876543210)"
+                            ref={contactNoLocRef}
+                            tabIndex={0}
                           />
                         </TooltipTrigger>
 
@@ -8252,7 +8524,8 @@ const handleLocationNoKeyDown = (e: React.KeyboardEvent) => {
                               options={userOptions}
                               value={
                                 userOptions.find(
-                                  (option) => option.value === roleMappingForm.user_code
+                                  (option) =>
+                                    option.value === roleMappingForm.user_code,
                                 ) || null
                               }
                               onChange={(selected) => {
@@ -8262,6 +8535,9 @@ const handleLocationNoKeyDown = (e: React.KeyboardEvent) => {
                                 });
                               }}
                               placeholder="Select User Code"
+                              ref={userCodeRMRef}
+                              tabIndex={0}
+                              onKeyDown={handleUserCodeRMKeyDown}
                             />
                           </div>
                         </TooltipTrigger>
@@ -8293,7 +8569,8 @@ const handleLocationNoKeyDown = (e: React.KeyboardEvent) => {
                               options={roleOptions}
                               value={
                                 roleOptions.find(
-                                  (option) => option.value === roleMappingForm.role_id
+                                  (option) =>
+                                    option.value === roleMappingForm.role_id,
                                 ) || null
                               }
                               onChange={(selected) => {
@@ -8303,6 +8580,9 @@ const handleLocationNoKeyDown = (e: React.KeyboardEvent) => {
                                 });
                               }}
                               placeholder="Select Role ID"
+                              ref={roleIdRMRef}
+                              tabIndex={0}
+                              onKeyDown={handleRoleIdRMKeyDown}
                             />
                           </div>
                         </TooltipTrigger>
@@ -8326,6 +8606,8 @@ const handleLocationNoKeyDown = (e: React.KeyboardEvent) => {
                         setSubmittedRoleMapping(false);
                         setIsRoleMappingDialogOpen(false);
                       }}
+                      ref={cancelRMRef}
+                      tabIndex={0}
                     >
                       Cancel
                     </Button>
@@ -8405,7 +8687,8 @@ const handleLocationNoKeyDown = (e: React.KeyboardEvent) => {
                               options={roleRightOptions}
                               value={
                                 roleRightOptions.find(
-                                  (option) => option.value === roleRightsForm.role_id
+                                  (option) =>
+                                    option.value === roleRightsForm.role_id,
                                 ) || null
                               }
                               onChange={(selected) => {
@@ -8415,6 +8698,9 @@ const handleLocationNoKeyDown = (e: React.KeyboardEvent) => {
                                 });
                               }}
                               placeholder="Select Role ID"
+                              ref={roleIdRRRef}
+                              tabIndex={0}
+                              onKeyDown={handleRoleIdRRKeyDown}
                             />
                           </div>
                         </TooltipTrigger>
@@ -8446,7 +8732,8 @@ const handleLocationNoKeyDown = (e: React.KeyboardEvent) => {
                               options={screenOptions}
                               value={
                                 screenOptions.find(
-                                  (option) => option.value === roleRightsForm.screen_type
+                                  (option) =>
+                                    option.value === roleRightsForm.screen_type,
                                 ) || null
                               }
                               onChange={(selected) => {
@@ -8456,6 +8743,9 @@ const handleLocationNoKeyDown = (e: React.KeyboardEvent) => {
                                 });
                               }}
                               placeholder="Select Screen Type"
+                              ref={screenTypeRRRef}
+                              tabIndex={0}
+                              onKeyDown={handleScreenTypeRRKeyDown}
                             />
                           </div>
                         </TooltipTrigger>
@@ -8487,7 +8777,9 @@ const handleLocationNoKeyDown = (e: React.KeyboardEvent) => {
                               options={permissionOptions}
                               value={
                                 permissionOptions.find(
-                                  (option) => option.value === roleRightsForm.permission_type
+                                  (option) =>
+                                    option.value ===
+                                    roleRightsForm.permission_type,
                                 ) || null
                               }
                               onChange={(selected) => {
@@ -8497,6 +8789,9 @@ const handleLocationNoKeyDown = (e: React.KeyboardEvent) => {
                                 });
                               }}
                               placeholder="Select Permission Type"
+                              ref={userCodeRRRef}
+                              tabIndex={0}
+                              onKeyDown={handleUserCodeRRKeyDown}
                             />
                           </div>
                         </TooltipTrigger>
@@ -8520,6 +8815,8 @@ const handleLocationNoKeyDown = (e: React.KeyboardEvent) => {
                         setSubmittedRoleRights(false);
                         setIsRoleRightsDialogOpen(false);
                       }}
+                      ref={cancelRRRef}
+                      tabIndex={0}
                     >
                       Cancel
                     </Button>
@@ -8786,7 +9083,8 @@ const handleLocationNoKeyDown = (e: React.KeyboardEvent) => {
                               options={statusOptions}
                               value={
                                 statusOptions.find(
-                                  (option) => option.value === userForm.user_status
+                                  (option) =>
+                                    option.value === userForm.user_status,
                                 ) || null
                               }
                               onChange={(selected) => {
@@ -8796,6 +9094,9 @@ const handleLocationNoKeyDown = (e: React.KeyboardEvent) => {
                                 });
                               }}
                               placeholder="Select Status"
+                              ref={StatusUserRef}
+                              tabIndex={0}
+                              onKeyDown={handleStatusUserKeyDown}
                             />
                           </div>
                         </TooltipTrigger>
@@ -8825,7 +9126,7 @@ const handleLocationNoKeyDown = (e: React.KeyboardEvent) => {
                               options={roleOptions}
                               value={
                                 roleOptions.find(
-                                  (option) => option.value === userForm.role_id
+                                  (option) => option.value === userForm.role_id,
                                 ) || null
                               }
                               onChange={(selected) => {
@@ -8835,6 +9136,9 @@ const handleLocationNoKeyDown = (e: React.KeyboardEvent) => {
                                 });
                               }}
                               placeholder="Select Role ID"
+                              ref={RoleIdUserRef}
+                              tabIndex={0}
+                              onKeyDown={handleRoleIdUserKeyDown}
                             />
                           </div>
                         </TooltipTrigger>
@@ -8872,11 +9176,47 @@ const handleLocationNoKeyDown = (e: React.KeyboardEvent) => {
                               })
                             }
                             placeholder="e.g., Email"
+                            ref={EmailUserRef}
+                            tabIndex={0}
                           />
                         </TooltipTrigger>
 
                         <TooltipContent>
                           <p>Enter Email</p>
+                        </TooltipContent>
+                      </Tooltip>
+                    </TooltipProvider>
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label htmlFor="Gender">Gender</Label>
+                    <TooltipProvider>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <div>
+                            <ReactSingleSelect
+                              options={genderOptions}
+                              value={
+                                genderOptions.find(
+                                  (option) => option.value === userForm.gender,
+                                ) || null
+                              }
+                              onChange={(selected) => {
+                                setUserForm({
+                                  ...userForm,
+                                  gender: selected?.value || "",
+                                });
+                              }}
+                              placeholder="Select Gender"
+                              ref={GenderUserRef}
+                              tabIndex={0}
+                              onKeyDown={handleGenderUserKeyDown}
+                            />
+                          </div>
+                        </TooltipTrigger>
+
+                        <TooltipContent>
+                          <p>Select Gender</p>
                         </TooltipContent>
                       </Tooltip>
                     </TooltipProvider>
@@ -8904,42 +9244,13 @@ const handleLocationNoKeyDown = (e: React.KeyboardEvent) => {
                               setUserForm({ ...userForm, dob: e.target.value })
                             }
                             placeholder="e.g., DOB"
+                            ref={DOBUserRef}
+                            tabIndex={0}
                           />
                         </TooltipTrigger>
 
                         <TooltipContent>
                           <p>Select DOB</p>
-                        </TooltipContent>
-                      </Tooltip>
-                    </TooltipProvider>
-                  </div>
-
-                  <div className="space-y-2">
-                    <Label htmlFor="Gender">Gender</Label>
-                    <TooltipProvider>
-                      <Tooltip>
-                        <TooltipTrigger asChild>
-                          <div>
-                            <ReactSingleSelect
-                              options={genderOptions}
-                              value={
-                                genderOptions.find(
-                                  (option) => option.value === userForm.gender
-                                ) || null
-                              }
-                              onChange={(selected) => {
-                                setUserForm({
-                                  ...userForm,
-                                  gender: selected?.value || "",
-                                });
-                              }}
-                              placeholder="Select Gender"
-                            />
-                          </div>
-                        </TooltipTrigger>
-
-                        <TooltipContent>
-                          <p>Select Gender</p>
                         </TooltipContent>
                       </Tooltip>
                     </TooltipProvider>
@@ -9041,7 +9352,7 @@ const handleLocationNoKeyDown = (e: React.KeyboardEvent) => {
                       required
                       className={
                         submittedAttributeDet &&
-                          !attributeForm.attributeheader_code
+                        !attributeForm.attributeheader_code
                           ? "text-red-500"
                           : ""
                       }
@@ -9058,7 +9369,9 @@ const handleLocationNoKeyDown = (e: React.KeyboardEvent) => {
                                 isDisabled={!!editingAttribute}
                                 value={
                                   attributehdrOptions.find(
-                                    (option) => option.value === attributeForm.attributeheader_code
+                                    (option) =>
+                                      option.value ===
+                                      attributeForm.attributeheader_code,
                                   ) || null
                                 }
                                 onChange={(selected) => {
@@ -9068,6 +9381,9 @@ const handleLocationNoKeyDown = (e: React.KeyboardEvent) => {
                                   });
                                 }}
                                 placeholder="Select Code"
+                                ref={codeRef}
+                                tabIndex={0}
+                                onKeyDown={handleCodeKeyDown}
                               />
                             </div>
                           </TooltipTrigger>
@@ -9090,6 +9406,8 @@ const handleLocationNoKeyDown = (e: React.KeyboardEvent) => {
                                 type="button"
                                 variant="outline"
                                 onClick={handleAddAttributeHdr}
+                                ref={plusRef}
+                                tabIndex={0}
                               >
                                 <Plus className="h-4 w-4" />
                               </Button>
@@ -9110,7 +9428,7 @@ const handleLocationNoKeyDown = (e: React.KeyboardEvent) => {
                       required
                       className={
                         submittedAttributeDet &&
-                          !attributeForm.attributedetails_code
+                        !attributeForm.attributedetails_code
                           ? "text-red-500"
                           : ""
                       }
@@ -9147,7 +9465,7 @@ const handleLocationNoKeyDown = (e: React.KeyboardEvent) => {
                       required
                       className={
                         submittedAttributeDet &&
-                          !attributeForm.attributedetails_name
+                        !attributeForm.attributedetails_name
                           ? "text-red-500"
                           : ""
                       }
@@ -9271,7 +9589,7 @@ const handleLocationNoKeyDown = (e: React.KeyboardEvent) => {
                   required
                   className={
                     submittedAttributeHdr &&
-                      !attributeHdrForm.attributeheader_code
+                    !attributeHdrForm.attributeheader_code
                       ? "text-red-500"
                       : ""
                   }
@@ -9307,7 +9625,7 @@ const handleLocationNoKeyDown = (e: React.KeyboardEvent) => {
                   required
                   className={
                     submittedAttributeHdr &&
-                      !attributeHdrForm.attributeheader_name
+                    !attributeHdrForm.attributeheader_name
                       ? "text-red-500"
                       : ""
                   }
@@ -9357,7 +9675,8 @@ const handleLocationNoKeyDown = (e: React.KeyboardEvent) => {
                           options={statusOptions}
                           value={
                             statusOptions.find(
-                              (option) => option.value === attributeHdrForm.status
+                              (option) =>
+                                option.value === attributeHdrForm.status,
                             ) || null
                           }
                           onChange={(selected) => {
@@ -9367,6 +9686,9 @@ const handleLocationNoKeyDown = (e: React.KeyboardEvent) => {
                             });
                           }}
                           placeholder="Select Status"
+                          ref={statusAHRef}
+                          tabIndex={0}
+                          onKeyDown={handleStatusAHKeyDown}
                         />
                       </div>
                     </TooltipTrigger>
@@ -9389,6 +9711,8 @@ const handleLocationNoKeyDown = (e: React.KeyboardEvent) => {
                         setSubmittedAttributeHdr(false);
                         setIsAttributeHdrDialogOpen(false);
                       }}
+                      ref={cancelAHRef}
+                      tabIndex={0}
                     >
                       Cancel
                     </Button>
@@ -9467,7 +9791,9 @@ const handleLocationNoKeyDown = (e: React.KeyboardEvent) => {
                               isDisabled={!!editingNumberSeries}
                               value={
                                 screenTypeOptions.find(
-                                  (option) => option.value === numberSeriesForm.Screen_Type
+                                  (option) =>
+                                    option.value ===
+                                    numberSeriesForm.Screen_Type,
                                 ) || null
                               }
                               onChange={(selected) => {
@@ -9477,6 +9803,9 @@ const handleLocationNoKeyDown = (e: React.KeyboardEvent) => {
                                 });
                               }}
                               placeholder="Select Screen Type"
+                              ref={screenTypeNSRef}
+                              tabIndex={0}
+                              onKeyDown={handleScreenTypeNSKeyDown}
                             />
                           </div>
                         </TooltipTrigger>
@@ -9516,6 +9845,8 @@ const handleLocationNoKeyDown = (e: React.KeyboardEvent) => {
                               })
                             }
                             placeholder="Select Start Year"
+                            ref={startYearNSRef}
+                            tabIndex={0}
                           />
                         </TooltipTrigger>
 
@@ -9730,7 +10061,9 @@ const handleLocationNoKeyDown = (e: React.KeyboardEvent) => {
                               options={numberPrefixOptions}
                               value={
                                 numberPrefixOptions.find(
-                                  (option) => option.value === numberSeriesForm.number_prefix
+                                  (option) =>
+                                    option.value ===
+                                    numberSeriesForm.number_prefix,
                                 ) || null
                               }
                               onChange={(selected) => {
@@ -9740,6 +10073,9 @@ const handleLocationNoKeyDown = (e: React.KeyboardEvent) => {
                                 });
                               }}
                               placeholder="Select Number Prefix"
+                              ref={numberPrefixNSRef}
+                              tabIndex={0}
+                              onKeyDown={handleNumberPrefixNSKeyDown}
                             />
                           </div>
                         </TooltipTrigger>
@@ -9771,7 +10107,9 @@ const handleLocationNoKeyDown = (e: React.KeyboardEvent) => {
                               options={billFormatOptions}
                               value={
                                 billFormatOptions.find(
-                                  (option) => option.value === numberSeriesForm.bill_format
+                                  (option) =>
+                                    option.value ===
+                                    numberSeriesForm.bill_format,
                                 ) || null
                               }
                               onChange={(selected) => {
@@ -9781,6 +10119,9 @@ const handleLocationNoKeyDown = (e: React.KeyboardEvent) => {
                                 });
                               }}
                               placeholder="Select Bill Format"
+                              ref={billFormatNSRef}
+                              tabIndex={0}
+                              onKeyDown={handleBillFormatNSKeyDown}
                             />
                           </div>
                         </TooltipTrigger>
@@ -9812,7 +10153,8 @@ const handleLocationNoKeyDown = (e: React.KeyboardEvent) => {
                               options={statusOptions}
                               value={
                                 statusOptions.find(
-                                  (option) => option.value === numberSeriesForm.Status
+                                  (option) =>
+                                    option.value === numberSeriesForm.Status,
                                 ) || null
                               }
                               onChange={(selected) => {
@@ -9822,6 +10164,9 @@ const handleLocationNoKeyDown = (e: React.KeyboardEvent) => {
                                 });
                               }}
                               placeholder="Select Status"
+                              ref={statusNSRef}
+                              tabIndex={0}
+                              onKeyDown={handleStatusNSKeyDown}
                             />
                           </div>
                         </TooltipTrigger>
@@ -9845,6 +10190,8 @@ const handleLocationNoKeyDown = (e: React.KeyboardEvent) => {
                         setSubmittedNumberSeries(false);
                         setIsNumberSeriesDialogOpen(false);
                       }}
+                      ref={cancelNSRef}
+                      tabIndex={0}
                     >
                       Cancel
                     </Button>
