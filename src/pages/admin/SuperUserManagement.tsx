@@ -2048,45 +2048,225 @@ const handleLocationNoKeyDown = (e: React.KeyboardEvent) => {
   const statusLocRef = useRef<any>(null);
   const contactNoLocRef = useRef<HTMLInputElement>(null);
 
-  // const handleCityKeyDown = (e: React.KeyboardEvent) => {
-  //   if (e.key === "Tab" && !e.shiftKey) {
-  //     e.preventDefault();
+  const handleCityLocKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === "Tab" && !e.shiftKey) {
+      e.preventDefault();
 
-  //     setTimeout(() => {
-  //       stateLocRef.current?.focus();
-  //     }, 0);
-  //   }
-  // };
+      setTimeout(() => {
+        stateLocRef.current?.focus();
+      }, 0);
+    }
+  };
 
-  // const handleStateKeyDown = (e: React.KeyboardEvent) => {
-  //   if (e.key === "Tab" && !e.shiftKey) {
-  //     e.preventDefault();
+  const handleStateLocKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === "Tab" && !e.shiftKey) {
+      e.preventDefault();
 
-  //     setTimeout(() => {
-  //       difficultyRef.current?.focus();
-  //     }, 0);
-  //   }
-  // };
+      setTimeout(() => {
+        pinCodeLocRef.current?.focus();
+      }, 0);
+    }
+  };
 
-  // const handleCountryKeyDown = (e: React.KeyboardEvent) => {
-  //   if (e.key === "Tab" && !e.shiftKey) {
-  //     e.preventDefault();
+  const handleCountryLocKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === "Tab" && !e.shiftKey) {
+      e.preventDefault();
 
-  //     setTimeout(() => {
-  //       difficultyRef.current?.focus();
-  //     }, 0);
-  //   }
-  // };
+      setTimeout(() => {
+        emailLocRef.current?.focus();
+      }, 0);
+    }
+  };
 
-  // const handleStatusKeyDown = (e: React.KeyboardEvent) => {
-  //   if (e.key === "Tab" && !e.shiftKey) {
-  //     e.preventDefault();
+  const handleStatusLocKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === "Tab" && !e.shiftKey) {
+      e.preventDefault();
 
-  //     setTimeout(() => {
-  //       difficultyRef.current?.focus();
-  //     }, 0);
-  //   }
-  // };
+      setTimeout(() => {
+        contactNoLocRef.current?.focus();
+      }, 0);
+    }
+  };
+
+  // Role Mapping screen
+  const userCodeRMRef = useRef<any>(null);
+  const roleIdRMRef = useRef<any>(null);
+  const cancelRMRef = useRef<HTMLButtonElement>(null);
+
+  const handleUserCodeRMKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === "Tab" && !e.shiftKey) {
+      e.preventDefault();
+
+      setTimeout(() => {
+        roleIdRMRef.current?.focus();
+      }, 0);
+    }
+  };
+
+  const handleRoleIdRMKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === "Tab" && !e.shiftKey) {
+      e.preventDefault();
+
+      setTimeout(() => {
+        cancelRMRef.current?.focus();
+      }, 0);
+    }
+  };
+
+  // Role Rights screen
+  const roleIdRRRef = useRef<any>(null);
+  const screenTypeRRRef = useRef<any>(null);
+  const userCodeRRRef = useRef<any>(null);
+  const cancelRRRef = useRef<HTMLButtonElement>(null);
+
+  const handleRoleIdRRKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === "Tab" && !e.shiftKey) {
+      e.preventDefault();
+
+      setTimeout(() => {
+        screenTypeRRRef.current?.focus();
+      }, 0);
+    }
+  };
+
+  const handleScreenTypeRRKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === "Tab" && !e.shiftKey) {
+      e.preventDefault();
+
+      setTimeout(() => {
+        userCodeRRRef.current?.focus();
+      }, 0);
+    }
+  };
+
+  const handleUserCodeRRKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === "Tab" && !e.shiftKey) {
+      e.preventDefault();
+
+      setTimeout(() => {
+        cancelRRRef.current?.focus();
+      }, 0);
+    }
+  };
+
+  // User screen
+  const StatusUserRef = useRef<any>(null);
+  const RoleIdUserRef = useRef<any>(null);
+  const EmailUserRef = useRef<HTMLInputElement>(null);
+  const GenderUserRef = useRef<any>(null);
+  const DOBUserRef = useRef<HTMLInputElement>(null);
+
+  const handleStatusUserKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === "Tab" && !e.shiftKey) {
+      e.preventDefault();
+
+      setTimeout(() => {
+        RoleIdUserRef.current?.focus();
+      }, 0);
+    }
+  };
+
+  const handleRoleIdUserKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === "Tab" && !e.shiftKey) {
+      e.preventDefault();
+
+      setTimeout(() => {
+        EmailUserRef.current?.focus();
+      }, 0);
+    }
+  };
+
+  const handleGenderUserKeyDown = (e: React.KeyboardEvent) => {
+  if (e.key === "Tab" && !e.shiftKey) {
+    e.preventDefault();
+
+    setTimeout(() => {
+      DOBUserRef.current?.focus();
+    }, 0);
+  }
+};
+
+// Attribute screen
+const codeRef = useRef<any>(null);
+const plusRef = useRef<HTMLButtonElement>(null);
+
+const handleCodeKeyDown = (e: React.KeyboardEvent) => {
+  if (e.key === "Tab" && !e.shiftKey) {
+    e.preventDefault();
+
+    setTimeout(() => {
+      plusRef.current?.focus();
+    }, 0);
+  }
+};
+
+// Attribute Header screen
+const statusAHRef = useRef<any>(null);
+const cancelAHRef = useRef<HTMLButtonElement>(null);
+
+const handleStatusAHKeyDown = (e: React.KeyboardEvent) => {
+  if (e.key === "Tab" && !e.shiftKey) {
+    e.preventDefault();
+
+    setTimeout(() => {
+      cancelAHRef.current?.focus();
+    }, 0);
+  }
+};
+
+// Number Series screen
+const screenTypeNSRef = useRef<any>(null);
+const startYearNSRef = useRef<HTMLInputElement>(null);
+const numberPrefixNSRef = useRef<any>(null);
+const billFormatNSRef = useRef<any>(null);
+const statusNSRef = useRef<any>(null);
+const cancelNSRef = useRef<HTMLButtonElement>(null);
+
+const handleScreenTypeNSKeyDown = (e: React.KeyboardEvent) => {
+  if (e.key === "Tab" && !e.shiftKey) {
+    e.preventDefault();
+
+    setTimeout(() => {
+      startYearNSRef.current?.focus();
+    }, 0);
+  }
+};
+
+const handleNumberPrefixNSKeyDown = (e: React.KeyboardEvent) => {
+  if (e.key === "Tab" && !e.shiftKey) {
+    e.preventDefault();
+
+    setTimeout(() => {
+      billFormatNSRef.current?.focus();
+    }, 0);
+  }
+};
+
+const handleBillFormatNSKeyDown = (e: React.KeyboardEvent) => {
+  if (e.key === "Tab" && !e.shiftKey) {
+    e.preventDefault();
+
+    setTimeout(() => {
+      statusNSRef.current?.focus();
+    }, 0);
+  }
+};
+
+const handleStatusNSKeyDown = (e: React.KeyboardEvent) => {
+  if (e.key === "Tab" && !e.shiftKey) {
+    e.preventDefault();
+
+    setTimeout(() => {
+      cancelNSRef.current?.focus();
+    }, 0);
+  }
+};
+
+
+  // ref={roleIdRMRef}
+  // tabIndex={0}
+  // onKeyDown={handleRoleIdRMKeyDown}
+
 
   //Company CRUD Functions
   const handleAddCompany = () => {
@@ -7796,6 +7976,9 @@ const handleLocationNoKeyDown = (e: React.KeyboardEvent) => {
                                 });
                               }}
                               placeholder="Select City"
+                              ref={citylLocRef}
+                              tabIndex={0}
+                              onKeyDown={handleCityLocKeyDown}
                             />
                           </div>
                         </TooltipTrigger>
@@ -7837,6 +8020,9 @@ const handleLocationNoKeyDown = (e: React.KeyboardEvent) => {
                                 });
                               }}
                               placeholder="Select State"
+                              ref={stateLocRef}
+                              tabIndex={0}
+                              onKeyDown={handleStateLocKeyDown}
                             />
                           </div>
                         </TooltipTrigger>
@@ -7875,6 +8061,8 @@ const handleLocationNoKeyDown = (e: React.KeyboardEvent) => {
                               })
                             }
                             placeholder="Enter Pin code (e.g., 600001)"
+                            ref={pinCodeLocRef}
+                            tabIndex={0}
                           />
                         </TooltipTrigger>
 
@@ -7915,6 +8103,9 @@ const handleLocationNoKeyDown = (e: React.KeyboardEvent) => {
                                 });
                               }}
                               placeholder="Select Country"
+                              ref={countryLocRef}
+                              tabIndex={0}
+                              onKeyDown={handleCountryLocKeyDown}
                             />
                           </div>
                         </TooltipTrigger>
@@ -7952,6 +8143,8 @@ const handleLocationNoKeyDown = (e: React.KeyboardEvent) => {
                               })
                             }
                             placeholder="Enter email address (e.g., branch@example.com)"
+                            ref={emailLocRef}
+                            tabIndex={0}
                           />
                         </TooltipTrigger>
 
@@ -7992,6 +8185,9 @@ const handleLocationNoKeyDown = (e: React.KeyboardEvent) => {
                                 });
                               }}
                               placeholder="Select Status"
+                              ref={statusLocRef}
+                              tabIndex={0}
+                              onKeyDown={handleStatusLocKeyDown}
                             />
                           </div>
                         </TooltipTrigger>
@@ -8030,6 +8226,8 @@ const handleLocationNoKeyDown = (e: React.KeyboardEvent) => {
                               })
                             }
                             placeholder="Enter contact number (e.g., +91 9876543210)"
+                            ref={contactNoLocRef}
+                            tabIndex={0}
                           />
                         </TooltipTrigger>
 
@@ -8311,6 +8509,9 @@ const handleLocationNoKeyDown = (e: React.KeyboardEvent) => {
                                 });
                               }}
                               placeholder="Select User Code"
+                              ref={userCodeRMRef}
+                              tabIndex={0}
+                              onKeyDown={handleUserCodeRMKeyDown}
                             />
                           </div>
                         </TooltipTrigger>
@@ -8352,6 +8553,9 @@ const handleLocationNoKeyDown = (e: React.KeyboardEvent) => {
                                 });
                               }}
                               placeholder="Select Role ID"
+                              ref={roleIdRMRef}
+                              tabIndex={0}
+                              onKeyDown={handleRoleIdRMKeyDown}
                             />
                           </div>
                         </TooltipTrigger>
@@ -8375,6 +8579,8 @@ const handleLocationNoKeyDown = (e: React.KeyboardEvent) => {
                         setSubmittedRoleMapping(false);
                         setIsRoleMappingDialogOpen(false);
                       }}
+                      ref={cancelRMRef}
+                      tabIndex={0}
                     >
                       Cancel
                     </Button>
@@ -8464,6 +8670,9 @@ const handleLocationNoKeyDown = (e: React.KeyboardEvent) => {
                                 });
                               }}
                               placeholder="Select Role ID"
+                              ref={roleIdRRRef}
+                              tabIndex={0}
+                              onKeyDown={handleRoleIdRRKeyDown}
                             />
                           </div>
                         </TooltipTrigger>
@@ -8505,6 +8714,9 @@ const handleLocationNoKeyDown = (e: React.KeyboardEvent) => {
                                 });
                               }}
                               placeholder="Select Screen Type"
+                              ref={screenTypeRRRef}
+                              tabIndex={0}
+                              onKeyDown={handleScreenTypeRRKeyDown}
                             />
                           </div>
                         </TooltipTrigger>
@@ -8546,6 +8758,9 @@ const handleLocationNoKeyDown = (e: React.KeyboardEvent) => {
                                 });
                               }}
                               placeholder="Select Permission Type"
+                              ref={userCodeRRRef}
+                              tabIndex={0}
+                              onKeyDown={handleUserCodeRRKeyDown}
                             />
                           </div>
                         </TooltipTrigger>
@@ -8569,6 +8784,8 @@ const handleLocationNoKeyDown = (e: React.KeyboardEvent) => {
                         setSubmittedRoleRights(false);
                         setIsRoleRightsDialogOpen(false);
                       }}
+                      ref={cancelRRRef}
+                      tabIndex={0}
                     >
                       Cancel
                     </Button>
@@ -8845,6 +9062,9 @@ const handleLocationNoKeyDown = (e: React.KeyboardEvent) => {
                                 });
                               }}
                               placeholder="Select Status"
+                              ref={StatusUserRef}
+                              tabIndex={0}
+                              onKeyDown={handleStatusUserKeyDown}
                             />
                           </div>
                         </TooltipTrigger>
@@ -8884,6 +9104,9 @@ const handleLocationNoKeyDown = (e: React.KeyboardEvent) => {
                                 });
                               }}
                               placeholder="Select Role ID"
+                              ref={RoleIdUserRef}
+                              tabIndex={0}
+                              onKeyDown={handleRoleIdUserKeyDown}
                             />
                           </div>
                         </TooltipTrigger>
@@ -8921,11 +9144,47 @@ const handleLocationNoKeyDown = (e: React.KeyboardEvent) => {
                               })
                             }
                             placeholder="e.g., Email"
+                            ref={EmailUserRef}
+                            tabIndex={0}
                           />
                         </TooltipTrigger>
 
                         <TooltipContent>
                           <p>Enter Email</p>
+                        </TooltipContent>
+                      </Tooltip>
+                    </TooltipProvider>
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label htmlFor="Gender">Gender</Label>
+                    <TooltipProvider>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <div>
+                            <ReactSingleSelect
+                              options={genderOptions}
+                              value={
+                                genderOptions.find(
+                                  (option) => option.value === userForm.gender
+                                ) || null
+                              }
+                              onChange={(selected) => {
+                                setUserForm({
+                                  ...userForm,
+                                  gender: selected?.value || "",
+                                });
+                              }}
+                              placeholder="Select Gender"
+                              ref={GenderUserRef}
+                              tabIndex={0}
+                              onKeyDown={handleGenderUserKeyDown}
+                            />
+                          </div>
+                        </TooltipTrigger>
+
+                        <TooltipContent>
+                          <p>Select Gender</p>
                         </TooltipContent>
                       </Tooltip>
                     </TooltipProvider>
@@ -8953,42 +9212,13 @@ const handleLocationNoKeyDown = (e: React.KeyboardEvent) => {
                               setUserForm({ ...userForm, dob: e.target.value })
                             }
                             placeholder="e.g., DOB"
+                            ref={DOBUserRef}
+                            tabIndex={0}
                           />
                         </TooltipTrigger>
 
                         <TooltipContent>
                           <p>Select DOB</p>
-                        </TooltipContent>
-                      </Tooltip>
-                    </TooltipProvider>
-                  </div>
-
-                  <div className="space-y-2">
-                    <Label htmlFor="Gender">Gender</Label>
-                    <TooltipProvider>
-                      <Tooltip>
-                        <TooltipTrigger asChild>
-                          <div>
-                            <ReactSingleSelect
-                              options={genderOptions}
-                              value={
-                                genderOptions.find(
-                                  (option) => option.value === userForm.gender
-                                ) || null
-                              }
-                              onChange={(selected) => {
-                                setUserForm({
-                                  ...userForm,
-                                  gender: selected?.value || "",
-                                });
-                              }}
-                              placeholder="Select Gender"
-                            />
-                          </div>
-                        </TooltipTrigger>
-
-                        <TooltipContent>
-                          <p>Select Gender</p>
                         </TooltipContent>
                       </Tooltip>
                     </TooltipProvider>
@@ -9117,6 +9347,9 @@ const handleLocationNoKeyDown = (e: React.KeyboardEvent) => {
                                   });
                                 }}
                                 placeholder="Select Code"
+                                ref={codeRef}
+                                tabIndex={0}
+                                onKeyDown={handleCodeKeyDown}
                               />
                             </div>
                           </TooltipTrigger>
@@ -9139,6 +9372,8 @@ const handleLocationNoKeyDown = (e: React.KeyboardEvent) => {
                                 type="button"
                                 variant="outline"
                                 onClick={handleAddAttributeHdr}
+                                ref={plusRef}
+                                tabIndex={0}
                               >
                                 <Plus className="h-4 w-4" />
                               </Button>
@@ -9416,6 +9651,9 @@ const handleLocationNoKeyDown = (e: React.KeyboardEvent) => {
                             });
                           }}
                           placeholder="Select Status"
+                          ref={statusAHRef}
+                          tabIndex={0}
+                          onKeyDown={handleStatusAHKeyDown}
                         />
                       </div>
                     </TooltipTrigger>
@@ -9438,6 +9676,8 @@ const handleLocationNoKeyDown = (e: React.KeyboardEvent) => {
                         setSubmittedAttributeHdr(false);
                         setIsAttributeHdrDialogOpen(false);
                       }}
+                      ref={cancelAHRef}
+                      tabIndex={0}
                     >
                       Cancel
                     </Button>
@@ -9526,6 +9766,9 @@ const handleLocationNoKeyDown = (e: React.KeyboardEvent) => {
                                 });
                               }}
                               placeholder="Select Screen Type"
+                              ref={screenTypeNSRef}
+                              tabIndex={0}
+                              onKeyDown={handleScreenTypeNSKeyDown}
                             />
                           </div>
                         </TooltipTrigger>
@@ -9565,6 +9808,8 @@ const handleLocationNoKeyDown = (e: React.KeyboardEvent) => {
                               })
                             }
                             placeholder="Select Start Year"
+                            ref={startYearNSRef}
+                            tabIndex={0}
                           />
                         </TooltipTrigger>
 
@@ -9789,6 +10034,9 @@ const handleLocationNoKeyDown = (e: React.KeyboardEvent) => {
                                 });
                               }}
                               placeholder="Select Number Prefix"
+                              ref={numberPrefixNSRef}
+                              tabIndex={0}
+                              onKeyDown={handleNumberPrefixNSKeyDown}
                             />
                           </div>
                         </TooltipTrigger>
@@ -9830,6 +10078,9 @@ const handleLocationNoKeyDown = (e: React.KeyboardEvent) => {
                                 });
                               }}
                               placeholder="Select Bill Format"
+                              ref={billFormatNSRef}
+                              tabIndex={0}
+                              onKeyDown={handleBillFormatNSKeyDown}
                             />
                           </div>
                         </TooltipTrigger>
@@ -9871,6 +10122,9 @@ const handleLocationNoKeyDown = (e: React.KeyboardEvent) => {
                                 });
                               }}
                               placeholder="Select Status"
+                              ref={statusNSRef}
+                              tabIndex={0}
+                              onKeyDown={handleStatusNSKeyDown}
                             />
                           </div>
                         </TooltipTrigger>
@@ -9894,6 +10148,8 @@ const handleLocationNoKeyDown = (e: React.KeyboardEvent) => {
                         setSubmittedNumberSeries(false);
                         setIsNumberSeriesDialogOpen(false);
                       }}
+                      ref={cancelNSRef}
+                      tabIndex={0}
                     >
                       Cancel
                     </Button>
