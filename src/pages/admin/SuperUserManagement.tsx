@@ -2039,6 +2039,55 @@ const handleLocationNoKeyDown = (e: React.KeyboardEvent) => {
     }
   };
 
+  // Location screen
+  const citylLocRef = useRef<any>(null);
+  const stateLocRef = useRef<any>(null);
+  const pinCodeLocRef = useRef<HTMLInputElement>(null);
+  const countryLocRef = useRef<any>(null);
+  const emailLocRef = useRef<HTMLInputElement>(null);
+  const statusLocRef = useRef<any>(null);
+  const contactNoLocRef = useRef<HTMLInputElement>(null);
+
+  // const handleCityKeyDown = (e: React.KeyboardEvent) => {
+  //   if (e.key === "Tab" && !e.shiftKey) {
+  //     e.preventDefault();
+
+  //     setTimeout(() => {
+  //       stateLocRef.current?.focus();
+  //     }, 0);
+  //   }
+  // };
+
+  // const handleStateKeyDown = (e: React.KeyboardEvent) => {
+  //   if (e.key === "Tab" && !e.shiftKey) {
+  //     e.preventDefault();
+
+  //     setTimeout(() => {
+  //       difficultyRef.current?.focus();
+  //     }, 0);
+  //   }
+  // };
+
+  // const handleCountryKeyDown = (e: React.KeyboardEvent) => {
+  //   if (e.key === "Tab" && !e.shiftKey) {
+  //     e.preventDefault();
+
+  //     setTimeout(() => {
+  //       difficultyRef.current?.focus();
+  //     }, 0);
+  //   }
+  // };
+
+  // const handleStatusKeyDown = (e: React.KeyboardEvent) => {
+  //   if (e.key === "Tab" && !e.shiftKey) {
+  //     e.preventDefault();
+
+  //     setTimeout(() => {
+  //       difficultyRef.current?.focus();
+  //     }, 0);
+  //   }
+  // };
+
   //Company CRUD Functions
   const handleAddCompany = () => {
     fetchCities(),
