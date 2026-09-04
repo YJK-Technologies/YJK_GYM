@@ -1663,6 +1663,7 @@ const AttributeUpdate = async (req, res) => {
   const {
     company_code,
     attributeheader_code,
+    attributeheader_name,
     attributedetails_code,
     attributedetails_name,
     descriptions,
@@ -1679,14 +1680,13 @@ const AttributeUpdate = async (req, res) => {
       .input("mode", sql.NVarChar, "U")
       .input("company_code", sql.NVarChar, company_code)
       .input("attributeheader_code", sql.NVarChar, attributeheader_code)
+      .input("attributeheader_name", sql.NVarChar, attributeheader_name)
       .input("attributedetails_code", sql.NVarChar, attributedetails_code)
       .input("attributedetails_name", sql.NVarChar, attributedetails_name)
       .input("descriptions", sql.NVarChar, descriptions)
       .input("created_by", sql.NVarChar, created_by)
       .input("modified_by", sql.NVarChar, modified_by)
-      .query(
-        `EXEC sp_attribute_Info @mode,@company_code, @attributeheader_code, @attributedetails_code, @attributedetails_name, @descriptions, @created_by,@modified_by, '', '', '', '', '', '', '', ''`,
-      );
+      .query(`EXEC sp_attribute_Info_pavun @mode,@company_code, @attributeheader_code, @attributeheader_name, @attributedetails_code, @attributedetails_name, @descriptions, @created_by,@modified_by, '', '', '', '', '', '', '', ''`,);
     res.status(200).json("Updated data successfully");
   } catch (err) {
     console.error("Error", err);
@@ -1700,9 +1700,7 @@ const gethdrcode = async (req, res) => {
     const result = await pool
       .request()
       .input("company_code", sql.NVarChar, company_code)
-      .query(
-        "EXEC sp_attribute_Info 'TS',@company_code,'', '','','','','',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL",
-      );
+      .query("EXEC sp_attribute_Info_pavun 'TS',@company_code,'','', '','','','','',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL",);
 
     res.json(result.recordset);
   } catch (err) {
@@ -1725,8 +1723,7 @@ const getAllattributedetData = async (req, res) => {
   try {
     await connection.connectToDatabase();
     const result =
-      await sql.query(`EXEC sp_attribute_info 'A','','', '','','','','',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL
-    `);
+      await sql.query(`EXEC sp_attribute_Info_pavun 'A','','','','','','','','',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL`);
 
     res.json(result.recordset);
   } catch (err) {
@@ -1783,10 +1780,8 @@ const addattridetData = async (req, res) => {
       .input("datetime2", sql.NVarChar, datetime2)
       .input("datetime3", sql.NVarChar, datetime3)
       .input("datetime4", sql.NVarChar, datetime4)
-      .query(
-        `EXEC sp_attribute_Info @mode,@company_code,@attributeheader_code, @attributedetails_code,@attributedetails_name,@descriptions,@created_by,@modified_by,@tempstr1, @tempstr2, @tempstr3, @tempstr4, 
-        @datetime1, @datetime2, @datetime3, @datetime4`,
-      );
+      .query(`EXEC sp_attribute_Info_pavun @mode,@company_code,@attributeheader_code, '',@attributedetails_code,@attributedetails_name,@descriptions,@created_by,@modified_by,@tempstr1, @tempstr2, @tempstr3, @tempstr4, 
+        @datetime1, @datetime2, @datetime3, @datetime4`,);
     // Return success response
     if (result.rowsAffected && result.rowsAffected[0] > 0) {
       return res
@@ -1820,8 +1815,7 @@ const deleteAttriDetailData = async (req, res) => {
   try {
     const pool = await connection.connectToDatabase();
 
-    const deleteQuery = `EXEC sp_attribute_Info 'D',@company_code,@attributeheader_code, @attributedetails_code,'','','',@modified_by,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL
-    `;
+    const deleteQuery = `EXEC sp_attribute_Info_pavun 'D',@company_code,@attributeheader_code,'', @attributedetails_code,'','','',@modified_by,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL`;
     for (let i = 0; i < attributeheader_codesToDelete.length; i++) {
       try {
         await pool
@@ -1883,11 +1877,8 @@ const updattridetData = async (req, res) => {
         .input("company_code", sql.NVarChar, req.headers["company_code"])
         .input("attributeheader_code", attributeheader_codesToUpdate[i])
         .input("attributedetails_code", attributedetails_codesToUpdate[i])
-        .input(
-          "attributedetails_name",
-          sql.NVarChar,
-          updatedRow.attributedetails_name,
-        )
+        .input("attributeheader_name", sql.NVarChar, updatedRow.attributeheader_name)
+        .input("attributedetails_name", sql.NVarChar, updatedRow.attributedetails_name)
         .input("descriptions", sql.NVarChar, updatedRow.descriptions)
         .input("created_by", sql.NVarChar, updatedRow.created_by)
         .input("modified_by", sql.NVarChar, req.headers["modified-by"])
@@ -1899,9 +1890,7 @@ const updattridetData = async (req, res) => {
         .input("datetime2", sql.NVarChar, updatedRow.datetime2)
         .input("datetime3", sql.NVarChar, updatedRow.datetime3)
         .input("datetime4", sql.NVarChar, updatedRow.datetime4)
-        .query(
-          `EXEC sp_attribute_Info @mode,@company_code, @attributeheader_code, @attributedetails_code, @attributedetails_name, @descriptions, @created_by,@modified_by, @tempstr1, @tempstr2, @tempstr3, @tempstr4, @datetime1, @datetime2, @datetime3, @datetime4`,
-        );
+        .query(`EXEC sp_attribute_Info_pavun @mode,@company_code, @attributeheader_code, @attributeheader_name,@attributedetails_code, @attributedetails_name, @descriptions, @created_by,@modified_by, @tempstr1, @tempstr2, @tempstr3, @tempstr4, @datetime1, @datetime2, @datetime3, @datetime4`,);
     }
 
     res.status(200).json("Updated data successfully");
@@ -1920,10 +1909,7 @@ const getattributeSearchdata = async (req, res) => {
   } = req.body;
 
   try {
-    // Connect to the database
     const pool = await connection.connectToDatabase();
-
-    // Execute the query
     const result = await pool
       .request()
       .input("mode", sql.NVarChar, "SC")
@@ -1932,14 +1918,12 @@ const getattributeSearchdata = async (req, res) => {
       .input("attributedetails_code", sql.NVarChar, attributedetails_code)
       .input("attributedetails_name", sql.NVarChar, attributedetails_name)
       .input("descriptions", sql.NVarChar, descriptions)
-      .query(`EXEC sp_attribute_Info 'SC',@company_code,@attributeheader_code,@attributedetails_code,@attributedetails_name,@descriptions,'','','','','','','','','',''
-                `);
+      .query(`EXEC sp_attribute_Info_pavun 'SC',@company_code,@attributeheader_code,'',@attributedetails_code,@attributedetails_name,@descriptions,'','','','','','','','','',''`);
 
-    // Send response
     if (result.recordset.length > 0) {
-      res.status(200).json(result.recordset); // 200 OK if data is found
+      res.status(200).json(result.recordset);
     } else {
-      res.status(404).json("Data not found"); // 404 Not Found if no data is found
+      res.status(404).json("Data not found"); 
     }
   } catch (err) {
     console.error("Error", err);
@@ -1953,9 +1937,7 @@ const getGSTReport = async (req, res) => {
     const result = await pool
       .request()
       .input("company_code", sql.NVarChar, company_code)
-      .query(
-        "EXEC sp_attribute_Info 'GF',@company_code,'GSTReport','','', '','','', NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL",
-      );
+      .query("EXEC sp_attribute_Info_pavun 'GF',@company_code,'GSTReport','','','', '','','', NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL",);
 
     res.json(result.recordset);
   } catch (err) {
@@ -1970,9 +1952,7 @@ const getDateFormat = async (req, res) => {
     const result = await pool
       .request()
       .input("company_code", sql.NVarChar, company_code)
-      .query(
-        "EXEC sp_attribute_Info 'FD',@company_code,'DateFormat','','', '' ,'','', NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL",
-      );
+      .query("EXEC sp_attribute_Info_pavun 'FD',@company_code,'DateFormat','','','', '' ,'','', NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL",);
 
     res.json(result.recordset);
   } catch (err) {
@@ -1991,7 +1971,7 @@ const getAttributeData = async (req, res) => {
       .input("company_code", sql.NVarChar, company_code)
       .input("attributeheader_code", sql.NVarChar, attributeheader_code)
       .input("attributedetails_code", sql.NVarChar, attributedetails_code)
-      .query(`EXEC sp_attribute_Info @mode,@company_code,@attributeheader_code,@attributedetails_code,'','','','','','','','','','','',''`);
+      .query(`EXEC sp_attribute_Info_pavun @mode,@company_code,@attributeheader_code,'',@attributedetails_code,'','','','','','','','','','','',''`);
 
     if (result.recordset.length > 0) {
       res.status(200).json(result.recordset);
@@ -2408,9 +2388,7 @@ const getCity = async (req, res) => {
     const result = await pool
       .request()
       .input("company_code", sql.NVarChar, company_code)
-      .query(
-        "EXEC sp_attribute_Info 'F',@company_code,'city','','', '','','', NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL",
-      );
+      .query("EXEC sp_attribute_Info_pavun 'F',@company_code,'city','','','', '','','', NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL",);
 
     res.json(result.recordset);
   } catch (err) {
@@ -2426,9 +2404,7 @@ const getState = async (req, res) => {
     const result = await pool
       .request()
       .input("company_code", sql.NVarChar, company_code)
-      .query(
-        "EXEC sp_attribute_Info 'F',@company_code,'state','',' ', ' ' ,'','', NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL",
-      );
+      .query("EXEC sp_attribute_Info_pavun 'F',@company_code,'state','','',' ', ' ' ,'','', NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL",);
 
     res.json(result.recordset);
   } catch (err) {
@@ -2444,9 +2420,7 @@ const getCountry = async (req, res) => {
     const result = await pool
       .request()
       .input("company_code", sql.NVarChar, company_code)
-      .query(
-        "EXEC sp_attribute_Info 'F',@company_code,'country','','', '','','', NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL",
-      );
+      .query("EXEC sp_attribute_Info_pavun 'F',@company_code,'country','','','', '','','', NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL",);
 
     res.json(result.recordset);
   } catch (err) {
@@ -2462,9 +2436,7 @@ const getStatus = async (req, res) => {
     const result = await pool
       .request()
       .input("company_code", sql.NVarChar, company_code)
-      .query(
-        "EXEC sp_attribute_Info 'F',@company_code,'status','','', '' , '','',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL",
-      );
+      .query("EXEC sp_attribute_Info_pavun 'F',@company_code,'status','','','', '' , '','',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL",);
 
     res.json(result.recordset);
   } catch (err) {
@@ -2480,9 +2452,7 @@ const getScreens = async (req, res) => {
     const result = await pool
       .request()
       .input("company_code", sql.NVarChar, company_code)
-      .query(
-        "EXEC sp_attribute_Info 'F',@company_code,'Screens','',' ', ' ','','' , NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL",
-      );
+      .query("EXEC sp_attribute_Info_pavun 'F',@company_code,'Screens','','',' ', ' ','','' , NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL",);
 
     res.json(result.recordset);
   } catch (err) {
@@ -2498,9 +2468,7 @@ const getPermissions = async (req, res) => {
     const result = await pool
       .request()
       .input("company_code", sql.NVarChar, company_code)
-      .query(
-        "EXEC sp_attribute_Info 'F',@company_code,'Permissions','',' ', ' ' , '','',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL",
-      );
+      .query("EXEC sp_attribute_Info_pavun 'F',@company_code,'Permissions','','',' ', ' ' , '','',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL",);
 
     res.json(result.recordset);
   } catch (err) {
@@ -2516,9 +2484,7 @@ const getLoginorout = async (req, res) => {
     const result = await pool
       .request()
       .input("company_code", sql.NVarChar, company_code)
-      .query(
-        "EXEC sp_attribute_Info 'F',@company_code,'Log IN/OUT','','', '' ,'','', NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL",
-      );
+      .query("EXEC sp_attribute_Info_pavun 'F',@company_code,'Log IN/OUT','','','', '' ,'','', NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL",);
 
     res.json(result.recordset);
   } catch (err) {
@@ -2534,9 +2500,7 @@ const getDisType = async (req, res) => {
     const result = await pool
       .request()
       .input("company_code", sql.NVarChar, company_code)
-      .query(
-        "EXEC sp_attribute_Info 'F',@company_code,'Discount Type','','', '' ,'','', NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL",
-      );
+      .query("EXEC sp_attribute_Info_pavun 'F',@company_code,'Discount Type','','','', '' ,'','', NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL",);
 
     res.json(result.recordset);
   } catch (err) {
@@ -2821,9 +2785,7 @@ const getscreentype = async (req, res) => {
     const result = await pool
       .request()
       .input("company_code", sql.NVarChar, company_code)
-      .query(
-        "EXEC sp_attribute_Info 'F',@company_code,'Sc type', '','','','','',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL",
-      );
+      .query("EXEC sp_attribute_Info_pavun 'F',@company_code,'Sc type','', '','','','','',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL",);
 
     res.json(result.recordset);
   } catch (err) {
@@ -2842,9 +2804,7 @@ const getBillFormat = async (req, res) => {
     const result = await pool
       .request()
       .input("company_code", sql.NVarChar, company_code)
-      .query(
-        "EXEC sp_attribute_Info 'F',@company_code,'Bill Format','','', '' ,'','', NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL"
-      );
+      .query("EXEC sp_attribute_Info_pavun 'F',@company_code,'Bill Format','','','', '' ,'','', NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL");
 
     res.json(result.recordset);
   } catch (err) {
@@ -2860,9 +2820,7 @@ const getboolean = async (req, res) => {
     const result = await pool
       .request()
       .input("company_code", sql.NVarChar, company_code)
-      .query(
-        "EXEC sp_attribute_Info 'F',@company_code,'boolean','','', '' ,'','', NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL",
-      );
+      .query("EXEC sp_attribute_Info_pavun 'F',@company_code,'boolean','','','', '' ,'','', NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL",);
 
     res.json(result.recordset);
   } catch (err) {
@@ -3265,9 +3223,7 @@ const getMembershipType = async (req, res) => {
     const result = await pool
       .request()
       .input("company_code", sql.NVarChar, company_code)
-      .query(
-        "EXEC sp_attribute_Info 'F',@company_code,'Membership Type','','', '' ,'','', NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL",
-      );
+      .query("EXEC sp_attribute_Info_pavun 'F',@company_code,'Membership Type','','','', '' ,'','', NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL",);
 
     res.json(result.recordset);
   } catch (err) {
@@ -3283,9 +3239,7 @@ const getRelationship = async (req, res) => {
     const result = await pool
       .request()
       .input("company_code", sql.NVarChar, company_code)
-      .query(
-        "EXEC sp_attribute_Info 'F',@company_code,'Relationship','','', '' ,'','', NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL",
-      );
+      .query("EXEC sp_attribute_Info_pavun 'F',@company_code,'Relationship','','','', '' ,'','', NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL",);
 
     res.json(result.recordset);
   } catch (err) {
@@ -3349,9 +3303,7 @@ const getCategory = async (req, res) => {
     const result = await pool
       .request()
       .input("company_code", sql.NVarChar, company_code)
-      .query(
-        "EXEC sp_attribute_Info 'FD',@company_code,'Category','','', '' ,'','', NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL",
-      );
+      .query("EXEC sp_attribute_Info_pavun 'FD',@company_code,'Category','','','', '' ,'','', NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL",);
 
     res.json(result.recordset);
   } catch (err) {
@@ -3367,9 +3319,7 @@ const getDifficultyLevel = async (req, res) => {
     const result = await pool
       .request()
       .input("company_code", sql.NVarChar, company_code)
-      .query(
-        "EXEC sp_attribute_Info 'FD',@company_code,'Difficulty Level','','', '' ,'','', NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL",
-      );
+      .query("EXEC sp_attribute_Info_pavun 'FD',@company_code,'Difficulty Level','','','', '' ,'','', NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL",);
 
     res.json(result.recordset);
   } catch (err) {
@@ -4080,9 +4030,7 @@ const getGender = async (req, res) => {
     const result = await pool
       .request()
       .input("company_code", sql.NVarChar, company_code)
-      .query(
-        "EXEC sp_attribute_Info 'F',@company_code,'Gender','','', '' ,'','', NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL",
-      );
+      .query("EXEC sp_attribute_Info_pavun 'F',@company_code,'Gender','','','', '' ,'','', NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL",);
 
     res.json(result.recordset);
   } catch (err) {
@@ -4424,9 +4372,7 @@ const getMealType = async (req, res) => {
     const result = await pool
       .request()
       .input("company_code", sql.NVarChar, company_code)
-      .query(
-        "EXEC sp_attribute_Info 'FD',@company_code,'Meal Type','','', '' ,'','', NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL",
-      );
+      .query("EXEC sp_attribute_Info_pavun 'FD',@company_code,'Meal Type','','','', '' ,'','', NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL",);
 
     res.json(result.recordset);
   } catch (err) {
@@ -4442,9 +4388,7 @@ const getEssentials = async (req, res) => {
     const result = await pool
       .request()
       .input("company_code", sql.NVarChar, company_code)
-      .query(
-        "EXEC sp_attribute_Info 'FD',@company_code,'Essentials','','', '' ,'','', NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL",
-      );
+      .query("EXEC sp_attribute_Info_pavun 'FD',@company_code,'Essentials','','','', '' ,'','', NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL",);
 
     res.json(result.recordset);
   } catch (err) {
@@ -4460,9 +4404,7 @@ const getDuration = async (req, res) => {
     const result = await pool
       .request()
       .input("company_code", sql.NVarChar, company_code)
-      .query(
-        "EXEC sp_attribute_Info 'FD',@company_code,'Duration','','', '' ,'','', NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL",
-      );
+      .query("EXEC sp_attribute_Info_pavun 'FD',@company_code,'Duration','','','', '' ,'','', NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL",);
 
     res.json(result.recordset);
   } catch (err) {
@@ -4543,9 +4485,7 @@ const getPackageTypes = async (req, res) => {
     const result = await pool
       .request()
       .input("company_code", sql.NVarChar, company_code)
-      .query(
-        "EXEC sp_attribute_Info 'F',@company_code,'Package Types','','', '' ,'','', NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL",
-      );
+      .query("EXEC sp_attribute_Info_pavun 'F',@company_code,'Package Types','','','', '' ,'','', NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL",);
 
     res.json(result.recordset);
   } catch (err) {
@@ -5544,9 +5484,7 @@ const getSMTPPorts = async (req, res) => {
     const result = await pool
       .request()
       .input("company_code", sql.NVarChar, company_code)
-      .query(
-        "EXEC sp_attribute_Info 'F',@company_code,'SMTPP','','', '','','', NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL",
-      );
+      .query("EXEC sp_attribute_Info_pavun 'F',@company_code,'SMTPP','','','', '','','', NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL",);
 
     res.json(result.recordset);
   } catch (err) {
@@ -5561,9 +5499,7 @@ const getSMSProviders = async (req, res) => {
     const result = await pool
       .request()
       .input("company_code", sql.NVarChar, company_code)
-      .query(
-        "EXEC sp_attribute_Info 'F',@company_code,'SMS Provider','','', '','','', NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL",
-      );
+      .query("EXEC sp_attribute_Info_pavun 'F',@company_code,'SMS Provider','','','', '','','', NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL",);
 
     res.json(result.recordset);
   } catch (err) {
@@ -5578,9 +5514,7 @@ const getCountryCodes = async (req, res) => {
     const result = await pool
       .request()
       .input("company_code", sql.NVarChar, company_code)
-      .query(
-        "EXEC sp_attribute_Info 'F',@company_code,'Default Country Co','','', '','','', NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL",
-      );
+      .query("EXEC sp_attribute_Info_pavun 'F',@company_code,'Default Country Co','','','', '','','', NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL",);
 
     res.json(result.recordset);
   } catch (err) {
@@ -5595,9 +5529,7 @@ const getWhatsappProviders = async (req, res) => {
     const result = await pool
       .request()
       .input("company_code", sql.NVarChar, company_code)
-      .query(
-        "EXEC sp_attribute_Info 'F',@company_code,'WhatsApp Provider','','', '','','', NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL",
-      );
+      .query("EXEC sp_attribute_Info_pavun 'F',@company_code,'WhatsApp Provider','','','', '','','', NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL",);
 
     res.json(result.recordset);
   } catch (err) {
@@ -5612,9 +5544,7 @@ const getSSLTypes = async (req, res) => {
     const result = await pool
       .request()
       .input("company_code", sql.NVarChar, company_code)
-      .query(
-        "EXEC sp_attribute_Info 'F',@company_code,'boolean','','', '','','', NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL",
-      );
+      .query("EXEC sp_attribute_Info_pavun 'F',@company_code,'boolean','','','', '','','', NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL",);
 
     res.json(result.recordset);
   } catch (err) {
