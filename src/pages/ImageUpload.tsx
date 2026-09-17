@@ -1,12 +1,15 @@
-
 import { useState, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Upload, X, Image } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
-
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 interface ImageUploadProps {
   images: (string | null)[];
@@ -18,7 +21,14 @@ interface ImageUploadProps {
   tooltips?: string[];
 }
 
-const ImageUpload = ({ images, onImagesChange, maxImages = 3, label = "Project Images", onFilesChange, tooltips = ["Upload Image"] }: ImageUploadProps) => {
+const ImageUpload = ({
+  images,
+  onImagesChange,
+  maxImages = 3,
+  label = "Project Images",
+  onFilesChange,
+  tooltips = ["Upload Image"],
+}: ImageUploadProps) => {
   const [uploading, setUploading] = useState<number | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const { toast } = useToast();
@@ -28,7 +38,7 @@ const ImageUpload = ({ images, onImagesChange, maxImages = 3, label = "Project I
       const reader = new FileReader();
       reader.readAsDataURL(file);
       reader.onload = () => resolve(reader.result as string);
-      reader.onerror = error => reject(error);
+      reader.onerror = (error) => reject(error);
     });
   };
 
@@ -64,7 +74,10 @@ const ImageUpload = ({ images, onImagesChange, maxImages = 3, label = "Project I
     onImagesChange(newImages);
   };
 
-  const handleFileSelect = (event: React.ChangeEvent<HTMLInputElement>, index: number) => {
+  const handleFileSelect = (
+    event: React.ChangeEvent<HTMLInputElement>,
+    index: number,
+  ) => {
     const file = event.target.files?.[0];
     if (file) {
       if (file.size > 5 * 1024 * 1024) {
@@ -76,7 +89,7 @@ const ImageUpload = ({ images, onImagesChange, maxImages = 3, label = "Project I
         return;
       }
 
-      if (!file.type.startsWith('image/')) {
+      if (!file.type.startsWith("image/")) {
         toast({
           title: "Error",
           description: "Please select an image file",
@@ -90,14 +103,16 @@ const ImageUpload = ({ images, onImagesChange, maxImages = 3, label = "Project I
   };
 
   const getGridLayout = () => {
-    if (maxImages === 1) return "grid-cols-1 w-full"; // Full space occupied 
+    if (maxImages === 1) return "grid-cols-1 w-full"; // Full space occupied
     if (maxImages === 2) return "grid-cols-2 w-full gap-4"; // Left & Right evenly split
     return "grid-cols-1 sm:grid-cols-2 md:grid-cols-3 w-full gap-4"; // 3 items alignment structured responsive matrix
   };
 
   return (
     <div className="space-y-4">
-      <Label>{label} (up to {maxImages})</Label>
+      <Label>
+        {label} (up to {maxImages})
+      </Label>
       <div className={`grid ${getGridLayout()}`}>
         {Array.from({ length: maxImages }).map((_, index) => (
           <div key={index} className="relative">
@@ -129,7 +144,18 @@ const ImageUpload = ({ images, onImagesChange, maxImages = 3, label = "Project I
               <TooltipProvider>
                 <Tooltip>
                   <TooltipTrigger asChild>
-                    <div className="w-full h-32 border-2 border-dashed border-gray-300 rounded-lg flex flex-col items-center justify-center hover:border-gray-400 transition-colors">
+                    <div
+                      tabIndex={0}
+                      role="button"
+                      aria-label={tooltips[index] || "Upload Image"}
+                      onKeyDown={(e) => {
+                        if (e.key === "Enter" || e.key === " ") {
+                          e.preventDefault();
+                          fileInputRef.current?.click();
+                        }
+                      }}
+                      className="w-full h-32 border-2 border-dashed border-gray-300 rounded-lg flex flex-col items-center justify-center hover:border-gray-400 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 transition-colors"
+                    >
                       <Input
                         ref={fileInputRef}
                         type="file"
@@ -149,7 +175,9 @@ const ImageUpload = ({ images, onImagesChange, maxImages = 3, label = "Project I
                         ) : (
                           <>
                             <Image className="h-6 w-6 text-gray-400 mb-2" />
-                            <span className="text-sm text-gray-500">Upload Image</span>
+                            <span className="text-sm text-gray-500">
+                              Upload Image
+                            </span>
                           </>
                         )}
                       </Label>
